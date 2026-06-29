@@ -1,0 +1,103 @@
+---
+/**
+ * QueueProgress — aggregate progress strip with overall bar, ETA, and totals.
+ * Markup only — wired by the page-level script.
+ */
+---
+
+<div class="queue-progress" data-queue-progress hidden>
+  <div class="qp-summary">
+    <span class="qp-label text-caption-mono">Compressing</span>
+    <span class="qp-counts text-body-sm-strong" data-qp-counts>0 / 0</span>
+    <span class="qp-eta text-caption" data-qp-eta>—</span>
+  </div>
+  <div class="qp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="qp-bar-fill" data-qp-fill></div>
+  </div>
+  <div class="qp-meta text-caption">
+    <span data-qp-saved>Saved 0 B so far</span>
+    <span class="qp-dot" aria-hidden="true">·</span>
+    <span data-qp-errors hidden>0 failed</span>
+  </div>
+</div>
+
+<style>
+  .queue-progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .qp-summary {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    color: var(--color-body);
+  }
+
+  .qp-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .qp-counts {
+    color: var(--color-ink);
+    font-feature-settings: "tnum";
+  }
+
+  .qp-eta {
+    margin-left: auto;
+    color: var(--color-mute);
+    font-feature-settings: "tnum";
+  }
+
+  .qp-bar {
+    height: 6px;
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .qp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(
+      90deg,
+      var(--gradient-develop-start),
+      var(--gradient-preview-end),
+      var(--gradient-ship-end)
+    );
+    background-size: 200% 100%;
+    border-radius: inherit;
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: qp-shimmer 2.5s linear infinite;
+  }
+
+  @keyframes qp-shimmer {
+    0% { background-position: 0% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .qp-bar-fill { animation: none; }
+  }
+
+  .qp-meta {
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .qp-meta [data-qp-errors] {
+    color: var(--color-error-deep);
+  }
+
+  .qp-dot {
+    color: var(--color-hairline-strong);
+  }
+</style>

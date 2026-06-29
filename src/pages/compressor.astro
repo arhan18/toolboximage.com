@@ -5,6 +5,8 @@ import Button from '../components/ui/Button.astro';
 import Badge from '../components/ui/Badge.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import UploadDropZone from '../components/upload/UploadDropZone.astro';
+import SettingsPanel from '../components/upload/SettingsPanel.astro';
+import QueueProgress from '../components/upload/QueueProgress.astro';
 import PreviewCard from '../components/upload/PreviewCard.astro';
 ---
 
@@ -17,11 +19,11 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       <div class="container stack stack-xl">
         <Reveal>
           <header class="compressor-head stack stack-sm">
-            <Badge eyebrow="Compressor" tone="info">Drop zone</Badge>
+            <Badge eyebrow="Compressor" tone="info">v1.0</Badge>
             <h1 class="text-display-lg compressor-title">Add your images.</h1>
             <p class="text-body-md" style="color:var(--color-body);max-width:56ch;">
               Drop, browse, paste, or pick a folder. We'll generate previews
-              locally and prepare the queue for compression.
+              locally and compress entirely in your browser.
             </p>
           </header>
         </Reveal>
@@ -30,8 +32,12 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
           <UploadDropZone />
         </Reveal>
 
+        <Reveal delay={140}>
+          <SettingsPanel />
+        </Reveal>
+
         <!-- Queue panel -->
-        <Reveal delay={140} class="queue-panel-wrap">
+        <Reveal delay={200} class="queue-panel-wrap">
           <section class="queue-panel" data-queue-panel aria-label="Upload queue">
             <header class="queue-header">
               <div class="queue-summary">
@@ -44,11 +50,16 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
                 <button type="button" class="queue-link" data-action="add-more">
                   + Add more
                 </button>
+                <button type="button" class="queue-link" data-action="cancel-all" hidden>
+                  Cancel all
+                </button>
                 <button type="button" class="queue-link queue-link-danger" data-action="clear" hidden>
                   Clear all
                 </button>
               </div>
             </header>
+
+            <QueueProgress />
 
             <!-- Loading state: shown while previews are being generated. -->
             <div class="queue-loading" data-queue-loading hidden>
@@ -74,7 +85,7 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
             <!-- Preview list. -->
             <ul class="queue-list" data-queue-list role="list" hidden></ul>
 
-            <!-- Footer with totals + primary action (compression comes in S4). -->
+            <!-- Footer with totals + primary action. -->
             <footer class="queue-footer" data-queue-footer hidden>
               <div class="queue-footer-stats">
                 <span class="text-body-sm queue-stat-row">
@@ -82,18 +93,30 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
                   <span class="text-body-md-strong" data-total-size>0 B</span>
                 </span>
                 <span class="text-body-sm queue-stat-row">
-                  <span class="text-caption queue-stat-label">Estimated time</span>
-                  <span class="text-body-md-strong" data-estimated-time>—</span>
+                  <span class="text-caption queue-stat-label">Saved so far</span>
+                  <span class="text-body-md-strong" data-saved-size>0 B</span>
                 </span>
               </div>
-              <Button
-                label="Compress images"
-                href="#"
-                variant="primary"
-                size="lg"
-                disabled={true}
-                ariaLabel="Compress images (coming in next milestone)"
-              />
+              <div class="queue-footer-actions">
+                <Button
+                  label="Cancel"
+                  variant="secondary"
+                  size="lg"
+                  class="footer-cancel"
+                  ariaLabel="Cancel compression"
+                />
+                <Button
+                  label="Compress all"
+                  variant="primary"
+                  size="lg"
+                  class="footer-compress"
+                  ariaLabel="Start compressing all ready images"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                </Button>
+              </div>
             </footer>
           </section>
         </Reveal>
@@ -119,7 +142,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     margin: 0;
   }
 
-  /* ---------- Queue panel ---------- */
   .queue-panel-wrap {
     display: block;
   }
@@ -193,7 +215,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     color: var(--color-error-deep);
   }
 
-  /* ---------- Loading ---------- */
   .queue-loading {
     display: flex;
     align-items: center;
@@ -219,7 +240,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     .queue-loading-spinner { animation: none; }
   }
 
-  /* ---------- Empty ---------- */
   .queue-empty {
     padding: var(--space-4xl) var(--space-xl);
     text-align: center;
@@ -241,7 +261,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     max-width: 40ch;
   }
 
-  /* ---------- List ---------- */
   .queue-list {
     list-style: none;
     margin: 0;
@@ -253,7 +272,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     overflow-y: auto;
   }
 
-  /* ---------- Footer ---------- */
   .queue-footer {
     display: flex;
     align-items: center;
@@ -268,6 +286,24 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     display: flex;
     align-items: center;
     gap: var(--space-xl);
+  }
+
+  .queue-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .queue-footer-actions .footer-cancel {
+    display: none;
+  }
+
+  .queue-footer[data-running="true"] .queue-footer-actions .footer-cancel {
+    display: inline-flex;
+  }
+
+  .queue-footer[data-running="true"] .queue-footer-actions .footer-compress {
+    display: none;
   }
 
   .queue-stat-row {
@@ -307,9 +343,17 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
 
 <script>
   import { UploadStore, formatBytes, type UploadItem } from '../lib/upload-store';
+  import {
+    DEFAULT_SETTINGS,
+    MODE_PRESETS,
+    type CompressionSettings,
+    type CompressionMode,
+  } from '../lib/compression-settings';
+  import { CompressionJobRunner, type Job } from '../lib/compression-runner';
 
   type FilesDetail = { files: File[]; paths?: Map<string, string> };
 
+  // ---------- Element refs -------------------------------------------------
   const queuePanel = document.querySelector<HTMLElement>('[data-queue-panel]');
   const queueList = document.querySelector<HTMLUListElement>('[data-queue-list]');
   const queueEmpty = document.querySelector<HTMLElement>('[data-queue-empty]');
@@ -317,22 +361,146 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
   const queueFooter = document.querySelector<HTMLElement>('[data-queue-footer]');
   const queueStats = document.querySelector<HTMLElement>('[data-queue-stats]');
   const totalSizeEl = document.querySelector<HTMLElement>('[data-total-size]');
-  const estimatedEl = document.querySelector<HTMLElement>('[data-estimated-time]');
+  const savedSizeEl = document.querySelector<HTMLElement>('[data-saved-size]');
   const clearBtn = document.querySelector<HTMLButtonElement>('[data-action="clear"]');
+  const cancelAllBtn = document.querySelector<HTMLButtonElement>('[data-action="cancel-all"]');
   const addMoreBtn = document.querySelector<HTMLButtonElement>('[data-action="add-more"]');
+  const compressBtn = document.querySelector<HTMLButtonElement>('.footer-compress');
+  const cancelBtn = document.querySelector<HTMLButtonElement>('.footer-cancel');
+  const queueProgressEl = document.querySelector<HTMLElement>('[data-queue-progress]');
+  const qpFill = document.querySelector<HTMLElement>('[data-qp-fill]');
+  const qpCounts = document.querySelector<HTMLElement>('[data-qp-counts]');
+  const qpEta = document.querySelector<HTMLElement>('[data-qp-eta]');
+  const qpSaved = document.querySelector<HTMLElement>('[data-qp-saved]');
+  const qpErrors = document.querySelector<HTMLElement>('[data-qp-errors]');
+  const qpBar = document.querySelector<HTMLElement>('.qp-bar');
+
+  const settingsRoot = document.querySelector<HTMLElement>('[data-settings]');
+  const customPanel = document.querySelector<HTMLElement>('[data-custom]');
+  const modeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-mode]'));
+  const settingInputs = Array.from(
+    document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-setting]')
+  );
 
   if (!queuePanel || !queueList || !queueEmpty || !queueLoading || !queueFooter || !queueStats) {
-    // Surface a clear error in dev so missing markup is obvious.
     console.warn('Compressor page: queue markup incomplete');
   } else {
-    const store = new UploadStore();
-    const tpl = document.getElementById('tpl-preview-card') as HTMLTemplateElement | null;
+    // ---------- State ------------------------------------------------------
+    let settings: CompressionSettings = { ...DEFAULT_SETTINGS };
+    let compressStarted = false;
 
-    /** Map of card element by item id. */
+    const store = new UploadStore();
+    const runner = new CompressionJobRunner(store, settings, 4);
+    const tpl = document.getElementById('tpl-preview-card') as HTMLTemplateElement | null;
     const cards = new Map<string, HTMLElement>();
 
-    const render = (items: ReadonlyArray<UploadItem>) => {
-      // Hide all sections first; we'll enable the right ones below.
+    // ---------- Settings binding ------------------------------------------
+    const fillSlider = (input: HTMLInputElement) => {
+      const min = Number(input.min || 0);
+      const max = Number(input.max || 100);
+      const val = Number(input.value || 0);
+      const pct = ((val - min) / (max - min)) * 100;
+      input.style.setProperty('--fill', `${pct}%`);
+    };
+
+    const updateDisplay = (key: string, value: unknown) => {
+      const displayEl = document.querySelector<HTMLElement>(`[data-display="${key}"]`);
+      if (!displayEl) return;
+      const mode = document
+        .querySelector<HTMLElement>(`[data-display-target="${key}"]`)
+        ?.getAttribute('data-display-mode');
+      if (mode === 'size') {
+        displayEl.textContent = (value as number) > 0 ? `${value} KB` : 'off';
+      } else {
+        displayEl.textContent = String(value);
+      }
+    };
+
+    const applySettingFromInput = (input: HTMLInputElement | HTMLSelectElement) => {
+      const key = input.dataset.setting!;
+      let value: unknown = input.value;
+      if (input instanceof HTMLInputElement && input.type === 'checkbox') {
+        value = input.checked;
+      } else if (input instanceof HTMLInputElement && input.type === 'number') {
+        value = Number(input.value);
+      } else if (input instanceof HTMLInputElement && input.type === 'range') {
+        value = Number(input.value);
+      }
+      setDeep(settings, key, value);
+      if (input instanceof HTMLInputElement && input.type === 'range') {
+        fillSlider(input);
+        updateDisplay(key, value);
+      }
+      if (compressStarted) {
+        // settings changed mid-run — for now we just rebuild the runner.
+        rebuildRunner();
+      }
+    };
+
+    const setDeep = (obj: any, path: string, value: unknown) => {
+      const parts = path.split('.');
+      let cur: any = obj;
+      for (let i = 0; i < parts.length - 1; i++) {
+        cur[parts[i]!] = { ...cur[parts[i]!] };
+        cur = cur[parts[i]!];
+      }
+      cur[parts[parts.length - 1]!] = value;
+    };
+
+    const applyMode = (mode: CompressionMode) => {
+      settings = { ...settings, ...MODE_PRESETS[mode] };
+      // Re-sync every input to current settings.
+      settingInputs.forEach((input) => {
+        const key = input.dataset.setting!;
+        const value = getDeep(settings, key);
+        if (input instanceof HTMLInputElement && input.type === 'checkbox') {
+          input.checked = Boolean(value);
+        } else {
+          input.value = String(value ?? '');
+        }
+        if (input instanceof HTMLInputElement && input.type === 'range') {
+          fillSlider(input);
+          updateDisplay(key, value);
+        }
+      });
+      modeBtns.forEach((btn) => {
+        const active = btn.dataset.mode === mode;
+        btn.setAttribute('aria-checked', active ? 'true' : 'false');
+      });
+      if (customPanel) customPanel.hidden = mode !== 'custom';
+      if (compressStarted) rebuildRunner();
+    };
+
+    const getDeep = (obj: any, path: string): unknown => {
+      return path.split('.').reduce((acc, k) => (acc == null ? undefined : acc[k]), obj);
+    };
+
+    const rebuildRunner = () => {
+      // Cancel current, retain done results via store, then restart pending.
+      runner.cancelAll();
+      // We replace the runner so future enqueues use new settings.
+      const fresh = new CompressionJobRunner(store, settings, 4);
+      copyRunnerBehavior(fresh);
+      // Manually re-emit from old runner so progress listeners re-attach to new.
+      Object.assign(runner as any, fresh as any);
+    };
+
+    // Bind inputs.
+    settingInputs.forEach((input) => {
+      applySettingFromInput(input);
+      input.addEventListener('input', () => applySettingFromInput(input));
+      input.addEventListener('change', () => applySettingFromInput(input));
+      if (input instanceof HTMLInputElement && input.type === 'range') {
+        fillSlider(input);
+      }
+    });
+    modeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => applyMode(btn.dataset.mode as CompressionMode));
+    });
+    applyMode('auto');
+
+    // ---------- Queue render ----------------------------------------------
+    const renderQueue = (items: ReadonlyArray<UploadItem>) => {
       queueEmpty.hidden = items.length > 0;
       queueList.hidden = items.length === 0;
       queueFooter.hidden = items.length === 0;
@@ -344,7 +512,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
         if (label) label.textContent = `Generating previews… (${pending} remaining)`;
       }
 
-      // Sync cards.
       if (tpl) {
         const seen = new Set<string>();
         for (const item of items) {
@@ -359,7 +526,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
           }
           updateCard(card, item);
         }
-        // Remove stale cards.
         for (const [id, el] of cards) {
           if (!seen.has(id)) {
             el.remove();
@@ -368,9 +534,7 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
         }
       }
 
-      // Stats.
       const total = items.length;
-      const totalSize = items.reduce((sum, i) => sum + i.size, 0);
       const ready = items.filter((i) => i.status === 'ready').length;
       const errored = items.filter((i) => i.status === 'error').length;
 
@@ -378,59 +542,44 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
         ? `${total} ${total === 1 ? 'image' : 'images'} · ${ready}/${total} ready${errored ? ` · ${errored} skipped` : ''}`
         : 'No images yet';
 
+      const totalSize = items.reduce((s, i) => s + i.size, 0);
       if (totalSizeEl) totalSizeEl.textContent = formatBytes(totalSize);
-      if (estimatedEl) {
-        // Rough estimate: 0.4s per image, parallelised 4-wide.
-        const sec = Math.max(1, Math.round((total / 4) * 0.4));
-        estimatedEl.textContent = total > 0 ? `~${sec}s` : '—';
-      }
+      if (savedSizeEl) savedSizeEl.textContent = '—';
 
       if (clearBtn) clearBtn.hidden = total === 0;
+
+      // Disable compress button if nothing ready.
+      if (compressBtn) {
+        const a = compressBtn as HTMLAnchorElement;
+        a.setAttribute('aria-disabled', ready === 0 ? 'true' : 'false');
+      }
     };
 
     const bindCard = (card: HTMLElement) => {
-      const upBtn = card.querySelector<HTMLButtonElement>('[data-action="up"]')!;
-      const downBtn = card.querySelector<HTMLButtonElement>('[data-action="down"]')!;
-      const removeBtn = card.querySelector<HTMLButtonElement>('[data-action="remove"]')!;
       const id = card.dataset.id!;
+      card.querySelector<HTMLButtonElement>('[data-action="up"]')!
+        .addEventListener('click', (e) => { e.stopPropagation(); store.reorder(id, 'up'); });
+      card.querySelector<HTMLButtonElement>('[data-action="down"]')!
+        .addEventListener('click', (e) => { e.stopPropagation(); store.reorder(id, 'down'); });
+      card.querySelector<HTMLButtonElement>('[data-action="remove"]')!
+        .addEventListener('click', (e) => { e.stopPropagation(); store.remove(id); });
+      card.querySelector<HTMLButtonElement>('[data-action="retry"]')!
+        .addEventListener('click', (e) => { e.stopPropagation(); runner.retry(id); });
 
-      upBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        store.reorder(id, 'up');
-      });
-      downBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        store.reorder(id, 'down');
-      });
-      removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        store.remove(id);
-      });
-
-      // Keyboard reorder on the card itself.
       card.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowUp' && e.altKey) {
-          e.preventDefault();
-          store.reorder(id, 'up');
-        } else if (e.key === 'ArrowDown' && e.altKey) {
-          e.preventDefault();
-          store.reorder(id, 'down');
-        } else if (e.key === 'Delete' || e.key === 'Backspace') {
-          e.preventDefault();
-          store.remove(id);
-        }
+        if (e.key === 'ArrowUp' && e.altKey) { e.preventDefault(); store.reorder(id, 'up'); }
+        else if (e.key === 'ArrowDown' && e.altKey) { e.preventDefault(); store.reorder(id, 'down'); }
+        else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); store.remove(id); }
       });
 
-      // Drag-and-drop reorder.
+      // Drag & drop reorder.
       card.draggable = true;
       card.addEventListener('dragstart', (e) => {
         card.dataset.dragging = 'true';
         e.dataTransfer?.setData('text/plain', id);
         if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
       });
-      card.addEventListener('dragend', () => {
-        delete card.dataset.dragging;
-      });
+      card.addEventListener('dragend', () => { delete card.dataset.dragging; });
       card.addEventListener('dragover', (e) => {
         e.preventDefault();
         if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
@@ -438,9 +587,7 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       card.addEventListener('drop', (e) => {
         e.preventDefault();
         const draggedId = e.dataTransfer?.getData('text/plain');
-        if (draggedId && draggedId !== id) {
-          store.moveBefore(draggedId, id);
-        }
+        if (draggedId && draggedId !== id) store.moveBefore(draggedId, id);
       });
     };
 
@@ -457,43 +604,168 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
 
       const dimsEl = card.querySelector<HTMLElement>('[data-preview-dims]');
       if (dimsEl) {
-        if (item.width && item.height) {
-          dimsEl.textContent = `${item.width} × ${item.height}`;
-        } else {
-          dimsEl.textContent = '—';
-        }
+        dimsEl.textContent = item.width && item.height ? `${item.width} × ${item.height}` : '—';
       }
 
       const errEl = card.querySelector<HTMLElement>('[data-preview-error]');
       if (errEl) {
-        if (item.error) {
-          errEl.textContent = item.error;
-          errEl.hidden = false;
-        } else {
-          errEl.hidden = true;
-        }
+        if (item.error) { errEl.textContent = item.error; errEl.hidden = false; }
+        else { errEl.hidden = true; }
       }
 
       const statusEl = card.querySelector<HTMLElement>('[data-preview-status]');
-      if (statusEl) {
-        statusEl.hidden = item.status !== 'thumbnailing';
+      if (statusEl) statusEl.hidden = item.status !== 'thumbnailing';
+    };
+
+    // ---------- Render jobs on cards --------------------------------------
+    const updateJobUI = (jobs: ReadonlyMap<string, Job>) => {
+      const items = store.snapshot();
+      const totalBytes = items.reduce((s, i) => s + i.size, 0);
+      let saved = 0;
+
+      for (const item of items) {
+        const job = jobs.get(item.id);
+        const card = cards.get(item.id);
+        if (!card) continue;
+        if (!job) {
+          card.removeAttribute('data-job-status');
+          const progEl = card.querySelector<HTMLElement>('[data-preview-progress]');
+          if (progEl) progEl.hidden = true;
+          const resultEl = card.querySelector<HTMLElement>('[data-preview-result]');
+          if (resultEl) resultEl.hidden = true;
+          const retry = card.querySelector<HTMLButtonElement>('[data-action="retry"]');
+          if (retry) retry.hidden = true;
+          continue;
+        }
+        card.dataset.jobStatus = job.status;
+
+        const progEl = card.querySelector<HTMLElement>('[data-preview-progress]');
+        const progBar = card.querySelector<HTMLElement>('[data-preview-progress-bar]');
+        if (progEl) progEl.hidden = job.status === 'queued';
+        if (progBar) progBar.style.width = `${Math.round(job.progress)}%`;
+
+        const resultEl = card.querySelector<HTMLElement>('[data-preview-result]');
+        if (resultEl) {
+          if (job.status === 'running' || job.status === 'retrying') {
+            resultEl.textContent = `${Math.round(job.progress)}%`;
+            resultEl.hidden = false;
+          } else if (job.status === 'done' && job.result) {
+            const savedBytes = Math.max(0, item.size - job.result.bytes);
+            const pct = item.size > 0 ? Math.round((savedBytes / item.size) * 100) : 0;
+            saved += savedBytes;
+            resultEl.textContent = `${formatBytes(job.result.bytes)} · −${pct}%`;
+            resultEl.hidden = false;
+          } else if (job.status === 'error') {
+            resultEl.textContent = job.error ?? 'Failed';
+            resultEl.hidden = false;
+          } else if (job.status === 'cancelled') {
+            resultEl.textContent = 'Cancelled';
+            resultEl.hidden = false;
+          } else {
+            resultEl.hidden = true;
+          }
+        }
+
+        const retry = card.querySelector<HTMLButtonElement>('[data-action="retry"]');
+        if (retry) retry.hidden = job.status !== 'error';
+      }
+
+      // Footer running state.
+      const anyActive = Array.from(jobs.values()).some(
+        (j) => j.status === 'running' || j.status === 'retrying'
+      );
+      queueFooter!.dataset.running = anyActive ? 'true' : 'false';
+
+      // Saved-so-far.
+      if (savedSizeEl) {
+        if (saved > 0) savedSizeEl.textContent = `−${formatBytes(saved)} (${totalBytes > 0 ? Math.round((saved / totalBytes) * 100) : 0}%)`;
+        else savedSizeEl.textContent = '—';
       }
     };
 
-    // Subscribe to store changes.
-    store.subscribe(render);
+    // ---------- Aggregate progress UI -------------------------------------
+    const updateProgressUI = () => {
+      const snap = Array.from(cards.keys());
+      // We don't have a direct AggregateProgress reference here — derive from jobs.
+      // Simpler: re-read via runner using subscribeProgress.
+    };
 
-    // Listen for files emitted from the drop zone / paste / browse / folder.
+    // ---------- Wire subscriptions -----------------------------------------
+    store.subscribe(renderQueue);
+    runner.subscribeJobs(updateJobUI);
+    runner.subscribeProgress((p) => {
+      if (!queueProgressEl || !qpFill || !qpCounts || !qpEta || !qpSaved) return;
+      const hasJobs = p.total > 0;
+      queueProgressEl.hidden = !hasJobs;
+      if (!hasJobs) return;
+
+      const percent = p.total ? Math.round(((p.done + p.errored) / p.total) * 100) : 0;
+      qpFill.style.width = `${percent}%`;
+      if (qpBar) qpBar.setAttribute('aria-valuenow', String(percent));
+      qpCounts.textContent = `${p.done} / ${p.total}`;
+      qpEta.textContent = p.active
+        ? p.etaMs > 0
+          ? `~${formatEta(p.etaMs)} remaining`
+          : 'estimating…'
+        : p.errored
+          ? 'done'
+          : 'done';
+      const totalSourceBytes = store.snapshot().reduce((s, i) => s + i.size, 0);
+      qpSaved.textContent = p.savedBytes > 0
+        ? `Saved ${formatBytes(p.savedBytes)} of ${formatBytes(totalSourceBytes)}`
+        : `${formatBytes(totalSourceBytes)} to compress`;
+
+      if (qpErrors) {
+        if (p.errored > 0) {
+          qpErrors.hidden = false;
+          qpErrors.textContent = `${p.errored} failed — click retry on each card`;
+        } else {
+          qpErrors.hidden = true;
+        }
+      }
+
+      if (cancelAllBtn) cancelAllBtn.hidden = !p.active && p.queued === 0;
+    });
+
+    // ---------- File intake ------------------------------------------------
     window.addEventListener('toolboximage:files', async (e) => {
       const detail = (e as CustomEvent<FilesDetail>).detail;
       if (!detail?.files?.length) return;
       await store.add(detail.files, detail.paths);
     });
 
-    clearBtn?.addEventListener('click', () => store.clear());
+    // ---------- Buttons ----------------------------------------------------
+    clearBtn?.addEventListener('click', () => { store.clear(); runner.clear(); });
     addMoreBtn?.addEventListener('click', () => {
-      const fileInput = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
-      fileInput?.click();
+      document.querySelector<HTMLInputElement>('[data-action="file-input"]')?.click();
     });
+    cancelAllBtn?.addEventListener('click', () => runner.cancelAll());
+    compressBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (compressBtn.getAttribute('aria-disabled') === 'true') return;
+      compressStarted = true;
+      runner.startAll();
+    });
+    cancelBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      runner.cancelAll();
+    });
+
+    // ---------- Helpers ----------------------------------------------------
+    function formatEta(ms: number): string {
+      if (ms < 1000) return '<1s';
+      const s = Math.round(ms / 1000);
+      if (s < 60) return `${s}s`;
+      const m = Math.floor(s / 60);
+      const rs = s % 60;
+      return rs > 0 ? `${m}m ${rs}s` : `${m}m`;
+    }
   }
+
+  /**
+   * copyRunnerBehavior is a placeholder for future expansion (e.g., preserving
+   * already-finished jobs across settings changes). For now, settings
+   * changes mid-run just cancel and the user restarts.
+   */
+  function copyRunnerBehavior(_: unknown) { /* reserved */ }
 </script>

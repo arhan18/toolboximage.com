@@ -1,0 +1,476 @@
+---
+/**
+ * SettingsPanel — mode picker + custom settings.
+ * Renders the layout; values are bound by the page-level script via data-* attrs.
+ */
+import Badge from '../ui/Badge.astro';
+
+const modes = [
+  { id: 'auto', label: 'Auto', desc: 'Balanced. Best encoder per image.' },
+  { id: 'maximum', label: 'Maximum', desc: 'Smallest file. Visual diffs possible.' },
+  { id: 'high', label: 'High quality', desc: 'Largest savings, no visible loss.' },
+  { id: 'custom', label: 'Custom', desc: 'Tune everything yourself.' },
+] as const;
+
+const formats = [
+  { id: 'keep', label: 'Keep original' },
+  { id: 'jpeg', label: 'JPEG' },
+  { id: 'png', label: 'PNG' },
+  { id: 'webp', label: 'WebP' },
+  { id: 'avif', label: 'AVIF' },
+  { id: 'gif', label: 'GIF' },
+  { id: 'svg', label: 'SVG' },
+] as const;
+---
+
+<section class="settings" aria-label="Compression settings" data-settings>
+  <header class="settings-head">
+    <div class="settings-head-text">
+      <p class="text-caption-mono settings-eyebrow">Settings</p>
+      <h2 class="text-display-sm settings-title">Compression</h2>
+    </div>
+    <Badge tone="info">Saved locally</Badge>
+  </header>
+
+  <!-- Mode picker -->
+  <div class="settings-row" role="radiogroup" aria-label="Compression mode">
+    {modes.map((m, i) => (
+      <button
+        type="button"
+        class="mode-pill"
+        data-mode={m.id}
+        role="radio"
+        aria-checked={i === 0 ? 'true' : 'false'}
+      >
+        <span class="mode-pill-label">{m.label}</span>
+        <span class="mode-pill-desc text-caption">{m.desc}</span>
+      </button>
+    ))}
+  </div>
+
+  <!-- Custom settings -->
+  <div class="settings-custom" data-custom hidden>
+    <div class="settings-grid">
+      <!-- Output format -->
+      <label class="field">
+        <span class="field-label text-caption-mono">Output format</span>
+        <select class="field-input" data-setting="output">
+          {formats.map((f) => <option value={f.id}>{f.label}</option>)}
+        </select>
+      </label>
+
+      <!-- Quality -->
+      <label class="field">
+        <span class="field-label text-caption-mono">
+          Quality
+          <span class="field-value" data-display="quality">75</span>
+        </span>
+        <input
+          type="range"
+          min="1"
+          max="100"
+          value="75"
+          class="field-slider"
+          data-setting="quality"
+          data-display-target="quality"
+        />
+      </label>
+
+      <!-- WebP quality -->
+      <label class="field">
+        <span class="field-label text-caption-mono">
+          WebP quality
+          <span class="field-value" data-display="webpQuality">75</span>
+        </span>
+        <input
+          type="range"
+          min="1"
+          max="100"
+          value="75"
+          class="field-slider"
+          data-setting="webpQuality"
+          data-display-target="webpQuality"
+        />
+      </label>
+
+      <!-- AVIF quality -->
+      <label class="field">
+        <span class="field-label text-caption-mono">
+          AVIF quality
+          <span class="field-value" data-display="avifQuality">55</span>
+        </span>
+        <input
+          type="range"
+          min="1"
+          max="100"
+          value="55"
+          class="field-slider"
+          data-setting="avifQuality"
+          data-display-target="avifQuality"
+        />
+      </label>
+
+      <!-- Target size -->
+      <label class="field">
+        <span class="field-label text-caption-mono">
+          Target size (KB)
+          <span class="field-value" data-display="targetSizeKb">off</span>
+        </span>
+        <input
+          type="range"
+          min="0"
+          max="2000"
+          step="10"
+          value="0"
+          class="field-slider"
+          data-setting="targetSizeKb"
+          data-display-target="targetSizeKb"
+          data-display-mode="size"
+        />
+      </label>
+
+      <!-- Resize -->
+      <div class="field field-row">
+        <label class="field-toggle">
+          <input type="checkbox" data-setting="resize.enabled" />
+          <span class="text-caption-mono">Resize</span>
+        </label>
+        <select class="field-input field-input-sm" data-setting="resize.mode">
+          <option value="original">Original</option>
+          <option value="width">Fit width</option>
+          <option value="height">Fit height</option>
+          <option value="fit">Fit (long edge)</option>
+          <option value="fill">Fill (long edge)</option>
+        </select>
+        <input
+          type="number"
+          min="64"
+          max="16384"
+          value="2048"
+          class="field-input field-input-sm"
+          data-setting="resize.longEdge"
+          aria-label="Resize target in pixels"
+        />
+        <span class="text-caption field-suffix">px</span>
+      </div>
+
+      <!-- Toggles -->
+      <div class="field field-toggles">
+        <label class="field-toggle">
+          <input type="checkbox" data-setting="progressiveJpeg" checked />
+          <span class="text-body-sm">Progressive JPEG</span>
+        </label>
+        <label class="field-toggle">
+          <input type="checkbox" data-setting="pngOptimize" checked />
+          <span class="text-body-sm">PNG optimization</span>
+        </label>
+        <label class="field-toggle">
+          <input type="checkbox" data-setting="removeMetadata" checked />
+          <span class="text-body-sm">Remove metadata (EXIF, XMP, IPTC)</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .settings {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .settings-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .settings-head-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .settings-eyebrow {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+
+  .settings-title {
+    margin: 0;
+  }
+
+  /* ---------- Mode pills ---------- */
+  .settings-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xs);
+    padding: var(--space-xxs);
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-hairline);
+  }
+
+  .mode-pill {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    color: var(--color-body);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .mode-pill:hover {
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+  }
+
+  .mode-pill[aria-checked="true"] {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    border-color: var(--color-hairline);
+    box-shadow: var(--shadow-2);
+  }
+
+  .mode-pill:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+  }
+
+  .mode-pill-label {
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-body-sm);
+  }
+
+  .mode-pill-desc {
+    color: var(--color-mute);
+    line-height: 1.3;
+  }
+
+  .mode-pill[aria-checked="true"] .mode-pill-desc {
+    color: var(--color-body);
+  }
+
+  /* ---------- Custom fields ---------- */
+  .settings-custom {
+    border-top: 1px solid var(--color-hairline);
+    padding-top: var(--space-lg);
+  }
+
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .field-label {
+    color: var(--color-body);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .field-value {
+    color: var(--color-ink);
+    font-weight: var(--weight-semibold);
+    text-transform: none;
+    letter-spacing: 0;
+    font-feature-settings: "tnum";
+  }
+
+  .field-input {
+    appearance: none;
+    height: 36px;
+    padding: 0 var(--space-sm);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+  }
+
+  .field-input-sm {
+    height: 32px;
+    width: 110px;
+  }
+
+  .field-input:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+    border-color: var(--color-link);
+  }
+
+  /* Range slider — clean & accessible. */
+  .field-slider {
+    appearance: none;
+    width: 100%;
+    height: 24px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .field-slider::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(
+      to right,
+      var(--color-primary) var(--fill, 0%),
+      var(--color-hairline) var(--fill, 0%)
+    );
+  }
+
+  .field-slider::-moz-range-track {
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-hairline);
+  }
+
+  .field-slider::-moz-range-progress {
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+  }
+
+  .field-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-full);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-ink);
+    box-shadow: var(--shadow-1);
+    margin-top: -6px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .field-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-full);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-ink);
+    box-shadow: var(--shadow-1);
+  }
+
+  .field-slider:hover::-webkit-slider-thumb {
+    transform: scale(1.1);
+  }
+
+  .field-slider:focus-visible {
+    outline: none;
+  }
+
+  .field-slider:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 35%, transparent);
+  }
+
+  /* ---------- Row / toggles ---------- */
+  .field-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .field-toggles {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .field-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    color: var(--color-ink);
+  }
+
+  .field-toggle input[type="checkbox"] {
+    appearance: none;
+    width: 32px;
+    height: 18px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-hairline-strong);
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .field-toggle input[type="checkbox"]::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-1);
+    transition: transform 0.15s ease;
+  }
+
+  .field-toggle input[type="checkbox"]:checked {
+    background-color: var(--color-primary);
+  }
+
+  .field-toggle input[type="checkbox"]:checked::after {
+    transform: translateX(14px);
+  }
+
+  .field-toggle input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+  }
+
+  .field-suffix {
+    color: var(--color-mute);
+  }
+
+  @media (max-width: 1023px) {
+    .settings-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .settings-row {
+      grid-template-columns: 1fr;
+    }
+    .settings-grid {
+      grid-template-columns: 1fr;
+    }
+    .field-toggles {
+      grid-column: auto;
+    }
+  }
+</style>
