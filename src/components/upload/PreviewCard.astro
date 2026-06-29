@@ -20,33 +20,70 @@ const { class: className = '' } = Astro.props;
           <path d="M21 12a9 9 0 0 1-9 9"/>
         </svg>
       </span>
+      <span class="preview-thumb-done" data-preview-done hidden>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </span>
     </div>
-    <div class="preview-meta">
-      <p class="preview-name" data-preview-name></p>
-      <p class="preview-sub text-caption">
-        <span data-preview-size></span>
-        <span class="preview-dot" aria-hidden="true">·</span>
-        <span data-preview-dims></span>
-      </p>
-      <p class="preview-error text-caption" data-preview-error hidden></p>
+
+    <div class="preview-body">
+      <div class="preview-row">
+        <div class="preview-meta">
+          <p class="preview-name" data-preview-name></p>
+          <p class="preview-sub text-caption">
+            <span data-preview-size></span>
+            <span class="preview-dot" aria-hidden="true">·</span>
+            <span data-preview-dims></span>
+          </p>
+          <p class="preview-error text-caption" data-preview-error hidden></p>
+        </div>
+        <div class="preview-actions">
+          <button type="button" class="preview-action" data-action="up" aria-label="Move up">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <button type="button" class="preview-action" data-action="down" aria-label="Move down">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button type="button" class="preview-action" data-action="retry" aria-label="Retry compression" hidden>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          </button>
+          <button type="button" class="preview-action" data-action="download" aria-label="Download compressed file" hidden>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button type="button" class="preview-action preview-action-remove" data-action="remove" aria-label="Remove from queue">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
       <div class="preview-progress" data-preview-progress hidden>
         <div class="preview-progress-bar" data-preview-progress-bar></div>
       </div>
-      <p class="preview-result text-caption" data-preview-result hidden></p>
-    </div>
-    <div class="preview-actions">
-      <button type="button" class="preview-action" data-action="up" aria-label="Move up">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-      </button>
-      <button type="button" class="preview-action" data-action="down" aria-label="Move down">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <button type="button" class="preview-action" data-action="retry" aria-label="Retry compression" hidden>
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-      </button>
-      <button type="button" class="preview-action preview-action-remove" data-action="remove" aria-label="Remove from queue">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+
+      <!-- Per-item statistics — visible once job is done -->
+      <div class="preview-stats" data-preview-stats hidden>
+        <div class="preview-stat">
+          <span class="preview-stat-label text-caption-mono">Original</span>
+          <span class="preview-stat-value" data-stat="original">—</span>
+        </div>
+        <div class="preview-stat preview-stat-accent">
+          <span class="preview-stat-label text-caption-mono">New</span>
+          <span class="preview-stat-value" data-stat="new">—</span>
+        </div>
+        <div class="preview-stat">
+          <span class="preview-stat-label text-caption-mono">Saved</span>
+          <span class="preview-stat-value preview-stat-saved" data-stat="saved">—</span>
+        </div>
+        <div class="preview-stat">
+          <span class="preview-stat-label text-caption-mono">Ratio</span>
+          <span class="preview-stat-value" data-stat="ratio">—</span>
+        </div>
+        <div class="preview-stat">
+          <span class="preview-stat-label text-caption-mono">Dimensions</span>
+          <span class="preview-stat-value" data-stat="dims">—</span>
+        </div>
+      </div>
     </div>
   </article>
 </template>
@@ -55,9 +92,8 @@ const { class: className = '' } = Astro.props;
   .preview-card {
     position: relative;
     display: grid;
-    grid-template-columns: 64px 1fr auto;
+    grid-template-columns: 64px 1fr;
     gap: var(--space-md);
-    align-items: center;
     padding: var(--space-sm) var(--space-md);
     background-color: var(--color-canvas);
     border-radius: var(--radius-md);
@@ -99,6 +135,7 @@ const { class: className = '' } = Astro.props;
     align-items: center;
     justify-content: center;
     color: var(--color-mute);
+    grid-row: span 2;
   }
 
   .preview-thumb img {
@@ -123,7 +160,6 @@ const { class: className = '' } = Astro.props;
     background-color: rgb(0 0 0 / 0.5);
   }
 
-  /* Hide "thumbnailing" overlay once status moves to 'ready' or job completes. */
   .preview-card[data-status="ready"] .preview-status,
   .preview-card[data-status="error"] .preview-status {
     display: none;
@@ -159,6 +195,42 @@ const { class: className = '' } = Astro.props;
     .preview-spinner { animation: none; }
   }
 
+  /* Success tick on thumbnail after job completes. */
+  .preview-thumb-done {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-cyan-deep);
+    color: var(--color-on-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-2);
+    animation: preview-done-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes preview-done-pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .preview-body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .preview-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-sm);
+  }
+
   .preview-meta {
     min-width: 0;
     display: flex;
@@ -186,83 +258,15 @@ const { class: className = '' } = Astro.props;
     margin: 0;
   }
 
-  .preview-dot {
-    color: var(--color-hairline-strong);
-  }
+  .preview-dot { color: var(--color-hairline-strong); }
 
   .preview-error {
     color: var(--color-error-deep);
     margin: 0;
   }
 
-  .preview-card[data-status="error"] .preview-error {
-    display: block;
-  }
-
-  .preview-card[data-status="error"] .preview-sub {
-    display: none;
-  }
-
-  /* Progress bar */
-  .preview-progress {
-    margin-top: var(--space-xs);
-    height: 4px;
-    width: 100%;
-    background-color: var(--color-canvas-soft);
-    border-radius: var(--radius-full);
-    overflow: hidden;
-  }
-
-  .preview-progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(
-      90deg,
-      var(--gradient-develop-start),
-      var(--gradient-preview-end)
-    );
-    background-size: 200% 100%;
-    border-radius: inherit;
-    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-    animation: progress-shimmer 2s linear infinite;
-  }
-
-  .preview-card[data-job-status="done"] .preview-progress-bar {
-    background: linear-gradient(
-      90deg,
-      var(--color-cyan-deep),
-      var(--color-cyan)
-    );
-    animation: none;
-  }
-
-  .preview-card[data-job-status="error"] .preview-progress-bar {
-    background: var(--color-error);
-    animation: none;
-  }
-
-  @keyframes progress-shimmer {
-    0% { background-position: 0% 0; }
-    100% { background-position: 200% 0; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .preview-progress-bar { animation: none; }
-  }
-
-  .preview-result {
-    color: var(--color-cyan-deep);
-    font-feature-settings: "tnum";
-    margin-top: 2px;
-  }
-
-  .preview-card[data-job-status="running"] .preview-result {
-    color: var(--color-body);
-  }
-
-  .preview-card[data-job-status="error"] .preview-result {
-    color: var(--color-error-deep);
-  }
+  .preview-card[data-status="error"] .preview-error { display: block; }
+  .preview-card[data-status="error"] .preview-sub { display: none; }
 
   .preview-actions {
     display: inline-flex;
@@ -281,7 +285,7 @@ const { class: className = '' } = Astro.props;
     background: transparent;
     color: var(--color-mute);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
   }
 
   .preview-action:hover {
@@ -306,23 +310,121 @@ const { class: className = '' } = Astro.props;
     color: var(--color-error-deep);
   }
 
+  .preview-action[data-action="download"] {
+    color: var(--color-cyan-deep);
+  }
+
+  .preview-action[data-action="download"]:hover {
+    background-color: color-mix(in srgb, var(--color-cyan) 14%, transparent);
+    color: var(--color-cyan-deep);
+    border-color: color-mix(in srgb, var(--color-cyan-deep) 30%, transparent);
+  }
+
+  /* Progress bar */
+  .preview-progress {
+    height: 4px;
+    width: 100%;
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .preview-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gradient-develop-start), var(--gradient-preview-end));
+    background-size: 200% 100%;
+    border-radius: inherit;
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: progress-shimmer 2s linear infinite;
+  }
+
+  .preview-card[data-job-status="done"] .preview-progress-bar {
+    background: linear-gradient(90deg, var(--color-cyan-deep), var(--color-cyan));
+    animation: none;
+  }
+
+  .preview-card[data-job-status="error"] .preview-progress-bar {
+    background: var(--color-error);
+    animation: none;
+  }
+
+  @keyframes progress-shimmer {
+    0% { background-position: 0% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preview-progress-bar,
+    .preview-thumb-done {
+      animation: none;
+    }
+  }
+
+  /* ---------- Per-item statistics ---------- */
+  .preview-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-sm) var(--space-md);
+    padding-top: var(--space-xs);
+    border-top: 1px dashed var(--color-hairline);
+    margin-top: var(--space-xxs);
+  }
+
+  .preview-card:not([data-job-status="done"]) .preview-stats {
+    display: none;
+  }
+
+  .preview-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .preview-stat-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 10px;
+  }
+
+  .preview-stat-value {
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-semibold);
+    line-height: 1.2;
+    font-feature-settings: "tnum";
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .preview-stat-accent .preview-stat-value {
+    color: var(--color-cyan-deep);
+  }
+
+  .preview-stat-saved {
+    color: var(--color-success);
+  }
+
+  [data-theme="dark"] .preview-stat-saved {
+    color: var(--color-cyan);
+  }
+
   @media (max-width: 600px) {
     .preview-card {
       grid-template-columns: 56px 1fr;
-      grid-template-rows: auto auto;
-      gap: var(--space-sm) var(--space-md);
       padding: var(--space-sm);
     }
 
     .preview-thumb {
       width: 56px;
       height: 56px;
-      grid-row: span 2;
     }
 
-    .preview-actions {
-      grid-column: 2;
-      justify-content: flex-end;
+    .preview-stats {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>

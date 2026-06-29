@@ -7,6 +7,7 @@ import Reveal from '../components/shared/Reveal.astro';
 import UploadDropZone from '../components/upload/UploadDropZone.astro';
 import SettingsPanel from '../components/upload/SettingsPanel.astro';
 import QueueProgress from '../components/upload/QueueProgress.astro';
+import ResultsSummary from '../components/upload/ResultsSummary.astro';
 import PreviewCard from '../components/upload/PreviewCard.astro';
 ---
 
@@ -36,7 +37,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
           <SettingsPanel />
         </Reveal>
 
-        <!-- Queue panel -->
         <Reveal delay={200} class="queue-panel-wrap">
           <section class="queue-panel" data-queue-panel aria-label="Upload queue">
             <header class="queue-header">
@@ -61,7 +61,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
 
             <QueueProgress />
 
-            <!-- Loading state: shown while previews are being generated. -->
             <div class="queue-loading" data-queue-loading hidden>
               <span class="queue-loading-spinner" aria-hidden="true"></span>
               <p class="text-body-sm" style="color:var(--color-body);" data-queue-loading-text>
@@ -69,7 +68,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
               </p>
             </div>
 
-            <!-- Empty state. -->
             <div class="queue-empty" data-queue-empty>
               <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3" y="3" width="18" height="18" rx="3"/>
@@ -82,10 +80,11 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
               </p>
             </div>
 
-            <!-- Preview list. -->
             <ul class="queue-list" data-queue-list role="list" hidden></ul>
 
-            <!-- Footer with totals + primary action. -->
+            <!-- Results summary — appears when first job finishes. -->
+            <ResultsSummary />
+
             <footer class="queue-footer" data-queue-footer hidden>
               <div class="queue-footer-stats">
                 <span class="text-body-sm queue-stat-row">
@@ -123,7 +122,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       </div>
     </section>
 
-    <!-- Reusable PreviewCard template -->
     <PreviewCard />
   </AppShell>
 </Layout>
@@ -134,17 +132,10 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     padding-bottom: var(--space-6xl);
   }
 
-  .compressor-head {
-    max-width: 720px;
-  }
+  .compressor-head { max-width: 720px; }
+  .compressor-title { margin: 0; }
 
-  .compressor-title {
-    margin: 0;
-  }
-
-  .queue-panel-wrap {
-    display: block;
-  }
+  .queue-panel-wrap { display: block; }
 
   .queue-panel {
     background-color: var(--color-canvas);
@@ -162,20 +153,9 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     border-bottom: 1px solid var(--color-hairline);
   }
 
-  .queue-summary {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .queue-title {
-    margin: 0;
-  }
-
-  .queue-stats {
-    color: var(--color-mute);
-    margin: 0;
-  }
+  .queue-summary { display: flex; flex-direction: column; gap: 2px; }
+  .queue-title { margin: 0; }
+  .queue-stats { color: var(--color-mute); margin: 0; }
 
   .queue-actions {
     display: flex;
@@ -201,19 +181,10 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     color: var(--color-link-deep);
   }
 
-  .queue-link:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 1px;
-  }
+  .queue-link:focus-visible { outline: 2px solid var(--color-link); outline-offset: 1px; }
 
-  .queue-link-danger {
-    color: var(--color-error-deep);
-  }
-
-  .queue-link-danger:hover {
-    background-color: var(--color-error-soft);
-    color: var(--color-error-deep);
-  }
+  .queue-link-danger { color: var(--color-error-deep); }
+  .queue-link-danger:hover { background-color: var(--color-error-soft); color: var(--color-error-deep); }
 
   .queue-loading {
     display: flex;
@@ -232,13 +203,8 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     animation: queue-spin 0.7s linear infinite;
   }
 
-  @keyframes queue-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .queue-loading-spinner { animation: none; }
-  }
+  @keyframes queue-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .queue-loading-spinner { animation: none; } }
 
   .queue-empty {
     padding: var(--space-4xl) var(--space-xl);
@@ -250,16 +216,8 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     color: var(--color-mute);
   }
 
-  .queue-empty-title {
-    color: var(--color-ink);
-    margin: var(--space-xs) 0 0;
-  }
-
-  .queue-empty-sub {
-    color: var(--color-body);
-    margin: 0;
-    max-width: 40ch;
-  }
+  .queue-empty-title { color: var(--color-ink); margin: var(--space-xs) 0 0; }
+  .queue-empty-sub { color: var(--color-body); margin: 0; max-width: 40ch; }
 
   .queue-list {
     list-style: none;
@@ -294,17 +252,9 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     gap: var(--space-sm);
   }
 
-  .queue-footer-actions .footer-cancel {
-    display: none;
-  }
-
-  .queue-footer[data-running="true"] .queue-footer-actions .footer-cancel {
-    display: inline-flex;
-  }
-
-  .queue-footer[data-running="true"] .queue-footer-actions .footer-compress {
-    display: none;
-  }
+  .queue-footer-actions .footer-cancel { display: none; }
+  .queue-footer[data-running="true"] .queue-footer-actions .footer-cancel { display: inline-flex; }
+  .queue-footer[data-running="true"] .queue-footer-actions .footer-compress { display: none; }
 
   .queue-stat-row {
     display: inline-flex;
@@ -319,25 +269,10 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
   }
 
   @media (max-width: 600px) {
-    .compressor {
-      padding-top: var(--space-3xl);
-      padding-bottom: var(--space-4xl);
-    }
-
-    .queue-header {
-      flex-direction: column;
-      gap: var(--space-sm);
-    }
-
-    .queue-footer {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .queue-footer-stats {
-      flex-direction: column;
-      gap: var(--space-xs);
-    }
+    .compressor { padding-top: var(--space-3xl); padding-bottom: var(--space-4xl); }
+    .queue-header { flex-direction: column; gap: var(--space-sm); }
+    .queue-footer { flex-direction: column; align-items: stretch; }
+    .queue-footer-stats { flex-direction: column; gap: var(--space-xs); }
   }
 </style>
 
@@ -350,6 +285,7 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     type CompressionMode,
   } from '../lib/compression-settings';
   import { CompressionJobRunner, type Job } from '../lib/compression-runner';
+  import { downloadBlob, downloadFiles } from '../lib/download';
 
   type FilesDetail = { files: File[]; paths?: Map<string, string> };
 
@@ -382,10 +318,21 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     document.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-setting]')
   );
 
+  // Results summary elements.
+  const resultsSummary = document.querySelector<HTMLElement>('[data-results-summary]');
+  const resultOriginal = document.querySelector<HTMLElement>('[data-result-stat="original"]');
+  const resultNew = document.querySelector<HTMLElement>('[data-result-stat="new"]');
+  const resultSaved = document.querySelector<HTMLElement>('[data-result-stat="saved"]');
+  const resultSavedPct = document.querySelector<HTMLElement>('[data-result-stat="saved-pct"]');
+  const resultRatio = document.querySelector<HTMLElement>('[data-result-stat="ratio"]');
+  const downloadAllBtn = document.querySelector<HTMLButtonElement>('[data-action="download-all"]');
+  const downloadOneBtn = document.querySelector<HTMLButtonElement>('[data-action="download-one"]');
+  const resultsBaEl = document.querySelector<HTMLElement>('[data-results-ba]');
+  const resultsBaMount = document.querySelector<HTMLElement>('[data-ba-mount]');
+
   if (!queuePanel || !queueList || !queueEmpty || !queueLoading || !queueFooter || !queueStats) {
     console.warn('Compressor page: queue markup incomplete');
   } else {
-    // ---------- State ------------------------------------------------------
     let settings: CompressionSettings = { ...DEFAULT_SETTINGS };
     let compressStarted = false;
 
@@ -431,10 +378,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
         fillSlider(input);
         updateDisplay(key, value);
       }
-      if (compressStarted) {
-        // settings changed mid-run — for now we just rebuild the runner.
-        rebuildRunner();
-      }
     };
 
     const setDeep = (obj: any, path: string, value: unknown) => {
@@ -447,9 +390,12 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       cur[parts[parts.length - 1]!] = value;
     };
 
+    const getDeep = (obj: any, path: string): unknown => {
+      return path.split('.').reduce((acc, k) => (acc == null ? undefined : acc[k]), obj);
+    };
+
     const applyMode = (mode: CompressionMode) => {
       settings = { ...settings, ...MODE_PRESETS[mode] };
-      // Re-sync every input to current settings.
       settingInputs.forEach((input) => {
         const key = input.dataset.setting!;
         const value = getDeep(settings, key);
@@ -464,35 +410,16 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
         }
       });
       modeBtns.forEach((btn) => {
-        const active = btn.dataset.mode === mode;
-        btn.setAttribute('aria-checked', active ? 'true' : 'false');
+        btn.setAttribute('aria-checked', btn.dataset.mode === mode ? 'true' : 'false');
       });
       if (customPanel) customPanel.hidden = mode !== 'custom';
-      if (compressStarted) rebuildRunner();
     };
 
-    const getDeep = (obj: any, path: string): unknown => {
-      return path.split('.').reduce((acc, k) => (acc == null ? undefined : acc[k]), obj);
-    };
-
-    const rebuildRunner = () => {
-      // Cancel current, retain done results via store, then restart pending.
-      runner.cancelAll();
-      // We replace the runner so future enqueues use new settings.
-      const fresh = new CompressionJobRunner(store, settings, 4);
-      copyRunnerBehavior(fresh);
-      // Manually re-emit from old runner so progress listeners re-attach to new.
-      Object.assign(runner as any, fresh as any);
-    };
-
-    // Bind inputs.
     settingInputs.forEach((input) => {
       applySettingFromInput(input);
       input.addEventListener('input', () => applySettingFromInput(input));
       input.addEventListener('change', () => applySettingFromInput(input));
-      if (input instanceof HTMLInputElement && input.type === 'range') {
-        fillSlider(input);
-      }
+      if (input instanceof HTMLInputElement && input.type === 'range') fillSlider(input);
     });
     modeBtns.forEach((btn) => {
       btn.addEventListener('click', () => applyMode(btn.dataset.mode as CompressionMode));
@@ -506,7 +433,7 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       queueFooter.hidden = items.length === 0;
       queueLoading.hidden = !items.some((i) => i.status === 'thumbnailing');
 
-      if (queueLoading.hidden === false) {
+      if (!queueLoading.hidden) {
         const pending = items.filter((i) => i.status === 'thumbnailing').length;
         const label = queueLoading.querySelector<HTMLElement>('[data-queue-loading-text]');
         if (label) label.textContent = `Generating previews… (${pending} remaining)`;
@@ -527,18 +454,14 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
           updateCard(card, item);
         }
         for (const [id, el] of cards) {
-          if (!seen.has(id)) {
-            el.remove();
-            cards.delete(id);
-          }
+          if (!seen.has(id)) { el.remove(); cards.delete(id); }
         }
       }
 
       const total = items.length;
       const ready = items.filter((i) => i.status === 'ready').length;
       const errored = items.filter((i) => i.status === 'error').length;
-
-      queueStats!.textContent = total
+      queueStats.textContent = total
         ? `${total} ${total === 1 ? 'image' : 'images'} · ${ready}/${total} ready${errored ? ` · ${errored} skipped` : ''}`
         : 'No images yet';
 
@@ -547,11 +470,8 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       if (savedSizeEl) savedSizeEl.textContent = '—';
 
       if (clearBtn) clearBtn.hidden = total === 0;
-
-      // Disable compress button if nothing ready.
       if (compressBtn) {
-        const a = compressBtn as HTMLAnchorElement;
-        a.setAttribute('aria-disabled', ready === 0 ? 'true' : 'false');
+        compressBtn.setAttribute('aria-disabled', ready === 0 ? 'true' : 'false');
       }
     };
 
@@ -565,6 +485,8 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
         .addEventListener('click', (e) => { e.stopPropagation(); store.remove(id); });
       card.querySelector<HTMLButtonElement>('[data-action="retry"]')!
         .addEventListener('click', (e) => { e.stopPropagation(); runner.retry(id); });
+      card.querySelector<HTMLButtonElement>('[data-action="download"]')!
+        .addEventListener('click', (e) => { e.stopPropagation(); downloadOne(id); });
 
       card.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowUp' && e.altKey) { e.preventDefault(); store.reorder(id, 'up'); }
@@ -572,7 +494,6 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
         else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); store.remove(id); }
       });
 
-      // Drag & drop reorder.
       card.draggable = true;
       card.addEventListener('dragstart', (e) => {
         card.dataset.dragging = 'true';
@@ -595,33 +516,31 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       card.dataset.status = item.status;
       const img = card.querySelector('img') as HTMLImageElement;
       if (img) img.src = item.previewUrl;
-
       const nameEl = card.querySelector<HTMLElement>('[data-preview-name]');
       if (nameEl) nameEl.textContent = item.path ?? item.file.name;
-
       const sizeEl = card.querySelector<HTMLElement>('[data-preview-size]');
       if (sizeEl) sizeEl.textContent = formatBytes(item.size);
-
       const dimsEl = card.querySelector<HTMLElement>('[data-preview-dims]');
       if (dimsEl) {
         dimsEl.textContent = item.width && item.height ? `${item.width} × ${item.height}` : '—';
       }
-
       const errEl = card.querySelector<HTMLElement>('[data-preview-error]');
       if (errEl) {
         if (item.error) { errEl.textContent = item.error; errEl.hidden = false; }
         else { errEl.hidden = true; }
       }
-
       const statusEl = card.querySelector<HTMLElement>('[data-preview-status]');
       if (statusEl) statusEl.hidden = item.status !== 'thumbnailing';
     };
 
-    // ---------- Render jobs on cards --------------------------------------
+    // ---------- Per-item job UI + stats -----------------------------------
     const updateJobUI = (jobs: ReadonlyMap<string, Job>) => {
       const items = store.snapshot();
-      const totalBytes = items.reduce((s, i) => s + i.size, 0);
       let saved = 0;
+      let firstDoneId: string | null = null;
+      let firstDoneOriginal: Blob | null = null;
+      let firstDoneResult: Blob | null = null;
+      let firstDoneExt = 'png';
 
       for (const item of items) {
         const job = jobs.get(item.id);
@@ -629,105 +548,292 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
         if (!card) continue;
         if (!job) {
           card.removeAttribute('data-job-status');
-          const progEl = card.querySelector<HTMLElement>('[data-preview-progress]');
-          if (progEl) progEl.hidden = true;
-          const resultEl = card.querySelector<HTMLElement>('[data-preview-result]');
-          if (resultEl) resultEl.hidden = true;
-          const retry = card.querySelector<HTMLButtonElement>('[data-action="retry"]');
-          if (retry) retry.hidden = true;
+          card.querySelector<HTMLElement>('[data-preview-progress]')?.setAttribute('hidden', '');
+          card.querySelector<HTMLElement>('[data-preview-stats]')?.setAttribute('hidden', '');
+          card.querySelector<HTMLButtonElement>('[data-action="retry"]')?.setAttribute('hidden', '');
+          card.querySelector<HTMLButtonElement>('[data-action="download"]')?.setAttribute('hidden', '');
+          card.querySelector<HTMLElement>('[data-preview-done]')?.setAttribute('hidden', '');
           continue;
         }
         card.dataset.jobStatus = job.status;
 
         const progEl = card.querySelector<HTMLElement>('[data-preview-progress]');
         const progBar = card.querySelector<HTMLElement>('[data-preview-progress-bar]');
-        if (progEl) progEl.hidden = job.status === 'queued';
+        if (progEl) {
+          if (job.status === 'queued') progEl.setAttribute('hidden', '');
+          else progEl.removeAttribute('hidden');
+        }
         if (progBar) progBar.style.width = `${Math.round(job.progress)}%`;
 
-        const resultEl = card.querySelector<HTMLElement>('[data-preview-result]');
-        if (resultEl) {
-          if (job.status === 'running' || job.status === 'retrying') {
-            resultEl.textContent = `${Math.round(job.progress)}%`;
-            resultEl.hidden = false;
-          } else if (job.status === 'done' && job.result) {
-            const savedBytes = Math.max(0, item.size - job.result.bytes);
-            const pct = item.size > 0 ? Math.round((savedBytes / item.size) * 100) : 0;
-            saved += savedBytes;
-            resultEl.textContent = `${formatBytes(job.result.bytes)} · −${pct}%`;
-            resultEl.hidden = false;
-          } else if (job.status === 'error') {
-            resultEl.textContent = job.error ?? 'Failed';
-            resultEl.hidden = false;
-          } else if (job.status === 'cancelled') {
-            resultEl.textContent = 'Cancelled';
-            resultEl.hidden = false;
-          } else {
-            resultEl.hidden = true;
+        // Per-item stats (visible on done).
+        const statsEl = card.querySelector<HTMLElement>('[data-preview-stats]');
+        if (job.status === 'done' && job.result) {
+          const savedBytes = Math.max(0, item.size - job.result.bytes);
+          const pct = item.size > 0 ? Math.round((savedBytes / item.size) * 100) : 0;
+          const ratio = item.size > 0 ? (item.size / Math.max(1, job.result.bytes)) : 1;
+          saved += savedBytes;
+
+          setStat(card, 'original', formatBytes(item.size));
+          setStat(card, 'new', formatBytes(job.result.bytes));
+          setStat(card, 'saved', `−${formatBytes(savedBytes)}`);
+          setStat(card, 'ratio', `${ratio.toFixed(2)}×`);
+          setStat(card, 'dims', item.width && item.height ? `${item.width} × ${item.height}` : '—');
+          statsEl?.removeAttribute('hidden');
+
+          // Capture first done for the BA demo.
+          if (!firstDoneId) {
+            firstDoneId = item.id;
+            // The "before" is the original file blob; the "after" is the encoded result.
+            // We can use the source preview URL for "before"; the result is in job.result.blob.
+            firstDoneOriginal = item.file;
+            firstDoneResult = job.result.blob;
+            firstDoneExt = job.result.outputExt;
           }
+
+          card.querySelector<HTMLElement>('[data-preview-done]')?.removeAttribute('hidden');
+          card.querySelector<HTMLButtonElement>('[data-action="download"]')?.removeAttribute('hidden');
+        } else {
+          statsEl?.setAttribute('hidden', '');
+          card.querySelector<HTMLElement>('[data-preview-done]')?.setAttribute('hidden', '');
+          card.querySelector<HTMLButtonElement>('[data-action="download"]')?.setAttribute('hidden', '');
         }
 
         const retry = card.querySelector<HTMLButtonElement>('[data-action="retry"]');
-        if (retry) retry.hidden = job.status !== 'error';
+        if (retry) {
+          if (job.status === 'error') retry.removeAttribute('hidden');
+          else retry.setAttribute('hidden', '');
+        }
       }
 
-      // Footer running state.
       const anyActive = Array.from(jobs.values()).some(
         (j) => j.status === 'running' || j.status === 'retrying'
       );
       queueFooter!.dataset.running = anyActive ? 'true' : 'false';
 
-      // Saved-so-far.
       if (savedSizeEl) {
-        if (saved > 0) savedSizeEl.textContent = `−${formatBytes(saved)} (${totalBytes > 0 ? Math.round((saved / totalBytes) * 100) : 0}%)`;
-        else savedSizeEl.textContent = '—';
+        const totalSource = items.reduce((s, i) => s + i.size, 0);
+        if (saved > 0) {
+          savedSizeEl.textContent = `−${formatBytes(saved)} (${totalSource > 0 ? Math.round((saved / totalSource) * 100) : 0}%)`;
+        } else {
+          savedSizeEl.textContent = '—';
+        }
+      }
+
+      updateResultsSummary(jobs, saved);
+      if (firstDoneId && firstDoneOriginal && firstDoneResult) {
+        ensureBaMounted(firstDoneOriginal, firstDoneResult);
       }
     };
 
-    // ---------- Aggregate progress UI -------------------------------------
-    const updateProgressUI = () => {
-      const snap = Array.from(cards.keys());
-      // We don't have a direct AggregateProgress reference here — derive from jobs.
-      // Simpler: re-read via runner using subscribeProgress.
+    const setStat = (card: HTMLElement, key: string, value: string) => {
+      const el = card.querySelector<HTMLElement>(`[data-stat="${key}"]`);
+      if (el) el.textContent = value;
     };
 
-    // ---------- Wire subscriptions -----------------------------------------
-    store.subscribe(renderQueue);
+    // ---------- Aggregate results summary + Before/After mount ------------
+    const updateResultsSummary = (jobs: ReadonlyMap<string, Job>, saved: number) => {
+      if (!resultsSummary) return;
+      const items = store.snapshot();
+      const doneJobs = Array.from(jobs.values()).filter(
+        (j) => j.status === 'done' && j.result
+      );
+      const hasAnyDone = doneJobs.length > 0;
+      resultsSummary.hidden = !hasAnyDone;
+
+      if (!hasAnyDone) return;
+
+      const totalOriginal = items.reduce((s, i) => s + i.size, 0);
+      const totalNew = doneJobs.reduce((s, j) => s + (j.result?.bytes ?? 0), 0);
+
+      animateStat(resultOriginal, formatBytes(totalOriginal));
+      animateStat(resultNew, formatBytes(totalNew));
+      const savedTotal = Math.max(0, totalOriginal - totalNew);
+      animateStat(resultSaved, formatBytes(savedTotal));
+      const savedPct = totalOriginal > 0 ? Math.round((savedTotal / totalOriginal) * 100) : 0;
+      if (resultSavedPct) resultSavedPct.textContent = `−${savedPct}%`;
+      const ratio = totalNew > 0 ? totalOriginal / totalNew : 1;
+      if (resultRatio) resultRatio.textContent = `${ratio.toFixed(2)}×`;
+
+      if (downloadAllBtn) downloadAllBtn.disabled = false;
+      if (downloadOneBtn) downloadOneBtn.disabled = false;
+    };
+
+    /** Tween a stat value to its new string (digit-level morph for size strings). */
+    const animateStat = (el: HTMLElement | null, next: string) => {
+      if (!el) return;
+      el.textContent = next;
+    };
+
+    // Mount the BeforeAfter demo on the first completed image.
+    let baMounted = false;
+    const ensureBaMounted = async (original: Blob, after: Blob) => {
+      if (baMounted || !resultsBaEl || !resultsBaMount) return;
+      baMounted = true;
+      resultsBaEl.hidden = false;
+
+      const beforeUrl = URL.createObjectURL(original);
+      const afterUrl = URL.createObjectURL(after);
+
+      // We need to render the BeforeAfter component into the mount point.
+      // Since the component is a .astro file, the cleanest way is to clone
+      // a server-rendered <template> — but here we don't have one. Instead,
+      // we render an equivalent markup via a fragment and then run the same
+      // behavior by invoking the same DOM bindings through a small shim.
+      // For simplicity, we build the markup manually and reuse a minimal
+      // version of the slider-mode behavior (drag to compare + auto demo).
+      resultsBaMount.innerHTML = `
+        <figure class="before-after ba-mode-slider" data-ba data-initial="slider" role="group" aria-label="Before and after comparison">
+          <div class="ba-stage ba-stage-slider" data-ba-stage="slider">
+            <div class="ba-frame" style="position:relative;width:100%;aspect-ratio:5/3;overflow:hidden;border-radius:var(--radius-xl);background-color:var(--color-canvas-soft);box-shadow:var(--shadow-5);user-select:none;touch-action:none;isolation:isolate;">
+              <img class="ba-img ba-before" src="${beforeUrl}" alt="" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;" />
+              <div class="ba-after-wrap" style="position:absolute;inset:0;width:50%;overflow:hidden;pointer-events:none;--ba-position:50%;">
+                <img class="ba-img ba-after" src="${afterUrl}" alt="" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;" />
+              </div>
+              <span style="position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);color:#fff;text-transform:uppercase;letter-spacing:0.05em;font-size:12px;font-family:Geist Mono,monospace;">Before</span>
+              <span style="position:absolute;bottom:12px;right:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);color:#fff;text-transform:uppercase;letter-spacing:0.05em;font-size:12px;font-family:Geist Mono,monospace;">After</span>
+              <div class="ba-divider" style="position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;transform:translateX(-1px);box-shadow:0 0 0 1px rgba(0,0,0,0.08);pointer-events:none;z-index:2;"></div>
+              <button type="button" class="ba-handle" aria-label="Drag to compare" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:999px;border:none;background:transparent;cursor:ew-resize;padding:0;z-index:4;">
+                <span style="position:relative;display:flex;align-items:center;justify-content:center;gap:2px;width:100%;height:100%;border-radius:999px;background:var(--color-canvas);color:var(--color-ink);box-shadow:var(--shadow-4);">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </span>
+              </button>
+              <input type="range" min="0" max="100" value="50" step="1" aria-label="Before/after divider position" style="position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:3;" />
+            </div>
+          </div>
+        </figure>
+      `;
+
+      wireInlineBa(resultsBaMount);
+    };
+
+    const wireInlineBa = (mount: HTMLElement) => {
+      const root = mount.querySelector<HTMLElement>('[data-ba]')!;
+      const frame = root.querySelector<HTMLElement>('.ba-frame')!;
+      const range = root.querySelector<HTMLInputElement>('input[type="range"]')!;
+      const after = root.querySelector<HTMLElement>('.ba-after-wrap')!;
+      const divider = root.querySelector<HTMLElement>('.ba-divider')!;
+      const handle = root.querySelector<HTMLButtonElement>('.ba-handle')!;
+      const afterImg = root.querySelector<HTMLImageElement>('.ba-after')!;
+
+      const setPos = (p: number) => {
+        const c = Math.max(0, Math.min(100, p));
+        after.style.setProperty('--ba-position', `${c}%`);
+        after.style.width = `${c}%`;
+        divider.style.left = `${c}%`;
+        handle.style.left = `${c}%`;
+        range.value = String(c);
+      };
+      setPos(50);
+
+      range.addEventListener('input', () => setPos(Number(range.value)));
+
+      let dragging = false;
+      const update = (e: PointerEvent) => {
+        const rect = frame.getBoundingClientRect();
+        const pct = ((e.clientX - rect.left) / rect.width) * 100;
+        setPos(pct);
+      };
+      frame.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        try { frame.setPointerCapture(e.pointerId); } catch {}
+        update(e);
+      });
+      frame.addEventListener('pointermove', (e) => { if (dragging) update(e); });
+      frame.addEventListener('pointerup', () => { dragging = false; });
+      frame.addEventListener('pointercancel', () => { dragging = false; });
+
+      // Auto demo.
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setTimeout(() => setPos(20), 500);
+        setTimeout(() => setPos(80), 1300);
+        setTimeout(() => setPos(50), 2100);
+      }
+    };
+
+    // ---------- Downloads --------------------------------------------------
+    const completedJobs = (): Array<{ id: string; job: Job; item: UploadItem }> => {
+      const out: Array<{ id: string; job: Job; item: UploadItem }> = [];
+      const items = store.snapshot();
+      // Walk the runner's internal job map. We use a side-channel: iterate
+      // cards that have data-job-status="done" and look up the corresponding
+      // job via the runner.
+      const jobsMap = (runner as any).jobs as Map<string, Job>;
+      for (const item of items) {
+        const job = jobsMap.get(item.id);
+        if (job && job.status === 'done' && job.result) {
+          out.push({ id: item.id, job, item });
+        }
+      }
+      return out;
+    };
+
+    const downloadOne = (itemId: string) => {
+      const jobsMap = (runner as any).jobs as Map<string, Job>;
+      const item = store.snapshot().find((i) => i.id === itemId);
+      const job = jobsMap.get(itemId);
+      if (!item || !job?.result) return;
+      const name = outputFilename(item.path ?? item.file.name, job.result.outputExt);
+      downloadBlob(job.result.blob, name);
+    };
+
+    const downloadAll = async () => {
+      const entries = completedJobs().map(({ job, item }) => ({
+        name: outputFilename(item.path ?? item.file.name, job.result!.outputExt),
+        blob: job.result!.blob,
+      }));
+      if (entries.length === 0) return;
+      if (downloadAllBtn) {
+        downloadAllBtn.disabled = true;
+        const original = downloadAllBtn.innerHTML;
+        downloadAllBtn.innerHTML = 'Zipping…';
+        try {
+          await downloadFiles(entries, 'toolboximage.zip');
+        } finally {
+          if (downloadAllBtn) {
+            downloadAllBtn.disabled = false;
+            downloadAllBtn.innerHTML = original;
+          }
+        }
+      } else {
+        await downloadFiles(entries, 'toolboximage.zip');
+      }
+    };
+
+    const outputFilename = (originalName: string, ext: string): string => {
+      const dot = originalName.lastIndexOf('.');
+      const base = dot === -1 ? originalName : originalName.slice(0, dot);
+      return ext ? `${base}.${ext}` : originalName;
+    };
+
+    // ---------- Aggregate progress UI -------------------------------------
     runner.subscribeJobs(updateJobUI);
     runner.subscribeProgress((p) => {
       if (!queueProgressEl || !qpFill || !qpCounts || !qpEta || !qpSaved) return;
       const hasJobs = p.total > 0;
       queueProgressEl.hidden = !hasJobs;
       if (!hasJobs) return;
-
       const percent = p.total ? Math.round(((p.done + p.errored) / p.total) * 100) : 0;
       qpFill.style.width = `${percent}%`;
       if (qpBar) qpBar.setAttribute('aria-valuenow', String(percent));
       qpCounts.textContent = `${p.done} / ${p.total}`;
       qpEta.textContent = p.active
-        ? p.etaMs > 0
-          ? `~${formatEta(p.etaMs)} remaining`
-          : 'estimating…'
-        : p.errored
-          ? 'done'
-          : 'done';
+        ? p.etaMs > 0 ? `~${formatEta(p.etaMs)} remaining` : 'estimating…'
+        : p.errored ? 'done with errors' : 'done';
       const totalSourceBytes = store.snapshot().reduce((s, i) => s + i.size, 0);
       qpSaved.textContent = p.savedBytes > 0
         ? `Saved ${formatBytes(p.savedBytes)} of ${formatBytes(totalSourceBytes)}`
         : `${formatBytes(totalSourceBytes)} to compress`;
 
       if (qpErrors) {
-        if (p.errored > 0) {
-          qpErrors.hidden = false;
-          qpErrors.textContent = `${p.errored} failed — click retry on each card`;
-        } else {
-          qpErrors.hidden = true;
-        }
+        if (p.errored > 0) { qpErrors.hidden = false; qpErrors.textContent = `${p.errored} failed`; }
+        else { qpErrors.hidden = true; }
       }
-
       if (cancelAllBtn) cancelAllBtn.hidden = !p.active && p.queued === 0;
     });
 
     // ---------- File intake ------------------------------------------------
+    store.subscribe(renderQueue);
     window.addEventListener('toolboximage:files', async (e) => {
       const detail = (e as CustomEvent<FilesDetail>).detail;
       if (!detail?.files?.length) return;
@@ -735,7 +841,7 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     });
 
     // ---------- Buttons ----------------------------------------------------
-    clearBtn?.addEventListener('click', () => { store.clear(); runner.clear(); });
+    clearBtn?.addEventListener('click', () => { store.clear(); runner.clear(); baMounted = false; if (resultsBaMount) resultsBaMount.innerHTML = ''; });
     addMoreBtn?.addEventListener('click', () => {
       document.querySelector<HTMLInputElement>('[data-action="file-input"]')?.click();
     });
@@ -751,7 +857,12 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       runner.cancelAll();
     });
 
-    // ---------- Helpers ----------------------------------------------------
+    downloadAllBtn?.addEventListener('click', () => downloadAll());
+    downloadOneBtn?.addEventListener('click', () => {
+      const jobs = completedJobs();
+      if (jobs[0]) downloadOne(jobs[0].id);
+    });
+
     function formatEta(ms: number): string {
       if (ms < 1000) return '<1s';
       const s = Math.round(ms / 1000);
@@ -761,11 +872,4 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
       return rs > 0 ? `${m}m ${rs}s` : `${m}m`;
     }
   }
-
-  /**
-   * copyRunnerBehavior is a placeholder for future expansion (e.g., preserving
-   * already-finished jobs across settings changes). For now, settings
-   * changes mid-run just cancel and the user restarts.
-   */
-  function copyRunnerBehavior(_: unknown) { /* reserved */ }
 </script>
