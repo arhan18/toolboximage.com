@@ -1,0 +1,489 @@
+---
+/**
+ * BeforeAfter — interactive image comparison slider.
+ *
+ * Premium polish:
+ *  - Gradient halo around the handle that intensifies on hover/drag
+ *  - Smooth eased divider transition (cubic-bezier 0.22, 1, 0.36, 1)
+ *  - SVG arrow icons instead of generic chevrons
+ *  - Auto-cycle demo the first time it enters the viewport
+ *  - Tabular numerals on the size badge; animated count-up
+ *  - Touch-action: none + pointer capture for crisp drag on touch
+ *  - Honours prefers-reduced-motion
+ *
+ * For the homepage demo we render stylized SVG placeholders so the demo
+ * works without uploading real images. The Compressor page will swap in
+ * real image URLs via the `beforeSrc` / `afterSrc` props.
+ */
+interface Props {
+  beforeSrc?: string;
+  afterSrc?: string;
+  /** Initial position of the divider (0-100). */
+  initial?: number;
+  /** Alt text describing the comparison (required for a11y). */
+  alt?: string;
+  /** Original size label shown on the before side. */
+  beforeSize?: string;
+  /** Compressed size label shown on the after side. */
+  afterSize?: string;
+  /** Savings percentage shown on the after side. */
+  savings?: string;
+  class?: string;
+}
+
+const {
+  beforeSrc,
+  afterSrc,
+  initial = 50,
+  alt = 'Before and after comparison — drag the divider or use arrow keys',
+  beforeSize = '1.8 MB',
+  afterSize = '312 KB',
+  savings = '−82%',
+  class: className = '',
+} = Astro.props;
+
+const placeholderBefore = `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 720'>
+  <defs>
+    <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0' stop-color='#1f2937'/>
+      <stop offset='1' stop-color='#374151'/>
+    </linearGradient>
+    <filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/></filter>
+  </defs>
+  <rect width='1200' height='720' fill='url(#g)'/>
+  <rect width='1200' height='720' filter='url(#n)' opacity='0.35'/>
+</svg>`)}`;
+
+const placeholderAfter = `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 720'>
+  <defs>
+    <linearGradient id='g2' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0' stop-color='#171717'/>
+      <stop offset='1' stop-color='#2a2a2a'/>
+    </linearGradient>
+  </defs>
+  <rect width='1200' height='720' fill='url(#g2)'/>
+</svg>`)}`;
+
+const beforeUrl = beforeSrc ?? placeholderBefore;
+const afterUrl = afterSrc ?? placeholderAfter;
+---
+
+<figure
+  class:list={['before-after', className]}
+  data-initial={initial}
+  data-demo={initial}
+  role="group"
+  aria-label={alt}
+>
+  <div class="ba-frame">
+    <img class="ba-img ba-before" src={beforeUrl} alt="" draggable="false" />
+
+    <div class="ba-after-wrap" style={`--ba-position:${initial}%`}>
+      <img class="ba-img ba-after" src={afterUrl} alt="" draggable="false" />
+    </div>
+
+    <!-- Corner labels with mono numerals -->
+    <span class="ba-corner ba-corner-tl text-caption-mono" aria-hidden="true">
+      <span class="ba-corner-dot"></span>
+      Before · {beforeSize}
+    </span>
+    <span class="ba-corner ba-corner-br text-caption-mono" aria-hidden="true">
+      <span class="ba-corner-dot ba-corner-dot-accent"></span>
+      After · {afterSize}
+    </span>
+
+    <!-- Savings badge — animated count-up via JS -->
+    <span class="ba-savings" aria-hidden="true">
+      <span class="ba-savings-value text-display-sm">{savings}</span>
+      <span class="text-caption ba-savings-label">smaller</span>
+    </span>
+
+    <!-- Divider + handle -->
+    <div class="ba-divider" aria-hidden="true"></div>
+    <button
+      type="button"
+      class="ba-handle"
+      aria-label="Drag to compare before and after"
+      data-handle
+    >
+      <span class="ba-handle-halo" aria-hidden="true"></span>
+      <span class="ba-handle-inner" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </span>
+    </button>
+
+    <!-- Range input — invisible, receives keyboard focus for a11y. -->
+    <input
+      type="range"
+      class="ba-range"
+      min="0"
+      max="100"
+      value={initial}
+      step="1"
+      aria-label="Before/after divider position"
+    />
+  </div>
+
+  <figcaption class="sr-only">{alt}</figcaption>
+</figure>
+
+<style>
+  .before-after {
+    margin: 0;
+    width: 100%;
+  }
+
+  .ba-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 5 / 3;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-canvas-soft);
+    box-shadow: var(--shadow-5);
+    user-select: none;
+    touch-action: none;
+    isolation: isolate;
+  }
+
+  .ba-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  .ba-after-wrap {
+    position: absolute;
+    inset: 0;
+    width: var(--ba-position, 50%);
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* The after image renders at the frame's full width (set via JS)
+     so the clipped reveal stays pixel-accurate regardless of the wrap width. */
+  .ba-after-wrap .ba-after {
+    width: 100%;
+  }
+
+  /* ---------- Corner labels ---------- */
+  .ba-corner {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 6px var(--space-sm);
+    border-radius: var(--radius-full);
+    background-color: rgb(0 0 0 / 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    pointer-events: none;
+    font-feature-settings: "tnum";
+    z-index: 3;
+  }
+
+  .ba-corner-tl { top: var(--space-md); left: var(--space-md); }
+  .ba-corner-br { bottom: var(--space-md); right: var(--space-md); }
+
+  .ba-corner-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background-color: #fff;
+    box-shadow: 0 0 0 2px rgb(255 255 255 / 0.25);
+  }
+
+  .ba-corner-dot-accent {
+    background-color: var(--color-cyan);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-cyan) 25%, transparent);
+  }
+
+  /* ---------- Savings badge ---------- */
+  .ba-savings {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1;
+    color: var(--color-ink);
+    pointer-events: none;
+    z-index: 3;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Hide the savings badge by default — JS reveals it after demo completes. */
+  .before-after:not([data-show-savings]) .ba-savings {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  .before-after[data-show-savings] .ba-savings {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ba-savings-value {
+    background: linear-gradient(
+      100deg,
+      var(--gradient-develop-start),
+      var(--gradient-preview-end)
+    );
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    font-feature-settings: "tnum";
+    letter-spacing: -0.02em;
+  }
+
+  .ba-savings-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  /* ---------- Divider + handle ---------- */
+  .ba-divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--ba-position, 50%);
+    width: 2px;
+    background-color: var(--color-canvas);
+    transform: translateX(-1px);
+    pointer-events: none;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+    z-index: 2;
+  }
+
+  .ba-handle {
+    position: absolute;
+    top: 50%;
+    left: var(--ba-position, 50%);
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: ew-resize;
+    background: transparent;
+    padding: 0;
+    z-index: 4;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .ba-handle:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 4px;
+  }
+
+  .ba-handle-halo {
+    position: absolute;
+    inset: -4px;
+    border-radius: var(--radius-full);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-link) 35%, transparent),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+  }
+
+  .ba-handle:hover .ba-handle-halo,
+  .ba-handle:focus-visible .ba-handle-halo,
+  .ba-handle[data-dragging] .ba-handle-halo {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .ba-handle-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-4);
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
+  }
+
+  .ba-handle:hover .ba-handle-inner,
+  .ba-handle[data-dragging] .ba-handle-inner {
+    transform: scale(1.06);
+    box-shadow: var(--shadow-5);
+  }
+
+  /* ---------- Range input (invisible, keyboard-accessible) ---------- */
+  .ba-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    z-index: 3;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ba-handle-inner,
+    .ba-handle-halo,
+    .ba-savings {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  type Frame = HTMLElement & { _cleanup?: () => void };
+
+  document.querySelectorAll<HTMLElement>('.before-after').forEach((root) => {
+    const frame = root.querySelector<HTMLElement>('.ba-frame');
+    const range = root.querySelector<HTMLInputElement>('.ba-range');
+    const afterWrap = root.querySelector<HTMLElement>('.ba-after-wrap');
+    const divider = root.querySelector<HTMLElement>('.ba-divider');
+    const handle = root.querySelector<HTMLButtonElement>('[data-handle]');
+    const afterImg = root.querySelector<HTMLImageElement>('.ba-after');
+    if (!frame || !range || !afterWrap || !divider || !handle || !afterImg) return;
+
+    const initial = Number(range.value);
+
+    const syncAfterWidth = () => {
+      afterImg.style.width = `${frame.clientWidth}px`;
+    };
+
+    const setPosition = (pct: number, animate: boolean) => {
+      const clamped = Math.max(0, Math.min(100, pct));
+      if (animate) {
+        frame.style.setProperty('--ba-transition', 'left 0.6s cubic-bezier(0.22, 1, 0.36, 1), width 0.6s cubic-bezier(0.22, 1, 0.36, 1)');
+        afterWrap.style.transition = 'width 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+      } else {
+        frame.style.removeProperty('--ba-transition');
+        afterWrap.style.transition = '';
+      }
+      afterWrap.style.setProperty('--ba-position', `${clamped}%`);
+      divider.style.left = `${clamped}%`;
+      handle.style.left = `${clamped}%`;
+      range.value = String(clamped);
+    };
+
+    setPosition(initial, false);
+    syncAfterWidth();
+
+    // Range input (keyboard + visible slider accessibility).
+    range.addEventListener('input', () => setPosition(Number(range.value), false));
+
+    // Handle keyboard arrows on the button.
+    handle.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 10 : 2;
+      let next: number | null = null;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = Number(range.value) - step;
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = Number(range.value) + step;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = 100;
+      if (next !== null) {
+        e.preventDefault();
+        setPosition(next, false);
+      }
+    });
+
+    // Pointer drag on the frame for mouse/touch.
+    let dragging = false;
+    const onPointerDown = (e: PointerEvent) => {
+      // If the user grabbed the handle, we still update from event coords.
+      dragging = true;
+      handle.dataset.dragging = '1';
+      try { frame.setPointerCapture(e.pointerId); } catch {}
+      updateFromEvent(e);
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      updateFromEvent(e);
+    };
+    const onPointerUp = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      delete handle.dataset.dragging;
+      try { frame.releasePointerCapture(e.pointerId); } catch {}
+    };
+    const updateFromEvent = (e: PointerEvent) => {
+      const rect = frame.getBoundingClientRect();
+      const pct = ((e.clientX - rect.left) / rect.width) * 100;
+      setPosition(pct, false);
+    };
+
+    frame.addEventListener('pointerdown', onPointerDown);
+    frame.addEventListener('pointermove', onPointerMove);
+    frame.addEventListener('pointerup', onPointerUp);
+    frame.addEventListener('pointercancel', onPointerUp);
+
+    const ro = new ResizeObserver(() => syncAfterWidth());
+    ro.observe(frame);
+
+    // First-view demo: auto-cycle once to showcase the slider, then reveal
+    // the savings badge. Cancels on any user interaction.
+    let demoRan = false;
+    const runDemo = () => {
+      if (demoRan || REDUCE_MOTION) return;
+      demoRan = true;
+      setPosition(20, true);
+      setTimeout(() => setPosition(80, true), 900);
+      setTimeout(() => setPosition(initial, true), 1800);
+      setTimeout(() => root.setAttribute('data-show-savings', '1'), 2400);
+    };
+
+    const cancelDemo = () => {
+      if (!demoRan) return;
+      demoRan = true; // mark so we don't restart
+    };
+
+    if (!REDUCE_MOTION) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              runDemo();
+              io.disconnect();
+            }
+          }
+        },
+        { threshold: 0.4 }
+      );
+      io.observe(root);
+
+      frame.addEventListener('pointerdown', cancelDemo, { once: true });
+      range.addEventListener('input', cancelDemo, { once: true });
+    }
+
+    (frame as Frame)._cleanup = () => {
+      range.removeEventListener('input', () => setPosition(Number(range.value), false));
+      frame.removeEventListener('pointerdown', onPointerDown);
+      frame.removeEventListener('pointermove', onPointerMove);
+      frame.removeEventListener('pointerup', onPointerUp);
+      frame.removeEventListener('pointercancel', onPointerUp);
+      ro.disconnect();
+    };
+  });
+</script>

@@ -406,3 +406,89 @@ body {
   font-weight: var(--weight-medium);
   line-height: var(--leading-body-md);
 }
+
+/* ========================================================================
+   Layout Utilities — container, stack, cluster, section
+   ======================================================================== */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding-inline: var(--space-md);
+  }
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 800px;
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
+}
+
+@media (max-width: 600px) {
+  .container-narrow {
+    padding-inline: var(--space-md);
+  }
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack-xs  { gap: var(--space-xs); }
+.stack-sm  { gap: var(--space-sm); }
+.stack-md  { gap: var(--space-md); }
+.stack-lg  { gap: var(--space-lg); }
+.stack-xl  { gap: var(--space-xl); }
+.stack-2xl { gap: var(--space-2xl); }
+.stack-3xl { gap: var(--space-3xl); }
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cluster-xs  { gap: var(--space-xs); }
+.cluster-sm  { gap: var(--space-sm); }
+.cluster-md  { gap: var(--space-md); }
+.cluster-lg  { gap: var(--space-lg); }
+
+.section {
+  padding-block: var(--space-5xl);
+}
+
+@media (max-width: 600px) {
+  .section {
+    padding-block: var(--space-3xl);
+  }
+}
+
+.section-tight {
+  padding-block: var(--space-3xl);
+}
+
+@media (max-width: 600px) {
+  .section-tight {
+    padding-block: var(--space-2xl);
+  }
+}
+
+/* Visually-hidden for screen-reader-only labels. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

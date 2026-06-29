@@ -1,0 +1,100 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Card from '../components/ui/Card.astro';
+import IconBox from '../components/ui/IconBox.astro';
+import Badge from '../components/ui/Badge.astro';
+import Button from '../components/ui/Button.astro';
+---
+
+<Layout
+  title="Image Compressor — ToolBox Image"
+  description="Compress JPG, PNG, WebP, GIF, AVIF, and SVG images entirely in your browser. No uploads, no tracking, no quality loss. Free and unlimited."
+>
+  <AppShell>
+    <section class="page-section section">
+      <div class="container stack stack-xl" style="max-width:720px;margin:0 auto;text-align:center;">
+        <Badge eyebrow="v1.0" tone="info">Coming soon</Badge>
+        <h1 class="text-display-xl">Image Compressor.</h1>
+        <p class="text-body-lg" style="color:var(--color-body);">
+          Compress JPG, PNG, WebP, GIF, AVIF, and SVG images without ever leaving
+          your browser. Your files stay on your device — nothing is uploaded.
+        </p>
+        <div class="cluster cluster-sm" style="justify-content:center;">
+          <Button label="Get notified" variant="primary" size="lg" />
+          <Button label="Learn more" href="#how-it-works" variant="secondary" size="lg" />
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section section-tight" id="how-it-works">
+      <div class="container stack stack-lg" style="max-width:960px;margin:0 auto;">
+        <h2 class="text-display-lg" style="text-align:center;">Built different.</h2>
+        <div class="grid-3">
+          <Card>
+            <IconBox tone="soft">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </IconBox>
+            <h3 class="text-display-sm">Privacy first.</h3>
+            <p class="text-body-sm" style="color:var(--color-body);">
+              Every byte is processed locally using WebAssembly and the browser's
+              native canvas. Nothing is uploaded, logged, or shared.
+            </p>
+          </Card>
+          <Card>
+            <IconBox tone="soft">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </IconBox>
+            <h3 class="text-display-sm">Blazing fast.</h3>
+            <p class="text-body-sm" style="color:var(--color-body);">
+              Near-native performance on commodity hardware. Compress hundreds of
+              images in seconds — the bottleneck is your disk, not us.
+            </p>
+          </Card>
+          <Card>
+            <IconBox tone="soft">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </IconBox>
+            <h3 class="text-display-sm">Works everywhere.</h3>
+            <p class="text-body-sm" style="color:var(--color-body);">
+              Desktop, tablet, mobile — every tool is fully responsive and works
+              across all modern browsers without installs.
+            </p>
+          </Card>
+        </div>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .page-section {
+    padding-top: var(--space-5xl);
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  @media (max-width: 959px) {
+    .grid-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .grid-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,137 @@
+---
+/**
+ * FAQ — accessible accordion. Uses native <details>/<summary> for
+ * full keyboard + screen reader support; CSS smooths the open/close.
+ */
+interface FaqItem {
+  q: string;
+  a: string;
+}
+interface Props {
+  items: FaqItem[];
+  /** Visual variant — default light, `dark` for polarity-flipped surface. */
+  tone?: 'light' | 'dark';
+  class?: string;
+}
+
+const { items, tone = 'light', class: className = '' } = Astro.props;
+---
+
+<ul class:list={['faq', `faq-${tone}`, className]} role="list">
+  {items.map((item) => (
+    <li class="faq-item">
+      <details class="faq-details">
+        <summary class="faq-summary text-body-md-strong">
+          <span>{item.q}</span>
+          <svg
+            class="faq-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </summary>
+        <div class="faq-answer text-body-md">
+          <p>{item.a}</p>
+        </div>
+      </details>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .faq {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .faq-item {
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-2);
+  }
+
+  .faq-dark .faq-item {
+    background-color: color-mix(in srgb, var(--color-on-primary) 6%, var(--color-primary));
+    box-shadow: none;
+    border: 1px solid color-mix(in srgb, var(--color-on-primary) 12%, transparent);
+  }
+
+  .faq-details {
+    overflow: hidden;
+  }
+
+  .faq-details[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  .faq-details[open] .faq-answer {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    cursor: pointer;
+    color: var(--color-ink);
+    list-style: none;
+  }
+
+  .faq-dark .faq-summary {
+    color: var(--color-on-primary);
+  }
+
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-summary:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: -2px;
+    border-radius: var(--radius-md);
+  }
+
+  .faq-icon {
+    flex-shrink: 0;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    color: var(--color-mute);
+  }
+
+  .faq-dark .faq-icon {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+  }
+
+  .faq-answer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    color: var(--color-body);
+  }
+
+  .faq-answer > p {
+    overflow: hidden;
+    margin: 0;
+    padding: 0 var(--space-lg) var(--space-lg);
+    line-height: var(--leading-body-md);
+  }
+
+  .faq-dark .faq-answer {
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+  }
+</style>

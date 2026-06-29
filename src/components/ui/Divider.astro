@@ -1,0 +1,21 @@
+---
+/**
+ * Divider — hairline horizontal rule. Use inside cards or as section separator.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<hr class:list={['divider', className]} />
+
+<style>
+  .divider {
+    border: 0;
+    border-top: 1px solid var(--color-hairline);
+    margin: 0;
+    width: 100%;
+  }
+</style>

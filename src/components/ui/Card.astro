@@ -1,0 +1,78 @@
+---
+/**
+ * Card — the canonical marketing card chrome (DESIGN.md `card-marketing`).
+ * Surface: canvas, padding: lg, radius: md, Level 3 soft-stack shadow.
+ */
+interface Props {
+  href?: string;
+  /** Visual elevation — see DESIGN.md §Elevation. Defaults to 3. */
+  elevation?: 1 | 2 | 3 | 4 | 5;
+  /** Surface tone. `default` = canvas, `soft` = canvas-soft. */
+  tone?: 'default' | 'soft';
+  class?: string;
+}
+
+const {
+  href,
+  elevation = 3,
+  tone = 'default',
+  class: className = '',
+} = Astro.props;
+
+const Tag = href ? 'a' : 'article';
+const classes = [
+  'card',
+  `card-elev-${elevation}`,
+  `card-tone-${tone}`,
+  href ? 'card-linked' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes} href={href}>
+  <slot />
+</Tag>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    color: var(--color-ink);
+    text-decoration: none;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card-tone-default {
+    background-color: var(--color-canvas);
+  }
+
+  .card-tone-soft {
+    background-color: var(--color-canvas-soft);
+  }
+
+  /* Elevation levels — DESIGN.md §Elevation */
+  .card-elev-1 { box-shadow: var(--shadow-1); }
+  .card-elev-2 { box-shadow: var(--shadow-2); }
+  .card-elev-3 { box-shadow: var(--shadow-3); }
+  .card-elev-4 { box-shadow: var(--shadow-4); }
+  .card-elev-5 { box-shadow: var(--shadow-5); }
+
+  .card-linked {
+    cursor: pointer;
+  }
+
+  .card-linked:hover {
+    box-shadow: var(--shadow-4);
+    transform: translateY(-1px);
+  }
+
+  .card-linked:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+  }
+</style>

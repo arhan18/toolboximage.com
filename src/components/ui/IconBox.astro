@@ -1,0 +1,54 @@
+---
+/**
+ * IconBox — square tinted container for an inline SVG icon (DESIGN.md feature-icon).
+ * Pass the icon's SVG as the slot content. Sized via the `size` prop.
+ */
+interface Props {
+  /** Edge length in px. */
+  size?: 32 | 36 | 40 | 48;
+  /** Surface tone — `soft` for canvas-soft, `canvas` for white. */
+  tone?: 'soft' | 'canvas' | 'ink';
+  class?: string;
+}
+
+const { size = 40, tone = 'soft', class: className = '' } = Astro.props;
+---
+
+<span
+  class:list={['icon-box', `icon-box-${tone}`, className]}
+  style={`--icon-size:${size}px`}
+>
+  <slot />
+</span>
+
+<style>
+  .icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    color: var(--color-ink);
+  }
+
+  .icon-box :global(svg) {
+    width: 60%;
+    height: 60%;
+  }
+
+  .icon-box-soft {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .icon-box-canvas {
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-1);
+  }
+
+  .icon-box-ink {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+</style>

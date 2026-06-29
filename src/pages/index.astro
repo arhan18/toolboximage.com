@@ -1,153 +1,529 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/nav/Navbar.astro';
+import AppShell from '../components/layout/AppShell.astro';
 import Button from '../components/ui/Button.astro';
-import Footer from '../components/base/Footer.astro';
+import Card from '../components/ui/Card.astro';
+import IconBox from '../components/ui/IconBox.astro';
+import Badge from '../components/ui/Badge.astro';
+import SectionHeader from '../components/shared/SectionHeader.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import MeshGradient from '../components/shared/MeshGradient.astro';
+import DropZone from '../components/shared/DropZone.astro';
+import BeforeAfter from '../components/shared/BeforeAfter.astro';
+import FAQ from '../components/shared/FAQ.astro';
+
+// ---------- Copy / data -----------------------------------------------------
+
+const whyItems = [
+  {
+    title: 'Files never leave your device.',
+    body:
+      'Every transformation runs in your browser via WebAssembly and the native canvas. There is no server, so there is nothing to leak.',
+    icon: 'shield',
+  },
+  {
+    title: 'No sign-up. No accounts.',
+    body:
+      'Open the page and start compressing. We do not collect email addresses, do not fingerprint your device, and do not run third-party analytics.',
+    icon: 'user',
+  },
+  {
+    title: 'Open formats. Honest output.',
+    body:
+      'We process the same standards your tools already speak — JPG, PNG, WebP, AVIF, GIF, SVG — and tell you exactly what we did.',
+    icon: 'eye',
+  },
+];
+
+const features = [
+  {
+    title: 'Drag & drop.',
+    body: 'Drop a folder of 500 photos. We will handle the queue.',
+    icon: 'mouse',
+  },
+  {
+    title: 'Paste from clipboard.',
+    body: 'Screenshot, ⌘V, done. No intermediate file.',
+    icon: 'clipboard',
+  },
+  {
+    title: 'Batch processing.',
+    body: 'Process hundreds of images in parallel on web workers.',
+    icon: 'stack',
+  },
+  {
+    title: 'Format conversion.',
+    body: 'JPG → WebP, PNG → AVIF — pick any source, any target.',
+    icon: 'swap',
+  },
+  {
+    title: 'Quality controls.',
+    body: 'Fine-tune quality, target size, or visual parity per image.',
+    icon: 'sliders',
+  },
+  {
+    title: 'Side-by-side preview.',
+    body: 'Compare before and after at full resolution before you download.',
+    icon: 'compare',
+  },
+];
+
+const steps = [
+  {
+    n: '01',
+    title: 'Drop or paste.',
+    body:
+      'Drop a file, click to browse, or paste from your clipboard. Anything image-shaped works.',
+  },
+  {
+    n: '02',
+    title: 'Pick a target.',
+    body:
+      'Choose a quality level, target size, or output format. Smart defaults handle the rest.',
+  },
+  {
+    n: '03',
+    title: 'Compare side-by-side.',
+    body:
+      'Drag the divider. If the result looks right, download. If not, dial it in and try again.',
+  },
+  {
+    n: '04',
+    title: 'Download or batch save.',
+    body:
+      'Grab individual files or save everything as a zip. Nothing was ever uploaded.',
+  },
+];
+
+const upcoming = [
+  {
+    title: 'Image Resizer',
+    body: 'Pixel-perfect resize with smart cropping and aspect-ratio lock.',
+    icon: 'resize',
+    status: 'Next',
+  },
+  {
+    title: 'Image Converter',
+    body: 'Convert between JPG, PNG, WebP, AVIF with one click.',
+    icon: 'convert',
+    status: 'Soon',
+  },
+  {
+    title: 'Image Cropper',
+    body: 'Drag-to-crop with safe-area guides for social platforms.',
+    icon: 'crop',
+    status: 'Soon',
+  },
+  {
+    title: 'Watermark',
+    body: 'Tile or corner watermarks with opacity, scale, and rotation controls.',
+    icon: 'watermark',
+    status: 'Planned',
+  },
+  {
+    title: 'Background Remover',
+    body: 'One-click subject isolation. WebGPU-accelerated.',
+    icon: 'magic',
+    status: 'Planned',
+  },
+  {
+    title: 'EXIF Cleaner',
+    body: 'Strip metadata before sharing — keep the pixels, lose the trail.',
+    icon: 'shield',
+    status: 'Planned',
+  },
+];
+
+const faq = [
+  {
+    q: 'Are my images uploaded to a server?',
+    a: 'No. Every step — decoding, resizing, recompressing, encoding — runs in your browser using WebAssembly and the native canvas. Your images never touch our servers, our CDN, or any third party.',
+  },
+  {
+    q: 'What file formats are supported?',
+    a: 'JPG, PNG, WebP, GIF, AVIF, and SVG. Output can be any of those as well, so you can convert between formats in the same pass.',
+  },
+  {
+    q: 'How does the compression work?',
+    a: 'We re-encode your images using modern codecs (mozJPEG, libwebp, libaom-avif) compiled to WebAssembly. You choose a target quality, target size, or "lossless" — and we pick the right encoder settings to hit it.',
+  },
+  {
+    q: 'Is there a file size limit?',
+    a: 'No hard limit on the server (there is no server). The practical limit is your device\'s available memory — most browsers handle 4K photos without breaking a sweat, and hundreds of small images can be batched in parallel.',
+  },
+  {
+    q: 'Will the quality actually suffer?',
+    a: 'At smart defaults, the visual difference is imperceptible at normal viewing distances — but the file is dramatically smaller. Drag the before/after slider on this page to see for yourself.',
+  },
+  {
+    q: 'Do I need to create an account?',
+    a: 'No. There is no sign-up, no email, no subscription. ToolBox Image is free and unlimited, supported by optional donations and the occasional gentle nudge.',
+  },
+];
 ---
 
 <Layout>
-  <Navbar />
-  <main>
-    <!-- Hero -->
-    <section class="hero-band">
-      <div class="hero-inner">
-        <div class="hero-badge">
-          <span class="text-caption-mono">v1.0</span>
-          <span class="hero-badge-text text-caption">Now available</span>
-        </div>
-        <h1 class="text-display-xl">
-          Image tools that respect your privacy.
-        </h1>
-        <p class="text-body-lg hero-subtitle">
-          Compress, resize, convert, and optimize images entirely in your browser.
-          No uploads. No tracking. No compromise.
-        </p>
-        <div class="hero-actions">
-          <Button label="Try Compressor" href="/compressor" variant="primary" size="lg" />
-          <Button label="Learn more" href="#how-it-works" variant="secondary" size="lg" />
-        </div>
-      </div>
+  <AppShell>
+    <!-- ============================================================
+         HERO
+         ============================================================ -->
+    <section class="hero">
+      <MeshGradient intensity="normal" />
 
-      <!-- Mesh gradient backdrop -->
-      <div class="hero-gradient" aria-hidden="true">
-        <div class="gradient-orb gradient-orb-1"></div>
-        <div class="gradient-orb gradient-orb-2"></div>
-        <div class="gradient-orb gradient-orb-3"></div>
-      </div>
-    </section>
+      <div class="container hero-inner">
+        <Reveal>
+          <Badge eyebrow="v1.0" tone="info" class="hero-badge">
+            Image Compressor is live
+          </Badge>
+        </Reveal>
 
-    <!-- Features -->
-    <section class="features-band" id="how-it-works">
-      <div class="features-inner">
-        <div class="features-header">
-          <h2 class="text-display-lg">Built different.</h2>
-          <p class="text-body-lg">
-            Every tool runs client-side. Your images never leave your device.
+        <Reveal delay={80}>
+          <h1 class="text-display-xl hero-title">
+            Image tools that respect your privacy.
+          </h1>
+        </Reveal>
+
+        <Reveal delay={160}>
+          <p class="text-body-lg hero-subtitle">
+            Compress, resize, convert, and optimize images entirely in your
+            browser. No uploads. No tracking. No compromise.
           </p>
-        </div>
+        </Reveal>
 
-        <div class="features-grid">
-          <article class="feature-card">
-            <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <Reveal delay={220}>
+          <div class="hero-actions">
+            <Button label="Try the Compressor" href="/compressor" variant="primary" size="lg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
               </svg>
-            </div>
-            <h3 class="text-display-sm">Privacy first.</h3>
-            <p class="text-body-sm">
-              All processing happens in your browser using WebAssembly.
-              No server uploads. No data collection. Ever.
-            </p>
-          </article>
+            </Button>
+            <Button label="See how it works" href="#how-it-works" variant="secondary" size="lg" />
+          </div>
+        </Reveal>
 
-          <article class="feature-card">
-            <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-              </svg>
-            </div>
-            <h3 class="text-display-sm">Blazing fast.</h3>
-            <p class="text-body-sm">
-              Near-native performance powered by WebAssembly.
-              Compress hundreds of images in seconds.
-            </p>
-          </article>
+        <Reveal delay={300} class="hero-drop">
+          <DropZone />
+        </Reveal>
+      </div>
+    </section>
 
-          <article class="feature-card">
-            <div class="feature-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
-            </div>
-            <h3 class="text-display-sm">Works everywhere.</h3>
-            <p class="text-body-sm">
-              Desktop, tablet, or phone — every tool is fully responsive
-              and works across all modern browsers.
-            </p>
-          </article>
+    <!-- ============================================================
+         WHY TOOLBOX IMAGE
+         ============================================================ -->
+    <section class="band band-soft" id="why">
+      <div class="container stack stack-3xl">
+        <SectionHeader eyebrow="Why ToolBox Image" leadMaxWidth="560px">
+          <h2 class="text-display-lg">Privacy isn't a feature. It's the architecture.</h2>
+          <p class="lead">
+            Most "free" image tools earn their keep by uploading your files,
+            training on them, or showing you ads. We earn it by being the
+            fastest, cleanest, most private tool on the web.
+          </p>
+        </SectionHeader>
+
+        <div class="why-grid">
+          {whyItems.map((w, i) => (
+            <Reveal delay={i * 80}>
+              <Card>
+                <IconBox tone="soft">
+                  {w.icon === 'shield' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                  )}
+                  {w.icon === 'user' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  )}
+                  {w.icon === 'eye' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  )}
+                </IconBox>
+                <h3 class="text-display-sm">{w.title}</h3>
+                <p class="text-body-md" style="color:var(--color-body);">{w.body}</p>
+              </Card>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>
 
-    <!-- CTA Band -->
-    <section class="cta-band">
-      <div class="cta-inner">
-        <h2 class="text-display-lg">Start compressing.</h2>
-        <p class="text-body-lg">
-          Free. Unlimited. No sign-up required.
-        </p>
-        <Button label="Open Compressor" href="/compressor" variant="primary" size="lg" />
+    <!-- ============================================================
+         FEATURES GRID
+         ============================================================ -->
+    <section class="band band-canvas" id="features">
+      <div class="container stack stack-3xl">
+        <SectionHeader eyebrow="Features" leadMaxWidth="600px">
+          <h2 class="text-display-lg">Everything you need. Nothing you don't.</h2>
+          <p class="lead">
+            A focused toolkit that does the boring stuff brilliantly and gets
+            out of your way.
+          </p>
+        </SectionHeader>
+
+        <div class="feature-grid">
+          {features.map((f, i) => (
+            <Reveal delay={i * 60}>
+              <article class="feature">
+                <span class="feature-icon" aria-hidden="true">
+                  {f.icon === 'mouse' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 3l7 18 2-8 8-2z"/>
+                    </svg>
+                  )}
+                  {f.icon === 'clipboard' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="8" y="2" width="8" height="4" rx="1"/>
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                    </svg>
+                  )}
+                  {f.icon === 'stack' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                      <polyline points="2 17 12 22 22 17"/>
+                      <polyline points="2 12 12 17 22 12"/>
+                    </svg>
+                  )}
+                  {f.icon === 'swap' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="17 1 21 5 17 9"/>
+                      <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                      <polyline points="7 23 3 19 7 15"/>
+                      <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                    </svg>
+                  )}
+                  {f.icon === 'sliders' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="4" y1="21" x2="4" y2="14"/>
+                      <line x1="4" y1="10" x2="4" y2="3"/>
+                      <line x1="12" y1="21" x2="12" y2="12"/>
+                      <line x1="12" y1="8" x2="12" y2="3"/>
+                      <line x1="20" y1="21" x2="20" y2="16"/>
+                      <line x1="20" y1="12" x2="20" y2="3"/>
+                      <line x1="1" y1="14" x2="7" y2="14"/>
+                      <line x1="9" y1="8" x2="15" y2="8"/>
+                      <line x1="17" y1="16" x2="23" y2="16"/>
+                    </svg>
+                  )}
+                  {f.icon === 'compare' && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="8" height="18" rx="1"/>
+                      <rect x="13" y="3" width="8" height="18" rx="1"/>
+                      <line x1="12" y1="3" x2="12" y2="21"/>
+                    </svg>
+                  )}
+                </span>
+                <h3 class="text-body-md-strong">{f.title}</h3>
+                <p class="text-body-sm" style="color:var(--color-body);">{f.body}</p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
-  </main>
 
-  <Footer />
+    <!-- ============================================================
+         HOW IT WORKS
+         ============================================================ -->
+    <section class="band band-soft" id="how-it-works">
+      <div class="container stack stack-3xl">
+        <SectionHeader eyebrow="How it works" leadMaxWidth="560px">
+          <h2 class="text-display-lg">Four steps. Zero servers.</h2>
+          <p class="lead">
+            A workflow designed to disappear into your day. No friction, no
+            learning curve, no fine print.
+          </p>
+        </SectionHeader>
+
+        <ol class="steps" role="list">
+          {steps.map((s, i) => (
+            <Reveal delay={i * 90} class="step-wrap">
+              <li class="step">
+                <span class="step-num text-caption-mono">{s.n}</span>
+                <h3 class="text-display-sm">{s.title}</h3>
+                <p class="text-body-md" style="color:var(--color-body);">{s.body}</p>
+              </li>
+              {i < steps.length - 1 && (
+                <span class="step-connector" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+              )}
+            </Reveal>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         INTERACTIVE BEFORE / AFTER
+         ============================================================ -->
+    <section class="band band-canvas ba-band">
+      <div class="container ba-grid">
+        <Reveal class="ba-copy">
+          <p class="text-caption-mono" style="color:var(--color-mute);text-transform:uppercase;letter-spacing:0.06em;">
+            See it
+          </p>
+          <h2 class="text-display-lg">Drag the divider.</h2>
+          <p class="text-body-lg" style="color:var(--color-body);max-width:480px;">
+            1.8 MB down to 312 KB. Visually identical at normal viewing
+            distances. The Compressor picks the right codec per image — JPEG,
+            WebP, or AVIF — to maximize quality at your target size.
+          </p>
+          <ul class="ba-stats" role="list">
+            <li class="ba-stat">
+              <span class="text-display-md ba-stat-value">−82%</span>
+              <span class="text-caption ba-stat-label">Avg. file size</span>
+            </li>
+            <li class="ba-stat">
+              <span class="text-display-md ba-stat-value">&lt;1s</span>
+              <span class="text-caption ba-stat-label">Per image</span>
+            </li>
+            <li class="ba-stat">
+              <span class="text-display-md ba-stat-value">6</span>
+              <span class="text-caption ba-stat-label">Formats</span>
+            </li>
+          </ul>
+        </Reveal>
+        <Reveal delay={120} class="ba-figure-wrap">
+          <BeforeAfter />
+          <p class="ba-hint text-caption-mono" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+              <polyline points="9 18 3 12 9 6" transform="translate(9 0)"/>
+            </svg>
+            Drag · or use ← →
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         UPCOMING TOOLS
+         ============================================================ -->
+    <section class="band band-soft">
+      <div class="container stack stack-3xl">
+        <SectionHeader eyebrow="Coming next" leadMaxWidth="600px">
+          <h2 class="text-display-lg">One toolkit. Many tools.</h2>
+          <p class="lead">
+            Image Compressor is the first of many. Every tool follows the same
+            rules: privacy-first, browser-native, no sign-up.
+          </p>
+        </SectionHeader>
+
+        <div class="upcoming-grid">
+          {upcoming.map((t, i) => (
+            <Reveal delay={i * 60}>
+              <article class="upcoming-card">
+                <header class="upcoming-head">
+                  <Badge
+                    eyebrow={t.status}
+                    tone={t.status === 'Next' ? 'info' : t.status === 'Soon' ? 'warning' : 'neutral'}
+                  >
+                    {t.title}
+                  </Badge>
+                </header>
+                <p class="text-body-sm" style="color:var(--color-body);">{t.body}</p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FAQ
+         ============================================================ -->
+    <section class="band band-canvas" id="faq">
+      <div class="container faq-container stack stack-3xl">
+        <SectionHeader eyebrow="FAQ" leadMaxWidth="560px">
+          <h2 class="text-display-lg">Frequently asked.</h2>
+          <p class="lead">
+            Quick answers to the questions we get most. If yours isn't here,
+            the privacy page has the long version.
+          </p>
+        </SectionHeader>
+        <Reveal>
+          <FAQ items={faq} />
+        </Reveal>
+        <div style="text-align:center;">
+          <Button label="Read the full privacy story" href="/privacy" variant="secondary" size="md" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FINAL CTA — polarity-flipped dark band
+         ============================================================ -->
+    <section class="band cta-band">
+      <MeshGradient intensity="ambient" />
+
+      <div class="container cta-inner">
+        <Reveal>
+          <p class="text-caption-mono cta-eyebrow">Ready when you are</p>
+          <h2 class="text-display-xl cta-title">
+            Compress your first image in under five seconds.
+          </h2>
+          <p class="text-body-lg cta-sub">
+            Free. Unlimited. No sign-up. Your files stay on your device.
+          </p>
+          <div class="cta-actions">
+            <Button label="Open Compressor" href="/compressor" variant="secondary" size="lg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </Button>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
 </Layout>
 
 <style>
-  /* --- Hero --- */
-  .hero-band {
+  /* ----------------------------------------------------------
+     HERO
+     ---------------------------------------------------------- */
+  .hero {
     position: relative;
-    padding: var(--space-6xl) var(--space-lg);
-    overflow: hidden;
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: calc(var(--space-6xl) + var(--space-3xl)) 0 var(--space-6xl);
     background-color: var(--color-canvas);
+    overflow: hidden;
+    isolation: isolate;
+    min-height: 88vh;
   }
 
   .hero-inner {
     position: relative;
     z-index: 1;
-    max-width: 800px;
-    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: var(--space-lg);
   }
 
   .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: 4px var(--space-sm);
-    border-radius: var(--radius-full);
-    background-color: var(--color-canvas-soft);
-    border: 1px solid var(--color-hairline);
-    color: var(--color-body);
+    margin-bottom: var(--space-xs);
   }
 
-  .hero-badge-text {
-    color: var(--color-mute);
+  .hero-title {
+    margin: 0;
+    max-width: 18ch;
+    color: var(--color-ink);
   }
 
   .hero-subtitle {
+    margin: 0;
     color: var(--color-body);
-    max-width: 560px;
+    max-width: 56ch;
   }
 
   .hero-actions {
@@ -156,156 +532,351 @@ import Footer from '../components/base/Footer.astro';
     gap: var(--space-sm);
     flex-wrap: wrap;
     justify-content: center;
+    margin-top: var(--space-xs);
   }
 
-  /* --- Mesh Gradient --- */
-  .hero-gradient {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
+  .hero-drop {
+    margin-top: var(--space-xl);
+    width: 100%;
   }
 
-  .gradient-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.4;
+  /* ----------------------------------------------------------
+     BAND PRIMITIVES
+     ---------------------------------------------------------- */
+  .band {
+    position: relative;
+    padding: var(--space-6xl) 0;
   }
 
-  .gradient-orb-1 {
-    width: 600px;
-    height: 600px;
-    top: -20%;
-    right: -10%;
-    background: radial-gradient(circle, var(--gradient-develop-start), var(--gradient-develop-end));
-  }
-
-  .gradient-orb-2 {
-    width: 500px;
-    height: 500px;
-    top: 10%;
-    left: -5%;
-    background: radial-gradient(circle, var(--gradient-preview-start), var(--gradient-preview-end));
-  }
-
-  .gradient-orb-3 {
-    width: 400px;
-    height: 400px;
-    bottom: -15%;
-    right: 20%;
-    background: radial-gradient(circle, var(--gradient-ship-start), var(--gradient-ship-end));
-  }
-
-  [data-theme="dark"] .gradient-orb {
-    opacity: 0.2;
-  }
-
-  /* --- Features --- */
-  .features-band {
-    padding: var(--space-5xl) var(--space-lg);
+  .band-soft {
     background-color: var(--color-canvas-soft);
   }
 
-  .features-inner {
-    max-width: 1400px;
-    margin: 0 auto;
+  .band-canvas {
+    background-color: var(--color-canvas);
   }
 
-  .features-header {
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto var(--space-4xl);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .features-header p {
-    color: var(--color-body);
-  }
-
-  .features-grid {
+  /* ----------------------------------------------------------
+     WHY GRID
+     ---------------------------------------------------------- */
+  .why-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-lg);
   }
 
-  .feature-card {
-    padding: var(--space-lg);
+  /* ----------------------------------------------------------
+     FEATURE GRID
+     ---------------------------------------------------------- */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl) var(--space-2xl);
+  }
+
+  .feature {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md) 0;
+  }
+
+  .feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
     border-radius: var(--radius-md);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    color: var(--color-ink);
+    margin-bottom: var(--space-xs);
+  }
+
+  .feature-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .feature h3 {
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .feature p {
+    margin: 0;
+  }
+
+  /* ----------------------------------------------------------
+     STEPS
+     ---------------------------------------------------------- */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+    align-items: stretch;
+  }
+
+  .step-wrap {
+    display: contents;
+  }
+
+  .step {
+    position: relative;
+    padding: var(--space-xl);
     background-color: var(--color-canvas);
-    box-shadow: var(--shadow-3);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    height: 100%;
+  }
+
+  .step-num {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .step h3 {
+    margin: 0;
+  }
+
+  .step p {
+    margin: 0;
+  }
+
+  .step-connector {
+    position: absolute;
+    top: 50%;
+    right: calc(var(--space-lg) * -1 + 8px);
+    transform: translate(50%, -50%);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  /* ----------------------------------------------------------
+     BEFORE / AFTER
+     ---------------------------------------------------------- */
+  .ba-band {
+    padding-top: var(--space-6xl);
+    padding-bottom: var(--space-6xl);
+  }
+
+  .ba-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: var(--space-4xl);
+    align-items: center;
+  }
+
+  .ba-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .ba-copy h2 {
+    margin: 0;
+  }
+
+  .ba-stats {
+    list-style: none;
+    margin: var(--space-lg) 0 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-xl);
+  }
+
+  .ba-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ba-stat-value {
+    color: var(--color-ink);
+    font-feature-settings: "tnum";
+    background: linear-gradient(
+      100deg,
+      var(--color-ink),
+      color-mix(in srgb, var(--color-ink) 70%, var(--color-link))
+    );
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+
+  .ba-stat-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .ba-figure-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: stretch;
+  }
+
+  .ba-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    align-self: center;
+    margin: 0;
+  }
+
+  .ba-hint svg {
+    flex-shrink: 0;
+  }
+  .upcoming-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  .upcoming-card {
+    padding: var(--space-lg);
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-2);
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
   }
 
-  .feature-icon {
+  .upcoming-head {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-    background-color: var(--color-canvas-soft);
-    color: var(--color-ink);
   }
 
-  .feature-card h3 {
-    margin: 0;
+  /* ----------------------------------------------------------
+     FAQ
+     ---------------------------------------------------------- */
+  .faq-container {
+    max-width: 760px;
+    margin: 0 auto;
   }
 
-  .feature-card p {
-    margin: 0;
-    color: var(--color-body);
-  }
-
-  /* --- CTA Band --- */
+  /* ----------------------------------------------------------
+     CTA
+     ---------------------------------------------------------- */
   .cta-band {
-    padding: var(--space-5xl) var(--space-lg);
+    position: relative;
     background-color: var(--color-primary);
     color: var(--color-on-primary);
-    text-align: center;
+    overflow: hidden;
+    isolation: isolate;
   }
 
   .cta-inner {
-    max-width: 600px;
-    margin: 0 auto;
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-lg);
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 720px;
+    margin: 0 auto;
   }
 
-  .cta-inner p {
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .cta-title {
+    margin: 0;
     color: var(--color-on-primary);
-    opacity: 0.7;
+    max-width: 18ch;
   }
 
-  /* --- Responsive --- */
-  @media (max-width: 959px) {
-    .features-grid {
+  .cta-sub {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+    max-width: 48ch;
+  }
+
+  .cta-actions {
+    margin-top: var(--space-md);
+  }
+
+  /* ----------------------------------------------------------
+     RESPONSIVE
+     ---------------------------------------------------------- */
+  @media (max-width: 1023px) {
+    .why-grid,
+    .feature-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .step-connector {
+      display: none;
+    }
+
+    .ba-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+
+    .upcoming-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
   @media (max-width: 600px) {
-    .hero-band {
-      padding: var(--space-3xl) var(--space-md);
+    .hero {
+      padding: var(--space-4xl) 0 var(--space-3xl);
       min-height: auto;
     }
 
-    .features-grid {
+    .hero-title {
+      max-width: 100%;
+    }
+
+    .band {
+      padding: var(--space-4xl) 0;
+    }
+
+    .why-grid,
+    .feature-grid,
+    .steps,
+    .upcoming-grid {
       grid-template-columns: 1fr;
     }
 
-    .features-band {
-      padding: var(--space-3xl) var(--space-md);
+    .ba-stats {
+      flex-wrap: wrap;
+      gap: var(--space-lg);
     }
 
-    .cta-band {
-      padding: var(--space-3xl) var(--space-md);
+    .cta-title {
+      max-width: 100%;
     }
   }
 </style>

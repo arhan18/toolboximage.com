@@ -15,7 +15,7 @@ const { class: className = '', size = 'md' } = Astro.props;
   data-size={size}
 >
   <!-- Sun icon (shown in dark mode) -->
-  <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <circle cx="12" cy="12" r="5"></circle>
     <line x1="12" y1="1" x2="12" y2="3"></line>
     <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -27,7 +27,7 @@ const { class: className = '', size = 'md' } = Astro.props;
     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
   </svg>
   <!-- Moon icon (shown in light mode) -->
-  <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
   </svg>
 </button>
@@ -77,54 +77,14 @@ const { class: className = '', size = 'md' } = Astro.props;
 </style>
 
 <script>
-  const THEME_KEY = 'toolbox-theme';
+  import { getStoredTheme, setStoredTheme, applyTheme, nextTheme } from '../../lib/theme';
 
-  function getStoredTheme(): 'light' | 'dark' | 'system' | null {
-    try {
-      return localStorage.getItem(THEME_KEY) as 'light' | 'dark' | 'system' | null;
-    } catch {
-      return null;
-    }
-  }
-
-  function getSystemTheme(): 'light' | 'dark' {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  function resolveTheme(theme: 'light' | 'dark' | 'system'): 'light' | 'dark' {
-    return theme === 'system' ? getSystemTheme() : theme;
-  }
-
-  function applyTheme(theme: 'light' | 'dark' | 'system'): void {
-    const resolved = resolveTheme(theme);
-    document.documentElement.setAttribute('data-theme', resolved);
-    document.documentElement.style.colorScheme = resolved;
-  }
-
-  function cycleTheme(): void {
-    const current = getStoredTheme() ?? 'system';
-    const order: Array<'light' | 'dark' | 'system'> = ['light', 'dark', 'system'];
-    const next = order[(order.indexOf(current) + 1) % order.length];
-
-    try {
-      localStorage.setItem(THEME_KEY, next);
-    } catch {
-      // Silently fail
-    }
-
-    applyTheme(next);
-  }
-
-  // Listen for system theme changes
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    const stored = getStoredTheme();
-    if (stored === 'system' || !stored) {
-      applyTheme('system');
-    }
-  });
-
-  // Bind toggle buttons
-  document.querySelectorAll('#theme-toggle').forEach((btn) => {
-    btn.addEventListener('click', cycleTheme);
+  // Bind toggle buttons (id is shared across pages)
+  document.querySelectorAll<HTMLButtonElement>('#theme-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next = nextTheme(getStoredTheme() ?? 'system');
+      setStoredTheme(next);
+      applyTheme(next);
+    });
   });
 </script>

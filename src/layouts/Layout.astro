@@ -1,12 +1,15 @@
 ---
 import '../styles/fonts.css';
 import '../styles/global.css';
+import { FOUC_GUARD_SCRIPT } from '../lib/theme';
 
 interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
   canonicalUrl?: string;
+  /** Hide the theme-color meta tags (e.g. for full-bleed tool pages). */
+  noThemeColor?: boolean;
 }
 
 const {
@@ -14,6 +17,7 @@ const {
   description = 'The fastest, cleanest, most modern privacy-first online image toolkit. Compress, resize, convert, and optimize images entirely in your browser.',
   ogImage = '/og-image.png',
   canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://toolboximage.com').href,
+  noThemeColor = false,
 } = Astro.props;
 ---
 
@@ -25,23 +29,7 @@ const {
     <meta name="generator" content={Astro.generator} />
 
     <!-- Prevent FOUC: resolve theme before first paint -->
-    <script is:inline>
-      (function () {
-        var THEME_KEY = 'toolbox-theme';
-        try {
-          var stored = localStorage.getItem(THEME_KEY);
-          var theme = stored || 'system';
-          var resolved = theme === 'system'
-            ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-            : theme;
-          document.documentElement.setAttribute('data-theme', resolved);
-          document.documentElement.style.colorScheme = resolved;
-        } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'light');
-          document.documentElement.style.colorScheme = 'light';
-        }
-      })();
-    </script>
+    <script is:inline set:html={FOUC_GUARD_SCRIPT} />
 
     <!-- SEO -->
     <title>{title}</title>
@@ -70,27 +58,21 @@ const {
     <link rel="preload" href="/fonts/geist/Geist-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/geist/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Theme color for mobile browsers -->
-    <meta name="theme-color" content="#171717" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    {!noThemeColor && (
+      <>
+        <meta name="theme-color" content="#171717" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+      </>
+    )}
   </head>
   <body class="min-h-screen bg-canvas-soft text-ink antialiased">
     <slot />
 
     <!-- Re-apply theme on load (handles system theme changes during navigation) -->
-    <script is:inline>
-      (function () {
-        var THEME_KEY = 'toolbox-theme';
-        try {
-          var stored = localStorage.getItem(THEME_KEY);
-          var theme = stored || 'system';
-          var resolved = theme === 'system'
-            ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-            : theme;
-          document.documentElement.setAttribute('data-theme', resolved);
-          document.documentElement.style.colorScheme = resolved;
-        } catch (e) {}
-      })();
+    <script>
+      import { initTheme, watchSystemTheme } from '../lib/theme';
+      initTheme();
+      watchSystemTheme(() => initTheme());
     </script>
   </body>
 </html>

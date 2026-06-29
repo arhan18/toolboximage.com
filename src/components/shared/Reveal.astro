@@ -1,0 +1,97 @@
+---
+/**
+ * Reveal — wraps children in a scroll-triggered fade + slide-up.
+ * Honours prefers-reduced-motion. Hydrated by an inline module script
+ * via IntersectionObserver.
+ */
+interface Props {
+  /** Stagger delay in ms when grouped. */
+  delay?: number;
+  /** Translate distance in px. */
+  distance?: number;
+  /** When true, only animates once. */
+  once?: boolean;
+  /** HTML tag for the wrapper. */
+  as?: string;
+  class?: string;
+}
+
+const {
+  delay = 0,
+  distance = 16,
+  once = true,
+  as: Tag = 'div',
+  class: className = '',
+} = Astro.props;
+---
+
+<Tag
+  class:list={['reveal', className]}
+  data-reveal
+  data-delay={delay}
+  data-distance={distance}
+  data-once={once ? '1' : '0'}
+>
+  <slot />
+</Tag>
+
+<script>
+  const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const reveal = (el: HTMLElement) => {
+    const delay = Number(el.dataset.delay ?? 0);
+    const distance = Number(el.dataset.distance ?? 16);
+    const once = el.dataset.once === '1';
+
+    el.style.setProperty('--reveal-distance', `${distance}px`);
+    el.style.setProperty('--reveal-delay', `${delay}ms`);
+
+    if (REDUCE_MOTION) {
+      el.dataset.revealed = '1';
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            (entry.target as HTMLElement).dataset.revealed = '1';
+            if (once) observer.unobserve(entry.target);
+          } else if (!once) {
+            (entry.target as HTMLElement).dataset.revealed = '0';
+          }
+        }
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+    );
+    observer.observe(el);
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-reveal]:not([data-reveal-bound])').forEach((el) => {
+    el.dataset.revealBound = '1';
+    reveal(el);
+  });
+</script>
+
+<style>
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance, 16px), 0);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .reveal[data-revealed="1"] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

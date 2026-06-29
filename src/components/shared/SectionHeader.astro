@@ -1,0 +1,89 @@
+---
+/**
+ * SectionHeader — consistent eyebrow + headline + lead block for content sections.
+ * Use `align="center"` for marketing bands, `align="start"` for side-by-side content.
+ */
+interface Props {
+  eyebrow?: string;
+  /** Tone for the eyebrow — `mono` (technical) or `pill` (badge). */
+  eyebrowTone?: 'mono' | 'pill';
+  /** Width constraint for the lead paragraph. */
+  leadMaxWidth?: string;
+  align?: 'start' | 'center';
+  class?: string;
+}
+
+const {
+  eyebrow,
+  eyebrowTone = 'mono',
+  leadMaxWidth,
+  align = 'center',
+  class: className = '',
+} = Astro.props;
+---
+
+<header
+  class:list={['section-header', `align-${align}`, className]}
+  style={leadMaxWidth ? `--lead-max:${leadMaxWidth}` : undefined}
+>
+  {eyebrow && eyebrowTone === 'mono' && (
+    <p class="text-caption-mono section-eyebrow">{eyebrow}</p>
+  )}
+  {eyebrow && eyebrowTone === 'pill' && (
+    <span class="section-eyebrow-pill text-caption">{eyebrow}</span>
+  )}
+  <slot />
+</header>
+
+<style>
+  .section-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    color: var(--color-ink);
+  }
+
+  .align-center {
+    align-items: center;
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  .align-start {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .section-eyebrow {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+
+  .section-eyebrow-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px var(--space-sm);
+    border-radius: var(--radius-full);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    color: var(--color-body);
+  }
+
+  .section-header :global(h2) {
+    margin: 0;
+  }
+
+  .section-header :global(.lead) {
+    margin: 0;
+    color: var(--color-body);
+    font-size: var(--text-body-lg);
+    line-height: var(--leading-body-lg);
+    max-width: var(--lead-max, 560px);
+  }
+
+  .align-center :global(.lead) {
+    margin-inline: auto;
+  }
+</style>

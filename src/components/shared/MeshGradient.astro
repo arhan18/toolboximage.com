@@ -1,0 +1,103 @@
+---
+/**
+ * MeshGradient — atmospheric multi-stop gradient backdrop.
+ * Three radial orbs following DESIGN.md's develop/preview/ship palette.
+ * Hero-scale only.
+ */
+interface Props {
+  /** Soften opacity for use behind content. */
+  intensity?: 'normal' | 'subtle' | 'ambient';
+  class?: string;
+}
+
+const { intensity = 'normal', class: className = '' } = Astro.props;
+---
+
+<div
+  class:list={['mesh-gradient', `mesh-${intensity}`, className]}
+  aria-hidden="true"
+>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="mesh-noise"></div>
+</div>
+
+<style>
+  .mesh-gradient {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    will-change: transform;
+    animation: orb-drift 22s ease-in-out infinite;
+  }
+
+  .orb-1 {
+    width: 600px;
+    height: 600px;
+    top: -20%;
+    right: -10%;
+    background: radial-gradient(circle, var(--gradient-develop-start), var(--gradient-develop-end));
+    animation-delay: 0s;
+  }
+
+  .orb-2 {
+    width: 500px;
+    height: 500px;
+    top: 10%;
+    left: -5%;
+    background: radial-gradient(circle, var(--gradient-preview-start), var(--gradient-preview-end));
+    animation-delay: -8s;
+  }
+
+  .orb-3 {
+    width: 420px;
+    height: 420px;
+    bottom: -15%;
+    right: 22%;
+    background: radial-gradient(circle, var(--gradient-ship-start), var(--gradient-ship-end));
+    animation-delay: -14s;
+  }
+
+  .mesh-normal .orb { opacity: 0.4; }
+  .mesh-subtle .orb { opacity: 0.28; }
+  .mesh-ambient .orb { opacity: 0.18; }
+
+  [data-theme="dark"] .mesh-normal .orb { opacity: 0.22; }
+  [data-theme="dark"] .mesh-subtle .orb { opacity: 0.14; }
+  [data-theme="dark"] .mesh-ambient .orb { opacity: 0.08; }
+
+  /* Subtle grain to keep the gradient from feeling flat at hero scale. */
+  .mesh-noise {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgb(0 0 0 / 0.025) 1px, transparent 1px);
+    background-size: 3px 3px;
+    mix-blend-mode: multiply;
+    opacity: 0.5;
+  }
+
+  [data-theme="dark"] .mesh-noise {
+    background-image: radial-gradient(circle, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+    mix-blend-mode: screen;
+    opacity: 0.35;
+  }
+
+  @keyframes orb-drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33%      { transform: translate3d(20px, -30px, 0) scale(1.04); }
+    66%      { transform: translate3d(-25px, 20px, 0) scale(0.97); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orb { animation: none; }
+  }
+</style>
