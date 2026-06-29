@@ -1,0 +1,437 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import IconBox from '../components/ui/IconBox.astro';
+import Badge from '../components/ui/Badge.astro';
+import PageHeader from '../components/shared/PageHeader.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import MeshGradient from '../components/shared/MeshGradient.astro';
+---
+
+<Layout
+  title="About — ToolBox Image"
+  description="Why we built ToolBox Image: the fastest, cleanest, most private image toolkit on the web."
+>
+  <AppShell>
+    <!-- ============================================================
+         HERO
+         ============================================================ -->
+    <section class="about-hero">
+      <MeshGradient intensity="subtle" />
+
+      <div class="container about-hero-inner">
+        <Reveal>
+          <Badge eyebrow="About" tone="info">v1.0</Badge>
+        </Reveal>
+        <Reveal delay={80}>
+          <h1 class="text-display-xl about-title">
+            We build tools that respect you.
+          </h1>
+        </Reveal>
+        <Reveal delay={160}>
+          <p class="text-body-lg about-lead">
+            ToolBox Image is a small team obsessed with one thing: making
+            image work feel instant, private, and pleasant. We started
+            because every other "free" image tool wanted something in
+            return — your files, your data, or your patience.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PRINCIPLES
+         ============================================================ -->
+    <section class="band band-soft">
+      <div class="container stack stack-3xl">
+        <Reveal>
+          <PageHeader
+            eyebrow="Principles"
+            title="Three rules. Everything else is a detail."
+            align="center"
+          />
+        </Reveal>
+
+        <div class="principles-grid">
+          <Reveal delay={80}>
+            <Card>
+              <IconBox tone="ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Privacy is the architecture.</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                We do not bolt privacy on as a setting. The entire product
+                runs in your browser. There is no server, so there is
+                nothing to leak.
+              </p>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={160}>
+            <Card>
+              <IconBox tone="ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Speed is the product.</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Tools that feel instant get used. Tools that feel slow get
+                abandoned. We obsess over milliseconds because that is
+                what makes a tool feel like an extension of your hand.
+              </p>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={240}>
+            <Card>
+              <IconBox tone="ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Restraint over features.</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Most tools die under their own weight. We ship one tool at
+                a time, get it right, and only then start the next one.
+                Every feature has to earn its place.
+              </p>
+            </Card>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STORY
+         ============================================================ -->
+    <section class="band band-canvas">
+      <div class="container-narrow about-story">
+        <Reveal>
+          <PageHeader
+            eyebrow="Story"
+            title="Why we started."
+            lead="In 2025, one of us was preparing 400 photos for a blog post. The 'free' compressor we picked uploaded them to a server, ran ads on the result page, and asked for an email to 'unlock batch download.'"
+          />
+        </Reveal>
+
+        <Reveal delay={120}>
+          <div class="about-story-body">
+            <p class="text-body-md">
+              We tried five more. All of them did the same thing. By the
+              time we had compressed, downloaded, deleted our accounts, and
+              cleared our cookies, it had taken an hour. The compression
+              itself took four seconds.
+            </p>
+            <p class="text-body-md">
+              The fix is obvious in hindsight: do the work in the browser.
+              The browser is the most powerful sandbox in the world, and
+              the user already has it open. We had the WebAssembly codecs
+              we needed. The only thing missing was someone willing to
+              take the time to do it right.
+            </p>
+            <p class="text-body-md">
+              So we did. ToolBox Image is what we wanted to use ourselves.
+              One tool at a time, no upload, no accounts, no email
+              collection, no upsell. Just a fast, private, well-designed
+              way to do the work.
+            </p>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         NUMBERS
+         ============================================================ -->
+    <section class="band band-soft">
+      <div class="container">
+        <div class="numbers-grid">
+          <Reveal>
+            <div class="number">
+              <p class="text-display-md number-value">100%</p>
+              <p class="text-caption-mono number-label">Client-side</p>
+            </div>
+          </Reveal>
+          <Reveal delay={80}>
+            <div class="number">
+              <p class="text-display-md number-value">0</p>
+              <p class="text-caption-mono number-label">Trackers</p>
+            </div>
+          </Reveal>
+          <Reveal delay={160}>
+            <div class="number">
+              <p class="text-display-md number-value">$0</p>
+              <p class="text-caption-mono number-label">Price, forever</p>
+            </div>
+          </Reveal>
+          <Reveal delay={240}>
+            <div class="number">
+              <p class="text-display-md number-value">6</p>
+              <p class="text-caption-mono number-label">Formats</p>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         ROADMAP
+         ============================================================ -->
+    <section class="band band-canvas">
+      <div class="container stack stack-3xl">
+        <Reveal>
+          <PageHeader
+            eyebrow="Roadmap"
+            title="What we are working on."
+            lead="One tool at a time. Every tool is fully client-side, free, and unlimited."
+            align="center"
+          />
+        </Reveal>
+
+        <div class="roadmap-grid">
+          <Reveal>
+            <div class="roadmap-item">
+              <Badge tone="info">Live</Badge>
+              <h3 class="text-display-sm">Image Compressor</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">JPG, PNG, WebP, AVIF, GIF, SVG, HEIC. Batch, side-by-side compare, ZIP download.</p>
+            </div>
+          </Reveal>
+          <Reveal delay={60}>
+            <div class="roadmap-item">
+              <Badge tone="warning">Next</Badge>
+              <h3 class="text-display-sm">Image Resizer</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">Smart resize with aspect-ratio lock, social-platform presets, and bulk apply.</p>
+            </div>
+          </Reveal>
+          <Reveal delay={120}>
+            <div class="roadmap-item">
+              <Badge tone="warning">Soon</Badge>
+              <h3 class="text-display-sm">Image Converter</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">One-click format conversion across the six supported formats.</p>
+            </div>
+          </Reveal>
+          <Reveal delay={180}>
+            <div class="roadmap-item">
+              <Badge tone="neutral">Planned</Badge>
+              <h3 class="text-display-sm">Image Cropper</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">Drag-to-crop with safe-area guides for social platforms.</p>
+            </div>
+          </Reveal>
+          <Reveal delay={240}>
+            <div class="roadmap-item">
+              <Badge tone="neutral">Planned</Badge>
+              <h3 class="text-display-sm">EXIF Cleaner</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">Strip metadata before sharing — keep the pixels, lose the trail.</p>
+            </div>
+          </Reveal>
+          <Reveal delay={300}>
+            <div class="roadmap-item">
+              <Badge tone="neutral">Planned</Badge>
+              <h3 class="text-display-sm">Background Remover</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">One-click subject isolation. WebGPU-accelerated.</p>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CTA
+         ============================================================ -->
+    <section class="band cta-band">
+      <MeshGradient intensity="ambient" />
+      <div class="container cta-inner">
+        <Reveal>
+          <p class="text-caption-mono cta-eyebrow">Try it now</p>
+          <h2 class="text-display-xl cta-title">
+            The fastest way to compress an image.
+          </h2>
+          <p class="text-body-lg cta-sub">
+            Free. Unlimited. No sign-up. Your files stay on your device.
+          </p>
+          <div class="cta-actions">
+            <Button label="Open Compressor" href="/compressor" variant="secondary" size="lg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </Button>
+            <Button label="Read the blog" href="/blog" variant="ghost" size="lg" class="cta-ghost" />
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  /* ---------- Hero ---------- */
+  .about-hero {
+    position: relative;
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl);
+    background-color: var(--color-canvas);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .about-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .about-title { margin: 0; max-width: 18ch; }
+  .about-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+
+  /* ---------- Band primitives ---------- */
+  .band {
+    position: relative;
+    padding: var(--space-6xl) 0;
+  }
+
+  .band-soft { background-color: var(--color-canvas-soft); }
+  .band-canvas { background-color: var(--color-canvas); }
+
+  /* ---------- Principles ---------- */
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  /* ---------- Story ---------- */
+  .about-story-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  /* ---------- Numbers ---------- */
+  .numbers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .number {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .number-value {
+    color: var(--color-ink);
+    font-feature-settings: "tnum";
+    background: linear-gradient(100deg, var(--gradient-develop-start), var(--gradient-preview-end));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+
+  .number-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+
+  /* ---------- Roadmap ---------- */
+  .roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  .roadmap-item {
+    padding: var(--space-lg);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .roadmap-item h3 { margin: 0; }
+  .roadmap-item p { margin: 0; }
+
+  /* ---------- CTA ---------- */
+  .cta-band {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .cta-title { margin: 0; color: var(--color-on-primary); max-width: 18ch; }
+  .cta-sub {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+    max-width: 48ch;
+  }
+
+  .cta-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cta-ghost {
+    color: var(--color-on-primary) !important;
+  }
+
+  .cta-ghost:hover {
+    background-color: color-mix(in srgb, var(--color-on-primary) 10%, transparent) !important;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1023px) {
+    .principles-grid,
+    .roadmap-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .numbers-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xl);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+    .about-hero { padding: var(--space-4xl) 0 var(--space-3xl); }
+    .principles-grid,
+    .roadmap-grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,146 @@
+---
+/**
+ * Prose — typography for long-form content (privacy, terms, blog posts).
+ * Drop raw HTML / Markdown inside and it gets the right rhythm.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div class:list={['prose', className]}>
+  <slot />
+</div>
+
+<style>
+  .prose {
+    color: var(--color-ink);
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .prose :global(h2) {
+    font-family: var(--font-sans);
+    font-size: var(--text-display-sm);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-display-sm);
+    letter-spacing: var(--tracking-display-sm);
+    color: var(--color-ink);
+    margin: var(--space-2xl) 0 0;
+  }
+
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(h3) {
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: var(--weight-semibold);
+    line-height: 24px;
+    color: var(--color-ink);
+    margin: var(--space-lg) 0 0;
+  }
+
+  .prose :global(p) {
+    margin: 0;
+    color: var(--color-body);
+    font-size: var(--text-body-md);
+    line-height: var(--leading-body-md);
+  }
+
+  .prose :global(p + p) {
+    margin-top: var(--space-md);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0;
+    padding-left: var(--space-lg);
+    color: var(--color-body);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .prose :global(li) {
+    line-height: var(--leading-body-md);
+  }
+
+  .prose :global(li::marker) {
+    color: var(--color-mute);
+  }
+
+  .prose :global(a) {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  }
+
+  .prose :global(a:hover) {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  .prose :global(strong) {
+    color: var(--color-ink);
+    font-weight: var(--weight-semibold);
+  }
+
+  .prose :global(blockquote) {
+    margin: 0;
+    padding: var(--space-md) var(--space-lg);
+    border-left: 2px solid var(--color-hairline-strong);
+    color: var(--color-body);
+    font-style: italic;
+  }
+
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: var(--text-code);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    padding: 1px 6px;
+    border-radius: var(--radius-xs);
+    color: var(--color-ink);
+  }
+
+  .prose :global(pre) {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    font-size: var(--text-code);
+    line-height: var(--leading-code);
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  .prose :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--color-hairline);
+    margin: var(--space-2xl) 0 0;
+  }
+
+  .prose :global(figure) {
+    margin: 0;
+  }
+
+  .prose :global(figure img) {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-hairline);
+  }
+</style>

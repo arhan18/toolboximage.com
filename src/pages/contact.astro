@@ -1,0 +1,300 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import IconBox from '../components/ui/IconBox.astro';
+import PageHeader from '../components/shared/PageHeader.astro';
+import Reveal from '../components/shared/Reveal.astro';
+---
+
+<Layout
+  title="Contact — ToolBox Image"
+  description="Get in touch with the ToolBox Image team. We read every message."
+>
+  <AppShell>
+    <section class="contact section">
+      <div class="container contact-grid">
+        <Reveal>
+          <PageHeader
+            eyebrow="Contact"
+            title="We read every message."
+            lead="Bug report, feature request, or just a hello — we would love to hear from you."
+          />
+        </Reveal>
+
+        <Reveal delay={80}>
+          <div class="contact-form-wrap">
+            <form class="contact-form" data-contact-form>
+              <div class="form-row">
+                <label class="field">
+                  <span class="field-label text-caption-mono">Name</span>
+                  <input
+                    type="text"
+                    name="name"
+                    class="field-input"
+                    placeholder="Your name"
+                    required
+                    autocomplete="name"
+                  />
+                </label>
+                <label class="field">
+                  <span class="field-label text-caption-mono">Email</span>
+                  <input
+                    type="email"
+                    name="email"
+                    class="field-input"
+                    placeholder="you@example.com"
+                    required
+                    autocomplete="email"
+                  />
+                </label>
+              </div>
+
+              <label class="field">
+                <span class="field-label text-caption-mono">Topic</span>
+                <select name="topic" class="field-input" required>
+                  <option value="">Select a topic</option>
+                  <option value="bug">Bug report</option>
+                  <option value="feature">Feature request</option>
+                  <option value="feedback">Feedback</option>
+                  <option value="other">Something else</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span class="field-label text-caption-mono">Message</span>
+                <textarea
+                  name="message"
+                  class="field-input field-textarea"
+                  rows="6"
+                  placeholder="What's on your mind?"
+                  required
+                ></textarea>
+              </label>
+
+              <div class="form-actions">
+                <Button
+                  label="Send message"
+                  variant="primary"
+                  size="lg"
+                  type="submit"
+                  ariaLabel="Send message"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                </Button>
+              </div>
+
+              <div class="form-note text-caption" data-form-note hidden>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Thanks! Mail client opened with your message. We reply within 1-2 business days.
+              </div>
+            </form>
+          </div>
+        </Reveal>
+
+        <aside class="contact-side">
+          <Reveal delay={120}>
+            <Card>
+              <IconBox tone="soft">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Email</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                The fastest way to reach us. We reply within 1-2 business days.
+              </p>
+              <a href="mailto:hello@toolboximage.com" class="contact-link text-body-md-strong">
+                hello@toolboximage.com
+              </a>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={180}>
+            <Card>
+              <IconBox tone="soft">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">GitHub</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                File an issue, request a feature, or read the source.
+              </p>
+              <a href="https://github.com/toolboximage" class="contact-link text-body-md-strong" rel="noopener">
+                github.com/toolboximage
+              </a>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={240}>
+            <Card>
+              <IconBox tone="soft">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Discord</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Hang out with the community. Get help, share feedback.
+              </p>
+              <a href="https://discord.gg/toolboximage" class="contact-link text-body-md-strong" rel="noopener">
+                Join the Discord
+              </a>
+            </Card>
+          </Reveal>
+        </aside>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .contact { padding-top: var(--space-5xl); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-4xl);
+    align-items: start;
+  }
+
+  .contact-form-wrap {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-3);
+    padding: var(--space-xl);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .field-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .field-input {
+    appearance: none;
+    height: 44px;
+    padding: 0 var(--space-sm);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    font-family: inherit;
+    font-size: var(--text-body-md);
+    line-height: var(--leading-body-md);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .field-input::placeholder {
+    color: var(--color-mute);
+  }
+
+  .field-input:focus-visible {
+    outline: none;
+    border-color: var(--color-link);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 25%, transparent);
+  }
+
+  .field-textarea {
+    height: auto;
+    padding: var(--space-sm);
+    resize: vertical;
+    min-height: 120px;
+    line-height: var(--leading-body-md);
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-xs);
+  }
+
+  .form-note {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-cyan-soft);
+    color: var(--color-cyan-deep);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-sm);
+  }
+
+  [data-theme="dark"] .form-note {
+    color: var(--color-cyan);
+  }
+
+  .contact-side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .contact-link {
+    display: inline-block;
+    color: var(--color-link);
+    text-decoration: none;
+    margin-top: var(--space-xs);
+    transition: color 0.15s ease;
+  }
+
+  .contact-link:hover {
+    color: var(--color-link-deep);
+  }
+
+  @media (max-width: 1023px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .contact-form-wrap { padding: var(--space-md); }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  const note = document.querySelector<HTMLElement>('[data-form-note]');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const name = String(data.get('name') || '').trim();
+    const email = String(data.get('email') || '').trim();
+    const topic = String(data.get('topic') || '').trim();
+    const message = String(data.get('message') || '').trim();
+    const subject = `[${topic || 'contact'}] ToolBox Image — ${name || 'visitor'}`;
+    const body = `From: ${name} <${email}>\nTopic: ${topic}\n\n${message}`;
+    window.location.href = `mailto:hello@toolboximage.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (note) note.hidden = false;
+  });
+</script>

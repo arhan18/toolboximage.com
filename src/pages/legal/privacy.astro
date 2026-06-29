@@ -1,0 +1,99 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AppShell from '../../components/layout/AppShell.astro';
+import PageHeader from '../../components/shared/PageHeader.astro';
+import Prose from '../../components/shared/Prose.astro';
+---
+
+<Layout
+  title="Privacy — ToolBox Image"
+  description="ToolBox Image runs entirely in your browser. No uploads, no tracking, no accounts. Your images never leave your device."
+>
+  <AppShell>
+    <section class="section">
+      <div class="container-narrow stack stack-lg">
+        <PageHeader
+          eyebrow="Privacy"
+          title="Your images stay on your device."
+          lead="Privacy is not a feature we added. It is the architecture. Here is how and why."
+        />
+
+        <Prose>
+          <h2>1. No uploads. Ever.</h2>
+          <p>
+            ToolBox Image runs entirely in your browser. Every step —
+            decoding, resizing, recompressing, encoding — happens on your
+            device using WebAssembly and the native canvas. Your image data
+            never leaves your device, never touches a server, and is never
+            shared with third parties.
+          </p>
+
+          <h2>2. No tracking. No cookies.</h2>
+          <p>
+            We do not set tracking cookies, do not fingerprint your device,
+            and do not use third-party analytics on this site. The only
+            thing we store is your theme preference (light, dark, or
+            system) in your browser's <code>localStorage</code>.
+          </p>
+          <p>
+            You can verify this yourself. Open DevTools → Network → reload
+            the page. Every request is for static assets served from our
+            CDN. There are no analytics endpoints, no pixel beacons, no
+            third-party requests.
+          </p>
+
+          <h2>3. No accounts required.</h2>
+          <p>
+            There is nothing to sign up for. Every tool is free, unlimited,
+            and works the moment you open the page. We will never ask for
+            your email address.
+          </p>
+
+          <h2>4. No fingerprinting.</h2>
+          <p>
+            We do not collect your IP address beyond what our CDN's raw
+            logs record (standard HTTP, no application-level processing).
+            We do not read your User-Agent beyond what the browser sends
+            by default. We do not use canvas fingerprinting, font
+            enumeration, or any other browser-side identification technique.
+          </p>
+
+          <h2>5. The one thing we do store.</h2>
+          <p>
+            Your theme preference (<code>light</code>, <code>dark</code>, or
+            <code>system</code>) is stored in your browser's localStorage
+            under the key <code>toolbox-theme</code>. This never leaves your
+            device. You can clear it at any time from your browser settings.
+          </p>
+
+          <h2>6. Open by default.</h2>
+          <p>
+            Our compression engine is built on open standards (WebAssembly,
+            Canvas, the browser's native decoders). You can verify this
+            yourself in DevTools.
+          </p>
+
+          <h2>7. Changes to this policy.</h2>
+          <p>
+            If we ever change anything material about how your data is
+            handled, we will post a notice on this page and update the
+            date below. The current architecture — entirely client-side —
+            is the foundation of the product, so we do not anticipate any
+            breaking changes here.
+          </p>
+
+          <h2>8. Contact.</h2>
+          <p>
+            Questions or concerns? <a href="/contact">Get in touch</a> — we
+            read every message.
+          </p>
+
+          <hr />
+          <p style="color:var(--color-mute);font-size:var(--text-caption);">
+            Last updated: June 2026.
+          </p>
+        </Prose>
+      </div>
+    </section>
+  </AppShell>
+</Layout>

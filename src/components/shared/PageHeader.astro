@@ -1,0 +1,63 @@
+---
+/**
+ * PageHeader — consistent top of content pages.
+ * Mono eyebrow + display headline + lead paragraph. Optional CTA slot.
+ */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  align?: 'start' | 'center';
+  class?: string;
+}
+
+const { eyebrow, title, lead, align = 'start', class: className = '' } = Astro.props;
+---
+
+<header class:list={['page-header', `align-${align}`, className]}>
+  {eyebrow && <p class="text-caption-mono page-eyebrow">{eyebrow}</p>}
+  <h1 class="text-display-xl page-title">{title}</h1>
+  {lead && <p class="text-body-lg page-lead">{lead}</p>}
+  {Astro.slots.has('cta') && <div class="page-cta"><slot name="cta" /></div>}
+</header>
+
+<style>
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 720px;
+  }
+
+  .align-center {
+    align-items: center;
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  .page-eyebrow {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .page-title {
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .page-lead {
+    margin: 0;
+    color: var(--color-body);
+    max-width: 56ch;
+  }
+
+  .align-center .page-lead {
+    margin-inline: auto;
+  }
+
+  .page-cta {
+    margin-top: var(--space-sm);
+  }
+</style>

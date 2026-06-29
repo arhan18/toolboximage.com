@@ -7,9 +7,20 @@ interface Props {
 }
 
 const { currentPath = '/' } = Astro.props;
+
+// Single top-level nav for now. As more tools ship, the link groups can
+// split into dropdowns/menus — keeping it flat for clarity.
 const links = [
   { href: '/compressor', label: 'Compressor' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/about', label: 'About' },
 ];
+
+const isActive = (href: string) =>
+  href === '/'
+    ? currentPath === '/'
+    : currentPath === href || currentPath.startsWith(`${href}/`);
 ---
 
 <header class="nav-bar">
@@ -20,7 +31,8 @@ const links = [
       {links.map((l) => (
         <a
           href={l.href}
-          class:list={['nav-link text-body-sm', { active: currentPath === l.href }]}
+          class:list={['nav-link text-body-sm', { active: isActive(l.href) }]}
+          aria-current={isActive(l.href) ? 'page' : undefined}
         >
           {l.label}
         </a>
@@ -28,6 +40,9 @@ const links = [
     </div>
 
     <div class="nav-actions">
+      <a href="/contact" class="nav-link nav-link-cta text-body-sm-strong">
+        Contact
+      </a>
       <ThemeToggle size="sm" />
     </div>
   </nav>
@@ -82,9 +97,19 @@ const links = [
     background-color: var(--color-canvas-soft);
   }
 
-  .nav-link.active {
+  .nav-link.active,
+  .nav-link[aria-current="page"] {
     color: var(--color-ink);
     background-color: var(--color-canvas-soft);
+  }
+
+  .nav-link-cta {
+    color: var(--color-link) !important;
+  }
+
+  .nav-link-cta:hover {
+    background-color: color-mix(in srgb, var(--color-link) 10%, transparent) !important;
+    color: var(--color-link-deep) !important;
   }
 
   .nav-actions {
@@ -93,13 +118,9 @@ const links = [
     gap: var(--space-xs);
   }
 
-  @media (max-width: 600px) {
-    .nav-bar {
-      padding: 0 var(--space-md);
-    }
-
-    .nav-links {
-      display: none;
-    }
+  @media (max-width: 768px) {
+    .nav-bar { padding: 0 var(--space-md); }
+    /* Hide links on mobile to avoid overflow — keep logo + theme + CTA. */
+    .nav-links { display: none; }
   }
 </style>

@@ -1,0 +1,241 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Button from '../components/ui/Button.astro';
+import Badge from '../components/ui/Badge.astro';
+import PageHeader from '../components/shared/PageHeader.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+
+const privacy = [
+  {
+    q: 'Are my images uploaded to a server?',
+    a: 'No. Every step — decoding, resizing, recompressing, encoding — runs in your browser using WebAssembly and the native canvas. Your images never touch our servers, our CDN, or any third party.',
+  },
+  {
+    q: "What does the privacy page actually mean by 'no tracking'?",
+    a: 'No analytics scripts, no third-party cookies, no fingerprinting techniques, no pixel beacons. The only thing we store is your theme preference in your browser’s localStorage.',
+  },
+  {
+    q: 'Can I verify the privacy claim myself?',
+    a: 'Yes. Open DevTools → Network → reload any page. Every request is for static assets served from our CDN. There are no analytics endpoints.',
+  },
+  {
+    q: 'Do you log IP addresses?',
+    a: 'Standard CDN HTTP logs exist for the time required to deliver the page (typically milliseconds). These are not enriched, not joined with any other data, and not used for analytics.',
+  },
+];
+
+const tools = [
+  {
+    q: 'What file formats are supported?',
+    a: 'JPG, PNG, WebP, AVIF, GIF, SVG, and HEIC. Output can be any of those as well, so you can convert between formats in the same pass.',
+  },
+  {
+    q: 'How does the compression work?',
+    a: 'We re-encode your images using modern codecs (mozJPEG, libwebp, libaom-avif) compiled to WebAssembly. You choose a target quality, target size, or ‘lossless’ — and we pick the right encoder settings to hit it.',
+  },
+  {
+    q: 'Is there a file size limit?',
+    a: 'No hard limit on the server (there is no server). The practical limit is your device’s available memory — most browsers handle 4K photos without breaking a sweat, and hundreds of small images can be batched in parallel.',
+  },
+  {
+    q: 'Will the quality actually suffer?',
+    a: 'At smart defaults, the visual difference is imperceptible at normal viewing distances — but the file is dramatically smaller. Drag the before/after slider on the homepage to see for yourself.',
+  },
+  {
+    q: 'Can I resize as well as compress in the same run?',
+    a: 'Yes. The Custom settings panel has a ‘Resize’ toggle with width / height / long-edge / fit / fill modes. The compressor will resize before encoding.',
+  },
+  {
+    q: 'Does removing metadata actually remove EXIF?',
+    a: 'Yes. When ‘Remove metadata’ is on, the canvas-based re-encode never re-attaches EXIF, XMP, or IPTC. For SVGs we strip the <metadata> element. Originals are unaffected.',
+  },
+];
+
+const account = [
+  {
+    q: 'Do I need to create an account?',
+    a: 'No. There is no sign-up, no email, no subscription. ToolBox Image is free and unlimited.',
+  },
+  {
+    q: "Is it really free? What's the catch?",
+    a: 'Yes, free. There is no catch. There are no ads, no upsells, no premium tier. The product runs entirely in your browser, so we do not have server costs to cover.',
+  },
+  {
+    q: 'Can I use this commercially?',
+    a: 'Yes. Use it for personal projects, client work, products you sell, anything. The license is unrestricted for both personal and commercial use.',
+  },
+  {
+    q: 'Will you add a paid tier in the future?',
+    a: 'Not for the core tools. We may add optional hosted services (like team workspaces or batch API access) at some point, but the browser tools themselves will remain free.',
+  },
+];
+---
+
+<Layout
+  title="FAQ — ToolBox Image"
+  description="Answers to the most common questions about ToolBox Image — privacy, file formats, batch processing, and more."
+>
+  <AppShell>
+    <section class="faq-hero">
+      <div class="container container-narrow">
+        <Reveal>
+          <Badge eyebrow="FAQ" tone="info">Questions</Badge>
+        </Reveal>
+        <Reveal delay={80}>
+          <h1 class="text-display-xl faq-title">Frequently asked.</h1>
+        </Reveal>
+        <Reveal delay={140}>
+          <p class="text-body-lg faq-lead">
+            Quick answers to the questions we get most. If yours isn't
+            here, the <a href="/legal/privacy">privacy page</a> or
+            <a href="/contact">contact form</a> has you covered.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-soft">
+      <div class="container container-narrow faq-list-wrap">
+        <Reveal>
+          <h2 class="text-display-lg faq-section-title">Privacy</h2>
+        </Reveal>
+        <Reveal delay={80}>
+          <FAQ items={privacy} tone="light" />
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-canvas">
+      <div class="container container-narrow faq-list-wrap">
+        <Reveal>
+          <h2 class="text-display-lg faq-section-title">About the tools</h2>
+        </Reveal>
+        <Reveal delay={80}>
+          <FAQ items={tools} tone="light" />
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-soft">
+      <div class="container container-narrow faq-list-wrap">
+        <Reveal>
+          <h2 class="text-display-lg faq-section-title">Account &amp; pricing</h2>
+        </Reveal>
+        <Reveal delay={80}>
+          <FAQ items={account} tone="light" />
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band cta-band">
+      <div class="container cta-inner">
+        <Reveal>
+          <p class="text-caption-mono cta-eyebrow">Still curious?</p>
+          <h2 class="text-display-lg cta-title">
+            We probably covered it. But if not…
+          </h2>
+          <p class="text-body-lg cta-sub">
+            The Compressor is the live tool today — try it before anything
+            else. We answer contact-form messages within 1-2 business days.
+          </p>
+          <div class="cta-actions">
+            <Button label="Open Compressor" href="/compressor" variant="secondary" size="lg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </Button>
+            <Button label="Contact us" href="/contact" variant="ghost" size="lg" class="cta-ghost" />
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .faq-hero {
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-3xl);
+    background-color: var(--color-canvas);
+  }
+
+  .faq-title {
+    margin: var(--space-md) 0 0;
+    max-width: 18ch;
+  }
+
+  .faq-lead {
+    margin: var(--space-md) 0 0;
+    color: var(--color-body);
+    max-width: 56ch;
+  }
+
+  .faq-lead a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+  }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+
+  .band-soft { background-color: var(--color-canvas-soft); }
+  .band-canvas { background-color: var(--color-canvas); }
+
+  .faq-list-wrap { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+  .faq-section-title {
+    margin: 0 0 var(--space-xs);
+  }
+
+  .cta-band {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .cta-title { margin: 0; color: var(--color-on-primary); }
+  .cta-sub { margin: 0; color: color-mix(in srgb, var(--color-on-primary) 75%, transparent); }
+
+  .cta-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cta-ghost {
+    color: var(--color-on-primary) !important;
+  }
+
+  .cta-ghost:hover {
+    background-color: color-mix(in srgb, var(--color-on-primary) 10%, transparent) !important;
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+    .faq-hero { padding: var(--space-4xl) 0 var(--space-2xl); }
+  }
+</style>

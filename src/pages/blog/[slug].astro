@@ -1,0 +1,176 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AppShell from '../../components/layout/AppShell.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Button from '../../components/ui/Button.astro';
+import Reveal from '../../components/shared/Reveal.astro';
+import Prose from '../../components/shared/Prose.astro';
+import { posts, formatDate } from '../../lib/blog';
+
+export function getStaticPaths() {
+  return posts.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = posts.find((p) => p.slug === slug);
+if (!post) {
+  return Astro.redirect('/blog');
+}
+
+const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
+  engineering: 'info',
+  design: 'warning',
+  announcement: 'success',
+};
+---
+
+<Layout title={`${post.title} — ToolBox Image`} description={post.description}>
+  <AppShell>
+    <section class="post-hero">
+      <div class="container container-narrow">
+        <Reveal>
+          <a href="/blog" class="post-back text-body-sm">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            All posts
+          </a>
+        </Reveal>
+        <Reveal delay={80}>
+          <div class="post-meta">
+            <Badge tone={toneByTag[post.tag]} eyebrow={post.tag}>
+              {formatDate(post.date)}
+            </Badge>
+            <span class="text-caption post-time">{post.readMinutes} min read</span>
+          </div>
+        </Reveal>
+        <Reveal delay={140}>
+          <h1 class="text-display-xl post-title">{post.title}</h1>
+        </Reveal>
+        <Reveal delay={200}>
+          <p class="text-body-lg post-lead">{post.description}</p>
+        </Reveal>
+        <Reveal delay={240}>
+          <p class="text-caption post-author">By {post.author}</p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-canvas">
+      <div class="container container-narrow">
+        <Reveal>
+          <Prose>
+            <slot>
+              <p>
+                Posts are written directly inside the page source. This is a
+                dynamic slug route (e.g. <code>/blog/{post.slug}</code>) so
+                each post can compose its own prose body.
+              </p>
+              <h2>The setup</h2>
+              <p>
+                We treat every blog post as a static page in <code>src/pages/blog/[slug].astro</code>.
+                The post frontmatter carries the metadata (title, description,
+                date, tag, read time); the body lives inside a
+                <code>&lt;Prose&gt;</code> slot for consistent typography.
+              </p>
+              <h2>What's next</h2>
+              <p>
+                New posts will land here. Subscribe via the blog post button
+                below or follow the GitHub repo for release notes.
+              </p>
+            </slot>
+          </Prose>
+        </Reveal>
+
+        <Reveal delay={120}>
+          <div class="post-cta">
+            <Button label="Try the Compressor" href="/compressor" variant="primary" size="lg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </Button>
+            <Button label="More posts" href="/blog" variant="secondary" size="lg" />
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .post-hero {
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-4xl);
+    background-color: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .post-back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-mute);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-lg);
+    transition: color 0.15s ease, gap 0.2s ease;
+  }
+
+  .post-back:hover {
+    color: var(--color-ink);
+    gap: var(--space-sm);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .post-time {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .post-title {
+    margin: 0;
+    max-width: 24ch;
+  }
+
+  .post-lead {
+    margin: var(--space-md) 0 0;
+    color: var(--color-body);
+    max-width: 60ch;
+  }
+
+  .post-author {
+    margin: var(--space-lg) 0 0;
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+
+  .band-canvas { background-color: var(--color-canvas); }
+
+  .post-cta {
+    margin-top: var(--space-4xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--color-hairline);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+    .post-hero { padding: var(--space-4xl) 0 var(--space-3xl); }
+  }
+</style>

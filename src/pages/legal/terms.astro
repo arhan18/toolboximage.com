@@ -1,0 +1,77 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AppShell from '../../components/layout/AppShell.astro';
+import PageHeader from '../../components/shared/PageHeader.astro';
+import Prose from '../../components/shared/Prose.astro';
+---
+
+<Layout
+  title="Terms — ToolBox Image"
+  description="The terms of service for ToolBox Image — a free, browser-based image toolkit."
+>
+  <AppShell>
+    <section class="section">
+      <div class="container-narrow stack stack-lg">
+        <PageHeader
+          eyebrow="Terms"
+          title="Terms of service."
+          lead="Plain-English rules for using ToolBox Image."
+        />
+
+        <Prose>
+          <h2>1. Acceptance</h2>
+          <p>
+            By using ToolBox Image you agree to these terms. If you do not
+            agree, please do not use the service.
+          </p>
+
+          <h2>2. License</h2>
+          <p>
+            ToolBox Image is provided free of charge for personal and
+            commercial use. You retain full ownership of every file you
+            process through the tools.
+          </p>
+
+          <h2>3. No warranty</h2>
+          <p>
+            The service is provided "as is" without warranty of any kind.
+            We do our best to keep the tools accurate and reliable, but
+            you are responsible for verifying that the output meets your
+            needs before relying on it in production.
+          </p>
+
+          <h2>4. Limitations</h2>
+          <p>
+            You agree not to use the service to violate any law, infringe
+            on any third-party right, or attempt to disrupt the service
+            for other users. Automated scraping at volume is not
+            permitted.
+          </p>
+
+          <h2>5. Availability</h2>
+          <p>
+            We may modify, suspend, or discontinue the service (or any
+            part of it) at any time, with or without notice. We will do
+            our best to communicate material changes in advance.
+          </p>
+
+          <h2>6. Changes</h2>
+          <p>
+            We may update these terms occasionally. Continued use of the
+            service after changes constitutes acceptance of the new terms.
+          </p>
+
+          <h2>7. Contact</h2>
+          <p>
+            Questions? <a href="/contact">Get in touch</a>.
+          </p>
+
+          <hr />
+          <p style="color:var(--color-mute);font-size:var(--text-caption);">
+            Last updated: June 2026.
+          </p>
+        </Prose>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
