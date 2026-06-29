@@ -1,0 +1,124 @@
+---
+import ThemeToggle from '../theme/ThemeToggle.astro';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+---
+
+<header class="nav-bar">
+  <nav class="nav-inner" aria-label="Main navigation">
+    <a href="/" class="nav-logo" aria-label="ToolBox Image — Home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-logo-icon">
+        <rect x="3" y="3" width="18" height="18" rx="4" />
+        <path d="M7 8h2l2 3 2-3h2v8h-2v-5l-2 3-2-3v5H7V8z" />
+      </svg>
+      <span class="nav-logo-text text-body-sm-strong">ToolBox Image</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="/compressor" class:list={['nav-link text-body-sm', { active: currentPath === '/compressor' }]}>
+        Compressor
+      </a>
+    </div>
+
+    <div class="nav-actions">
+      <ThemeToggle size="sm" />
+    </div>
+  </nav>
+</header>
+
+<style>
+  .nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-lg);
+    background-color: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .nav-inner {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    text-decoration: none;
+    color: var(--color-ink);
+    transition: opacity 0.15s ease;
+  }
+
+  .nav-logo:hover {
+    opacity: 0.8;
+  }
+
+  .nav-logo-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .nav-logo-text {
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    color: var(--color-body);
+    text-decoration: none;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft);
+  }
+
+  .nav-link.active {
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  @media (max-width: 600px) {
+    .nav-bar {
+      padding: 0 var(--space-md);
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .nav-logo-text {
+      display: none;
+    }
+  }
+</style>

@@ -1,11 +1,311 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Navbar from '../components/nav/Navbar.astro';
+import Button from '../components/ui/Button.astro';
+import Footer from '../components/base/Footer.astro';
 ---
 
 <Layout>
-	<Welcome />
+  <Navbar />
+  <main>
+    <!-- Hero -->
+    <section class="hero-band">
+      <div class="hero-inner">
+        <div class="hero-badge">
+          <span class="text-caption-mono">v1.0</span>
+          <span class="hero-badge-text text-caption">Now available</span>
+        </div>
+        <h1 class="text-display-xl">
+          Image tools that respect your privacy.
+        </h1>
+        <p class="text-body-lg hero-subtitle">
+          Compress, resize, convert, and optimize images entirely in your browser.
+          No uploads. No tracking. No compromise.
+        </p>
+        <div class="hero-actions">
+          <Button label="Try Compressor" href="/compressor" variant="primary" size="lg" />
+          <Button label="Learn more" href="#how-it-works" variant="secondary" size="lg" />
+        </div>
+      </div>
+
+      <!-- Mesh gradient backdrop -->
+      <div class="hero-gradient" aria-hidden="true">
+        <div class="gradient-orb gradient-orb-1"></div>
+        <div class="gradient-orb gradient-orb-2"></div>
+        <div class="gradient-orb gradient-orb-3"></div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-band" id="how-it-works">
+      <div class="features-inner">
+        <div class="features-header">
+          <h2 class="text-display-lg">Built different.</h2>
+          <p class="text-body-lg">
+            Every tool runs client-side. Your images never leave your device.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h3 class="text-display-sm">Privacy first.</h3>
+            <p class="text-body-sm">
+              All processing happens in your browser using WebAssembly.
+              No server uploads. No data collection. Ever.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+            </div>
+            <h3 class="text-display-sm">Blazing fast.</h3>
+            <p class="text-body-sm">
+              Near-native performance powered by WebAssembly.
+              Compress hundreds of images in seconds.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </div>
+            <h3 class="text-display-sm">Works everywhere.</h3>
+            <p class="text-body-sm">
+              Desktop, tablet, or phone — every tool is fully responsive
+              and works across all modern browsers.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Band -->
+    <section class="cta-band">
+      <div class="cta-inner">
+        <h2 class="text-display-lg">Start compressing.</h2>
+        <p class="text-body-lg">
+          Free. Unlimited. No sign-up required.
+        </p>
+        <Button label="Open Compressor" href="/compressor" variant="primary" size="lg" />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
 </Layout>
+
+<style>
+  /* --- Hero --- */
+  .hero-band {
+    position: relative;
+    padding: var(--space-6xl) var(--space-lg);
+    overflow: hidden;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-canvas);
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 4px var(--space-sm);
+    border-radius: var(--radius-full);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    color: var(--color-body);
+  }
+
+  .hero-badge-text {
+    color: var(--color-mute);
+  }
+
+  .hero-subtitle {
+    color: var(--color-body);
+    max-width: 560px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* --- Mesh Gradient --- */
+  .hero-gradient {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .gradient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.4;
+  }
+
+  .gradient-orb-1 {
+    width: 600px;
+    height: 600px;
+    top: -20%;
+    right: -10%;
+    background: radial-gradient(circle, var(--gradient-develop-start), var(--gradient-develop-end));
+  }
+
+  .gradient-orb-2 {
+    width: 500px;
+    height: 500px;
+    top: 10%;
+    left: -5%;
+    background: radial-gradient(circle, var(--gradient-preview-start), var(--gradient-preview-end));
+  }
+
+  .gradient-orb-3 {
+    width: 400px;
+    height: 400px;
+    bottom: -15%;
+    right: 20%;
+    background: radial-gradient(circle, var(--gradient-ship-start), var(--gradient-ship-end));
+  }
+
+  [data-theme="dark"] .gradient-orb {
+    opacity: 0.2;
+  }
+
+  /* --- Features --- */
+  .features-band {
+    padding: var(--space-5xl) var(--space-lg);
+    background-color: var(--color-canvas-soft);
+  }
+
+  .features-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .features-header {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto var(--space-4xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .features-header p {
+    color: var(--color-body);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .feature-card {
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas);
+    box-shadow: var(--shadow-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas-soft);
+    color: var(--color-ink);
+  }
+
+  .feature-card h3 {
+    margin: 0;
+  }
+
+  .feature-card p {
+    margin: 0;
+    color: var(--color-body);
+  }
+
+  /* --- CTA Band --- */
+  .cta-band {
+    padding: var(--space-5xl) var(--space-lg);
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    text-align: center;
+  }
+
+  .cta-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .cta-inner p {
+    color: var(--color-on-primary);
+    opacity: 0.7;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 959px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero-band {
+      padding: var(--space-3xl) var(--space-md);
+      min-height: auto;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .features-band {
+      padding: var(--space-3xl) var(--space-md);
+    }
+
+    .cta-band {
+      padding: var(--space-3xl) var(--space-md);
+    }
+  }
+</style>
