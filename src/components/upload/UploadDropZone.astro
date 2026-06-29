@@ -1,0 +1,476 @@
+---
+/**
+ * UploadDropZone — drop / browse / paste / folder-pick zone for the Compressor page.
+ *
+ * Extends the homepage hero zone with:
+ *   - multi-file <input>
+ *   - folder-pick via webkitdirectory
+ *   - inline validation error list
+ *   - tighter, tool-focused styling
+ *
+ * Emits `toolboximage:files` (drop / paste / browse) and
+ * `toolboximage:folder` (folder pick) so the page can hand them to UploadStore.
+ */
+import IconBox from '../ui/IconBox.astro';
+
+const formats = ['JPG', 'PNG', 'WebP', 'AVIF', 'GIF', 'SVG', 'HEIC'];
+const accept = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/avif',
+  'image/gif',
+  'image/svg+xml',
+  'image/heic',
+  'image/heif',
+].join(',');
+---
+
+<section class="upload-zone" aria-label="Upload images">
+  <div
+    id="upload-dropzone"
+    class="zone"
+    role="button"
+    tabindex="0"
+    aria-label="Drop images, click to browse, or paste from clipboard"
+  >
+    <IconBox size={48} tone="soft" class="zone-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" y1="3" x2="12" y2="15" />
+      </svg>
+    </IconBox>
+
+    <div class="zone-copy">
+      <p class="text-display-sm zone-title">
+        Drop images here to start
+      </p>
+      <p class="text-body-sm zone-sub">
+        <button type="button" class="zone-link" data-action="browse">Browse files</button>
+        <span class="zone-divider">·</span>
+        <button type="button" class="zone-link" data-action="folder">Pick a folder</button>
+        <span class="zone-divider">·</span>
+        <button type="button" class="zone-link" data-action="paste">Paste from clipboard</button>
+      </p>
+    </div>
+
+    <ul class="zone-formats" aria-label="Supported formats">
+      {formats.map((f) => (
+        <li class="zone-format text-caption-mono">{f}</li>
+      ))}
+    </ul>
+
+    <input
+      type="file"
+      multiple
+      accept={accept}
+      data-action="file-input"
+      hidden
+      aria-hidden="true"
+    />
+    <input
+      type="file"
+      multiple
+      accept={accept}
+      data-action="folder-input"
+      hidden
+      aria-hidden="true"
+      webkitdirectory
+      directory
+    />
+  </div>
+
+  <div class="zone-errors" data-errors hidden role="alert" aria-live="polite">
+    <p class="text-caption-mono zone-errors-label">Skipped</p>
+    <ul class="zone-errors-list" data-errors-list></ul>
+  </div>
+</section>
+
+<style>
+  .upload-zone {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .zone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    padding: var(--space-3xl) var(--space-xl);
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-3);
+    cursor: pointer;
+    overflow: hidden;
+    isolation: isolate;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from 0deg,
+      var(--gradient-develop-start),
+      var(--gradient-preview-end),
+      var(--gradient-ship-end),
+      var(--gradient-develop-end),
+      var(--gradient-develop-start)
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+    animation: ring-spin 8s linear infinite;
+  }
+
+  .zone:hover,
+  .zone:focus-visible {
+    box-shadow: var(--shadow-4);
+    transform: translateY(-1px);
+  }
+
+  .zone:hover::before,
+  .zone:focus-visible::before {
+    opacity: 1;
+  }
+
+  .zone:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+  }
+
+  /* Drag-over — same blue glow treatment as the hero. */
+  .zone[data-dragover="true"] {
+    background-color: color-mix(in srgb, var(--color-link) 4%, var(--color-canvas));
+    box-shadow:
+      var(--shadow-4),
+      0 0 0 1px color-mix(in srgb, var(--color-link) 40%, transparent),
+      0 0 32px -4px color-mix(in srgb, var(--color-link) 45%, transparent);
+    transform: translateY(-2px) scale(1.005);
+    animation: zone-pulse 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .zone[data-dragover="true"]::before {
+    opacity: 0;
+  }
+
+  .zone-icon {
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  }
+
+  .zone[data-dragover="true"] .zone-icon {
+    background-color: var(--color-link);
+    color: var(--color-on-primary);
+    transform: scale(1.08);
+  }
+
+  @keyframes zone-pulse {
+    0%, 100% {
+      box-shadow:
+        var(--shadow-4),
+        0 0 0 1px color-mix(in srgb, var(--color-link) 40%, transparent),
+        0 0 32px -4px color-mix(in srgb, var(--color-link) 45%, transparent);
+    }
+    50% {
+      box-shadow:
+        var(--shadow-4),
+        0 0 0 1px color-mix(in srgb, var(--color-link) 55%, transparent),
+        0 0 48px -2px color-mix(in srgb, var(--color-link) 60%, transparent);
+    }
+  }
+
+  @keyframes ring-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zone::before,
+    .zone[data-dragover="true"] {
+      animation: none;
+    }
+  }
+
+  .zone-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .zone-title {
+    margin: 0;
+  }
+
+  .zone-sub {
+    margin: 0;
+    color: var(--color-body);
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xs);
+  }
+
+  .zone-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--color-link);
+    cursor: pointer;
+    font: inherit;
+    font-weight: var(--weight-medium);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+  }
+
+  .zone-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  .zone-divider {
+    color: var(--color-mute);
+  }
+
+  .zone-formats {
+    list-style: none;
+    margin: var(--space-xs) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xs);
+  }
+
+  .zone-format {
+    padding: 4px var(--space-sm);
+    border-radius: var(--radius-full);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    color: var(--color-body);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Errors panel */
+  .zone-errors {
+    padding: var(--space-md);
+    background-color: var(--color-error-soft);
+    border: 1px solid color-mix(in srgb, var(--color-error) 25%, transparent);
+    border-radius: var(--radius-md);
+  }
+
+  .zone-errors-label {
+    color: var(--color-error-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 var(--space-xs);
+  }
+
+  .zone-errors-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xxs);
+    color: var(--color-error-deep);
+    font-size: var(--text-caption);
+    line-height: var(--leading-caption);
+  }
+
+  @media (max-width: 600px) {
+    .zone {
+      padding: var(--space-2xl) var(--space-md);
+    }
+  }
+</style>
+
+<script>
+  import { UploadStore, type ValidationError } from '../../lib/upload-store';
+
+  type Detail = { files: File[]; paths?: Map<string, string> };
+
+  const zone = document.getElementById('upload-dropzone');
+  if (zone) {
+    const fileInput = zone.querySelector<HTMLInputElement>('[data-action="file-input"]')!;
+    const folderInput = zone.querySelector<HTMLInputElement>('[data-action="folder-input"]')!;
+    const browseBtn = zone.querySelector<HTMLButtonElement>('[data-action="browse"]')!;
+    const folderBtn = zone.querySelector<HTMLButtonElement>('[data-action="folder"]')!;
+    const pasteBtn = zone.querySelector<HTMLButtonElement>('[data-action="paste"]')!;
+    const errorsEl = document.querySelector<HTMLElement>('[data-errors]');
+    const errorsList = document.querySelector<HTMLElement>('[data-errors-list]');
+
+    const isImage = (f: File) => f.type.startsWith('image/') || /\.(jpe?g|png|webp|avif|gif|svg|heic|heif)$/i.test(f.name);
+
+    const emit = (detail: Detail) => {
+      window.dispatchEvent(new CustomEvent<Detail>('toolboximage:files', { detail }));
+    };
+
+    const showErrors = (errors: ValidationError[]) => {
+      if (!errorsEl || !errorsList) return;
+      if (!errors.length) {
+        errorsEl.hidden = true;
+        errorsList.innerHTML = '';
+        return;
+      }
+      errorsList.innerHTML = errors
+        .map((e) => {
+          const reason =
+            e.reason === 'not-image'
+              ? 'not an image'
+              : e.reason === 'too-large'
+                ? `too large${e.detail ? ` — ${e.detail}` : ''}`
+                : e.reason === 'queue-full'
+                  ? 'queue full'
+                  : e.reason === 'duplicate'
+                    ? 'already added'
+                    : 'decode failed';
+          return `<li><strong>${escapeHtml(e.fileName)}</strong> — ${escapeHtml(reason)}</li>`;
+        })
+        .join('');
+      errorsEl.hidden = false;
+    };
+
+    browseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fileInput.click();
+    });
+
+    folderBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      folderInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files) emit({ files: Array.from(fileInput.files) });
+      fileInput.value = '';
+    });
+
+    folderInput.addEventListener('change', () => {
+      if (!folderInput.files) return;
+      const files = Array.from(folderInput.files);
+      const paths = new Map<string, string>();
+      for (const f of files) {
+        // webkitRelativePath is populated for webkitdirectory picks.
+        const rel = (f as File & { webkitRelativePath?: string }).webkitRelativePath;
+        if (rel) paths.set(f.name, rel);
+      }
+      emit({ files, paths });
+      folderInput.value = '';
+    });
+
+    // Click anywhere in the zone (except links) opens the file picker.
+    zone.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('button')) return;
+      fileInput.click();
+    });
+
+    zone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
+
+    // Drag & drop.
+    ['dragenter', 'dragover'].forEach((ev) => {
+      zone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        zone.dataset.dragover = 'true';
+      });
+    });
+
+    ['dragleave', 'drop'].forEach((ev) => {
+      zone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        if (ev === 'dragleave' && zone.contains(e.relatedTarget as Node)) return;
+        zone.dataset.dragover = 'false';
+      });
+    });
+
+    zone.addEventListener('drop', async (e) => {
+      const dt = (e as DragEvent).dataTransfer;
+      if (!dt) return;
+      const { files, paths } = await UploadStore.expandDataTransfer(dt);
+      const filtered = files.filter(isImage);
+      emit({ files: filtered, paths });
+    });
+
+    // Paste button — uses async Clipboard API for direct image read.
+    pasteBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try {
+        if (!navigator.clipboard || !('read' in navigator.clipboard)) return;
+        const items = await (navigator.clipboard as Clipboard).read();
+        const files: File[] = [];
+        for (const it of items) {
+          for (const type of it.types) {
+            if (type.startsWith('image/')) {
+              const blob = await it.getType(type);
+              const ext = type.split('/')[1] ?? 'png';
+              files.push(new File([blob], `pasted-${Date.now()}.${ext}`, { type }));
+            }
+          }
+        }
+        if (files.length) emit({ files });
+      } catch {
+        // Permission denied or unsupported.
+      }
+    });
+
+    // Global paste when the zone is focused.
+    document.addEventListener('paste', (e) => {
+      if (document.activeElement !== zone) return;
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      const files: File[] = [];
+      for (const it of Array.from(items)) {
+        if (it.kind === 'file') {
+          const f = it.getAsFile();
+          if (f && isImage(f)) files.push(f);
+        }
+      }
+      if (files.length) {
+        e.preventDefault();
+        emit({ files });
+      }
+    });
+
+    // Re-emit validation errors as a CustomEvent so the page can show them.
+    window.addEventListener('toolboximage:files', (e) => {
+      const detail = (e as CustomEvent<Detail>).detail;
+      if (!detail?.files) return;
+      // Validation happens in the page-level UploadStore consumer.
+      // We surface simple "not an image" errors here for files that slipped through.
+      const errors: ValidationError[] = [];
+      for (const f of detail.files) {
+        if (!isImage(f)) errors.push({ fileName: f.name, reason: 'not-image' });
+      }
+      if (errors.length) showErrors(errors);
+      else showErrors([]);
+    });
+  }
+
+  function escapeHtml(s: string): string {
+    return s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+</script>

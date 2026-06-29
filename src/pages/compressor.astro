@@ -1,100 +1,499 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import AppShell from '../components/layout/AppShell.astro';
-import Card from '../components/ui/Card.astro';
-import IconBox from '../components/ui/IconBox.astro';
-import Badge from '../components/ui/Badge.astro';
 import Button from '../components/ui/Button.astro';
+import Badge from '../components/ui/Badge.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import UploadDropZone from '../components/upload/UploadDropZone.astro';
+import PreviewCard from '../components/upload/PreviewCard.astro';
 ---
 
 <Layout
   title="Image Compressor — ToolBox Image"
-  description="Compress JPG, PNG, WebP, GIF, AVIF, and SVG images entirely in your browser. No uploads, no tracking, no quality loss. Free and unlimited."
+  description="Compress JPG, PNG, WebP, GIF, AVIF, SVG, and HEIC images without ever leaving your browser. Drop a folder of 500 photos — we'll handle the queue."
 >
-  <AppShell>
-    <section class="page-section section">
-      <div class="container stack stack-xl" style="max-width:720px;margin:0 auto;text-align:center;">
-        <Badge eyebrow="v1.0" tone="info">Coming soon</Badge>
-        <h1 class="text-display-xl">Image Compressor.</h1>
-        <p class="text-body-lg" style="color:var(--color-body);">
-          Compress JPG, PNG, WebP, GIF, AVIF, and SVG images without ever leaving
-          your browser. Your files stay on your device — nothing is uploaded.
-        </p>
-        <div class="cluster cluster-sm" style="justify-content:center;">
-          <Button label="Get notified" variant="primary" size="lg" />
-          <Button label="Learn more" href="#how-it-works" variant="secondary" size="lg" />
-        </div>
+  <AppShell hideFooter={true}>
+    <section class="compressor section">
+      <div class="container stack stack-xl">
+        <Reveal>
+          <header class="compressor-head stack stack-sm">
+            <Badge eyebrow="Compressor" tone="info">Drop zone</Badge>
+            <h1 class="text-display-lg compressor-title">Add your images.</h1>
+            <p class="text-body-md" style="color:var(--color-body);max-width:56ch;">
+              Drop, browse, paste, or pick a folder. We'll generate previews
+              locally and prepare the queue for compression.
+            </p>
+          </header>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <UploadDropZone />
+        </Reveal>
+
+        <!-- Queue panel -->
+        <Reveal delay={140} class="queue-panel-wrap">
+          <section class="queue-panel" data-queue-panel aria-label="Upload queue">
+            <header class="queue-header">
+              <div class="queue-summary">
+                <h2 class="text-display-sm queue-title">Queue</h2>
+                <p class="text-caption queue-stats" data-queue-stats>
+                  No images yet
+                </p>
+              </div>
+              <div class="queue-actions">
+                <button type="button" class="queue-link" data-action="add-more">
+                  + Add more
+                </button>
+                <button type="button" class="queue-link queue-link-danger" data-action="clear" hidden>
+                  Clear all
+                </button>
+              </div>
+            </header>
+
+            <!-- Loading state: shown while previews are being generated. -->
+            <div class="queue-loading" data-queue-loading hidden>
+              <span class="queue-loading-spinner" aria-hidden="true"></span>
+              <p class="text-body-sm" style="color:var(--color-body);" data-queue-loading-text>
+                Generating previews…
+              </p>
+            </div>
+
+            <!-- Empty state. -->
+            <div class="queue-empty" data-queue-empty>
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <circle cx="9" cy="9" r="1.5"/>
+                <path d="m21 15-5-5L5 21"/>
+              </svg>
+              <p class="text-body-md-strong queue-empty-title">Your queue is empty</p>
+              <p class="text-body-sm queue-empty-sub">
+                Drop images anywhere in this page, or use the buttons above.
+              </p>
+            </div>
+
+            <!-- Preview list. -->
+            <ul class="queue-list" data-queue-list role="list" hidden></ul>
+
+            <!-- Footer with totals + primary action (compression comes in S4). -->
+            <footer class="queue-footer" data-queue-footer hidden>
+              <div class="queue-footer-stats">
+                <span class="text-body-sm queue-stat-row">
+                  <span class="text-caption queue-stat-label">Total size</span>
+                  <span class="text-body-md-strong" data-total-size>0 B</span>
+                </span>
+                <span class="text-body-sm queue-stat-row">
+                  <span class="text-caption queue-stat-label">Estimated time</span>
+                  <span class="text-body-md-strong" data-estimated-time>—</span>
+                </span>
+              </div>
+              <Button
+                label="Compress images"
+                href="#"
+                variant="primary"
+                size="lg"
+                disabled={true}
+                ariaLabel="Compress images (coming in next milestone)"
+              />
+            </footer>
+          </section>
+        </Reveal>
       </div>
     </section>
 
-    <section class="page-section section-tight" id="how-it-works">
-      <div class="container stack stack-lg" style="max-width:960px;margin:0 auto;">
-        <h2 class="text-display-lg" style="text-align:center;">Built different.</h2>
-        <div class="grid-3">
-          <Card>
-            <IconBox tone="soft">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              </svg>
-            </IconBox>
-            <h3 class="text-display-sm">Privacy first.</h3>
-            <p class="text-body-sm" style="color:var(--color-body);">
-              Every byte is processed locally using WebAssembly and the browser's
-              native canvas. Nothing is uploaded, logged, or shared.
-            </p>
-          </Card>
-          <Card>
-            <IconBox tone="soft">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-              </svg>
-            </IconBox>
-            <h3 class="text-display-sm">Blazing fast.</h3>
-            <p class="text-body-sm" style="color:var(--color-body);">
-              Near-native performance on commodity hardware. Compress hundreds of
-              images in seconds — the bottleneck is your disk, not us.
-            </p>
-          </Card>
-          <Card>
-            <IconBox tone="soft">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="2" y="3" width="20" height="14" rx="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
-            </IconBox>
-            <h3 class="text-display-sm">Works everywhere.</h3>
-            <p class="text-body-sm" style="color:var(--color-body);">
-              Desktop, tablet, mobile — every tool is fully responsive and works
-              across all modern browsers without installs.
-            </p>
-          </Card>
-        </div>
-      </div>
-    </section>
+    <!-- Reusable PreviewCard template -->
+    <PreviewCard />
   </AppShell>
 </Layout>
 
 <style>
-  .page-section {
+  .compressor {
     padding-top: var(--space-5xl);
+    padding-bottom: var(--space-6xl);
   }
 
-  .grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
+  .compressor-head {
+    max-width: 720px;
   }
 
-  @media (max-width: 959px) {
-    .grid-3 {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .compressor-title {
+    margin: 0;
+  }
+
+  /* ---------- Queue panel ---------- */
+  .queue-panel-wrap {
+    display: block;
+  }
+
+  .queue-panel {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    overflow: hidden;
+  }
+
+  .queue-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .queue-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .queue-title {
+    margin: 0;
+  }
+
+  .queue-stats {
+    color: var(--color-mute);
+    margin: 0;
+  }
+
+  .queue-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .queue-link {
+    background: none;
+    border: none;
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--color-link);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    border-radius: var(--radius-sm);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .queue-link:hover {
+    background-color: var(--color-canvas-soft);
+    color: var(--color-link-deep);
+  }
+
+  .queue-link:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+  }
+
+  .queue-link-danger {
+    color: var(--color-error-deep);
+  }
+
+  .queue-link-danger:hover {
+    background-color: var(--color-error-soft);
+    color: var(--color-error-deep);
+  }
+
+  /* ---------- Loading ---------- */
+  .queue-loading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .queue-loading-spinner {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-hairline);
+    border-top-color: var(--color-ink);
+    animation: queue-spin 0.7s linear infinite;
+  }
+
+  @keyframes queue-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .queue-loading-spinner { animation: none; }
+  }
+
+  /* ---------- Empty ---------- */
+  .queue-empty {
+    padding: var(--space-4xl) var(--space-xl);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-mute);
+  }
+
+  .queue-empty-title {
+    color: var(--color-ink);
+    margin: var(--space-xs) 0 0;
+  }
+
+  .queue-empty-sub {
+    color: var(--color-body);
+    margin: 0;
+    max-width: 40ch;
+  }
+
+  /* ---------- List ---------- */
+  .queue-list {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  /* ---------- Footer ---------- */
+  .queue-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background-color: var(--color-canvas-soft);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .queue-footer-stats {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+  }
+
+  .queue-stat-row {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+  }
+
+  .queue-stat-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   @media (max-width: 600px) {
-    .grid-3 {
-      grid-template-columns: 1fr;
+    .compressor {
+      padding-top: var(--space-3xl);
+      padding-bottom: var(--space-4xl);
+    }
+
+    .queue-header {
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .queue-footer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .queue-footer-stats {
+      flex-direction: column;
+      gap: var(--space-xs);
     }
   }
 </style>
+
+<script>
+  import { UploadStore, formatBytes, type UploadItem } from '../lib/upload-store';
+
+  type FilesDetail = { files: File[]; paths?: Map<string, string> };
+
+  const queuePanel = document.querySelector<HTMLElement>('[data-queue-panel]');
+  const queueList = document.querySelector<HTMLUListElement>('[data-queue-list]');
+  const queueEmpty = document.querySelector<HTMLElement>('[data-queue-empty]');
+  const queueLoading = document.querySelector<HTMLElement>('[data-queue-loading]');
+  const queueFooter = document.querySelector<HTMLElement>('[data-queue-footer]');
+  const queueStats = document.querySelector<HTMLElement>('[data-queue-stats]');
+  const totalSizeEl = document.querySelector<HTMLElement>('[data-total-size]');
+  const estimatedEl = document.querySelector<HTMLElement>('[data-estimated-time]');
+  const clearBtn = document.querySelector<HTMLButtonElement>('[data-action="clear"]');
+  const addMoreBtn = document.querySelector<HTMLButtonElement>('[data-action="add-more"]');
+
+  if (!queuePanel || !queueList || !queueEmpty || !queueLoading || !queueFooter || !queueStats) {
+    // Surface a clear error in dev so missing markup is obvious.
+    console.warn('Compressor page: queue markup incomplete');
+  } else {
+    const store = new UploadStore();
+    const tpl = document.getElementById('tpl-preview-card') as HTMLTemplateElement | null;
+
+    /** Map of card element by item id. */
+    const cards = new Map<string, HTMLElement>();
+
+    const render = (items: ReadonlyArray<UploadItem>) => {
+      // Hide all sections first; we'll enable the right ones below.
+      queueEmpty.hidden = items.length > 0;
+      queueList.hidden = items.length === 0;
+      queueFooter.hidden = items.length === 0;
+      queueLoading.hidden = !items.some((i) => i.status === 'thumbnailing');
+
+      if (queueLoading.hidden === false) {
+        const pending = items.filter((i) => i.status === 'thumbnailing').length;
+        const label = queueLoading.querySelector<HTMLElement>('[data-queue-loading-text]');
+        if (label) label.textContent = `Generating previews… (${pending} remaining)`;
+      }
+
+      // Sync cards.
+      if (tpl) {
+        const seen = new Set<string>();
+        for (const item of items) {
+          seen.add(item.id);
+          let card = cards.get(item.id);
+          if (!card) {
+            card = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+            card.dataset.id = item.id;
+            bindCard(card);
+            queueList.appendChild(card);
+            cards.set(item.id, card);
+          }
+          updateCard(card, item);
+        }
+        // Remove stale cards.
+        for (const [id, el] of cards) {
+          if (!seen.has(id)) {
+            el.remove();
+            cards.delete(id);
+          }
+        }
+      }
+
+      // Stats.
+      const total = items.length;
+      const totalSize = items.reduce((sum, i) => sum + i.size, 0);
+      const ready = items.filter((i) => i.status === 'ready').length;
+      const errored = items.filter((i) => i.status === 'error').length;
+
+      queueStats!.textContent = total
+        ? `${total} ${total === 1 ? 'image' : 'images'} · ${ready}/${total} ready${errored ? ` · ${errored} skipped` : ''}`
+        : 'No images yet';
+
+      if (totalSizeEl) totalSizeEl.textContent = formatBytes(totalSize);
+      if (estimatedEl) {
+        // Rough estimate: 0.4s per image, parallelised 4-wide.
+        const sec = Math.max(1, Math.round((total / 4) * 0.4));
+        estimatedEl.textContent = total > 0 ? `~${sec}s` : '—';
+      }
+
+      if (clearBtn) clearBtn.hidden = total === 0;
+    };
+
+    const bindCard = (card: HTMLElement) => {
+      const upBtn = card.querySelector<HTMLButtonElement>('[data-action="up"]')!;
+      const downBtn = card.querySelector<HTMLButtonElement>('[data-action="down"]')!;
+      const removeBtn = card.querySelector<HTMLButtonElement>('[data-action="remove"]')!;
+      const id = card.dataset.id!;
+
+      upBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        store.reorder(id, 'up');
+      });
+      downBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        store.reorder(id, 'down');
+      });
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        store.remove(id);
+      });
+
+      // Keyboard reorder on the card itself.
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp' && e.altKey) {
+          e.preventDefault();
+          store.reorder(id, 'up');
+        } else if (e.key === 'ArrowDown' && e.altKey) {
+          e.preventDefault();
+          store.reorder(id, 'down');
+        } else if (e.key === 'Delete' || e.key === 'Backspace') {
+          e.preventDefault();
+          store.remove(id);
+        }
+      });
+
+      // Drag-and-drop reorder.
+      card.draggable = true;
+      card.addEventListener('dragstart', (e) => {
+        card.dataset.dragging = 'true';
+        e.dataTransfer?.setData('text/plain', id);
+        if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+      });
+      card.addEventListener('dragend', () => {
+        delete card.dataset.dragging;
+      });
+      card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+      });
+      card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const draggedId = e.dataTransfer?.getData('text/plain');
+        if (draggedId && draggedId !== id) {
+          store.moveBefore(draggedId, id);
+        }
+      });
+    };
+
+    const updateCard = (card: HTMLElement, item: UploadItem) => {
+      card.dataset.status = item.status;
+      const img = card.querySelector('img') as HTMLImageElement;
+      if (img) img.src = item.previewUrl;
+
+      const nameEl = card.querySelector<HTMLElement>('[data-preview-name]');
+      if (nameEl) nameEl.textContent = item.path ?? item.file.name;
+
+      const sizeEl = card.querySelector<HTMLElement>('[data-preview-size]');
+      if (sizeEl) sizeEl.textContent = formatBytes(item.size);
+
+      const dimsEl = card.querySelector<HTMLElement>('[data-preview-dims]');
+      if (dimsEl) {
+        if (item.width && item.height) {
+          dimsEl.textContent = `${item.width} × ${item.height}`;
+        } else {
+          dimsEl.textContent = '—';
+        }
+      }
+
+      const errEl = card.querySelector<HTMLElement>('[data-preview-error]');
+      if (errEl) {
+        if (item.error) {
+          errEl.textContent = item.error;
+          errEl.hidden = false;
+        } else {
+          errEl.hidden = true;
+        }
+      }
+
+      const statusEl = card.querySelector<HTMLElement>('[data-preview-status]');
+      if (statusEl) {
+        statusEl.hidden = item.status !== 'thumbnailing';
+      }
+    };
+
+    // Subscribe to store changes.
+    store.subscribe(render);
+
+    // Listen for files emitted from the drop zone / paste / browse / folder.
+    window.addEventListener('toolboximage:files', async (e) => {
+      const detail = (e as CustomEvent<FilesDetail>).detail;
+      if (!detail?.files?.length) return;
+      await store.add(detail.files, detail.paths);
+    });
+
+    clearBtn?.addEventListener('click', () => store.clear());
+    addMoreBtn?.addEventListener('click', () => {
+      const fileInput = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
+      fileInput?.click();
+    });
+  }
+</script>
