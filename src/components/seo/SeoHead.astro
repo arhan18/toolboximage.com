@@ -1,0 +1,81 @@
+---
+/**
+ * SeoHead — injects meta tags + JSON-LD structured data into <head>.
+ * Place inside <Layout> on every page.
+ */
+import type { SeoMeta } from '../../lib/seo';
+import {
+  SITE_NAME,
+  SITE_URL,
+  SITE_DESCRIPTION,
+  SITE_TWITTER,
+  SITE_BASE_IMAGE,
+  SITE_LOCALE,
+  organizationSchema,
+  websiteSchema,
+  renderJsonLd,
+} from '../../lib/seo';
+
+interface Props extends SeoMeta {
+  /** Additional JSON-LD schemas to inject (e.g. FAQ, Breadcrumb, Article). */
+  schemas?: Record<string, unknown>[];
+  /** When true, include the default Organization + WebSite schemas. */
+  includeDefaultSchema?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical = `${SITE_URL}${Astro.url.pathname}`,
+  ogImage = SITE_BASE_IMAGE,
+  ogType = 'website',
+  publishedTime,
+  author,
+  tags,
+  noIndex = false,
+  schemas = [],
+  includeDefaultSchema = true,
+} = Astro.props;
+
+const fullTitle = title.includes(SITE_NAME) ? title : `${title} — ${SITE_NAME}`;
+
+const defaultSchemas = includeDefaultSchema
+  ? [organizationSchema(), websiteSchema()]
+  : [];
+
+const allSchemas = [...defaultSchemas, ...schemas];
+---
+
+<!-- Primary meta -->
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content={SITE_LOCALE} />
+<meta property="og:image" content={new URL(ogImage, SITE_URL).href} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={fullTitle} />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content={SITE_TWITTER} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={new URL(ogImage, SITE_URL).href} />
+
+<!-- Article-specific meta -->
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{author && <meta name="author" content={author} />}
+{tags && tags.map((t) => <meta property="article:tag" content={t} />)}
+
+<!-- JSON-LD structured data -->
+{allSchemas.length > 0 && <Fragment set:html={renderJsonLd(...allSchemas)} />}

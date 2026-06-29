@@ -11,7 +11,7 @@
     <span class="qp-counts text-body-sm-strong" data-qp-counts>0 / 0</span>
     <span class="qp-eta text-caption" data-qp-eta>—</span>
   </div>
-  <div class="qp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+  <div class="qp-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Overall compression progress">
     <div class="qp-bar-fill" data-qp-fill></div>
   </div>
   <div class="qp-meta text-caption">
@@ -29,6 +29,16 @@
     padding: var(--space-md) var(--space-lg);
     background-color: var(--color-canvas);
     border-bottom: 1px solid var(--color-hairline);
+    animation: queue-progress-in 0.36s var(--ease-out-quart);
+  }
+
+  @keyframes queue-progress-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .queue-progress { animation: none; }
   }
 
   .qp-summary {
@@ -41,18 +51,19 @@
   .qp-label {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
+    font-weight: var(--weight-medium);
   }
 
   .qp-counts {
     color: var(--color-ink);
-    font-feature-settings: "tnum";
+    font-feature-settings: var(--tnum);
   }
 
   .qp-eta {
     margin-left: auto;
     color: var(--color-mute);
-    font-feature-settings: "tnum";
+    font-feature-settings: var(--tnum);
   }
 
   .qp-bar {
@@ -60,6 +71,7 @@
     background-color: var(--color-canvas-soft);
     border-radius: var(--radius-full);
     overflow: hidden;
+    position: relative;
   }
 
   .qp-bar-fill {
@@ -73,7 +85,7 @@
     );
     background-size: 200% 100%;
     border-radius: inherit;
-    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: width 0.4s var(--ease-out-quart);
     animation: qp-shimmer 2.5s linear infinite;
   }
 
@@ -91,6 +103,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-xs);
+    font-feature-settings: var(--tnum);
   }
 
   .qp-meta [data-qp-errors] {
@@ -101,3 +114,5 @@
     color: var(--color-hairline-strong);
   }
 </style>
+</content>
+</invoke>

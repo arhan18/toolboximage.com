@@ -1,0 +1,126 @@
+---
+/**
+ * SkeletonGroup — composes a row of Skeleton blocks for placeholders.
+ *
+ * Use as a drop-in for "loading" states (e.g. a list of cards).
+ */
+import Skeleton from '../ui/Skeleton.astro';
+
+interface Props {
+  /** Number of skeleton lines. */
+  lines?: number;
+  /** Visual preset. */
+  variant?: 'card' | 'list' | 'paragraph';
+  /** Optional additional classes. */
+  class?: string;
+}
+
+const {
+  lines = 3,
+  variant = 'list',
+  class: className = '',
+} = Astro.props;
+---
+
+<div class:list={['skeleton-group', `skeleton-variant-${variant}`, className]} aria-hidden="true">
+  {variant === 'card' && (
+    <div class="skeleton-card">
+      <Skeleton shape="block" height="160px" />
+      <div class="skeleton-card-body">
+        <Skeleton width="60%" height="18px" />
+        <Skeleton width="90%" />
+        <Skeleton width="80%" />
+      </div>
+    </div>
+  )}
+
+  {variant === 'list' && (
+    <div class="skeleton-list">
+      {Array.from({ length: lines }).map((_, i) => (
+        <div class="skeleton-row" key={i}>
+          <Skeleton shape="circle" width="40px" height="40px" />
+          <div class="skeleton-row-body">
+            <Skeleton width={`${60 + (i * 7) % 30}%`} height="14px" />
+            <Skeleton width={`${30 + (i * 11) % 40}%`} height="12px" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+
+  {variant === 'paragraph' && (
+    <div class="skeleton-paragraph">
+      <Skeleton width="40%" height="24px" />
+      <div class="skeleton-paragraph-lines">
+        {Array.from({ length: lines }).map((_, i) => (
+          <Skeleton width={i === lines - 1 ? '70%' : '100%'} key={i} />
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .skeleton-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  /* ---------- Card ---------- */
+  .skeleton-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-2);
+  }
+
+  .skeleton-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  /* ---------- List ---------- */
+  .skeleton-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+  }
+
+  .skeleton-row-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  /* ---------- Paragraph ---------- */
+  .skeleton-paragraph {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .skeleton-paragraph-lines {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+</style>
+</content>
+</invoke>

@@ -77,8 +77,9 @@ const {
   .reveal {
     opacity: 0;
     transform: translate3d(0, var(--reveal-distance, 16px), 0);
-    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
-                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+    transition:
+      opacity 0.7s var(--ease-out-quart) var(--reveal-delay, 0ms),
+      transform 0.7s var(--ease-out-quart) var(--reveal-delay, 0ms);
     will-change: opacity, transform;
   }
 
@@ -95,3 +96,5 @@ const {
     }
   }
 </style>
+</content>
+</invoke>

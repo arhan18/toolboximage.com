@@ -6,7 +6,7 @@ export const tools: ToolConfig[] = [
     name: 'Image Compressor',
     description: 'Compress images without losing quality',
     icon: 'compress',
-    path: '/compressor',
+    path: '/compressor/',
     available: true,
   },
   {

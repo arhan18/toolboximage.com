@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Disallow: /_assets/
+
+Sitemap: https://toolboximage.com/sitemap-index.xml

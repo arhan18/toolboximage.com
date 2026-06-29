@@ -6,6 +6,7 @@ import Button from '../../components/ui/Button.astro';
 import Reveal from '../../components/shared/Reveal.astro';
 import Prose from '../../components/shared/Prose.astro';
 import { posts, formatDate } from '../../lib/blog';
+import { articleSchema, breadcrumbSchema } from '../../lib/seo';
 
 export function getStaticPaths() {
   return posts.map((p) => ({ params: { slug: p.slug } }));
@@ -24,12 +25,27 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
 };
 ---
 
-<Layout title={`${post.title} — ToolBox Image`} description={post.description}>
+<Layout
+  title={`${post.title} — ToolBox Image`}
+  description={post.description}
+  ogType="article"
+  publishedTime={post.date}
+  author={post.author}
+  tags={[post.tag]}
+  schemas={[
+    articleSchema(post),
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Blog', href: '/blog' },
+      { name: post.title, href: `/blog/${post.slug}` },
+    ]),
+  ]}
+>
   <AppShell>
     <section class="post-hero">
       <div class="container container-narrow">
         <Reveal>
-          <a href="/blog" class="post-back text-body-sm">
+          <a href="/blog/" class="post-back text-body-sm">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="19" y1="12" x2="5" y2="12"/>
               <polyline points="12 19 5 12 12 5"/>
@@ -85,12 +101,12 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
 
         <Reveal delay={120}>
           <div class="post-cta">
-            <Button label="Try the Compressor" href="/compressor" variant="primary" size="lg">
+            <Button label="Try the Compressor" href="/compressor/" variant="primary" size="lg">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             </Button>
-            <Button label="More posts" href="/blog" variant="secondary" size="lg" />
+            <Button label="More posts" href="/blog/" variant="secondary" size="lg" />
           </div>
         </Reveal>
       </div>
@@ -122,6 +138,13 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
     gap: var(--space-sm);
   }
 
+  .post-back:focus-visible {
+    outline: none;
+    color: var(--color-ink);
+    box-shadow: var(--focus-ring-tight);
+    border-radius: var(--radius-xs);
+  }
+
   .post-meta {
     display: flex;
     align-items: center;
@@ -133,11 +156,13 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
     color: var(--color-mute);
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
   }
 
   .post-title {
     margin: 0;
     max-width: 24ch;
+    text-wrap: balance;
   }
 
   .post-lead {

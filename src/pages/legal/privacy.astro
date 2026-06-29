@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AppShell from '../../components/layout/AppShell.astro';
+import { breadcrumbSchema } from '../../lib/seo';
 import PageHeader from '../../components/shared/PageHeader.astro';
 import Prose from '../../components/shared/Prose.astro';
 ---
@@ -8,6 +9,12 @@ import Prose from '../../components/shared/Prose.astro';
 <Layout
   title="Privacy — ToolBox Image"
   description="ToolBox Image runs entirely in your browser. No uploads, no tracking, no accounts. Your images never leave your device."
+  schemas={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Privacy', href: '/legal/privacy' },
+    ]),
+  ]}
 >
   <AppShell>
     <section class="section">
@@ -84,7 +91,7 @@ import Prose from '../../components/shared/Prose.astro';
 
           <h2>8. Contact.</h2>
           <p>
-            Questions or concerns? <a href="/contact">Get in touch</a> — we
+            Questions or concerns? <a href="/contact/">Get in touch</a> — we
             read every message.
           </p>
 

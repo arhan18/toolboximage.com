@@ -41,6 +41,7 @@ const formats = [
         data-mode={m.id}
         role="radio"
         aria-checked={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
       >
         <span class="mode-pill-label">{m.label}</span>
         <span class="mode-pill-desc text-caption">{m.desc}</span>
@@ -73,6 +74,7 @@ const formats = [
           class="field-slider"
           data-setting="quality"
           data-display-target="quality"
+          aria-label="JPEG/PNG quality"
         />
       </label>
 
@@ -90,6 +92,7 @@ const formats = [
           class="field-slider"
           data-setting="webpQuality"
           data-display-target="webpQuality"
+          aria-label="WebP quality"
         />
       </label>
 
@@ -107,6 +110,7 @@ const formats = [
           class="field-slider"
           data-setting="avifQuality"
           data-display-target="avifQuality"
+          aria-label="AVIF quality"
         />
       </label>
 
@@ -126,6 +130,7 @@ const formats = [
           data-setting="targetSizeKb"
           data-display-target="targetSizeKb"
           data-display-mode="size"
+          aria-label="Target file size in kilobytes"
         />
       </label>
 
@@ -135,7 +140,7 @@ const formats = [
           <input type="checkbox" data-setting="resize.enabled" />
           <span class="text-caption-mono">Resize</span>
         </label>
-        <select class="field-input field-input-sm" data-setting="resize.mode">
+        <select class="field-input field-input-sm" data-setting="resize.mode" aria-label="Resize mode">
           <option value="original">Original</option>
           <option value="width">Fit width</option>
           <option value="height">Fit height</option>
@@ -176,6 +181,7 @@ const formats = [
 <style>
   .settings {
     background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-2);
     padding: var(--space-lg);
@@ -200,8 +206,9 @@ const formats = [
   .settings-eyebrow {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     margin: 0;
+    font-weight: var(--weight-medium);
   }
 
   .settings-title {
@@ -215,8 +222,8 @@ const formats = [
     gap: var(--space-xs);
     padding: var(--space-xxs);
     background-color: var(--color-canvas-soft);
-    border-radius: var(--radius-md);
     border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
   }
 
   .mode-pill {
@@ -232,10 +239,12 @@ const formats = [
     flex-direction: column;
     gap: 2px;
     transition:
-      background-color 0.15s ease,
-      color 0.15s ease,
-      border-color 0.15s ease,
-      box-shadow 0.15s ease;
+      background-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart),
+      box-shadow var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart);
+    -webkit-tap-highlight-color: transparent;
   }
 
   .mode-pill:hover {
@@ -243,26 +252,32 @@ const formats = [
     background-color: var(--color-canvas);
   }
 
+  .mode-pill:active:not([aria-checked="true"]) {
+    transform: scale(0.985);
+  }
+
   .mode-pill[aria-checked="true"] {
     background-color: var(--color-canvas);
     color: var(--color-ink);
-    border-color: var(--color-hairline);
+    border-color: var(--color-hairline-strong);
     box-shadow: var(--shadow-2);
   }
 
   .mode-pill:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
   }
 
   .mode-pill-label {
     font-weight: var(--weight-semibold);
     font-size: var(--text-body-sm);
+    letter-spacing: -0.01em;
   }
 
   .mode-pill-desc {
     color: var(--color-mute);
     line-height: 1.3;
+    font-size: 11px;
   }
 
   .mode-pill[aria-checked="true"] .mode-pill-desc {
@@ -273,6 +288,16 @@ const formats = [
   .settings-custom {
     border-top: 1px solid var(--color-hairline);
     padding-top: var(--space-lg);
+    animation: settings-custom-in 0.3s var(--ease-out-quart);
+  }
+
+  @keyframes settings-custom-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .settings-custom { animation: none; }
   }
 
   .settings-grid {
@@ -290,10 +315,11 @@ const formats = [
   .field-label {
     color: var(--color-body);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    font-weight: var(--weight-medium);
   }
 
   .field-value {
@@ -301,7 +327,7 @@ const formats = [
     font-weight: var(--weight-semibold);
     text-transform: none;
     letter-spacing: 0;
-    font-feature-settings: "tnum";
+    font-feature-settings: var(--tnum);
   }
 
   .field-input {
@@ -314,6 +340,14 @@ const formats = [
     color: var(--color-ink);
     font-family: inherit;
     font-size: var(--text-body-sm);
+    transition:
+      border-color var(--dur-fast) var(--ease-out-quart),
+      box-shadow var(--dur-fast) var(--ease-out-quart),
+      background-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .field-input:hover {
+    border-color: var(--color-hairline-strong);
   }
 
   .field-input-sm {
@@ -322,9 +356,9 @@ const formats = [
   }
 
   .field-input:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 1px;
+    outline: none;
     border-color: var(--color-link);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 25%, transparent);
   }
 
   /* Range slider — clean & accessible. */
@@ -344,6 +378,7 @@ const formats = [
       var(--color-primary) var(--fill, 0%),
       var(--color-hairline) var(--fill, 0%)
     );
+    transition: background var(--dur-fast) var(--ease-out-quart);
   }
 
   .field-slider::-moz-range-track {
@@ -360,27 +395,37 @@ const formats = [
 
   .field-slider::-webkit-slider-thumb {
     appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border-radius: var(--radius-full);
     background: var(--color-canvas);
-    border: 1px solid var(--color-ink);
-    box-shadow: var(--shadow-1);
-    margin-top: -6px;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1.5px solid var(--color-ink);
+    box-shadow: var(--shadow-2);
+    margin-top: -7px;
+    transition:
+      transform var(--dur-fast) var(--ease-out-quart),
+      box-shadow var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart);
+    cursor: grab;
   }
 
   .field-slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border-radius: var(--radius-full);
     background: var(--color-canvas);
-    border: 1px solid var(--color-ink);
-    box-shadow: var(--shadow-1);
+    border: 1.5px solid var(--color-ink);
+    box-shadow: var(--shadow-2);
   }
 
   .field-slider:hover::-webkit-slider-thumb {
-    transform: scale(1.1);
+    transform: scale(1.2);
+    box-shadow: var(--shadow-3);
+  }
+
+  .field-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(0.95);
   }
 
   .field-slider:focus-visible {
@@ -388,6 +433,12 @@ const formats = [
   }
 
   .field-slider:focus-visible::-webkit-slider-thumb {
+    border-color: var(--color-link);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 35%, transparent);
+  }
+
+  .field-slider:focus-visible::-moz-range-thumb {
+    border-color: var(--color-link);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 35%, transparent);
   }
 
@@ -405,6 +456,8 @@ const formats = [
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
+    padding-top: var(--space-xs);
+    border-top: 1px dashed var(--color-hairline);
   }
 
   .field-toggle {
@@ -413,30 +466,46 @@ const formats = [
     gap: var(--space-sm);
     cursor: pointer;
     color: var(--color-ink);
+    padding: 2px 0;
+    border-radius: var(--radius-sm);
+    transition: color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .field-toggle:hover {
+    color: var(--color-link);
   }
 
   .field-toggle input[type="checkbox"] {
     appearance: none;
-    width: 32px;
-    height: 18px;
+    width: 36px;
+    height: 20px;
     border-radius: var(--radius-full);
     background-color: var(--color-hairline-strong);
     position: relative;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: background-color var(--dur-fast) var(--ease-out-quart);
+    flex-shrink: 0;
+  }
+
+  .field-toggle:hover input[type="checkbox"] {
+    background-color: var(--color-mute);
+  }
+
+  .field-toggle:hover input[type="checkbox"]:checked {
+    background-color: var(--color-link-deep);
   }
 
   .field-toggle input[type="checkbox"]::after {
     content: '';
     position: absolute;
-    top: 2px;
-    left: 2px;
+    top: 3px;
+    left: 3px;
     width: 14px;
     height: 14px;
     border-radius: var(--radius-full);
     background-color: var(--color-canvas);
-    box-shadow: var(--shadow-1);
-    transition: transform 0.15s ease;
+    box-shadow: var(--shadow-2);
+    transition: transform var(--dur-base) var(--ease-spring);
   }
 
   .field-toggle input[type="checkbox"]:checked {
@@ -444,12 +513,12 @@ const formats = [
   }
 
   .field-toggle input[type="checkbox"]:checked::after {
-    transform: translateX(14px);
+    transform: translateX(16px);
   }
 
   .field-toggle input[type="checkbox"]:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
   }
 
   .field-suffix {
@@ -474,3 +543,5 @@ const formats = [
     }
   }
 </style>
+</content>
+</invoke>

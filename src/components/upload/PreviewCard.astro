@@ -13,7 +13,7 @@ const { class: className = '' } = Astro.props;
 <template id="tpl-preview-card" data-preview-card-template>
   <article class="preview-card" data-preview-card tabindex="0">
     <div class="preview-thumb" aria-hidden="true">
-      <img alt="" />
+      <img alt="" loading="lazy" decoding="async" />
       <span class="preview-status" data-preview-status>
         <svg class="preview-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="9" opacity="0.2"/>
@@ -39,19 +39,19 @@ const { class: className = '' } = Astro.props;
           <p class="preview-error text-caption" data-preview-error hidden></p>
         </div>
         <div class="preview-actions">
-          <button type="button" class="preview-action" data-action="up" aria-label="Move up">
+          <button type="button" class="preview-action" data-action="up" aria-label="Move up" title="Move up">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
           </button>
-          <button type="button" class="preview-action" data-action="down" aria-label="Move down">
+          <button type="button" class="preview-action" data-action="down" aria-label="Move down" title="Move down">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <button type="button" class="preview-action" data-action="retry" aria-label="Retry compression" hidden>
+          <button type="button" class="preview-action" data-action="retry" aria-label="Retry compression" title="Retry" hidden>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
           </button>
-          <button type="button" class="preview-action" data-action="download" aria-label="Download compressed file" hidden>
+          <button type="button" class="preview-action" data-action="download" aria-label="Download compressed file" title="Download" hidden>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           </button>
-          <button type="button" class="preview-action preview-action-remove" data-action="remove" aria-label="Remove from queue">
+          <button type="button" class="preview-action preview-action-remove" data-action="remove" aria-label="Remove from queue" title="Remove">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
@@ -96,9 +96,19 @@ const { class: className = '' } = Astro.props;
     gap: var(--space-md);
     padding: var(--space-sm) var(--space-md);
     background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-2);
-    transition: box-shadow 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+    transition:
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-out-quart),
+      border-color var(--dur-base) var(--ease-out-quart),
+      opacity var(--dur-base) var(--ease-out-quart);
+  }
+
+  .preview-card:hover {
+    border-color: var(--color-hairline-strong);
+    box-shadow: var(--shadow-3);
   }
 
   .preview-card[data-dragging="true"] {
@@ -108,20 +118,21 @@ const { class: className = '' } = Astro.props;
   }
 
   .preview-card[data-job-status="error"] {
-    box-shadow: var(--shadow-2), 0 0 0 1px var(--color-error);
+    border-color: color-mix(in srgb, var(--color-error) 40%, var(--color-hairline));
   }
 
   .preview-card[data-job-status="done"] {
-    box-shadow: var(--shadow-2), 0 0 0 1px color-mix(in srgb, var(--color-cyan-deep) 45%, transparent);
+    border-color: color-mix(in srgb, var(--color-cyan-deep) 45%, var(--color-hairline));
   }
 
   .preview-card[data-job-status="running"] {
-    box-shadow: var(--shadow-3);
+    border-color: color-mix(in srgb, var(--color-link) 30%, var(--color-hairline));
   }
 
   .preview-card:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+    border-color: var(--color-link);
   }
 
   .preview-thumb {
@@ -136,6 +147,7 @@ const { class: className = '' } = Astro.props;
     justify-content: center;
     color: var(--color-mute);
     grid-row: span 2;
+    box-shadow: var(--shadow-1);
   }
 
   .preview-thumb img {
@@ -143,6 +155,11 @@ const { class: className = '' } = Astro.props;
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform var(--dur-slow) var(--ease-out-quart);
+  }
+
+  .preview-card:hover .preview-thumb img {
+    transform: scale(1.04);
   }
 
   .preview-status {
@@ -209,12 +226,16 @@ const { class: className = '' } = Astro.props;
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-2);
-    animation: preview-done-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: preview-done-pop 0.4s var(--ease-spring);
   }
 
   @keyframes preview-done-pop {
-    from { opacity: 0; transform: scale(0.6); }
-    to { opacity: 1; transform: scale(1); }
+    from { opacity: 0; transform: scale(0.4) rotate(-30deg); }
+    to { opacity: 1; transform: scale(1) rotate(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preview-thumb-done { animation: none; }
   }
 
   .preview-body {
@@ -256,6 +277,7 @@ const { class: className = '' } = Astro.props;
     align-items: center;
     gap: var(--space-xs);
     margin: 0;
+    font-feature-settings: var(--tnum);
   }
 
   .preview-dot { color: var(--color-hairline-strong); }
@@ -272,6 +294,19 @@ const { class: className = '' } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 2px;
+    opacity: 0;
+    transform: translateX(4px);
+    transition:
+      opacity var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .preview-card:hover .preview-actions,
+  .preview-card:focus-within .preview-actions,
+  .preview-card[data-job-status="done"] .preview-actions,
+  .preview-card[data-job-status="error"] .preview-actions {
+    opacity: 1;
+    transform: translateX(0);
   }
 
   .preview-action {
@@ -285,7 +320,12 @@ const { class: className = '' } = Astro.props;
     background: transparent;
     color: var(--color-mute);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart);
+    -webkit-tap-highlight-color: transparent;
   }
 
   .preview-action:hover {
@@ -294,9 +334,13 @@ const { class: className = '' } = Astro.props;
     border-color: var(--color-hairline);
   }
 
+  .preview-action:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+
   .preview-action:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
   }
 
   .preview-action:disabled {
@@ -327,6 +371,7 @@ const { class: className = '' } = Astro.props;
     background-color: var(--color-canvas-soft);
     border-radius: var(--radius-full);
     overflow: hidden;
+    position: relative;
   }
 
   .preview-progress-bar {
@@ -335,7 +380,7 @@ const { class: className = '' } = Astro.props;
     background: linear-gradient(90deg, var(--gradient-develop-start), var(--gradient-preview-end));
     background-size: 200% 100%;
     border-radius: inherit;
-    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: width 0.3s var(--ease-out-quart);
     animation: progress-shimmer 2s linear infinite;
   }
 
@@ -356,9 +401,7 @@ const { class: className = '' } = Astro.props;
 
   @media (prefers-reduced-motion: reduce) {
     .preview-progress-bar,
-    .preview-thumb-done {
-      animation: none;
-    }
+    .preview-thumb-done { animation: none; }
   }
 
   /* ---------- Per-item statistics ---------- */
@@ -369,6 +412,16 @@ const { class: className = '' } = Astro.props;
     padding-top: var(--space-xs);
     border-top: 1px dashed var(--color-hairline);
     margin-top: var(--space-xxs);
+    animation: preview-stats-in 0.36s var(--ease-out-quart);
+  }
+
+  @keyframes preview-stats-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preview-stats { animation: none; }
   }
 
   .preview-card:not([data-job-status="done"]) .preview-stats {
@@ -385,8 +438,9 @@ const { class: className = '' } = Astro.props;
   .preview-stat-label {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     font-size: 10px;
+    font-weight: var(--weight-medium);
   }
 
   .preview-stat-value {
@@ -394,7 +448,7 @@ const { class: className = '' } = Astro.props;
     font-size: var(--text-body-sm);
     font-weight: var(--weight-semibold);
     line-height: 1.2;
-    font-feature-settings: "tnum";
+    font-feature-settings: var(--tnum);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -428,3 +482,5 @@ const { class: className = '' } = Astro.props;
     }
   }
 </style>
+</content>
+</invoke>

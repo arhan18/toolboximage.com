@@ -7,20 +7,24 @@
 interface Props {
   /** Soften opacity for use behind content. */
   intensity?: 'normal' | 'subtle' | 'ambient';
+  /** Optional animation pause — useful when stacking many gradients. */
+  paused?: boolean;
   class?: string;
 }
 
-const { intensity = 'normal', class: className = '' } = Astro.props;
+const { intensity = 'normal', paused = false, class: className = '' } = Astro.props;
 ---
 
 <div
-  class:list={['mesh-gradient', `mesh-${intensity}`, className]}
+  class:list={['mesh-gradient', `mesh-${intensity}`, paused ? 'mesh-paused' : '', className]}
   aria-hidden="true"
 >
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
   <div class="mesh-noise"></div>
+  <div class="mesh-vignette"></div>
 </div>
 
 <style>
@@ -67,13 +71,37 @@ const { intensity = 'normal', class: className = '' } = Astro.props;
     animation-delay: -14s;
   }
 
+  /* Smaller 4th orb — adds depth without dominating. */
+  .orb-4 {
+    width: 320px;
+    height: 320px;
+    top: 40%;
+    right: 35%;
+    background: radial-gradient(circle, var(--color-cyan), var(--color-violet));
+    animation-delay: -5s;
+    opacity: 0.6;
+  }
+
   .mesh-normal .orb { opacity: 0.4; }
   .mesh-subtle .orb { opacity: 0.28; }
   .mesh-ambient .orb { opacity: 0.18; }
 
+  /* The 4th accent orb reads slightly differently across themes. */
+  .mesh-normal .orb-4 { opacity: 0.22; }
+  .mesh-subtle .orb-4 { opacity: 0.14; }
+  .mesh-ambient .orb-4 { opacity: 0.08; }
+
   [data-theme="dark"] .mesh-normal .orb { opacity: 0.22; }
   [data-theme="dark"] .mesh-subtle .orb { opacity: 0.14; }
   [data-theme="dark"] .mesh-ambient .orb { opacity: 0.08; }
+
+  [data-theme="dark"] .mesh-normal .orb-4 { opacity: 0.12; }
+  [data-theme="dark"] .mesh-subtle .orb-4 { opacity: 0.08; }
+  [data-theme="dark"] .mesh-ambient .orb-4 { opacity: 0.04; }
+
+  .mesh-paused .orb {
+    animation-play-state: paused;
+  }
 
   /* Subtle grain to keep the gradient from feeling flat at hero scale. */
   .mesh-noise {
@@ -91,6 +119,25 @@ const { intensity = 'normal', class: className = '' } = Astro.props;
     opacity: 0.35;
   }
 
+  /* Soft vignette so the gradient fades gracefully into the page. */
+  .mesh-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 90% 70% at 50% 50%,
+      transparent 50%,
+      color-mix(in srgb, var(--color-canvas) 35%, transparent) 100%
+    );
+  }
+
+  [data-theme="dark"] .mesh-vignette {
+    background: radial-gradient(
+      ellipse 90% 70% at 50% 50%,
+      transparent 50%,
+      color-mix(in srgb, var(--color-canvas-soft) 50%, transparent) 100%
+    );
+  }
+
   @keyframes orb-drift {
     0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
     33%      { transform: translate3d(20px, -30px, 0) scale(1.04); }
@@ -101,3 +148,5 @@ const { intensity = 'normal', class: className = '' } = Astro.props;
     .orb { animation: none; }
   }
 </style>
+</content>
+</invoke>

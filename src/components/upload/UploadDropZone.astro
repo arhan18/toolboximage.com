@@ -108,7 +108,10 @@ const accept = [
     cursor: pointer;
     overflow: hidden;
     isolation: isolate;
-    transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+    transition:
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-out-quart),
+      background-color var(--dur-base) var(--ease-out-quart);
   }
 
   .zone::before {
@@ -129,7 +132,7 @@ const accept = [
     -webkit-mask-composite: xor;
             mask-composite: exclude;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--dur-base) var(--ease-out-quart);
     pointer-events: none;
     z-index: 1;
     animation: ring-spin 8s linear infinite;
@@ -138,7 +141,7 @@ const accept = [
   .zone:hover,
   .zone:focus-visible {
     box-shadow: var(--shadow-4);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
   }
 
   .zone:hover::before,
@@ -147,8 +150,10 @@ const accept = [
   }
 
   .zone:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow:
+      var(--shadow-4),
+      0 0 0 3px color-mix(in srgb, var(--color-link) 35%, transparent);
   }
 
   /* Drag-over — same blue glow treatment as the hero. */
@@ -159,7 +164,7 @@ const accept = [
       0 0 0 1px color-mix(in srgb, var(--color-link) 40%, transparent),
       0 0 32px -4px color-mix(in srgb, var(--color-link) 45%, transparent);
     transform: translateY(-2px) scale(1.005);
-    animation: zone-pulse 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    animation: zone-pulse 1.6s var(--ease-in-out-soft) infinite;
   }
 
   .zone[data-dragover="true"]::before {
@@ -167,7 +172,10 @@ const accept = [
   }
 
   .zone-icon {
-    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    transition:
+      background-color var(--dur-base) var(--ease-out-quart),
+      color var(--dur-base) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-spring);
   }
 
   .zone[data-dragover="true"] .zone-icon {
@@ -233,11 +241,20 @@ const accept = [
     text-decoration: underline;
     text-underline-offset: 3px;
     text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition:
+      color var(--dur-fast) var(--ease-out-quart),
+      text-decoration-color var(--dur-fast) var(--ease-out-quart);
   }
 
   .zone-link:hover {
     color: var(--color-link-deep);
     text-decoration-color: var(--color-link-deep);
+  }
+
+  .zone-link:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+    border-radius: var(--radius-xs);
   }
 
   .zone-divider {
@@ -261,22 +278,51 @@ const accept = [
     border: 1px solid var(--color-hairline);
     color: var(--color-body);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .zone:hover .zone-format {
+    border-color: var(--color-hairline-strong);
+    color: var(--color-ink);
   }
 
   /* Errors panel */
   .zone-errors {
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
     background-color: var(--color-error-soft);
     border: 1px solid color-mix(in srgb, var(--color-error) 25%, transparent);
     border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    animation: zone-errors-in 0.36s var(--ease-out-quart);
+  }
+
+  @keyframes zone-errors-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zone-errors { animation: none; }
   }
 
   .zone-errors-label {
     color: var(--color-error-deep);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin: 0 0 var(--space-xs);
+    letter-spacing: 0.08em;
+    margin: 0;
+    font-weight: var(--weight-medium);
   }
 
   .zone-errors-list {
@@ -474,3 +520,5 @@ const accept = [
       .replace(/'/g, '&#39;');
   }
 </script>
+</content>
+</invoke>

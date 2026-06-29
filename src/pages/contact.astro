@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import AppShell from '../components/layout/AppShell.astro';
+import { breadcrumbSchema } from '../lib/seo';
 import Button from '../components/ui/Button.astro';
 import Card from '../components/ui/Card.astro';
 import IconBox from '../components/ui/IconBox.astro';
@@ -10,7 +11,13 @@ import Reveal from '../components/shared/Reveal.astro';
 
 <Layout
   title="Contact — ToolBox Image"
-  description="Get in touch with the ToolBox Image team. We read every message."
+  description="Get in touch with the ToolBox Image team. We reply to contact-form messages within 1–2 business days."
+  schemas={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Contact', href: '/contact' },
+    ]),
+  ]}
 >
   <AppShell>
     <section class="contact section">
@@ -262,11 +269,39 @@ import Reveal from '../components/shared/Reveal.astro';
     color: var(--color-link);
     text-decoration: none;
     margin-top: var(--space-xs);
-    transition: color 0.15s ease;
+    padding: 2px 0;
+    transition:
+      color var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart);
+    position: relative;
+  }
+
+  .contact-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-base) var(--ease-out-quart);
   }
 
   .contact-link:hover {
     color: var(--color-link-deep);
+  }
+
+  .contact-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  .contact-link:focus-visible {
+    outline: none;
+    color: var(--color-link-deep);
+    box-shadow: var(--focus-ring-tight);
+    border-radius: var(--radius-xs);
   }
 
   @media (max-width: 1023px) {
@@ -285,8 +320,10 @@ import Reveal from '../components/shared/Reveal.astro';
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
   const note = document.querySelector<HTMLElement>('[data-form-note]');
+  const submitBtn = form?.querySelector<HTMLButtonElement>('[type="submit"]');
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (submitBtn) submitBtn.disabled = true;
     const data = new FormData(form);
     const name = String(data.get('name') || '').trim();
     const email = String(data.get('email') || '').trim();
@@ -296,5 +333,14 @@ import Reveal from '../components/shared/Reveal.astro';
     const body = `From: ${name} <${email}>\nTopic: ${topic}\n\n${message}`;
     window.location.href = `mailto:hello@toolboximage.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     if (note) note.hidden = false;
+    const toast = (window as any).toast;
+    if (typeof toast === 'function') {
+      toast({
+        title: 'Message ready to send',
+        description: 'Your mail client should be opening. We reply within 1–2 business days.',
+        tone: 'success',
+        durationMs: 5000,
+      });
+    }
   });
 </script>

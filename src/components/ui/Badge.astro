@@ -31,10 +31,19 @@ const { tone = 'neutral', eyebrow, class: className = '' } = Astro.props;
     background-color: var(--color-canvas-soft);
     color: var(--color-body);
     white-space: nowrap;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart);
   }
 
   .badge-eyebrow {
     color: var(--color-mute);
+  }
+
+  .badge-text {
+    line-height: 1;
   }
 
   .badge-info {
@@ -64,4 +73,10 @@ const { tone = 'neutral', eyebrow, class: className = '' } = Astro.props;
     border-color: transparent;
     color: var(--color-error-deep);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .badge { transition: none; }
+  }
 </style>
+</content>
+</invoke>

@@ -2,22 +2,32 @@
 import '../styles/fonts.css';
 import '../styles/global.css';
 import { FOUC_GUARD_SCRIPT } from '../lib/theme';
+import Toaster from '../components/ui/Toaster.astro';
+import SeoHead from '../components/seo/SeoHead.astro';
+import type { SeoMeta } from '../lib/seo';
+import { SITE_URL, SITE_BASE_IMAGE } from '../lib/seo';
 
-interface Props {
-  title?: string;
-  description?: string;
-  ogImage?: string;
-  canonicalUrl?: string;
-  /** Hide the theme-color meta tags (e.g. for full-bleed tool pages). */
+interface Props extends SeoMeta {
   noThemeColor?: boolean;
+  /** When true, skip default Organization+WebSite JSON-LD schemas. */
+  noDefaultSchema?: boolean;
+  /** Additional JSON-LD schemas. */
+  schemas?: Record<string, unknown>[];
 }
 
 const {
   title = 'ToolBox Image — Fast, Private Image Tools',
   description = 'The fastest, cleanest, most modern privacy-first online image toolkit. Compress, resize, convert, and optimize images entirely in your browser.',
-  ogImage = '/og-image.png',
-  canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://toolboximage.com').href,
+  canonical,
+  ogImage = SITE_BASE_IMAGE,
+  ogType,
+  publishedTime,
+  author,
+  tags,
+  noIndex = false,
   noThemeColor = false,
+  noDefaultSchema = false,
+  schemas,
 } = Astro.props;
 ---
 
@@ -31,42 +41,58 @@ const {
     <!-- Prevent FOUC: resolve theme before first paint -->
     <script is:inline set:html={FOUC_GUARD_SCRIPT} />
 
-    <!-- SEO -->
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl} />
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
-    <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:site_name" content="ToolBox Image" />
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    <!-- SEO: meta + JSON-LD -->
+    <SeoHead
+      {title}
+      {description}
+      canonical={canonical ?? `${SITE_URL}${Astro.url.pathname}`}
+      {ogImage}
+      {ogType}
+      {publishedTime}
+      {author}
+      {tags}
+      {noIndex}
+      schemas={schemas}
+      includeDefaultSchema={!noDefaultSchema}
+    />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
 
-    <!-- Preload critical font for hero text -->
+    <!-- Preconnect for critical third-party origins -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- DNS prefetch for any future CDN resources -->
+    <link rel="dns-prefetch" href="https://toolboximage.com" />
+
+    <!-- Preload critical fonts -->
     <link rel="preload" href="/fonts/geist/Geist-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/geist/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/geist/Geist-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/geist-mono/GeistMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
 
+    <!-- Prefetch the compressor page (highest-traffic route) -->
+    <link rel="prefetch" href="/compressor/" />
+
+    <!-- Theme color -->
     {!noThemeColor && (
       <>
         <meta name="theme-color" content="#171717" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
       </>
     )}
+
+    <!-- Performance: hint the browser to pre-render the compressor page on idle -->
+    <link rel="prerender" href="/compressor/" />
   </head>
-  <body class="min-h-screen bg-canvas-soft text-ink antialiased">
+  <body class="min-h-screen text-ink antialiased">
+    <!-- Accessibility: skip to main content for keyboard users -->
+    <a href="#main" class="skip-link">Skip to content</a>
+
     <slot />
+
+    <Toaster />
 
     <!-- Re-apply theme on load (handles system theme changes during navigation) -->
     <script>

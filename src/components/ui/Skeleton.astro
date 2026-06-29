@@ -1,0 +1,91 @@
+---
+/**
+ * Skeleton — animated placeholder block. Drop into any layout to indicate
+ * loading state. Honors prefers-reduced-motion (no shimmer).
+ *
+ * Variants:
+ *  - text   : soft rounded pill (default)
+ *  - circle : round (for avatars / icon placeholders)
+ *  - block  : rectangle (for image / card placeholders)
+ *  - line   : full-width thin bar with a lighter background (for list rows)
+ */
+interface Props {
+  /** Width: any CSS length. Default 100%. */
+  width?: string;
+  /** Height: any CSS length. Default 14px. */
+  height?: string;
+  /** Shape preset. */
+  shape?: 'text' | 'circle' | 'block' | 'line';
+  /** Optional additional classes. */
+  class?: string;
+}
+
+const {
+  width = '100%',
+  height = '14px',
+  shape = 'text',
+  class: className = '',
+} = Astro.props;
+---
+
+<span
+  class:list={['skeleton', `skeleton-${shape}`, className]}
+  style={`--sk-w:${width};--sk-h:${height}`}
+  aria-hidden="true"
+></span>
+
+<style>
+  .skeleton {
+    display: inline-block;
+    width: var(--sk-w);
+    height: var(--sk-h);
+    background-color: var(--color-canvas-soft);
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-hairline) 60%, transparent) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: skeleton-shimmer 1.6s linear infinite;
+    border: 1px solid var(--color-hairline);
+  }
+
+  .skeleton-text {
+    border-radius: var(--radius-full);
+  }
+
+  .skeleton-circle {
+    border-radius: var(--radius-full);
+    width: var(--sk-h);
+  }
+
+  .skeleton-block {
+    border-radius: var(--radius-sm);
+  }
+
+  .skeleton-line {
+    border-radius: var(--radius-full);
+    height: 1px;
+    border: none;
+    background-color: var(--color-hairline);
+    background-image: none;
+    animation: none;
+  }
+
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton {
+      animation: none;
+      background-image: none;
+      background-color: var(--color-canvas-soft);
+    }
+  }
+</style>
+</content>
+</invoke>

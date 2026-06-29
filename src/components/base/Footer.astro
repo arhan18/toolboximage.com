@@ -11,27 +11,29 @@ const columns = [
   {
     label: 'Tools',
     links: [
-      { href: '/compressor', label: 'Compressor' },
-      { href: '/blog/compression-basics', label: 'How compression works' },
+      { href: '/compressor/', label: 'Compressor' },
+      { href: '/blog/compression-basics/', label: 'How compression works' },
     ],
   },
   {
     label: 'Resources',
     links: [
-      { href: '/blog', label: 'Blog' },
-      { href: '/faq', label: 'FAQ' },
+      { href: '/blog/', label: 'Blog' },
+      { href: '/faq/', label: 'FAQ' },
     ],
   },
   {
     label: 'Company',
     links: [
-      { href: '/about', label: 'About' },
-      { href: '/contact', label: 'Contact' },
-      { href: '/legal/privacy', label: 'Privacy' },
-      { href: '/legal/terms', label: 'Terms' },
+      { href: '/about/', label: 'About' },
+      { href: '/contact/', label: 'Contact' },
+      { href: '/legal/privacy/', label: 'Privacy' },
+      { href: '/legal/terms/', label: 'Terms' },
     ],
   },
 ];
+
+const year = new Date().getFullYear();
 ---
 
 <footer class:list={['site-footer', className]}>
@@ -50,7 +52,7 @@ const columns = [
           <h4 class="text-caption-mono footer-column-label">{col.label}</h4>
           <ul class="footer-links">
             {col.links.map((l) => (
-              <li><a href={l.href} class="text-body-sm">{l.label}</a></li>
+              <li><a href={l.href} class="text-body-sm footer-link">{l.label}</a></li>
             ))}
           </ul>
         </div>
@@ -60,7 +62,7 @@ const columns = [
 
   <div class="footer-bottom container">
     <p class="text-caption footer-copy">
-      &copy; {new Date().getFullYear()} ToolBox Image. All rights reserved.
+      &copy; {year} ToolBox Image. All rights reserved.
     </p>
     <p class="text-caption footer-status">
       <span class="footer-status-dot" aria-hidden="true"></span>
@@ -74,6 +76,7 @@ const columns = [
     background-color: var(--color-canvas);
     border-top: 1px solid var(--color-hairline);
     padding: var(--space-4xl) 0 var(--space-xl);
+    margin-top: var(--space-5xl);
   }
 
   .footer-inner {
@@ -92,6 +95,7 @@ const columns = [
   .footer-tagline {
     color: var(--color-mute);
     margin: 0;
+    line-height: 1.5;
   }
 
   .footer-columns {
@@ -108,9 +112,10 @@ const columns = [
 
   .footer-column-label {
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     color: var(--color-mute);
     margin: 0;
+    font-weight: var(--weight-medium);
   }
 
   .footer-links {
@@ -122,14 +127,26 @@ const columns = [
     gap: var(--space-xs);
   }
 
-  .footer-links a {
+  .footer-link {
     color: var(--color-body);
     text-decoration: none;
-    transition: color 0.15s ease;
+    display: inline-block;
+    padding: 2px 0;
+    border-radius: var(--radius-xs);
+    transition:
+      color var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart);
+    position: relative;
   }
 
-  .footer-links a:hover {
+  .footer-link:hover {
     color: var(--color-ink);
+    transform: translateX(2px);
+  }
+
+  .footer-link:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
   }
 
   .footer-bottom {
@@ -156,6 +173,21 @@ const columns = [
     border-radius: var(--radius-full);
     background-color: var(--color-cyan-deep);
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-cyan-deep) 25%, transparent);
+    animation: footer-status-pulse 2.4s var(--ease-in-out-soft) infinite;
+  }
+
+  @keyframes footer-status-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-cyan-deep) 25%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-cyan-deep) 12%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-status-dot { animation: none; }
+    .footer-link { transition: none; }
   }
 
   @media (max-width: 1023px) {
@@ -185,3 +217,5 @@ const columns = [
     }
   }
 </style>
+</content>
+</invoke>

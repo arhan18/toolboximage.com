@@ -18,27 +18,31 @@ const { items, tone = 'light', class: className = '' } = Astro.props;
 ---
 
 <ul class:list={['faq', `faq-${tone}`, className]} role="list">
-  {items.map((item) => (
+  {items.map((item, i) => (
     <li class="faq-item">
-      <details class="faq-details">
+      <details class="faq-details" name={items.length > 1 ? `faq-g${i}` : undefined}>
         <summary class="faq-summary text-body-md-strong">
-          <span>{item.q}</span>
-          <svg
-            class="faq-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
+          <span class="faq-question">
+            <span class="faq-num text-caption-mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <span>{item.q}</span>
+          </span>
+          <span class="faq-toggle" aria-hidden="true">
+            <svg
+              class="faq-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </span>
         </summary>
         <div class="faq-answer text-body-md">
           <p>{item.a}</p>
@@ -62,6 +66,18 @@ const { items, tone = 'light', class: className = '' } = Astro.props;
     border-radius: var(--radius-md);
     background-color: var(--color-canvas);
     box-shadow: var(--shadow-2);
+    transition:
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-out-quart);
+    scroll-margin-top: 100px;
+  }
+
+  .faq-item:hover {
+    box-shadow: var(--shadow-3);
+  }
+
+  .faq-item:has(.faq-details[open]) {
+    box-shadow: var(--shadow-3);
   }
 
   .faq-dark .faq-item {
@@ -74,7 +90,7 @@ const { items, tone = 'light', class: className = '' } = Astro.props;
     overflow: hidden;
   }
 
-  .faq-details[open] .faq-icon {
+  .faq-details[open] .faq-toggle .faq-icon {
     transform: rotate(45deg);
   }
 
@@ -91,10 +107,19 @@ const { items, tone = 'light', class: className = '' } = Astro.props;
     cursor: pointer;
     color: var(--color-ink);
     list-style: none;
+    transition: background-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .faq-summary:hover {
+    background-color: color-mix(in srgb, var(--color-canvas-soft) 60%, transparent);
   }
 
   .faq-dark .faq-summary {
     color: var(--color-on-primary);
+  }
+
+  .faq-dark .faq-summary:hover {
+    background-color: color-mix(in srgb, var(--color-on-primary) 6%, transparent);
   }
 
   .faq-summary::-webkit-details-marker {
@@ -102,14 +127,52 @@ const { items, tone = 'light', class: className = '' } = Astro.props;
   }
 
   .faq-summary:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: -2px;
+    outline: none;
+    box-shadow: var(--focus-ring-inset);
     border-radius: var(--radius-md);
   }
 
-  .faq-icon {
+  .faq-question {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    min-width: 0;
+  }
+
+  .faq-num {
+    color: var(--color-mute);
+    font-feature-settings: var(--tnum);
     flex-shrink: 0;
-    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    padding-top: 2px;
+  }
+
+  .faq-toggle {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .faq-dark .faq-toggle {
+    background-color: color-mix(in srgb, var(--color-on-primary) 8%, transparent);
+    border-color: color-mix(in srgb, var(--color-on-primary) 14%, transparent);
+  }
+
+  .faq-summary:hover .faq-toggle {
+    background-color: var(--color-canvas);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .faq-icon {
+    transition: transform var(--dur-base) var(--ease-spring);
     color: var(--color-mute);
   }
 
@@ -120,7 +183,7 @@ const { items, tone = 'light', class: className = '' } = Astro.props;
   .faq-answer {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: grid-template-rows var(--dur-base) var(--ease-out-quart);
     color: var(--color-body);
   }
 
@@ -131,7 +194,18 @@ const { items, tone = 'light', class: className = '' } = Astro.props;
     line-height: var(--leading-body-md);
   }
 
+  .faq-answer > p > :global(*) + * {
+    margin-top: var(--space-md);
+  }
+
   .faq-dark .faq-answer {
     color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-toggle .faq-icon,
+    .faq-answer { transition: none; }
+  }
 </style>
+</content>
+</invoke>

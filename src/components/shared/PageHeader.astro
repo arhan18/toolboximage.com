@@ -8,13 +8,15 @@ interface Props {
   title: string;
   lead?: string;
   align?: 'start' | 'center';
+  /** Optional accent color for the eyebrow mono prefix. */
+  accent?: boolean;
   class?: string;
 }
 
-const { eyebrow, title, lead, align = 'start', class: className = '' } = Astro.props;
+const { eyebrow, title, lead, align = 'start', accent = false, class: className = '' } = Astro.props;
 ---
 
-<header class:list={['page-header', `align-${align}`, className]}>
+<header class:list={['page-header', `align-${align}`, accent ? 'with-accent' : '', className]}>
   {eyebrow && <p class="text-caption-mono page-eyebrow">{eyebrow}</p>}
   <h1 class="text-display-xl page-title">{title}</h1>
   {lead && <p class="text-body-lg page-lead">{lead}</p>}
@@ -38,19 +40,39 @@ const { eyebrow, title, lead, align = 'start', class: className = '' } = Astro.p
   .page-eyebrow {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .with-accent .page-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(
+      135deg,
+      var(--gradient-develop-start),
+      var(--gradient-preview-end)
+    );
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 14%, transparent);
   }
 
   .page-title {
     margin: 0;
     color: var(--color-ink);
+    letter-spacing: var(--tracking-display-xl);
+    text-wrap: balance;
   }
 
   .page-lead {
     margin: 0;
     color: var(--color-body);
     max-width: 56ch;
+    text-wrap: pretty;
   }
 
   .align-center .page-lead {
@@ -61,3 +83,5 @@ const { eyebrow, title, lead, align = 'start', class: className = '' } = Astro.p
     margin-top: var(--space-sm);
   }
 </style>
+</content>
+</invoke>

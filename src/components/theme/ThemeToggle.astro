@@ -2,16 +2,19 @@
 interface Props {
   class?: string;
   size?: 'sm' | 'md';
+  /** Accessible label override. Defaults to "Toggle theme". */
+  ariaLabel?: string;
 }
 
-const { class: className = '', size = 'md' } = Astro.props;
+const { class: className = '', size = 'md', ariaLabel = 'Toggle theme' } = Astro.props;
 ---
 
 <button
   type="button"
   id="theme-toggle"
   class={`theme-toggle ${className}`}
-  aria-label="Toggle theme"
+  aria-label={ariaLabel}
+  title={ariaLabel}
   data-size={size}
 >
   <!-- Sun icon (shown in dark mode) -->
@@ -42,7 +45,13 @@ const { class: className = '', size = 'md' } = Astro.props;
     background: var(--color-canvas);
     color: var(--color-ink);
     cursor: pointer;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    position: relative;
+    overflow: hidden;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart);
   }
 
   .theme-toggle[data-size="sm"] {
@@ -61,18 +70,38 @@ const { class: className = '', size = 'md' } = Astro.props;
   }
 
   .theme-toggle:active {
-    transform: scale(0.95);
+    transform: scale(0.94);
   }
 
-  /* Show/hide icons based on theme */
-  [data-theme="light"] .theme-icon-sun,
-  [data-theme="dark"] .theme-icon-moon {
-    display: none;
+  .theme-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
   }
 
-  [data-theme="light"] .theme-icon-moon,
-  [data-theme="dark"] .theme-icon-sun {
-    display: block;
+  /* Icons sit on top of each other for a real crossfade. */
+  .theme-icon-sun,
+  .theme-icon-moon {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    transition:
+      transform var(--dur-slow) var(--ease-spring),
+      opacity var(--dur-base) var(--ease-out-quart);
+  }
+
+  /* Show/hide icons based on theme via opacity (not display:none) for smooth crossfade. */
+  [data-theme="light"] .theme-icon-sun { opacity: 0; transform: rotate(0deg) scale(0.6); pointer-events: none; }
+  [data-theme="dark"] .theme-icon-moon { opacity: 0; transform: rotate(0deg) scale(0.6); pointer-events: none; }
+  [data-theme="light"] .theme-icon-moon { opacity: 1; transform: rotate(0deg) scale(1); }
+  [data-theme="dark"] .theme-icon-sun { opacity: 1; transform: rotate(0deg) scale(1); }
+
+  .theme-toggle:hover .theme-icon-sun { transform: rotate(15deg) scale(1.1); }
+  .theme-toggle:hover .theme-icon-moon { transform: rotate(15deg) scale(1.1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle,
+    .theme-icon-sun,
+    .theme-icon-moon { transition: none; }
   }
 </style>
 
@@ -88,3 +117,5 @@ const { class: className = '', size = 'md' } = Astro.props;
     });
   });
 </script>
+</content>
+</invoke>

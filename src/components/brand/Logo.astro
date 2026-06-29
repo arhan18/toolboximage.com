@@ -47,19 +47,41 @@ const {
     gap: var(--space-xs);
     color: var(--color-ink);
     text-decoration: none;
-    transition: opacity 0.15s ease;
+    transition:
+      opacity var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart);
+    border-radius: var(--radius-sm);
+    padding: 2px;
+    margin: -2px;
   }
 
   .logo:hover {
-    opacity: 0.85;
+    opacity: 1;
   }
 
   .logo-mark {
     flex-shrink: 0;
+    transition: transform var(--dur-slow) var(--ease-spring);
+  }
+
+  .logo:hover .logo-mark {
+    transform: rotate(-10deg) scale(1.06);
   }
 
   .logo-text {
     white-space: nowrap;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.01em;
+    transition: color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .logo:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo, .logo-mark { transition: none; }
   }
 </style>
+</content>
+</invoke>

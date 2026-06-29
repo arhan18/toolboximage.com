@@ -8,7 +8,10 @@
 <section class="results-summary" data-results-summary hidden aria-label="Results summary">
   <div class="results-header">
     <div class="results-title-block">
-      <p class="text-caption-mono results-eyebrow">Done</p>
+      <p class="text-caption-mono results-eyebrow">
+        <span class="results-eyebrow-dot" aria-hidden="true"></span>
+        Done
+      </p>
       <h2 class="text-display-sm results-title">Your images are ready.</h2>
     </div>
     <div class="results-actions">
@@ -61,7 +64,7 @@
   <div class="results-ba" data-results-ba hidden>
     <div class="results-ba-head">
       <p class="text-caption-mono results-ba-eyebrow">Spot check</p>
-      <p class="text-body-sm" style="color:var(--color-body);max-width:48ch;">
+      <p class="text-body-sm results-ba-copy">
         Drag the divider or switch to side-by-side / zoom to compare the first image.
       </p>
     </div>
@@ -73,13 +76,14 @@
   .results-summary {
     margin-top: var(--space-md);
     background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-3);
     padding: var(--space-lg);
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
-    animation: results-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: results-rise 0.6s var(--ease-out-quart);
   }
 
   @keyframes results-rise {
@@ -107,8 +111,34 @@
   .results-eyebrow {
     color: var(--color-cyan-deep);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     margin: 0;
+    font-weight: var(--weight-medium);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .results-eyebrow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-cyan-deep);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-cyan-deep) 25%, transparent);
+    animation: results-dot-pulse 1.6s var(--ease-in-out-soft) infinite;
+  }
+
+  @keyframes results-dot-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-cyan-deep) 25%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-cyan-deep) 8%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .results-eyebrow-dot { animation: none; }
   }
 
   .results-title {
@@ -134,13 +164,23 @@
     font-family: inherit;
     font-size: var(--text-body-sm);
     font-weight: var(--weight-medium);
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart),
+      border-color var(--dur-fast) var(--ease-out-quart),
+      transform var(--dur-fast) var(--ease-out-quart),
+      box-shadow var(--dur-fast) var(--ease-out-quart);
     white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .results-btn:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+  }
+
+  .results-btn:active:not(:disabled) {
+    transform: scale(0.985);
   }
 
   .results-btn-primary {
@@ -190,16 +230,18 @@
   .result-stat-label {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
+    font-weight: var(--weight-medium);
   }
 
   .result-stat-value {
     color: var(--color-ink);
-    font-feature-settings: "tnum";
+    font-feature-settings: var(--tnum);
     line-height: 1.1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: color var(--dur-base) var(--ease-out-quart);
   }
 
   .result-stat-accent .result-stat-value {
@@ -216,7 +258,7 @@
 
   .result-stat-sub {
     color: var(--color-cyan-deep);
-    font-feature-settings: "tnum";
+    font-feature-settings: var(--tnum);
   }
 
   .result-stat-arrow {
@@ -242,7 +284,14 @@
   .results-ba-eyebrow {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
+    margin: 0;
+    font-weight: var(--weight-medium);
+  }
+
+  .results-ba-copy {
+    color: var(--color-body);
+    max-width: 48ch;
     margin: 0;
   }
 
@@ -270,3 +319,5 @@
     }
   }
 </style>
+</content>
+</invoke>

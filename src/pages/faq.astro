@@ -6,6 +6,7 @@ import Badge from '../components/ui/Badge.astro';
 import PageHeader from '../components/shared/PageHeader.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema, breadcrumbSchema } from '../lib/seo';
 
 const privacy = [
   {
@@ -76,6 +77,13 @@ const account = [
 <Layout
   title="FAQ — ToolBox Image"
   description="Answers to the most common questions about ToolBox Image — privacy, file formats, batch processing, and more."
+  schemas={[
+    faqSchema([...privacy, ...tools, ...account]),
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'FAQ', href: '/faq' },
+    ]),
+  ]}
 >
   <AppShell>
     <section class="faq-hero">
@@ -89,8 +97,8 @@ const account = [
         <Reveal delay={140}>
           <p class="text-body-lg faq-lead">
             Quick answers to the questions we get most. If yours isn't
-            here, the <a href="/legal/privacy">privacy page</a> or
-            <a href="/contact">contact form</a> has you covered.
+            here, the <a href="/legal/privacy/">privacy page</a> or
+            <a href="/contact/">contact form</a> has you covered.
           </p>
         </Reveal>
       </div>
@@ -141,12 +149,12 @@ const account = [
             else. We answer contact-form messages within 1-2 business days.
           </p>
           <div class="cta-actions">
-            <Button label="Open Compressor" href="/compressor" variant="secondary" size="lg">
+            <Button label="Open Compressor" href="/compressor/" variant="secondary" size="lg">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             </Button>
-            <Button label="Contact us" href="/contact" variant="ghost" size="lg" class="cta-ghost" />
+            <Button label="Contact us" href="/contact/" variant="ghost" size="lg" class="cta-ghost" />
           </div>
         </Reveal>
       </div>

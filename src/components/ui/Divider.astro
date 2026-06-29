@@ -1,15 +1,39 @@
 ---
 /**
  * Divider — hairline horizontal rule. Use inside cards or as section separator.
+ * Optionally renders an inline label centered on the line.
  */
 interface Props {
+  /** Centered label rendered on top of the hairline. */
+  label?: string;
+  /** Tone of the label text. */
+  tone?: 'mute' | 'body' | 'ink';
+  /** Vertical margin in spacing units. */
+  spacing?: 'none' | 'sm' | 'md' | 'lg';
   class?: string;
 }
 
-const { class: className = '' } = Astro.props;
+const {
+  label,
+  tone = 'mute',
+  spacing = 'md',
+  class: className = '',
+} = Astro.props;
 ---
 
-<hr class:list={['divider', className]} />
+{label ? (
+  <div
+    class:list={['divider divider-label', `divider-tone-${tone}`, `divider-space-${spacing}`, className]}
+    role="separator"
+    aria-label={label}
+  >
+    <span class="divider-line" aria-hidden="true"></span>
+    <span class="divider-label-text text-caption-mono">{label}</span>
+    <span class="divider-line" aria-hidden="true"></span>
+  </div>
+) : (
+  <hr class:list={['divider', `divider-space-${spacing}`, className]} />
+)}
 
 <style>
   .divider {
@@ -18,4 +42,34 @@ const { class: className = '' } = Astro.props;
     margin: 0;
     width: 100%;
   }
+
+  .divider-space-none { margin-block: 0; }
+  .divider-space-sm   { margin-block: var(--space-sm); }
+  .divider-space-md   { margin-block: var(--space-md); }
+  .divider-space-lg   { margin-block: var(--space-lg); }
+
+  .divider-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background-color: var(--color-hairline);
+  }
+
+  .divider-label-text {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .divider-tone-body .divider-label-text { color: var(--color-body); }
+  .divider-tone-ink  .divider-label-text { color: var(--color-ink); }
 </style>
+</content>
+</invoke>

@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AppShell from '../../components/layout/AppShell.astro';
+import { breadcrumbSchema } from '../../lib/seo';
 import PageHeader from '../../components/shared/PageHeader.astro';
 import Prose from '../../components/shared/Prose.astro';
 ---
@@ -8,6 +9,12 @@ import Prose from '../../components/shared/Prose.astro';
 <Layout
   title="Terms — ToolBox Image"
   description="The terms of service for ToolBox Image — a free, browser-based image toolkit."
+  schemas={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Terms', href: '/legal/terms' },
+    ]),
+  ]}
 >
   <AppShell>
     <section class="section">
@@ -34,7 +41,7 @@ import Prose from '../../components/shared/Prose.astro';
 
           <h2>3. No warranty</h2>
           <p>
-            The service is provided "as is" without warranty of any kind.
+            The service is provided &ldquo;as is&rdquo; without warranty of any kind.
             We do our best to keep the tools accurate and reliable, but
             you are responsible for verifying that the output meets your
             needs before relying on it in production.
@@ -63,7 +70,7 @@ import Prose from '../../components/shared/Prose.astro';
 
           <h2>7. Contact</h2>
           <p>
-            Questions? <a href="/contact">Get in touch</a>.
+            Questions? <a href="/contact/">Get in touch</a>.
           </p>
 
           <hr />

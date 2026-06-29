@@ -1,9 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AppShell from '../../components/layout/AppShell.astro';
+import { breadcrumbSchema } from '../../lib/seo';
 import Badge from '../../components/ui/Badge.astro';
 import PageHeader from '../../components/shared/PageHeader.astro';
 import Reveal from '../../components/shared/Reveal.astro';
+import EmptyState from '../../components/shared/EmptyState.astro';
 import { posts, formatDate } from '../../lib/blog';
 
 const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
@@ -15,7 +17,13 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
 
 <Layout
   title="Blog — ToolBox Image"
-  description="Notes on privacy, performance, and the craft of building browser-native tools."
+  description="Thoughts on image compression, privacy-first architecture, and the tools we are building."
+  schemas={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Blog', href: '/blog' },
+    ]),
+  ]}
 >
   <AppShell>
     <section class="blog-hero">
@@ -37,29 +45,37 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
 
     <section class="band band-canvas">
       <div class="container container-narrow blog-list-wrap">
-        {posts.map((post, i) => (
-          <Reveal delay={i * 60}>
-            <a href={`/blog/${post.slug}`} class="blog-card">
-              <div class="blog-card-meta">
-                <Badge tone={toneByTag[post.tag]} eyebrow={post.tag}>
-                  {post.date ? formatDate(post.date) : ''}
-                </Badge>
-                <span class="text-caption blog-card-time">{post.readMinutes} min read</span>
-              </div>
-              <h2 class="text-display-sm blog-card-title">{post.title}</h2>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                {post.description}
-              </p>
-              <span class="text-body-sm-strong blog-card-cta">
-                Read more
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <line x1="5" y1="12" x2="19" y2="12"/>
-                  <polyline points="12 5 19 12 12 19"/>
-                </svg>
-              </span>
-            </a>
-          </Reveal>
-        ))}
+        {posts.length === 0 ? (
+          <EmptyState
+            eyebrow="Coming soon"
+            title="No posts yet."
+            description="We're writing. Subscribe via the contact form to be notified when the first one lands."
+          />
+        ) : (
+          posts.map((post, i) => (
+            <Reveal delay={i * 60}>
+              <a href={`/blog/${post.slug}/`} class="blog-card">
+                <div class="blog-card-meta">
+                  <Badge tone={toneByTag[post.tag]} eyebrow={post.tag}>
+                    {post.date ? formatDate(post.date) : ''}
+                  </Badge>
+                  <span class="text-caption blog-card-time">{post.readMinutes} min read</span>
+                </div>
+                <h2 class="text-display-sm blog-card-title">{post.title}</h2>
+                <p class="text-body-sm blog-card-desc">
+                  {post.description}
+                </p>
+                <span class="text-body-sm-strong blog-card-cta">
+                  Read more
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </span>
+              </a>
+            </Reveal>
+          ))
+        )}
       </div>
     </section>
   </AppShell>
@@ -71,7 +87,7 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
     background-color: var(--color-canvas);
   }
 
-  .blog-title { margin: var(--space-md) 0 0; max-width: 18ch; }
+  .blog-title { margin: var(--space-md) 0 0; max-width: 18ch; text-wrap: balance; }
   .blog-lead { margin: var(--space-md) 0 0; color: var(--color-body); max-width: 56ch; }
 
   .band {
@@ -97,18 +113,23 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
     border-radius: var(--radius-lg);
     text-decoration: none;
     color: var(--color-ink);
-    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border-color var(--dur-base) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-out-quart),
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      background-color var(--dur-base) var(--ease-out-quart);
   }
 
   .blog-card:hover {
     border-color: var(--color-hairline-strong);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: var(--shadow-3);
   }
 
   .blog-card:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-color: var(--color-link);
   }
 
   .blog-card-meta {
@@ -121,11 +142,21 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
   .blog-card-time {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
+    font-weight: var(--weight-medium);
+    font-variant-numeric: tabular-nums;
   }
 
   .blog-card-title {
     margin: 0;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .blog-card-desc {
+    margin: 0;
+    color: var(--color-body);
+    text-wrap: pretty;
   }
 
   .blog-card-cta {
@@ -134,11 +165,15 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
     gap: var(--space-xs);
     color: var(--color-link);
     margin-top: var(--space-xs);
-    transition: gap 0.2s ease;
+    transition: gap var(--dur-base) var(--ease-out-quart);
   }
 
   .blog-card:hover .blog-card-cta {
     gap: var(--space-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blog-card, .blog-card-cta { transition: none; }
   }
 
   @media (max-width: 600px) {

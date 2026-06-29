@@ -9,11 +9,19 @@ import SettingsPanel from '../components/upload/SettingsPanel.astro';
 import QueueProgress from '../components/upload/QueueProgress.astro';
 import ResultsSummary from '../components/upload/ResultsSummary.astro';
 import PreviewCard from '../components/upload/PreviewCard.astro';
+import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 ---
 
 <Layout
   title="Image Compressor — ToolBox Image"
   description="Compress JPG, PNG, WebP, GIF, AVIF, SVG, and HEIC images without ever leaving your browser. Drop a folder of 500 photos — we'll handle the queue."
+  schemas={[
+    softwareAppSchema(),
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Compressor', href: '/compressor' },
+    ]),
+  ]}
 >
   <AppShell hideFooter={true}>
     <section class="compressor section">
@@ -423,6 +431,24 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     });
     modeBtns.forEach((btn) => {
       btn.addEventListener('click', () => applyMode(btn.dataset.mode as CompressionMode));
+    });
+
+    // Roving tabindex for the mode radio group — arrow keys move, enter/space select.
+    modeBtns.forEach((btn, idx) => {
+      btn.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Home' && e.key !== 'End') return;
+        e.preventDefault();
+        let nextIdx = idx;
+        if (e.key === 'ArrowLeft') nextIdx = (idx - 1 + modeBtns.length) % modeBtns.length;
+        else if (e.key === 'ArrowRight') nextIdx = (idx + 1) % modeBtns.length;
+        else if (e.key === 'Home') nextIdx = 0;
+        else if (e.key === 'End') nextIdx = modeBtns.length - 1;
+        const next = modeBtns[nextIdx];
+        if (!next) return;
+        modeBtns.forEach((b, i) => b.tabIndex = i === nextIdx ? 0 : -1);
+        next.focus();
+        applyMode(next.dataset.mode as CompressionMode);
+      });
     });
     applyMode('auto');
 
@@ -837,7 +863,20 @@ import PreviewCard from '../components/upload/PreviewCard.astro';
     window.addEventListener('toolboximage:files', async (e) => {
       const detail = (e as CustomEvent<FilesDetail>).detail;
       if (!detail?.files?.length) return;
-      await store.add(detail.files, detail.paths);
+      const result = await store.add(detail.files, detail.paths);
+      if (result.errors.length) {
+        const toast = (window as any).toast;
+        if (typeof toast === 'function') {
+          toast({
+            title: `${result.errors.length} file${result.errors.length === 1 ? '' : 's'} skipped`,
+            description: result.errors
+              .slice(0, 3)
+              .map((er) => `· ${er.fileName}`)
+              .join('\n'),
+            tone: 'warning',
+          });
+        }
+      }
     });
 
     // ---------- Buttons ----------------------------------------------------

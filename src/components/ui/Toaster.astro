@@ -1,0 +1,374 @@
+---
+/**
+ * Toaster — accessible toast container. Mount once near the top of <body>.
+ * Emits toasts via `window.dispatchEvent(new CustomEvent('toolboximage:toast', { detail }))`.
+ *
+ * Toast shape:
+ *   {
+ *     title: string,
+ *     description?: string,
+ *     tone?: 'info' | 'success' | 'warning' | 'error',
+ *     durationMs?: number,   // default 4000; 0 = sticky
+ *     action?: { label: string, href?: string }
+ *   }
+ *
+ * Imperative API: `window.toast({ ... })`
+ */
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div
+  class:list={['toaster', className]}
+  data-toaster
+  role="region"
+  aria-label="Notifications"
+  aria-live="polite"
+  aria-atomic="false"
+></div>
+
+<template id="tpl-toast" data-toast-template>
+  <div class="toast" role="status" data-toast>
+    <div class="toast-icon" data-toast-icon aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="16" x2="12" y2="12"/>
+        <line x1="12" y1="8" x2="12.01" y2="8"/>
+      </svg>
+    </div>
+    <div class="toast-body">
+      <p class="toast-title" data-toast-title></p>
+      <p class="toast-desc" data-toast-desc hidden></p>
+    </div>
+    <div class="toast-actions" data-toast-actions></div>
+    <button type="button" class="toast-close" data-toast-close aria-label="Dismiss">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</template>
+
+<style>
+  .toaster {
+    position: fixed;
+    z-index: 200;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--space-sm);
+    pointer-events: none;
+    max-width: min(420px, calc(100vw - var(--space-lg) * 2));
+  }
+
+  .toast {
+    pointer-events: auto;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: start;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-5);
+    font-size: var(--text-body-sm);
+    line-height: var(--leading-body-sm);
+    animation: toast-in 0.36s var(--ease-out-quart);
+    transition:
+      opacity var(--dur-base) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-out-quart);
+    backdrop-filter: saturate(180%) blur(8px);
+  }
+
+  [data-theme="dark"] .toast {
+    background-color: color-mix(in srgb, var(--color-canvas) 92%, transparent);
+  }
+
+  .toast[data-leaving="true"] {
+    opacity: 0;
+    transform: translateX(12px) scale(0.98);
+  }
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toast { animation: none; }
+  }
+
+  .toast-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--color-link);
+    background-color: color-mix(in srgb, var(--color-link) 12%, transparent);
+  }
+
+  .toast[data-tone="success"] .toast-icon {
+    color: var(--color-cyan-deep);
+    background-color: color-mix(in srgb, var(--color-cyan-deep) 14%, transparent);
+  }
+
+  .toast[data-tone="warning"] .toast-icon {
+    color: var(--color-warning-deep);
+    background-color: var(--color-warning-soft);
+  }
+
+  .toast[data-tone="error"] .toast-icon {
+    color: var(--color-error-deep);
+    background-color: var(--color-error-soft);
+  }
+
+  .toast-body {
+    min-width: 0;
+  }
+
+  .toast-title {
+    margin: 0;
+    font-weight: var(--weight-semibold);
+    color: var(--color-ink);
+  }
+
+  .toast-desc {
+    margin: 2px 0 0;
+    color: var(--color-body);
+  }
+
+  .toast-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-left: var(--space-xs);
+  }
+
+  .toast-actions:empty {
+    display: none;
+  }
+
+  .toast-actions a {
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-link);
+    text-decoration: none;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition:
+      background-color var(--dur-fast) var(--ease-out-quart),
+      color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .toast-actions a:hover {
+    background-color: color-mix(in srgb, var(--color-link) 10%, transparent);
+    color: var(--color-link-deep);
+  }
+
+  .toast-close {
+    appearance: none;
+    background: transparent;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-mute);
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) var(--ease-out-quart),
+      background-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .toast-close:hover {
+    background-color: var(--color-canvas-soft);
+    color: var(--color-ink);
+  }
+
+  .toast-close:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 1px;
+  }
+
+  @media (max-width: 600px) {
+    .toaster {
+      left: var(--space-md);
+      right: var(--space-md);
+      bottom: var(--space-md);
+      max-width: none;
+    }
+  }
+</style>
+
+<script>
+  type ToastDetail = {
+    title: string;
+    description?: string;
+    tone?: 'info' | 'success' | 'warning' | 'error';
+    durationMs?: number;
+    action?: { label: string; href?: string };
+  };
+
+  type ToastEl = HTMLElement & { _leaveTimer?: number };
+
+  const toaster = document.querySelector<HTMLElement>('[data-toaster]');
+  const tpl = document.getElementById('tpl-toast') as HTMLTemplateElement | null;
+  if (toaster && tpl) {
+    const ICON_MAP: Record<string, string> = {
+      info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+      success: '<polyline points="20 6 9 17 4 12"/>',
+      warning: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+      error: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+    };
+
+    const MAX_VISIBLE = 5;
+    let lastToastAt = 0;
+    const show = (detail: ToastDetail) => {
+      // Limit toasts — remove oldest if at cap.
+      while (toaster.children.length >= MAX_VISIBLE) {
+        const oldest = toaster.firstElementChild as HTMLElement | null;
+        if (oldest) {
+          oldest.dataset.leaving = 'true';
+          oldest.style.transition = 'none';
+          oldest.remove();
+        }
+      }
+
+      const node = tpl.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      const tone = detail.tone ?? 'info';
+      node.dataset.tone = tone;
+      node.dataset.toastId = String(Date.now() + Math.random());
+
+      const iconEl = node.querySelector<HTMLElement>('[data-toast-icon] svg');
+      if (iconEl) iconEl.innerHTML = ICON_MAP[tone] ?? ICON_MAP.info!;
+
+      const titleEl = node.querySelector<HTMLElement>('[data-toast-title]');
+      if (titleEl) titleEl.textContent = detail.title;
+      const descEl = node.querySelector<HTMLElement>('[data-toast-desc]');
+      if (descEl && detail.description) {
+        descEl.textContent = detail.description;
+        descEl.hidden = false;
+      }
+
+      const actionsEl = node.querySelector<HTMLElement>('[data-toast-actions]');
+      if (actionsEl && detail.action) {
+        if (detail.action.href) {
+          const a = document.createElement('a');
+          a.href = detail.action.href;
+          a.textContent = detail.action.label;
+          actionsEl.appendChild(a);
+        } else {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = detail.action.label;
+          b.className = 'toast-action-btn';
+          actionsEl.appendChild(b);
+        }
+      }
+
+      toaster.appendChild(node);
+      lastToastAt = Date.now();
+
+      const duration = detail.durationMs ?? 4000;
+      const dismiss = () => {
+        if (node.dataset.leaving === 'true') return;
+        node.dataset.leaving = 'true';
+        window.setTimeout(() => node.remove(), 220);
+      };
+
+      node.querySelector('[data-toast-close]')?.addEventListener('click', dismiss);
+
+      if (duration > 0) {
+        (node as ToastEl)._leaveTimer = window.setTimeout(dismiss, duration);
+        // Pause on hover.
+        node.addEventListener('mouseenter', () => {
+          if ((node as ToastEl)._leaveTimer) {
+            window.clearTimeout((node as ToastEl)._leaveTimer);
+            (node as ToastEl)._leaveTimer = undefined;
+          }
+        });
+        node.addEventListener('mouseleave', () => {
+          (node as ToastEl)._leaveTimer = window.setTimeout(dismiss, Math.min(2000, duration));
+        });
+        // Pause on focus.
+        node.addEventListener('focusin', () => {
+          if ((node as ToastEl)._leaveTimer) {
+            window.clearTimeout((node as ToastEl)._leaveTimer);
+            (node as ToastEl)._leaveTimer = undefined;
+          }
+        });
+        node.addEventListener('focusout', () => {
+          (node as ToastEl)._leaveTimer = window.setTimeout(dismiss, Math.min(2000, duration));
+        });
+      }
+
+      // Swipe-to-dismiss with touch.
+      let startX = 0;
+      let startY = 0;
+      let swiping = false;
+
+      node.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        startX = touch.clientX;
+        startY = touch.clientY;
+        swiping = false;
+      }, { passive: true });
+
+      node.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        if (!touch || !startX) return;
+        const dx = touch.clientX - startX;
+        const dy = touch.clientY - startY;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          swiping = true;
+          node.style.transition = 'none';
+          node.style.transform = `translateX(${dx}px)`;
+          node.style.opacity = `${Math.max(0, 1 - Math.abs(dx) / 200)}`;
+        }
+      }, { passive: true });
+
+      node.addEventListener('touchend', () => {
+        if (!swiping) return;
+        const x = node.style.transform ? parseFloat(node.style.transform.replace('translateX(', '')) : 0;
+        node.style.transition = '';
+        node.style.transform = '';
+        node.style.opacity = '';
+        if (Math.abs(x) > 80) {
+          dismiss();
+        }
+        startX = 0;
+        swiping = false;
+      }, { passive: true });
+    };
+
+    window.addEventListener('toolboximage:toast', (e) => {
+      const detail = (e as CustomEvent<ToastDetail>).detail;
+      if (detail?.title) show(detail);
+    });
+
+    // Expose a tiny imperative API.
+    (window as any).toast = show;
+  }
+</script>
+</content>
+</invoke>

@@ -57,8 +57,27 @@ const {
   .section-eyebrow {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .section-eyebrow::before {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background-color: currentColor;
+    opacity: 0.6;
+  }
+
+  .align-center .section-eyebrow::after {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background-color: currentColor;
+    opacity: 0.6;
   }
 
   .section-eyebrow-pill {
@@ -73,6 +92,7 @@ const {
 
   .section-header :global(h2) {
     margin: 0;
+    letter-spacing: var(--tracking-display-lg);
   }
 
   .section-header :global(.lead) {
@@ -81,9 +101,12 @@ const {
     font-size: var(--text-body-lg);
     line-height: var(--leading-body-lg);
     max-width: var(--lead-max, 560px);
+    letter-spacing: 0;
   }
 
   .align-center :global(.lead) {
     margin-inline: auto;
   }
 </style>
+</content>
+</invoke>

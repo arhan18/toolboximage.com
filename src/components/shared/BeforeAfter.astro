@@ -103,9 +103,9 @@ const afterUrl = afterSrc ?? placeholderAfter;
   <!-- SLIDER MODE -->
   <div class="ba-stage ba-stage-slider" data-ba-stage="slider">
     <div class="ba-frame">
-      <img class="ba-img ba-before" src={beforeUrl} alt="" draggable="false" />
+      <img class="ba-img ba-before" src={beforeUrl} alt="" draggable="false" loading="eager" decoding="async" />
       <div class="ba-after-wrap" style="--ba-position:50%">
-        <img class="ba-img ba-after" src={afterUrl} alt="" draggable="false" />
+        <img class="ba-img ba-after" src={afterUrl} alt="" draggable="false" loading="eager" decoding="async" />
       </div>
       <span class="ba-corner ba-corner-tl text-caption-mono" aria-hidden="true">
         <span class="ba-corner-dot"></span>Before · {beforeSize}
@@ -134,7 +134,7 @@ const afterUrl = afterSrc ?? placeholderAfter;
     <div class="ba-side-grid">
       <figure class="ba-tile">
         <div class="ba-tile-frame">
-          <img class="ba-img" src={beforeUrl} alt="" draggable="false" />
+          <img class="ba-img" src={beforeUrl} alt="" draggable="false" loading="lazy" decoding="async" />
         </div>
         <figcaption class="ba-tile-label text-caption-mono">
           <span class="ba-corner-dot"></span>Before · {beforeSize}
@@ -142,7 +142,7 @@ const afterUrl = afterSrc ?? placeholderAfter;
       </figure>
       <figure class="ba-tile">
         <div class="ba-tile-frame">
-          <img class="ba-img" src={afterUrl} alt="" draggable="false" />
+          <img class="ba-img" src={afterUrl} alt="" draggable="false" loading="lazy" decoding="async" />
         </div>
         <figcaption class="ba-tile-label text-caption-mono">
           <span class="ba-corner-dot ba-corner-dot-accent"></span>After · {afterSize}
@@ -154,10 +154,10 @@ const afterUrl = afterSrc ?? placeholderAfter;
   <!-- ZOOM MODE -->
   <div class="ba-stage ba-stage-zoom" data-ba-stage="zoom" hidden>
     <div class="ba-zoom-frame" data-ba-zoom-frame>
-      <img class="ba-img ba-zoom-base" src={beforeUrl} alt="" draggable="false" />
+      <img class="ba-img ba-zoom-base" src={beforeUrl} alt="" draggable="false" loading="lazy" decoding="async" />
       <div class="ba-zoom-lens" data-ba-lens hidden>
         <div class="ba-zoom-lens-inner">
-          <img class="ba-img" src={afterUrl} alt="" draggable="false" data-ba-lens-img />
+          <img class="ba-img" src={afterUrl} alt="" draggable="false" data-ba-lens-img loading="lazy" decoding="async" />
         </div>
         <div class="ba-zoom-lens-dot" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -231,8 +231,8 @@ const afterUrl = afterSrc ?? placeholderAfter;
   }
 
   .ba-tool:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 1px;
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
   }
 
   /* ---------- Stage base ---------- */
@@ -572,6 +572,8 @@ const afterUrl = afterSrc ?? placeholderAfter;
     .ba-side-grid {
       grid-template-columns: 1fr;
     }
+    .ba-corner { font-size: 10px; padding: 4px 8px; }
+    .ba-savings-value { font-size: 16px; }
   }
 </style>
 

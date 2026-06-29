@@ -8,11 +8,18 @@ import Badge from '../components/ui/Badge.astro';
 import PageHeader from '../components/shared/PageHeader.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import MeshGradient from '../components/shared/MeshGradient.astro';
+import { breadcrumbSchema } from '../lib/seo';
 ---
 
 <Layout
   title="About — ToolBox Image"
   description="Why we built ToolBox Image: the fastest, cleanest, most private image toolkit on the web."
+  schemas={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'About', href: '/about' },
+    ]),
+  ]}
 >
   <AppShell>
     <!-- ============================================================
@@ -257,12 +264,12 @@ import MeshGradient from '../components/shared/MeshGradient.astro';
             Free. Unlimited. No sign-up. Your files stay on your device.
           </p>
           <div class="cta-actions">
-            <Button label="Open Compressor" href="/compressor" variant="secondary" size="lg">
+            <Button label="Open Compressor" href="/compressor/" variant="secondary" size="lg" class="btn-on-dark">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             </Button>
-            <Button label="Read the blog" href="/blog" variant="ghost" size="lg" class="cta-ghost" />
+            <Button label="Read the blog" href="/blog/" variant="ghost" size="lg" class="cta-ghost" />
           </div>
         </Reveal>
       </div>
@@ -331,18 +338,20 @@ import MeshGradient from '../components/shared/MeshGradient.astro';
 
   .number-value {
     color: var(--color-ink);
-    font-feature-settings: "tnum";
+    font-feature-settings: var(--tnum);
     background: linear-gradient(100deg, var(--gradient-develop-start), var(--gradient-preview-end));
     -webkit-background-clip: text;
             background-clip: text;
     color: transparent;
+    letter-spacing: -0.02em;
   }
 
   .number-label {
     color: var(--color-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     margin: 0;
+    font-weight: var(--weight-medium);
   }
 
   /* ---------- Roadmap ---------- */
@@ -360,10 +369,26 @@ import MeshGradient from '../components/shared/MeshGradient.astro';
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
+    transition:
+      transform var(--dur-base) var(--ease-out-quart),
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      border-color var(--dur-base) var(--ease-out-quart),
+      background-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .roadmap-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+    border-color: var(--color-hairline-strong);
+    background-color: var(--color-canvas);
   }
 
   .roadmap-item h3 { margin: 0; }
   .roadmap-item p { margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .roadmap-item { transition: none; }
+  }
 
   /* ---------- CTA ---------- */
   .cta-band {

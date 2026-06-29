@@ -9,6 +9,8 @@ interface Props {
   elevation?: 1 | 2 | 3 | 4 | 5;
   /** Surface tone. `default` = canvas, `soft` = canvas-soft. */
   tone?: 'default' | 'soft';
+  /** Optional hover lift behaviour. Default true. */
+  interactive?: boolean;
   class?: string;
 }
 
@@ -16,6 +18,7 @@ const {
   href,
   elevation = 3,
   tone = 'default',
+  interactive = true,
   class: className = '',
 } = Astro.props;
 
@@ -25,6 +28,7 @@ const classes = [
   `card-elev-${elevation}`,
   `card-tone-${tone}`,
   href ? 'card-linked' : '',
+  interactive ? 'card-interactive' : '',
   className,
 ]
   .filter(Boolean)
@@ -44,15 +48,23 @@ const classes = [
     border-radius: var(--radius-md);
     color: var(--color-ink);
     text-decoration: none;
-    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    transition:
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-out-quart),
+      border-color var(--dur-base) var(--ease-out-quart),
+      background-color var(--dur-base) var(--ease-out-quart);
+    position: relative;
+    isolation: isolate;
   }
 
   .card-tone-default {
     background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
   }
 
   .card-tone-soft {
     background-color: var(--color-canvas-soft);
+    border: 1px solid transparent;
   }
 
   /* Elevation levels — DESIGN.md §Elevation */
@@ -62,17 +74,81 @@ const classes = [
   .card-elev-4 { box-shadow: var(--shadow-4); }
   .card-elev-5 { box-shadow: var(--shadow-5); }
 
+  /* Hairline that sits *over* the shadow so elevation feels like a card. */
+  .card-tone-default.card-elev-1,
+  .card-tone-default.card-elev-2,
+  .card-tone-default.card-elev-3,
+  .card-tone-default.card-elev-4,
+  .card-tone-default.card-elev-5 {
+    border-color: var(--color-hairline);
+  }
+
+  /* Hover lift for non-link cards (e.g. "About" principles) */
+  .card-interactive:not(.card-linked):hover {
+    box-shadow: var(--shadow-4);
+    transform: translateY(-2px);
+    border-color: var(--color-hairline-strong);
+  }
+
+  /* Linked cards */
   .card-linked {
     cursor: pointer;
   }
 
-  .card-linked:hover {
+  .card-linked::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-link) 0%, transparent) 100%
+    );
+    transition: background var(--dur-slow) var(--ease-out-quart);
+    z-index: 0;
+  }
+
+  /* Ensure children sit above the gradient overlay. */
+  .card > :global(*) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .card-linked:hover,
+  .card-interactive:not(.card-linked):hover {
     box-shadow: var(--shadow-4);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .card-linked:hover::after {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-link) 6%, transparent) 0%,
+      transparent 60%
+    );
   }
 
   .card-linked:focus-visible {
-    outline: 2px solid var(--color-link);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-color: var(--color-link);
+  }
+
+  .card:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: translateY(0);
+  }
+
+  /* Subtle press effect on click. */
+  .card:active {
+    transform: scale(0.995);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .card-linked::after { transition: none; }
   }
 </style>
+</content>
+</invoke>

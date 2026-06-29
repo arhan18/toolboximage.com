@@ -5,17 +5,24 @@
  */
 interface Props {
   /** Edge length in px. */
-  size?: 32 | 36 | 40 | 48;
-  /** Surface tone — `soft` for canvas-soft, `canvas` for white. */
+  size?: 32 | 36 | 40 | 48 | 56;
+  /** Surface tone — `soft` for canvas-soft, `canvas` for white, `ink` for primary. */
   tone?: 'soft' | 'canvas' | 'ink';
+  /** Optional gradient tint that pairs with the brand mesh. */
+  gradient?: boolean;
   class?: string;
 }
 
-const { size = 40, tone = 'soft', class: className = '' } = Astro.props;
+const {
+  size = 40,
+  tone = 'soft',
+  gradient = false,
+  class: className = '',
+} = Astro.props;
 ---
 
 <span
-  class:list={['icon-box', `icon-box-${tone}`, className]}
+  class:list={['icon-box', `icon-box-${tone}`, gradient ? 'icon-box-gradient' : '', className]}
   style={`--icon-size:${size}px`}
 >
   <slot />
@@ -31,15 +38,25 @@ const { size = 40, tone = 'soft', class: className = '' } = Astro.props;
     border-radius: var(--radius-md);
     flex-shrink: 0;
     color: var(--color-ink);
+    border: 1px solid transparent;
+    transition:
+      background-color var(--dur-base) var(--ease-out-quart),
+      color var(--dur-base) var(--ease-out-quart),
+      transform var(--dur-base) var(--ease-out-quart),
+      box-shadow var(--dur-base) var(--ease-out-quart);
+    position: relative;
+    isolation: isolate;
   }
 
   .icon-box :global(svg) {
     width: 60%;
     height: 60%;
+    transition: transform var(--dur-base) var(--ease-out-quart);
   }
 
   .icon-box-soft {
     background-color: var(--color-canvas-soft);
+    border-color: var(--color-hairline);
   }
 
   .icon-box-canvas {
@@ -51,4 +68,44 @@ const { size = 40, tone = 'soft', class: className = '' } = Astro.props;
     background-color: var(--color-primary);
     color: var(--color-on-primary);
   }
+
+  /* Subtle gradient wash using the brand palette, behind the icon. */
+  .icon-box-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-link) 10%, transparent),
+      color-mix(in srgb, var(--color-violet) 10%, transparent)
+    );
+    opacity: 0.7;
+    z-index: -1;
+    transition: opacity var(--dur-base) var(--ease-out-quart);
+  }
+
+  /* If the icon-box sits inside an interactive parent, lift on hover. */
+  a:hover > .icon-box,
+  button:hover > .icon-box,
+  [role="button"]:hover > .icon-box {
+    transform: translateY(-2px) rotate(-3deg);
+  }
+
+  a:hover > .icon-box :global(svg),
+  button:hover > .icon-box :global(svg),
+  [role="button"]:hover > .icon-box :global(svg) {
+    transform: scale(1.06);
+  }
+
+  a:hover > .icon-box-gradient::before,
+  button:hover > .icon-box-gradient::before {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .icon-box, .icon-box :global(svg) { transition: none; }
+  }
 </style>
+</content>
+</invoke>
