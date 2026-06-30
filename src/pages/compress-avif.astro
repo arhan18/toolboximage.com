@@ -1,280 +1,130 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AppShell from '../components/layout/AppShell.astro';
-import Button from '../components/ui/Button.astro';
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
-import Card from '../components/ui/Card.astro';
-import IconBox from '../components/ui/IconBox.astro';
-import PageHeader from '../components/shared/PageHeader.astro';
 import Reveal from '../components/shared/Reveal.astro';
-import MeshGradient from '../components/shared/MeshGradient.astro';
-import { breadcrumbSchema } from '../lib/seo';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'Is AVIF better than WebP?',
+    a: 'AVIF typically achieves 30-50% better compression than WebP at the same quality level, especially for photographic content. It uses the AV1 codec from the Alliance for Open Media — the same codec used by Netflix and YouTube. The trade-off is slower encoding, which our parallel queue handles by processing images simultaneously.',
+  },
+  {
+    q: 'What browsers support AVIF?',
+    a: 'AVIF is supported by Chrome (85+), Firefox (93+), Safari (16.1+), and Edge (121+). Coverage is over 92% of global browser usage. For the remaining users, you can use a JPEG or WebP fallback.',
+  },
+  {
+    q: 'Does AVIF support transparency?',
+    a: 'Yes. AVIF supports full alpha channel transparency, HDR (PQ and HLG), wide colour gamut (P3, Rec.2020), 10-bit and 12-bit depth, and lossless compression. It is the most feature-rich image format available.',
+  },
+  {
+    q: 'Is AVIF good for photography?',
+    a: 'AVIF excels at photography. The AV1 codec handles gradients, textures, and fine detail much more efficiently than JPEG or WebP. A 10 MB JPEG can often be reduced to 1-2 MB as AVIF with no visible quality difference.',
+  },
+  {
+    q: 'Can I batch compress images to AVIF?',
+    a: 'Yes. Drop any supported image format and set the output to AVIF. The queue processes files in parallel. AVIF encoding is slower than JPEG or WebP, so parallel processing helps maintain throughput.',
+  },
+];
 ---
 
-<Layout
-  title="Compress AVIF Images Online — ToolBox Image"
-  description="Compress AVIF images using the next-gen AV1 codec. Free online AVIF compressor — smaller files than WebP with better quality. Browser-based, private, unlimited."
+<CompressorPageLayout
+  title="Compress AVIF Images Online — Free AVIF Compressor | ToolBox Image"
+  description="Compress AVIF images online with the AV1 codec. Free AVIF compressor — smaller files than WebP with better quality. Browser-based, private, unlimited."
   canonical="https://toolboximage.com/compress-avif/"
-  schemas={[
-    breadcrumbSchema([
-      { name: 'Home', href: '/' },
-      { name: 'Compress AVIF', href: '/compress-avif' },
-    ]),
+  defaultFormat="avif"
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Compress AVIF', href: '/compress-avif' },
   ]}
+  schemas={[faqSchema(faqs)]}
 >
-  <AppShell>
-    <section class="page-hero">
-      <MeshGradient intensity="subtle" />
-      <div class="container page-hero-inner">
-        <Reveal>
-          <Badge eyebrow="AVIF Compressor" tone="info">Free</Badge>
-        </Reveal>
-        <Reveal delay={80}>
-          <h1 class="text-display-xl page-title">
-            Compress AVIF images online.
-          </h1>
-        </Reveal>
-        <Reveal delay={160}>
-          <p class="text-body-lg page-lead">
-            AVIF is the most efficient image format on the web — 50%
-            smaller than JPEG at the same quality. Our libaom-based
-            compressor lets you create production-ready AVIF files in
-            your browser.
-          </p>
-        </Reveal>
-      </div>
-    </section>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="AVIF Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress AVIF images online.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        AVIF is the most efficient image format on the web — 50% smaller
+        than JPEG at the same quality. Our libaom-based compressor lets
+        you create production-ready AVIF files entirely in your browser.
+      </p>
+    </Reveal>
+  </section>
 
-    <section class="band band-soft">
-      <div class="container stack stack-3xl">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="AVIF compression"
-            title="Next-gen codec. Zero compromises."
-            align="center"
-          />
-        </Reveal>
-        <div class="features-grid">
-          <Reveal delay={80}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="m9 12 2 2 4-4"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">AV1 in your browser</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                We compile libaom (the AV1 reference encoder) to
-                WebAssembly. You get the same codec Netflix and YouTube
-                use — right in your browser, no installation needed.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={160}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Superior compression</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                AVIF typically beats WebP by 30-50% at the same quality
-                level. HDR, wide gamut, lossless, and lossy modes — all
-                supported.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={240}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Quality control</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Fine-tune the AVIF encoding with quality and speed
-                settings. Preview the result before committing — drag
-                the slider to compare against the original.
-              </p>
-            </Card>
-          </Reveal>
-        </div>
-      </div>
-    </section>
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">AVIF compression with the AV1 codec.</h2>
+        <p class="text-body-md cp-body-text">
+          AVIF (AV1 Image File Format) represents the state of the art in
+          image compression. Built on the AV1 video codec from the Alliance
+          for Open Media, AVIF delivers compression efficiency that
+          significantly outperforms JPEG, PNG, and WebP — typically 50%
+          smaller than JPEG and 30% smaller than WebP at equivalent visual
+          quality.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Our compressor uses libaom — the reference AV1 encoder — compiled
+          to WebAssembly. You can adjust quality (1-100) and speed preset.
+          The speed setting trades encoding time for compression density:
+          slower speeds produce smaller files but take longer to encode. This
+          is particularly useful for batch jobs where you can let the queue
+          run while you work. AVIF also supports HDR, wide colour gamut,
+          lossless compression, and full alpha transparency — making it
+          suitable for virtually any use case.
+        </p>
+        <h3 class="text-display-sm">Why choose AVIF compression?</h3>
+        <p class="text-body-md cp-body-text">
+          If you are building for the modern web, AVIF is the format that
+          future-proofs your images. The compression gains translate directly
+          to faster page loads, lower CDN bills, and better Core Web Vitals
+          scores. For photographers and designers, AVIF's support for HDR
+          and wide colour gamut means your images look better on modern
+          displays while taking up less space.
+        </p>
+        <p class="text-body-md cp-body-text">
+          The compressor is preconfigured for AVIF output with optimal
+          quality settings. Use the Custom panel to tune the quality and
+          speed presets, set a target file size, or enable resize.
+        </p>
+      </Reveal>
+    </div>
+  </section>
 
-    <section class="band band-canvas">
-      <div class="container-narrow stack stack-lg">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="How it works"
-            title="AVIF compression, entirely client-side."
-            lead="The libaom AV1 encoder runs as WebAssembly in your browser. No uploads, no servers, no file size limits. Your images never leave your machine."
-          />
-        </Reveal>
-        <Reveal delay={100}>
-          <div class="steps-list">
-            <div class="step">
-              <span class="step-number text-caption-mono">01</span>
-              <div>
-                <h3 class="text-display-sm">Drop your images</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Input can be JPEG, PNG, WebP, or another AVIF. Drop
-                  files, paste, or pick an entire folder. Up to 200 at
-                  once, each up to 100 MB.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">02</span>
-              <div>
-                <h3 class="text-display-sm">Configure encoding</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Set quality level, speed preset, and target file size.
-                  AVIF's encoding is slower than JPEG — the speed setting
-                  lets you trade encoding time for compression density.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">03</span>
-              <div>
-                <h3 class="text-display-sm">Preview &amp; export</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Compare compressed vs original with the side-by-side
-                  slider. Download as individual AVIF files or a single
-                  ZIP archive.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-
-    <section class="band cta-band">
-      <MeshGradient intensity="ambient" />
-      <div class="container cta-inner">
-        <Reveal>
-          <p class="text-caption-mono cta-eyebrow">Ready to compress?</p>
-          <h2 class="text-display-xl cta-title">
-            Compress your AVIF images now.
-          </h2>
-          <p class="text-body-lg cta-sub">
-            Free. Unlimited. Your files never leave your device.
-          </p>
-          <div class="cta-actions">
-            <Button label="Open AVIF Compressor" href="/compressor/" variant="secondary" size="lg" class="btn-on-dark">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </Button>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  </AppShell>
-</Layout>
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
 
 <style>
-  .page-hero {
-    position: relative;
-    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl);
-    background-color: var(--color-canvas);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .page-hero-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-md);
-  }
-  .page-title { margin: 0; max-width: 18ch; }
-  .page-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
 
   .band {
     position: relative;
     padding: var(--space-5xl) 0;
   }
-  .band-soft { background-color: var(--color-canvas-soft); }
   .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
-  }
-
-  .steps-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-  .step {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: var(--space-md);
-    align-items: start;
-  }
-  .step-number {
-    color: var(--color-mute);
-    margin-top: 2px;
-  }
-  .step h3 { margin: 0; }
-  .step p { margin: var(--space-xs) 0 0; }
-
-  .cta-band {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .cta-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-md);
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  .cta-eyebrow {
-    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0;
-  }
-  .cta-title { margin: 0; color: var(--color-on-primary); max-width: 18ch; }
-  .cta-sub {
-    margin: 0;
-    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
-    max-width: 48ch;
-  }
-  .cta-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-    flex-wrap: wrap;
-    justify-content: center;
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
   }
 
-  @media (max-width: 1023px) {
-    .features-grid { grid-template-columns: repeat(2, 1fr); }
-  }
   @media (max-width: 600px) {
     .band { padding: var(--space-4xl) 0; }
-    .page-hero { padding: var(--space-4xl) 0 var(--space-3xl); }
-    .features-grid { grid-template-columns: 1fr; }
   }
 </style>

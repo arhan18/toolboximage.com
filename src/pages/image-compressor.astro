@@ -1,0 +1,136 @@
+---
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
+import Badge from '../components/ui/Badge.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'What is an image compressor?',
+    a: 'An image compressor is a tool that reduces the file size of a digital image by re-encoding it with more efficient compression algorithms. The goal is to make the image smaller without visibly degrading its quality — essential for faster websites, smaller storage, and quicker uploads.',
+  },
+  {
+    q: 'Is this image compressor really free?',
+    a: 'Yes. ToolBox Image is completely free with no sign-ups, no ads, no file size limits, and no hidden tiers. The compressor runs entirely in your browser using WebAssembly — we have no server costs, so there is nothing to charge for.',
+  },
+  {
+    q: 'What image formats are supported?',
+    a: 'The compressor supports JPG, PNG, WebP, AVIF, GIF, SVG, and HEIC as input formats. You can output to JPG, PNG, WebP, AVIF, GIF, or SVG — which means you can also convert between formats in the same compression pass.',
+  },
+  {
+    q: 'Are my images uploaded to a server?',
+    a: 'Never. Every step — decoding, re-encoding, resizing, and compression — happens in your browser using WebAssembly and the native Canvas API. Your images never leave your device.',
+  },
+  {
+    q: 'How many images can I compress at once?',
+    a: 'You can compress up to 200 images in a single batch, each up to 100 MB. The queue runs in parallel using all available CPU cores, so a folder of 200 photos processes much faster than one-by-one.',
+  },
+  {
+    q: 'Does the compressor reduce image quality?',
+    a: 'It depends on your settings. The Auto preset balances file size and quality so the difference is nearly imperceptible. The High quality preset preserves visual fidelity while still reducing file size. You can also use Lossless mode which keeps every pixel identical while still achieving some compression for PNG and WebP.',
+  },
+];
+---
+
+<CompressorPageLayout
+  title="Image Compressor — Free Online Image Compression | ToolBox Image"
+  description="Free online image compressor. Compress JPG, PNG, WebP, AVIF, GIF, SVG, and HEIC images directly in your browser. No uploads, no sign-up, unlimited — the best free image compressor."
+  canonical="https://toolboximage.com/image-compressor/"
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Image Compressor', href: '/image-compressor' },
+  ]}
+  schemas={[faqSchema(faqs)]}
+>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="Image Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Free online image compressor.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Compress JPG, PNG, WebP, AVIF, GIF, SVG, and HEIC images without
+        ever leaving your browser. Drop a folder of 500 photos — we will
+        handle the queue in parallel, all on your device.
+      </p>
+    </Reveal>
+  </section>
+
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">The best free image compressor online.</h2>
+        <p class="text-body-md cp-body-text">
+          Most free image compressors have a catch: they upload your images to
+          a server, limit you to a handful of files, slap watermarks on the
+          output, or ask for your email before letting you download. ToolBox
+          Image is different because it does not have a server. The entire
+          compressor — decoding, re-encoding, resizing, metadata stripping —
+          runs in your browser via WebAssembly. Your images stay on your
+          machine, period.
+        </p>
+        <p class="text-body-md cp-body-text">
+          This architecture means there are no file size limits (other than
+          what your device can handle in memory), no queue caps, and no
+          premium tier. You can drag in a folder of 200 high-resolution
+          photos and compress them all at once. The compressor uses
+          Mozilla's mozJPEG for JPEG, Google's libwebp for WebP, and
+          libaom for AVIF — all compiled to WebAssembly for native-level
+          performance.
+        </p>
+        <h3 class="text-display-sm">Why use an online image compressor?</h3>
+        <p class="text-body-md cp-body-text">
+          Images make up the majority of bytes on the average web page.
+          Compressing them is the single highest-impact optimisation you can
+          make — it improves page load times, reduces bandwidth costs, and
+          creates a better experience for visitors on slow connections.
+          Beyond the web, compressed images take up less storage space on
+          your phone or computer and upload faster to social media, email
+          attachments, and cloud services.
+        </p>
+        <p class="text-body-md cp-body-text">
+          ToolBox Image handles all major formats in a single interface. You
+          do not need separate tools for JPEG, PNG, and WebP — just drop
+          everything into one queue, pick your settings, and download the
+          results. Each image gets its own before-and-after comparison so
+          you can verify quality before saving.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
+
+<style>
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

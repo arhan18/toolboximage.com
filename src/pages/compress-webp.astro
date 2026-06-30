@@ -1,280 +1,131 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AppShell from '../components/layout/AppShell.astro';
-import Button from '../components/ui/Button.astro';
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
-import Card from '../components/ui/Card.astro';
-import IconBox from '../components/ui/IconBox.astro';
-import PageHeader from '../components/shared/PageHeader.astro';
 import Reveal from '../components/shared/Reveal.astro';
-import MeshGradient from '../components/shared/MeshGradient.astro';
-import { breadcrumbSchema } from '../lib/seo';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'Is WebP better than JPEG?',
+    a: 'WebP typically produces files 25-35% smaller than JPEG at the same quality level, with fewer artefacts in gradient areas. It also supports transparency (alpha channel) and animation — features JPEG cannot offer. Browser support is near-universal, making WebP a safe choice for modern websites.',
+  },
+  {
+    q: 'Does WebP support transparency?',
+    a: 'Yes. WebP has full alpha channel support, similar to PNG. Our compressor preserves transparency while independently optimizing the colour and alpha planes for maximum compression.',
+  },
+  {
+    q: 'What is the difference between lossy and lossless WebP?',
+    a: 'Lossy WebP uses a block-based predictive coding scheme similar to VP8 video compression. It produces much smaller files but can show artefacts at low quality. Lossless WebP uses a completely different algorithm based on spatial prediction and colour cache — it achieves excellent compression for graphics and screenshots without any quality loss.',
+  },
+  {
+    q: 'Can I convert JPEG to WebP?',
+    a: 'Yes. Drop a JPEG and set the output format to WebP. The compressor re-encodes from the source into WebP using libwebp. This typically saves an additional 25-35% compared to the original JPEG.',
+  },
+  {
+    q: 'Is WebP supported by all browsers?',
+    a: 'WebP is supported by Chrome, Firefox, Safari (since 14+), Edge, and Opera. That covers over 97% of global browser usage. For the remaining 3%, you can serve a JPEG fallback or use our SVG output.',
+  },
+];
 ---
 
-<Layout
-  title="Compress WebP Images Online — ToolBox Image"
-  description="Create smaller WebP images with intelligent compression. Free online WebP compressor powered by libwebp — batch processing, no uploads, full privacy."
+<CompressorPageLayout
+  title="Compress WebP Images Online — Free WebP Compressor | ToolBox Image"
+  description="Compress WebP images online with libwebp. Free WebP compressor — lossy and lossless modes, alpha channel support, batch processing. No uploads."
   canonical="https://toolboximage.com/compress-webp/"
-  schemas={[
-    breadcrumbSchema([
-      { name: 'Home', href: '/' },
-      { name: 'Compress WebP', href: '/compress-webp' },
-    ]),
+  defaultFormat="webp"
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Compress WebP', href: '/compress-webp' },
   ]}
+  schemas={[faqSchema(faqs)]}
 >
-  <AppShell>
-    <section class="page-hero">
-      <MeshGradient intensity="subtle" />
-      <div class="container page-hero-inner">
-        <Reveal>
-          <Badge eyebrow="WebP Compressor" tone="info">Free</Badge>
-        </Reveal>
-        <Reveal delay={80}>
-          <h1 class="text-display-xl page-title">
-            Compress WebP images online.
-          </h1>
-        </Reveal>
-        <Reveal delay={160}>
-          <p class="text-body-lg page-lead">
-            WebP already delivers smaller files than JPEG and PNG — but
-            you can still squeeze more out. Our libwebp-based compressor
-            gives you full control over quality, method, and file size.
-          </p>
-        </Reveal>
-      </div>
-    </section>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="WebP Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress WebP images online.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        WebP already delivers smaller files than JPEG and PNG — but you
+        can still squeeze more out. Our libwebp-based compressor gives you
+        full control over quality, method, and file size.
+      </p>
+    </Reveal>
+  </section>
 
-    <section class="band band-soft">
-      <div class="container stack stack-3xl">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="WebP compression"
-            title="Already efficient. Make it smaller."
-            align="center"
-          />
-        </Reveal>
-        <div class="features-grid">
-          <Reveal delay={80}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="m9 12 2 2 4-4"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">libwebp engine</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Google's libwebp compiled to WebAssembly. Supports both
-                lossy and lossless WebP, with fine-grained control over
-                the compression method (0-6) and quality.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={160}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M2 20h20"/>
-                  <path d="M4 16V8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Lossy &amp; lossless</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                WebP supports both compression modes. Lossy for photos
-                and gradients. Lossless for screenshots and graphics with
-                sharp edges. Pick the right mode for your image.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={240}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Alpha compression</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                WebP supports transparency just like PNG. Our compressor
-                preserves the alpha channel while independently optimizing
-                the color and transparency planes.
-              </p>
-            </Card>
-          </Reveal>
-        </div>
-      </div>
-    </section>
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">WebP compression powered by libwebp.</h2>
+        <p class="text-body-md cp-body-text">
+          WebP is Google's modern image format designed to replace JPEG, PNG,
+          and GIF with a single format that offers superior compression across
+          the board. A WebP image is typically 25-35% smaller than an
+          equivalent JPEG and 26% smaller than PNG — all while supporting
+          transparency and animation.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Our compressor uses Google's libwebp encoder compiled to
+          WebAssembly. You get fine-grained control over compression: adjust
+          quality (1-100), choose between lossy and lossless modes, set the
+          compression method (0-6, where higher means smaller but slower),
+          and enable alpha channel optimisation. The compression method
+          setting is particularly useful — method 4 is a good balance of
+          speed and density, while method 6 squeezes out every last byte at
+          the cost of encoding time.
+        </p>
+        <h3 class="text-display-sm">Why use WebP compression?</h3>
+        <p class="text-body-md cp-body-text">
+          WebP is already one of the most efficient image formats available.
+          Re-compressing existing WebP images might seem unnecessary, but
+          many tools save WebP with suboptimal settings — high quality
+          settings that produce files larger than needed, or low method
+          values that leave compression gains on the table. Our compressor
+          lets you re-encode WebP files with optimal settings for your use
+          case, whether that is maximum quality for a hero image or maximum
+          compression for thumbnails.
+        </p>
+        <p class="text-body-md cp-body-text">
+          The compressor is preconfigured for WebP output. Switch to Custom
+          mode to fine-tune every parameter, set a target file size, or
+          resize before encoding.
+        </p>
+      </Reveal>
+    </div>
+  </section>
 
-    <section class="band band-canvas">
-      <div class="container-narrow stack stack-lg">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="How it works"
-            title="Compress WebP in your browser."
-            lead="Google's libwebp encoder runs directly in your browser via WebAssembly. No uploads, no servers, no limits. Drop your WebP images and optimize them instantly."
-          />
-        </Reveal>
-        <Reveal delay={100}>
-          <div class="steps-list">
-            <div class="step">
-              <span class="step-number text-caption-mono">01</span>
-              <div>
-                <h3 class="text-display-sm">Add your WebP files</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Drop them in, browse, paste from clipboard, or drag an
-                  entire folder. We handle up to 200 files in a single
-                  batch.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">02</span>
-              <div>
-                <h3 class="text-display-sm">Tune the settings</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Adjust quality, compression method (faster vs smaller),
-                  target file size, or toggle lossless mode. Preview updates
-                  in real time.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">03</span>
-              <div>
-                <h3 class="text-display-sm">Download optimized WebP</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Compare before and after with the slider. Download
-                  individual files or everything as a ZIP. No accounts,
-                  no limits, no uploads.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-
-    <section class="band cta-band">
-      <MeshGradient intensity="ambient" />
-      <div class="container cta-inner">
-        <Reveal>
-          <p class="text-caption-mono cta-eyebrow">Ready to compress?</p>
-          <h2 class="text-display-xl cta-title">
-            Compress your WebP images now.
-          </h2>
-          <p class="text-body-lg cta-sub">
-            Free. Unlimited. Your files never leave your device.
-          </p>
-          <div class="cta-actions">
-            <Button label="Open WebP Compressor" href="/compressor/" variant="secondary" size="lg" class="btn-on-dark">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </Button>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  </AppShell>
-</Layout>
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
 
 <style>
-  .page-hero {
-    position: relative;
-    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl);
-    background-color: var(--color-canvas);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .page-hero-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-md);
-  }
-  .page-title { margin: 0; max-width: 18ch; }
-  .page-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
 
   .band {
     position: relative;
     padding: var(--space-5xl) 0;
   }
-  .band-soft { background-color: var(--color-canvas-soft); }
   .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
-  }
-
-  .steps-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-  .step {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: var(--space-md);
-    align-items: start;
-  }
-  .step-number {
-    color: var(--color-mute);
-    margin-top: 2px;
-  }
-  .step h3 { margin: 0; }
-  .step p { margin: var(--space-xs) 0 0; }
-
-  .cta-band {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .cta-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-md);
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  .cta-eyebrow {
-    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0;
-  }
-  .cta-title { margin: 0; color: var(--color-on-primary); max-width: 18ch; }
-  .cta-sub {
-    margin: 0;
-    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
-    max-width: 48ch;
-  }
-  .cta-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-    flex-wrap: wrap;
-    justify-content: center;
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
   }
 
-  @media (max-width: 1023px) {
-    .features-grid { grid-template-columns: repeat(2, 1fr); }
-  }
   @media (max-width: 600px) {
     .band { padding: var(--space-4xl) 0; }
-    .page-hero { padding: var(--space-4xl) 0 var(--space-3xl); }
-    .features-grid { grid-template-columns: 1fr; }
   }
 </style>

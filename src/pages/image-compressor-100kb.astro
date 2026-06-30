@@ -1,277 +1,134 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AppShell from '../components/layout/AppShell.astro';
-import Button from '../components/ui/Button.astro';
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
-import Card from '../components/ui/Card.astro';
-import IconBox from '../components/ui/IconBox.astro';
-import PageHeader from '../components/shared/PageHeader.astro';
 import Reveal from '../components/shared/Reveal.astro';
-import MeshGradient from '../components/shared/MeshGradient.astro';
-import { breadcrumbSchema } from '../lib/seo';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'How do I compress an image to exactly 100 KB?',
+    a: 'Enable "Target size" in the Custom settings panel and enter 100. The compressor iteratively adjusts quality and resolution to hit your target. The first result is usually within 5% of the target — significantly better than manual trial-and-error.',
+  },
+  {
+    q: 'Does target-size compression affect image quality?',
+    a: 'When compressing to a target size, the encoder finds the highest quality setting that still meets the target. Whether this produces visible artefacts depends on the source image — a detailed photo at 100 KB will show more compression than a simple logo at the same size. You can preview the result with the side-by-side slider before downloading.',
+  },
+  {
+    q: 'What formats support target-size compression?',
+    a: 'Target-size mode works with JPEG, PNG, WebP, and AVIF output. The encoder uses format-specific strategies: JPEG and WebP adjust quality, PNG uses quantization, and AVIF adjusts its internal quality metric. All formats benefit from optional resize to help hit the target.',
+  },
+  {
+    q: 'Why would I need to compress images to 100 KB?',
+    a: 'Many platforms have strict file size limits for uploads: job applications, government forms, email attachments, CMS image fields, and some social media platforms cap images at 100 KB or similar values. Target-size mode guarantees you stay under the limit without guesswork.',
+  },
+  {
+    q: 'Can I target other sizes besides 100 KB?',
+    a: 'Yes. The target size slider goes from 0 (off) to 2000 KB. Set any value that fits your platform requirement. For Discord use, target 8000 KB (free) or 25000 KB (Nitro). For email, 200-500 KB is usually safe.',
+  },
+];
 ---
 
-<Layout
-  title="Compress Images to 100KB — ToolBox Image"
-  description="Compress any image to under 100KB. Free online tool — perfect for website optimization, email attachments, and application forms that require sub-100KB uploads."
+<CompressorPageLayout
+  title="Compress Images to 100KB — Free Online Image Compressor | ToolBox Image"
+  description="Compress any image to under 100KB. Free online tool — perfect for websites, email attachments, and forms that require sub-100KB uploads. No uploads, no limits."
   canonical="https://toolboximage.com/image-compressor-100kb/"
-  schemas={[
-    breadcrumbSchema([
-      { name: 'Home', href: '/' },
-      { name: 'Compress to 100KB', href: '/image-compressor-100kb' },
-    ]),
+  defaultTargetSize={100}
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Compress to 100KB', href: '/image-compressor-100kb' },
   ]}
+  schemas={[faqSchema(faqs)]}
 >
-  <AppShell>
-    <section class="page-hero">
-      <MeshGradient intensity="subtle" />
-      <div class="container page-hero-inner">
-        <Reveal>
-          <Badge eyebrow="100KB Compressor" tone="info">Free</Badge>
-        </Reveal>
-        <Reveal delay={80}>
-          <h1 class="text-display-xl page-title">
-            Compress images to 100KB.
-          </h1>
-        </Reveal>
-        <Reveal delay={160}>
-          <p class="text-body-lg page-lead">
-            Need your image under 100KB? Set the target, and our encoder
-            automatically adjusts quality, resolution, and compression
-            to hit it. No guesswork, no trial-and-error.
-          </p>
-        </Reveal>
-      </div>
-    </section>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="100KB Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress images to 100KB.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Need your image under 100KB? Set the target, and the encoder
+        automatically adjusts quality, resolution, and compression to
+        hit it. No guesswork, no trial-and-error.
+      </p>
+    </Reveal>
+  </section>
 
-    <section class="band band-soft">
-      <div class="container stack stack-3xl">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="Target file size"
-            title="Set a number. We hit it."
-            align="center"
-          />
-        </Reveal>
-        <div class="features-grid">
-          <Reveal delay={80}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="m9 12 2 2 4-4"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Target size mode</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Enter 100 KB (or any value) and the compressor iterates
-                to find the right quality and resolution combination. No
-                more compress → check → repeat.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={160}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Any format</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Works with JPEG, PNG, WebP, AVIF, GIF, and HEIC. Target
-                size mode automatically picks the right strategy for each
-                format.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={240}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Web &amp; form optimized</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Many platforms cap file uploads at 100KB. Whether it's a
-                job application, a government form, or a CMS — we get you
-                under the limit with minimal quality loss.
-              </p>
-            </Card>
-          </Reveal>
-        </div>
-      </div>
-    </section>
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">Compress to a specific file size every time.</h2>
+        <p class="text-body-md cp-body-text">
+          Most image compressors force you to play the quality guessing game:
+          compress at 80, check the file size, compress again at 70, check
+          again, repeat until you hit your target. Our target-size mode
+          eliminates this workflow entirely. Set the file size you need —
+          100 KB, 200 KB, 8 MB — and the encoder iterates automatically to
+          find the right combination of quality and (optionally) resolution
+          to hit it.
+        </p>
+        <p class="text-body-md cp-body-text">
+          The target-size algorithm works by intelligently predicting the
+          relationship between quality and file size for each format. It
+          makes an initial estimate, encodes, checks the result, adjusts,
+          and repeats — typically converging within 2-3 passes. The result
+          is a compressed image that meets your size requirement with the
+          highest possible quality. You can also enable resize to scale down
+          large images, which helps the encoder hit aggressive targets like
+          100 KB without compromising quality as much.
+        </p>
+        <h3 class="text-display-sm">Common use cases for 100 KB compression.</h3>
+        <p class="text-body-md cp-body-text">
+          A 100 KB limit is common in several scenarios: online job
+          application portals that accept photos, government form upload
+          systems, email attachment size restrictions, CMS thumbnail fields,
+          and some social media profile pictures. Setting a target size of
+          100 KB guarantees your image meets these requirements on the first
+          try. Our compressor is preconfigured with the target set to 100 KB
+          — upload an image and it automatically works towards that goal.
+        </p>
+        <p class="text-body-md cp-body-text">
+          The target size is fully adjustable from the Custom settings panel.
+          If 100 KB is too aggressive for a particular image, increase the
+          target. If you need even smaller files for things like favicons or
+          thumbnails, set a target of 10-50 KB. The algorithm handles it
+          seamlessly.
+        </p>
+      </Reveal>
+    </div>
+  </section>
 
-    <section class="band band-canvas">
-      <div class="container-narrow stack stack-lg">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="How it works"
-            title="Just set the target size."
-            lead="No more compressing, checking file size, and repeating. Enter your target in KB, and our encoder iterates to find the optimal settings to hit it. All in your browser, all private."
-          />
-        </Reveal>
-        <Reveal delay={100}>
-          <div class="steps-list">
-            <div class="step">
-              <span class="step-number text-caption-mono">01</span>
-              <div>
-                <h3 class="text-display-sm">Upload your image</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Drop a file, paste from clipboard, or pick a folder.
-                  Works with JPEG, PNG, WebP, AVIF, GIF, SVG, and HEIC.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">02</span>
-              <div>
-                <h3 class="text-display-sm">Set target to 100 KB</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  In the Custom settings panel, enable "Target size" and
-                  enter 100 KB. The compressor handles the rest.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">03</span>
-              <div>
-                <h3 class="text-display-sm">Download &amp; verify</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Compare before and after with the slider. Each result
-                  shows the exact file size. Download individually or as
-                  a ZIP.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-
-    <section class="band cta-band">
-      <MeshGradient intensity="ambient" />
-      <div class="container cta-inner">
-        <Reveal>
-          <p class="text-caption-mono cta-eyebrow">Ready to compress?</p>
-          <h2 class="text-display-xl cta-title">
-            Hit 100 KB on your first try.
-          </h2>
-          <p class="text-body-lg cta-sub">
-            Free. Unlimited. Your files never leave your device.
-          </p>
-          <div class="cta-actions">
-            <Button label="Open Compressor" href="/compressor/" variant="secondary" size="lg" class="btn-on-dark">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </Button>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  </AppShell>
-</Layout>
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
 
 <style>
-  .page-hero {
-    position: relative;
-    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl);
-    background-color: var(--color-canvas);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .page-hero-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-md);
-  }
-  .page-title { margin: 0; max-width: 18ch; }
-  .page-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
 
   .band {
     position: relative;
     padding: var(--space-5xl) 0;
   }
-  .band-soft { background-color: var(--color-canvas-soft); }
   .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
-  }
-
-  .steps-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-  .step {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: var(--space-md);
-    align-items: start;
-  }
-  .step-number {
-    color: var(--color-mute);
-    margin-top: 2px;
-  }
-  .step h3 { margin: 0; }
-  .step p { margin: var(--space-xs) 0 0; }
-
-  .cta-band {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .cta-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-md);
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  .cta-eyebrow {
-    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0;
-  }
-  .cta-title { margin: 0; color: var(--color-on-primary); max-width: 18ch; }
-  .cta-sub {
-    margin: 0;
-    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
-    max-width: 48ch;
-  }
-  .cta-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-    flex-wrap: wrap;
-    justify-content: center;
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
   }
 
-  @media (max-width: 1023px) {
-    .features-grid { grid-template-columns: repeat(2, 1fr); }
-  }
   @media (max-width: 600px) {
     .band { padding: var(--space-4xl) 0; }
-    .page-hero { padding: var(--space-4xl) 0 var(--space-3xl); }
-    .features-grid { grid-template-columns: 1fr; }
   }
 </style>

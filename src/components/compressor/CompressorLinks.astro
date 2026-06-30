@@ -1,0 +1,105 @@
+---
+import Reveal from '../shared/Reveal.astro';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const allLinks = [
+  { href: '/image-compressor/', label: 'Image Compressor', desc: 'General image compression for all formats' },
+  { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'JPEG optimization with mozJPEG' },
+  { href: '/compress-png/', label: 'Compress PNG', desc: 'PNG compression with lossless and lossy' },
+  { href: '/compress-webp/', label: 'Compress WebP', desc: 'WebP optimization with libwebp' },
+  { href: '/compress-avif/', label: 'Compress AVIF', desc: 'AVIF encoding with libaom' },
+  { href: '/image-compressor-100kb/', label: 'Compress to 100KB', desc: 'Target file size compression' },
+  { href: '/image-compressor-for-discord/', label: 'For Discord', desc: 'Compress images for Discord' },
+  { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch compress hundreds of images' },
+];
+---
+
+<section class="band band-soft compressor-links">
+  <div class="container stack stack-3xl">
+    <Reveal>
+      <h2 class="text-display-md links-title">Related compressor tools</h2>
+      <p class="text-body-md links-lead">
+        Optimize your images for any format, platform, or file size.
+      </p>
+    </Reveal>
+    <div class="links-grid">
+      {allLinks.filter((l) => l.href !== currentPath).map((link, i) => (
+        <Reveal delay={i * 40}>
+          <a href={link.href} class="link-card">
+            <h3 class="text-display-sm link-card-title">{link.label}</h3>
+            <p class="text-body-sm link-card-desc">{link.desc}</p>
+          </a>
+        </Reveal>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .compressor-links {
+    position: relative;
+  }
+
+  .links-title {
+    margin: 0;
+  }
+
+  .links-lead {
+    color: var(--color-body);
+    margin: var(--space-xs) 0 0;
+    max-width: 48ch;
+  }
+
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+  }
+
+  .link-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-lg);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition:
+      transform var(--dur-base) var(--ease-out-quart),
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      border-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .link-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .link-card-title {
+    margin: 0;
+    color: var(--color-link);
+    font-size: var(--text-body-md);
+    font-weight: var(--weight-semibold);
+  }
+
+  .link-card-desc {
+    margin: 0;
+    color: var(--color-body);
+    font-size: var(--text-body-sm);
+  }
+
+  @media (max-width: 1023px) {
+    .links-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .links-grid { grid-template-columns: 1fr; }
+  }
+</style>

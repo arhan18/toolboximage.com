@@ -1,0 +1,125 @@
+---
+import Layout from './Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import CompressorShell from '../components/compressor/CompressorShell.astro';
+import CompressorLinks from '../components/compressor/CompressorLinks.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  schemas?: Record<string, unknown>[];
+  noIndex?: boolean;
+  defaultFormat?: string;
+  defaultTargetSize?: number;
+  breadcrumbs: { name: string; href: string }[];
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage,
+  schemas = [],
+  noIndex,
+  defaultFormat,
+  defaultTargetSize,
+  breadcrumbs,
+} = Astro.props;
+---
+
+<Layout
+  {title}
+  {description}
+  canonical={canonical}
+  ogImage={ogImage}
+  {noIndex}
+  schemas={[
+    softwareAppSchema(),
+    breadcrumbSchema(breadcrumbs),
+    ...schemas,
+  ]}
+>
+  <AppShell>
+    <section class="cp-hero">
+      <div class="container cp-hero-inner">
+        <slot name="hero" />
+      </div>
+    </section>
+
+    <CompressorShell {defaultFormat} {defaultTargetSize} />
+
+    <slot name="content" />
+
+    <CompressorLinks currentPath={breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1].href : ''} />
+
+    <slot name="faq" />
+
+    <section class="band cta-band">
+      <div class="container cta-inner">
+        <Reveal>
+          <p class="text-caption-mono cta-eyebrow">Get started</p>
+          <h2 class="text-display-xl cta-title">Ready to compress your images?</h2>
+          <p class="text-body-lg cta-sub">Free. Unlimited. Your files never leave your device.</p>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .cp-hero {
+    position: relative;
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-lg);
+    background-color: var(--color-canvas);
+  }
+
+  .cp-hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+
+  .cta-band {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .cta-title { margin: 0; color: var(--color-on-primary); }
+
+  .cta-sub {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+  }
+
+  @media (max-width: 600px) {
+    .cp-hero { padding: var(--space-4xl) 0 var(--space-md); }
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

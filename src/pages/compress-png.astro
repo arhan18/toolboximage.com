@@ -1,278 +1,131 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AppShell from '../components/layout/AppShell.astro';
-import Button from '../components/ui/Button.astro';
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
-import Card from '../components/ui/Card.astro';
-import IconBox from '../components/ui/IconBox.astro';
-import PageHeader from '../components/shared/PageHeader.astro';
 import Reveal from '../components/shared/Reveal.astro';
-import MeshGradient from '../components/shared/MeshGradient.astro';
-import { breadcrumbSchema } from '../lib/seo';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'Can you compress a PNG without losing quality?',
+    a: 'Yes. PNG supports lossless compression, which reduces file size without changing a single pixel. Our compressor uses optimized filter strategies and deflate compression to shrink lossless PNGs by 10-40% with identical output.',
+  },
+  {
+    q: 'Does PNG compression preserve transparency?',
+    a: 'Absolutely. The alpha channel, gamma correction, and color profiles are all preserved during compression. Your transparent PNGs stay transparent with the exact same pixel values.',
+  },
+  {
+    q: 'What is the difference between lossy and lossless PNG compression?',
+    a: 'Lossless PNG compression re-encodes the image data more efficiently without changing any pixels — the output is mathematically identical to the input. Lossy PNG compression (quantization) reduces the number of distinct colours, which can dramatically shrink file size at the cost of some precision. This is useful for PNG photographs where the format choice adds overhead.',
+  },
+  {
+    q: 'When should I use PNG instead of JPEG?',
+    a: 'PNG is best for images with sharp edges, text, logos, screenshots, and graphics with transparency. JPEG excels at photographs and gradients. If your image has fewer than 256 colours, PNG will often be smaller than JPEG even before compression.',
+  },
+  {
+    q: 'Can I batch compress PNG files?',
+    a: 'Yes. Drop a folder of PNGs and the queue processes them in parallel. Up to 200 files at once with no individual size limit beyond your device memory.',
+  },
+];
 ---
 
-<Layout
-  title="Compress PNG Images Online — ToolBox Image"
-  description="Reduce PNG file size while preserving full transparency. Free online PNG compressor with lossy and lossless modes — no uploads, no limits, no sign-up."
+<CompressorPageLayout
+  title="Compress PNG Images Online — Free PNG Compressor | ToolBox Image"
+  description="Compress PNG images online with lossless and lossy modes. Free PNG compressor — preserve transparency while reducing file size. No uploads, no limits."
   canonical="https://toolboximage.com/compress-png/"
-  schemas={[
-    breadcrumbSchema([
-      { name: 'Home', href: '/' },
-      { name: 'Compress PNG', href: '/compress-png' },
-    ]),
+  defaultFormat="png"
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Compress PNG', href: '/compress-png' },
   ]}
+  schemas={[faqSchema(faqs)]}
 >
-  <AppShell>
-    <section class="page-hero">
-      <MeshGradient intensity="subtle" />
-      <div class="container page-hero-inner">
-        <Reveal>
-          <Badge eyebrow="PNG Compressor" tone="info">Free</Badge>
-        </Reveal>
-        <Reveal delay={80}>
-          <h1 class="text-display-xl page-title">
-            Compress PNG images online.
-          </h1>
-        </Reveal>
-        <Reveal delay={160}>
-          <p class="text-body-lg page-lead">
-            Shrink your PNGs without breaking transparency. Whether you
-            need lossless compression for design assets or aggressive
-            size reduction for the web — it all happens in your browser.
-          </p>
-        </Reveal>
-      </div>
-    </section>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="PNG Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress PNG images online.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Shrink your PNGs without breaking transparency. Lossless mode
+        preserves every pixel. Lossy mode slashes file sizes. Both keep
+        your alpha channel intact.
+      </p>
+    </Reveal>
+  </section>
 
-    <section class="band band-soft">
-      <div class="container stack stack-3xl">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="PNG compression"
-            title="Lossy or lossless. You choose."
-            align="center"
-          />
-        </Reveal>
-        <div class="features-grid">
-          <Reveal delay={80}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="m9 12 2 2 4-4"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Lossless mode</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Re-encode your PNG with optimized filter strategies and
-                deflate compression. Every pixel stays identical — only
-                the file gets smaller.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={160}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M2 20h20"/>
-                  <path d="M4 16V8a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v8"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Transparency preserved</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Alpha channel, gamma, color profiles — nothing is stripped.
-                Your transparent PNGs stay transparent after compression.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={240}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Quantization</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                For photos in PNG format, enable lossy compression to
-                dramatically cut file size. The encoder intelligently
-                reduces color precision where it won't be noticed.
-              </p>
-            </Card>
-          </Reveal>
-        </div>
-      </div>
-    </section>
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">PNG compression with full control.</h2>
+        <p class="text-body-md cp-body-text">
+          PNG is the go-to format for screenshots, logos, icons, and any
+          image that needs crisp edges or transparency. The trade-off is
+          file size — PNG files are typically larger than JPEG for
+          photographic content. Our compressor gives you two paths to
+          smaller PNGs: lossless and lossy.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Lossless mode re-encodes the PNG with optimized filter strategies
+          (the per-row prediction method) and maximum deflate compression.
+          Every pixel stays identical — only the file gets smaller. This is
+          ideal for design assets where pixel-perfect fidelity matters. Lossy
+          mode uses colour quantization to reduce the palette size, which can
+          dramatically cut file size for photographs stored as PNG. The
+          encoder intelligently reduces colour precision where it won't be
+          noticed, preserving edges and gradients.
+        </p>
+        <h3 class="text-display-sm">When to use PNG compression.</h3>
+        <p class="text-body-md cp-body-text">
+          If you work with UI designs, screenshots, or images with text
+          overlays, PNG is usually the right format. Compressing those PNGs
+          before uploading them to a website or sharing them with a team
+          saves bandwidth without sacrificing the sharpness that makes PNG
+          valuable in the first place. For images that need transparency —
+          logos, icons, product cutouts — PNG is irreplaceable, and our
+          compressor keeps your alpha channel safe.
+        </p>
+        <p class="text-body-md cp-body-text">
+          The compressor is preconfigured for PNG output, so you can start
+          immediately. The Custom panel gives you access to all settings
+          including quality, target file size, resize options, and metadata
+          stripping.
+        </p>
+      </Reveal>
+    </div>
+  </section>
 
-    <section class="band band-canvas">
-      <div class="container-narrow stack stack-lg">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="How it works"
-            title="Your PNGs stay private."
-            lead="Everything runs client-side. We use canvas-based re-encoding with optimized PNG filter and compression strategies. Your images never touch a server — ever."
-          />
-        </Reveal>
-        <Reveal delay={100}>
-          <div class="steps-list">
-            <div class="step">
-              <span class="step-number text-caption-mono">01</span>
-              <div>
-                <h3 class="text-display-sm">Drop your PNGs</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Drag, browse, paste, or pick a folder. Up to 200 files
-                  with no individual size limit beyond your device memory.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">02</span>
-              <div>
-                <h3 class="text-display-sm">Pick your mode</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Lossless for pixel-perfect assets. Lossy for maximum
-                  compression. Or target a specific file size in KB. The
-                  encoder does the math.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">03</span>
-              <div>
-                <h3 class="text-display-sm">Compare &amp; download</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Side-by-side preview with a draggable slider shows
-                  exactly what changed. Download files individually or as
-                  a single ZIP archive.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-
-    <section class="band cta-band">
-      <MeshGradient intensity="ambient" />
-      <div class="container cta-inner">
-        <Reveal>
-          <p class="text-caption-mono cta-eyebrow">Ready to compress?</p>
-          <h2 class="text-display-xl cta-title">
-            Compress your PNGs now.
-          </h2>
-          <p class="text-body-lg cta-sub">
-            Free. Unlimited. Your files never leave your device.
-          </p>
-          <div class="cta-actions">
-            <Button label="Open PNG Compressor" href="/compressor/" variant="secondary" size="lg" class="btn-on-dark">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </Button>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  </AppShell>
-</Layout>
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
 
 <style>
-  .page-hero {
-    position: relative;
-    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl);
-    background-color: var(--color-canvas);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .page-hero-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-md);
-  }
-  .page-title { margin: 0; max-width: 18ch; }
-  .page-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
 
   .band {
     position: relative;
     padding: var(--space-5xl) 0;
   }
-  .band-soft { background-color: var(--color-canvas-soft); }
   .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
-  }
-
-  .steps-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-  .step {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: var(--space-md);
-    align-items: start;
-  }
-  .step-number {
-    color: var(--color-mute);
-    margin-top: 2px;
-  }
-  .step h3 { margin: 0; }
-  .step p { margin: var(--space-xs) 0 0; }
-
-  .cta-band {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .cta-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-md);
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  .cta-eyebrow {
-    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0;
-  }
-  .cta-title { margin: 0; color: var(--color-on-primary); max-width: 18ch; }
-  .cta-sub {
-    margin: 0;
-    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
-    max-width: 48ch;
-  }
-  .cta-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-    flex-wrap: wrap;
-    justify-content: center;
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
   }
 
-  @media (max-width: 1023px) {
-    .features-grid { grid-template-columns: repeat(2, 1fr); }
-  }
   @media (max-width: 600px) {
     .band { padding: var(--space-4xl) 0; }
-    .page-hero { padding: var(--space-4xl) 0 var(--space-3xl); }
-    .features-grid { grid-template-columns: 1fr; }
   }
 </style>

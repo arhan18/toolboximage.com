@@ -1,0 +1,355 @@
+---
+import UploadDropZone from '../upload/UploadDropZone.astro';
+import SettingsPanel from '../upload/SettingsPanel.astro';
+import QueueProgress from '../upload/QueueProgress.astro';
+import ResultsSummary from '../upload/ResultsSummary.astro';
+import PreviewCard from '../upload/PreviewCard.astro';
+import Reveal from '../shared/Reveal.astro';
+
+export interface Props {
+  defaultFormat?: string;
+  defaultTargetSize?: number;
+}
+
+const { defaultFormat, defaultTargetSize } = Astro.props;
+---
+
+<section
+  class="compressor section"
+  data-compressor-shell
+  data-default-format={defaultFormat ?? ''}
+  data-default-target-size={defaultTargetSize ?? ''}
+>
+  <div class="container stack stack-xl">
+    <Reveal delay={80}>
+      <UploadDropZone />
+    </Reveal>
+
+    <Reveal delay={140}>
+      <SettingsPanel />
+    </Reveal>
+
+    <Reveal delay={200} class="queue-panel-wrap">
+      <section class="queue-panel" data-queue-panel aria-label="Upload queue">
+        <header class="queue-header">
+          <div class="queue-summary">
+            <h2 class="text-display-sm queue-title">Queue</h2>
+            <p class="text-caption queue-stats" data-queue-stats>
+              No images yet
+            </p>
+          </div>
+          <div class="queue-actions">
+            <button type="button" class="queue-link" data-action="add-more">
+              + Add more
+            </button>
+            <button type="button" class="queue-link" data-action="cancel-all" hidden>
+              Cancel all
+            </button>
+            <button type="button" class="queue-link queue-link-danger" data-action="clear" hidden>
+              Clear all
+            </button>
+          </div>
+          <div class="queue-top-compress" data-top-compress hidden>
+            <button
+              type="button"
+              class="btn btn-primary btn-lg top-compress"
+              aria-label="Start compressing all ready images"
+              data-action="compress"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              Compress all
+            </button>
+          </div>
+        </header>
+
+        <QueueProgress />
+
+        <div class="queue-loading" data-queue-loading hidden>
+          <span class="queue-loading-spinner" aria-hidden="true"></span>
+          <p class="text-body-sm queue-loading-text" data-queue-loading-text>
+            Generating previews…
+          </p>
+        </div>
+
+        <div class="queue-empty" data-queue-empty>
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <circle cx="9" cy="9" r="1.5"/>
+            <path d="m21 15-5-5L5 21"/>
+          </svg>
+          <p class="text-body-md-strong queue-empty-title">Your queue is empty</p>
+          <p class="text-body-sm queue-empty-sub">
+            Drop images anywhere in this page, or use the buttons above.
+          </p>
+        </div>
+
+        <ul class="queue-list" data-queue-list role="list" hidden></ul>
+
+        <ResultsSummary />
+
+        <footer class="queue-footer" data-queue-footer hidden>
+          <div class="queue-footer-stats">
+            <span class="text-body-sm queue-stat-row">
+              <span class="text-caption queue-stat-label">Total size</span>
+              <span class="text-body-md-strong" data-total-size>0 B</span>
+            </span>
+            <span class="text-body-sm queue-stat-row">
+              <span class="text-caption queue-stat-label">Saved so far</span>
+              <span class="text-body-md-strong" data-saved-size>0 B</span>
+            </span>
+          </div>
+          <div class="queue-footer-actions">
+            <button type="button" class="btn btn-secondary btn-lg footer-cancel" aria-label="Cancel compression">
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary btn-lg footer-compress"
+              aria-label="Start compressing all ready images"
+              data-action="compress"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              Compress all
+            </button>
+          </div>
+        </footer>
+      </section>
+    </Reveal>
+  </div>
+</section>
+
+<PreviewCard />
+
+<script>
+  import { initCompressor } from '../../lib/compressor-client';
+  initCompressor();
+</script>
+
+<style>
+  .compressor {
+    padding-top: var(--space-5xl);
+    padding-bottom: var(--space-6xl);
+  }
+
+  .queue-loading-text { color: var(--color-body); }
+
+  .queue-panel-wrap { display: block; }
+
+  .queue-panel {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    overflow: hidden;
+  }
+
+  .queue-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-hairline);
+    flex-wrap: wrap;
+  }
+
+  .queue-summary { display: flex; flex-direction: column; gap: 2px; }
+  .queue-title { margin: 0; }
+  .queue-stats { color: var(--color-mute); margin: 0; }
+
+  .queue-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .queue-top-compress {
+    display: flex;
+    align-items: center;
+  }
+  .queue-top-compress[data-running="true"] {
+    display: none;
+  }
+
+  .top-compress {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    height: 44px;
+    padding: 0 var(--space-lg);
+    border-radius: var(--radius-pill);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-semibold);
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    transition: background-color var(--dur-fast) var(--ease-out-quart), transform var(--dur-fast) var(--ease-out-quart), box-shadow var(--dur-fast) var(--ease-out-quart);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .top-compress:hover { background-color: var(--color-primary-deep); transform: translateY(-1px); box-shadow: var(--shadow-3); }
+  .top-compress:active { transform: scale(0.985); }
+  .top-compress:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .top-compress[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+
+  .queue-link {
+    background: none;
+    border: none;
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--color-link);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    border-radius: var(--radius-sm);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .queue-link:hover {
+    background-color: var(--color-canvas-soft);
+    color: var(--color-link-deep);
+  }
+
+  .queue-link:focus-visible { outline: 2px solid var(--color-link); outline-offset: 1px; }
+
+  .queue-link-danger { color: var(--color-error-deep); }
+  .queue-link-danger:hover { background-color: var(--color-error-soft); color: var(--color-error-deep); }
+
+  .queue-loading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .queue-loading-spinner {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-hairline);
+    border-top-color: var(--color-ink);
+    animation: queue-spin 0.7s linear infinite;
+  }
+
+  @keyframes queue-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .queue-loading-spinner { animation: none; } }
+
+  .queue-empty {
+    padding: var(--space-4xl) var(--space-xl);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-mute);
+  }
+
+  .queue-empty-title { color: var(--color-ink); margin: var(--space-xs) 0 0; }
+  .queue-empty-sub { color: var(--color-body); margin: 0; max-width: 40ch; }
+
+  .queue-list {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .queue-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background-color: var(--color-canvas-soft);
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .queue-footer-stats {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+  }
+
+  .queue-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .queue-footer-actions .footer-cancel { display: none; }
+  .queue-footer[data-running="true"] .queue-footer-actions .footer-cancel { display: inline-flex; }
+  .queue-footer[data-running="true"] .queue-footer-actions .footer-compress { display: none; }
+
+  .queue-stat-row {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+  }
+
+  .queue-stat-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .footer-cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    height: 44px;
+    padding: 0 var(--space-lg);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-hairline);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    transition: background-color var(--dur-fast) var(--ease-out-quart), transform var(--dur-fast) var(--ease-out-quart);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .footer-cancel:hover { background-color: var(--color-canvas-soft); }
+  .footer-cancel:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+
+  .footer-compress {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    height: 44px;
+    padding: 0 var(--space-lg);
+    border-radius: var(--radius-pill);
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-semibold);
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    transition: background-color var(--dur-fast) var(--ease-out-quart), transform var(--dur-fast) var(--ease-out-quart), box-shadow var(--dur-fast) var(--ease-out-quart);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .footer-compress:hover { background-color: var(--color-primary-deep); transform: translateY(-1px); box-shadow: var(--shadow-3); }
+  .footer-compress:active { transform: scale(0.985); }
+  .footer-compress:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .footer-compress[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+
+  @media (max-width: 600px) {
+    .compressor { padding-top: var(--space-3xl); padding-bottom: var(--space-4xl); }
+    .queue-header { flex-direction: column; gap: var(--space-sm); }
+    .queue-footer { flex-direction: column; align-items: stretch; }
+    .queue-footer-stats { flex-direction: column; gap: var(--space-xs); }
+  }
+</style>

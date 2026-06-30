@@ -1,281 +1,130 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import AppShell from '../components/layout/AppShell.astro';
-import Button from '../components/ui/Button.astro';
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
-import Card from '../components/ui/Card.astro';
-import IconBox from '../components/ui/IconBox.astro';
-import PageHeader from '../components/shared/PageHeader.astro';
 import Reveal from '../components/shared/Reveal.astro';
-import MeshGradient from '../components/shared/MeshGradient.astro';
-import { breadcrumbSchema } from '../lib/seo';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'How much can you compress a JPEG?',
+    a: 'A typical JPEG can be reduced by 40-80% without visible quality loss. Our compressor uses Mozilla\'s mozJPEG encoder, which produces smaller files than standard JPEG at the same quality setting. In Maximum mode, reductions of 80-90% are common, though visual artefacts may become noticeable.',
+  },
+  {
+    q: 'Does JPEG compression lose quality?',
+    a: 'JPEG is a lossy format by design — every re-encode discards some data. That said, at quality settings above 80 the visual difference from the original is imperceptible at normal viewing sizes. Our side-by-side comparison slider lets you verify quality before downloading.',
+  },
+  {
+    q: 'Can I compress a JPEG without losing quality?',
+    a: 'You can use Lossless mode for JPEG, which re-encodes without recompressing the image data. This can still reduce file size by stripping metadata and optimizing Huffman tables, but the savings are smaller than lossy compression — typically 5-15%.',
+  },
+  {
+    q: 'What is the best JPEG quality setting?',
+    a: 'Quality 75-85 is the sweet spot for web use: excellent compression with no visible loss. Quality 50-60 is usable for thumbnails and backgrounds. Below 30, blocky artefacts become obvious. Our Auto mode starts at quality 80 as a safe default.',
+  },
+  {
+    q: 'Can I batch compress JPEG files?',
+    a: 'Yes. Drop an entire folder of JPEGs and the queue processes them in parallel using all available CPU cores. Up to 200 files at once, each up to 100 MB.',
+  },
+];
 ---
 
-<Layout
-  title="Compress JPEG Images Online — ToolBox Image"
-  description="Reduce JPEG file size without losing visual quality. Free online JPEG compressor powered by mozJPEG — no uploads, no limits, no sign-up. Drop in and compress."
+<CompressorPageLayout
+  title="Compress JPEG Images Online — Free JPEG Compressor | ToolBox Image"
+  description="Compress JPEG images online with mozJPEG. Free JPEG compressor — reduce file size without losing quality. No uploads, no limits, no sign-up. Drop and compress."
   canonical="https://toolboximage.com/compress-jpeg/"
-  schemas={[
-    breadcrumbSchema([
-      { name: 'Home', href: '/' },
-      { name: 'Compress JPEG', href: '/compress-jpeg' },
-    ]),
+  defaultFormat="jpeg"
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Compress JPEG', href: '/compress-jpeg' },
   ]}
+  schemas={[faqSchema(faqs)]}
 >
-  <AppShell>
-    <section class="page-hero">
-      <MeshGradient intensity="subtle" />
-      <div class="container page-hero-inner">
-        <Reveal>
-          <Badge eyebrow="JPEG Compressor" tone="info">Free</Badge>
-        </Reveal>
-        <Reveal delay={80}>
-          <h1 class="text-display-xl page-title">
-            Compress JPEG images online.
-          </h1>
-        </Reveal>
-        <Reveal delay={160}>
-          <p class="text-body-lg page-lead">
-            Drop a JPEG — or five hundred — and let mozJPEG shrink them
-            down. No uploads, no server, no sign-up. Your photos stay on
-            your device.
-          </p>
-        </Reveal>
-      </div>
-    </section>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="JPEG Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress JPEG images online.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Drop a JPEG — or five hundred — and let mozJPEG shrink them down.
+        No uploads, no server, no sign-up. Your photos stay on your device.
+      </p>
+    </Reveal>
+  </section>
 
-    <section class="band band-soft">
-      <div class="container stack stack-3xl">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="Why JPEG?"
-            title="The universal format, supercharged."
-            align="center"
-          />
-        </Reveal>
-        <div class="features-grid">
-          <Reveal delay={80}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                  <path d="m9 12 2 2 4-4"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">mozJPEG engine</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                We use Mozilla's mozJPEG — the same encoder that powers
-                Firefox — compiled to WebAssembly. It produces smaller
-                files at the same quality setting than any standard JPEG
-                encoder.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={160}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Batch processing</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Drag in a folder of JPEGs and compress them all at once.
-                The queue runs in parallel using every core your device
-                has.
-              </p>
-            </Card>
-          </Reveal>
-          <Reveal delay={240}>
-            <Card>
-              <IconBox tone="ink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="16" x2="12" y2="12"/>
-                  <line x1="12" y1="8" x2="12.01" y2="8"/>
-                </svg>
-              </IconBox>
-              <h3 class="text-display-sm">Target quality &amp; size</h3>
-              <p class="text-body-sm" style="color:var(--color-body);">
-                Set a quality slider, target file size in KB, or lossless
-                mode. Preview the result before you download — side by
-                side with the original.
-              </p>
-            </Card>
-          </Reveal>
-        </div>
-      </div>
-    </section>
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">JPEG compression powered by mozJPEG.</h2>
+        <p class="text-body-md cp-body-text">
+          JPEG is the most widely used image format on the web, and for good
+          reason: it offers excellent compression for photographic content.
+          The key to good JPEG compression lies in the encoder. Our compressor
+          uses mozJPEG — the same encoder that powers Firefox — compiled to
+          WebAssembly. MozJPEG produces files that are 5-15% smaller than
+          standard libjpeg at the same quality setting, with fewer artefacts
+          in gradient-heavy areas like skies and skin tones.
+        </p>
+        <p class="text-body-md cp-body-text">
+          You have full control over the compression. Use the quality slider
+          (1-100) for precise control, enable target-size mode to hit a
+          specific file size in KB, or switch to lossless mode to strip
+          metadata while preserving every pixel. The progressive JPEG option
+          creates images that render gradually as they load — ideal for
+          slow connections.
+        </p>
+        <h3 class="text-display-sm">Why compress JPEG images?</h3>
+        <p class="text-body-md cp-body-text">
+          JPEG compression is essential for web performance. A typical photo
+          from a modern smartphone is 4-8 MB. Compressed for the web, the
+          same photo can be 200-600 KB with no visible quality difference.
+          That is a 90% reduction in bandwidth and load time. For websites
+          with many images — portfolios, e-commerce stores, news sites —
+          this translates directly to faster pages, lower hosting costs,
+          and better search rankings.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Our compressor is preconfigured for JPEG output. The settings panel
+          defaults to JPEG format so you can start compressing immediately.
+          All the advanced options — resize, metadata removal, progressive
+          encoding — are still available in the Custom panel.
+        </p>
+      </Reveal>
+    </div>
+  </section>
 
-    <section class="band band-canvas">
-      <div class="container-narrow stack stack-lg">
-        <Reveal>
-          <PageHeader
-            as="h2"
-            eyebrow="How it works"
-            title="Your JPEGs never leave your device."
-            lead="Every step — decoding, compression, encoding — happens in your browser. We use Mozilla's mozJPEG compiled to WebAssembly for best-in-class compression. No server, no upload, no privacy risk."
-          />
-        </Reveal>
-        <Reveal delay={100}>
-          <div class="steps-list">
-            <div class="step">
-              <span class="step-number text-caption-mono">01</span>
-              <div>
-                <h3 class="text-display-sm">Drop your JPEGs</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Drag and drop files, click to browse, paste from clipboard,
-                  or pick an entire folder. Up to 200 files at once, each
-                  up to 100 MB.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">02</span>
-              <div>
-                <h3 class="text-display-sm">Choose your settings</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Pick a preset (High, Medium, Low, or Lossless) or go
-                  custom — quality %, target file size, resize dimensions,
-                  and metadata removal.
-                </p>
-              </div>
-            </div>
-            <div class="step">
-              <span class="step-number text-caption-mono">03</span>
-              <div>
-                <h3 class="text-display-sm">Compress &amp; compare</h3>
-                <p class="text-body-sm" style="color:var(--color-body);">
-                  Watch the queue process in parallel. Drag the before/after
-                  slider to compare quality. Download individually or as a
-                  ZIP.
-                </p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-
-    <section class="band cta-band">
-      <MeshGradient intensity="ambient" />
-      <div class="container cta-inner">
-        <Reveal>
-          <p class="text-caption-mono cta-eyebrow">Ready to compress?</p>
-          <h2 class="text-display-xl cta-title">
-            Compress your JPEGs now.
-          </h2>
-          <p class="text-body-lg cta-sub">
-            Free. Unlimited. Your files never leave your device.
-          </p>
-          <div class="cta-actions">
-            <Button label="Open JPEG Compressor" href="/compressor/" variant="secondary" size="lg" class="btn-on-dark">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </Button>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  </AppShell>
-</Layout>
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
 
 <style>
-  .page-hero {
-    position: relative;
-    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl);
-    background-color: var(--color-canvas);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .page-hero-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-md);
-  }
-  .page-title { margin: 0; max-width: 18ch; }
-  .page-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
 
   .band {
     position: relative;
     padding: var(--space-5xl) 0;
   }
-  .band-soft { background-color: var(--color-canvas-soft); }
   .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
-  }
-
-  .steps-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
-  .step {
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: var(--space-md);
-    align-items: start;
-  }
-  .step-number {
-    color: var(--color-mute);
-    margin-top: 2px;
-  }
-  .step h3 { margin: 0; }
-  .step p { margin: var(--space-xs) 0 0; }
-
-  .cta-band {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .cta-inner {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: var(--space-md);
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  .cta-eyebrow {
-    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0;
-  }
-  .cta-title { margin: 0; color: var(--color-on-primary); max-width: 18ch; }
-  .cta-sub {
-    margin: 0;
-    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
-    max-width: 48ch;
-  }
-  .cta-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-    flex-wrap: wrap;
-    justify-content: center;
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
   }
 
-  @media (max-width: 1023px) {
-    .features-grid { grid-template-columns: repeat(2, 1fr); }
-  }
   @media (max-width: 600px) {
     .band { padding: var(--space-4xl) 0; }
-    .page-hero { padding: var(--space-4xl) 0 var(--space-3xl); }
-    .features-grid { grid-template-columns: 1fr; }
   }
 </style>
