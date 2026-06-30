@@ -73,6 +73,13 @@ export class CompressionEngine {
       if (ctx) ctx.drawImage(resized, 0, 0);
     }
 
+    // Flatten alpha onto white for output formats that don't support
+    // transparency (JPEG). This prevents transparent canvas pixels
+    // (rgba(0,0,0,0)) from becoming visible black in the encoded output.
+    if (mime === 'image/jpeg') {
+      flattenAlpha(canvas, '#ffffff');
+    }
+
     const quality = qualityFor(settings, mime) / 100;
 
     // Target-size binary search (best-effort, up to 6 iterations).
@@ -178,9 +185,9 @@ function drawResized(
     : Object.assign(document.createElement('canvas'), { width, height });
   const ctx = dest.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
   if (!ctx) throw new Error('Canvas 2D context unavailable');
-  ctx.fillStyle = background || 'transparent';
+  ctx.fillStyle = background || '#ffffff';
   ctx.fillRect(0, 0, width, height);
-  (ctx as CanvasRenderingContext2D).drawImage(src as CanvasImageSource, 0, 0, width, height);
+  ctx.drawImage(src as CanvasImageSource, 0, 0, width, height);
   return dest;
 }
 
@@ -199,6 +206,33 @@ function canvasToBlob(
       quality
     );
   });
+}
+
+/**
+ * Composite the canvas content onto a solid background color.
+ * This prevents transparent pixels from becoming black when
+ * encoded to a format without alpha (e.g. JPEG).
+ */
+function flattenAlpha(
+  canvas: HTMLCanvasElement | OffscreenCanvas,
+  bg: string
+): void {
+  const isOffscreen = typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas;
+  const w = canvas.width;
+  const h = canvas.height;
+  const dest = isOffscreen
+    ? new OffscreenCanvas(w, h)
+    : Object.assign(document.createElement('canvas'), { width: w, height: h });
+  const ctx = dest.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+  if (!ctx) return;
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+  ctx.drawImage(canvas as CanvasImageSource, 0, 0);
+  // Replace the original canvas content.
+  const srcCtx = canvas.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+  if (!srcCtx) return;
+  srcCtx.clearRect(0, 0, w, h);
+  srcCtx.drawImage(dest as CanvasImageSource, 0, 0);
 }
 
 async function binarySearchTargetSize(

@@ -778,7 +778,10 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
       if (!hasAnyDone) return;
 
-      const totalOriginal = items.reduce((s, i) => s + i.size, 0);
+      const doneIds = new Set(doneJobs.map((j) => j.sourceId));
+      const totalOriginal = items
+        .filter((i) => doneIds.has(i.id))
+        .reduce((s, i) => s + i.size, 0);
       const totalNew = doneJobs.reduce((s, j) => s + (j.result?.bytes ?? 0), 0);
 
       animateStat(resultOriginal, formatBytes(totalOriginal));
@@ -852,6 +855,10 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
       const handle = root.querySelector<HTMLButtonElement>('.ba-handle')!;
       const afterImg = root.querySelector<HTMLImageElement>('.ba-after')!;
 
+      const syncAfterWidth = () => {
+        afterImg.style.width = `${frame.clientWidth}px`;
+      };
+
       const setPos = (p: number) => {
         const c = Math.max(0, Math.min(100, p));
         after.style.setProperty('--ba-position', `${c}%`);
@@ -861,8 +868,19 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
         range.value = String(c);
       };
       setPos(50);
+      syncAfterWidth();
 
       range.addEventListener('input', () => setPos(Number(range.value)));
+
+      handle.addEventListener('keydown', (e) => {
+        const step = e.shiftKey ? 10 : 2;
+        let next: number | null = null;
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = Number(range.value) - step;
+        else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = Number(range.value) + step;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = 100;
+        if (next !== null) { e.preventDefault(); setPos(next); }
+      });
 
       let dragging = false;
       const update = (e: PointerEvent) => {
@@ -872,12 +890,23 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
       };
       frame.addEventListener('pointerdown', (e) => {
         dragging = true;
+        handle.dataset.dragging = '1';
         try { frame.setPointerCapture(e.pointerId); } catch {}
         update(e);
       });
       frame.addEventListener('pointermove', (e) => { if (dragging) update(e); });
-      frame.addEventListener('pointerup', () => { dragging = false; });
-      frame.addEventListener('pointercancel', () => { dragging = false; });
+      frame.addEventListener('pointerup', () => {
+        if (!dragging) return;
+        dragging = false;
+        delete handle.dataset.dragging;
+      });
+      frame.addEventListener('pointercancel', () => {
+        dragging = false;
+        delete handle.dataset.dragging;
+      });
+
+      const ro = new ResizeObserver(() => syncAfterWidth());
+      ro.observe(frame);
 
       // Auto demo.
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
