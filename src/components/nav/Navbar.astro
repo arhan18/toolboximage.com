@@ -1,6 +1,7 @@
 ---
 import Logo from '../brand/Logo.astro';
 import ThemeToggle from '../theme/ThemeToggle.astro';
+import { tools } from '../../lib/tools';
 
 interface Props {
   currentPath?: string;
@@ -8,21 +9,26 @@ interface Props {
 
 const { currentPath = '/' } = Astro.props;
 
-// Single top-level nav for now. As more tools ship, the link groups can
-// split into dropdowns/menus — keeping it flat for clarity.
-const links = [
-  { href: '/compressor/', label: 'Compressor' },
-  { href: '/blog/', label: 'Blog' },
-  { href: '/faq/', label: 'FAQ' },
-  { href: '/about/', label: 'About' },
-];
-
 const stripSlash = (s: string) => s.length > 1 && s.endsWith('/') ? s.slice(0, -1) : s;
+
+const isToolsActive = () => {
+  const cp = stripSlash(currentPath);
+  return cp.startsWith('/image-tools') || cp.startsWith('/compressor') || cp.startsWith('/compress-') || cp.startsWith('/tools/');
+};
+
 const isActive = (href: string) => {
   const cp = stripSlash(currentPath);
   const h = stripSlash(href);
   return cp === h || (h !== '/' && cp.startsWith(h + '/'));
 };
+
+const comingSoonLinks = tools
+  .filter((t) => t.status === 'coming-soon')
+  .map((t) => ({ href: t.path, label: t.shortName ?? t.name }));
+
+const plannedLinks = tools
+  .filter((t) => t.status === 'planned')
+  .map((t) => ({ href: t.path, label: t.shortName ?? t.name }));
 ---
 
 <header class="nav-bar">
@@ -31,16 +37,172 @@ const isActive = (href: string) => {
     <Logo />
 
     <div class="nav-links">
-      {links.map((l) => (
-        <a
-          href={l.href}
-          class:list={['nav-link text-body-sm', { active: isActive(l.href) }]}
-          aria-current={isActive(l.href) ? 'page' : undefined}
-          data-astro-prefetch="hover"
+      <div class="nav-dropdown">
+        <button
+          type="button"
+          class:list={['nav-link nav-dropdown-trigger text-body-sm', { active: isToolsActive() }]}
+          aria-expanded="false"
+          aria-controls="tools-dropdown"
+          data-tools-trigger
         >
-          {l.label}
-        </a>
-      ))}
+          Tools
+          <svg class="dropdown-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="nav-dropdown-panel" id="tools-dropdown" data-tools-dropdown hidden>
+          <div class="dropdown-inner">
+            <a
+              href="/image-tools/"
+              class:list={['dropdown-link dropdown-link-all text-body-sm-strong', { active: isActive('/image-tools/') }]}
+              aria-current={isActive('/image-tools/') ? 'page' : undefined}
+              data-astro-prefetch="hover"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+              </svg>
+              All Image Tools
+            </a>
+
+            <div class="dropdown-group">
+              <a
+                href="/image-compressor/"
+                class:list={['dropdown-group-label text-caption-mono dropdown-group-link', { active: isActive('/image-compressor/') }]}
+                aria-current={isActive('/image-compressor/') ? 'page' : undefined}
+                data-astro-prefetch="hover"
+              >
+                Image Compressor
+              </a>
+              <div class="dropdown-links">
+                <a
+                  href="/image-compressor/"
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/image-compressor/') }]}
+                  aria-current={isActive('/image-compressor/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  Image Compressor
+                </a>
+                <a
+                  href="/compress-jpeg/"
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/compress-jpeg/') }]}
+                  aria-current={isActive('/compress-jpeg/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  Compress JPEG
+                </a>
+                <a
+                  href="/compress-png/"
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/compress-png/') }]}
+                  aria-current={isActive('/compress-png/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  Compress PNG
+                </a>
+                <a
+                  href="/compress-webp/"
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/compress-webp/') }]}
+                  aria-current={isActive('/compress-webp/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  Compress WebP
+                </a>
+                <a
+                  href="/compress-avif/"
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/compress-avif/') }]}
+                  aria-current={isActive('/compress-avif/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  Compress AVIF
+                </a>
+                <a
+                  href="/bulk-image-compressor/"
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/bulk-image-compressor/') }]}
+                  aria-current={isActive('/bulk-image-compressor/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  Bulk Compressor
+                </a>
+                <a
+                  href="/image-compressor-100kb/"
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/image-compressor-100kb/') }]}
+                  aria-current={isActive('/image-compressor-100kb/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  Compress to 100KB
+                </a>
+                <a
+                  href="/image-compressor-for-discord/"
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/image-compressor-for-discord/') }]}
+                  aria-current={isActive('/image-compressor-for-discord/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  Discord Compressor
+                </a>
+              </div>
+            </div>
+
+            <div class="dropdown-group">
+              <span class="dropdown-group-label text-caption-mono">Coming Soon</span>
+              <div class="dropdown-links">
+                {comingSoonLinks.map((l) => (
+                  <a
+                    href={l.href}
+                    class:list={['dropdown-link text-body-sm', { active: isActive(l.href) }]}
+                    aria-current={isActive(l.href) ? 'page' : undefined}
+                    data-astro-prefetch="hover"
+                  >
+                    {l.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div class="dropdown-group">
+              <span class="dropdown-group-label text-caption-mono">Planned</span>
+              <div class="dropdown-links">
+                {plannedLinks.map((l) => (
+                  <a
+                    href={l.href}
+                    class:list={['dropdown-link text-body-sm', { active: isActive(l.href) }]}
+                    aria-current={isActive(l.href) ? 'page' : undefined}
+                    data-astro-prefetch="hover"
+                  >
+                    {l.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a
+        href="/blog/"
+        class:list={['nav-link text-body-sm', { active: isActive('/blog/') }]}
+        aria-current={isActive('/blog/') ? 'page' : undefined}
+        data-astro-prefetch="hover"
+      >
+        Blog
+      </a>
+      <a
+        href="/faq/"
+        class:list={['nav-link text-body-sm', { active: isActive('/faq/') }]}
+        aria-current={isActive('/faq/') ? 'page' : undefined}
+        data-astro-prefetch="hover"
+      >
+        FAQ
+      </a>
+      <a
+        href="/about/"
+        class:list={['nav-link text-body-sm', { active: isActive('/about/') }]}
+        aria-current={isActive('/about/') ? 'page' : undefined}
+        data-astro-prefetch="hover"
+      >
+        About
+      </a>
     </div>
 
     <div class="nav-actions">
@@ -97,6 +259,41 @@ const isActive = (href: string) => {
     });
     updateScroll();
 
+    // Tools dropdown toggle.
+    const trigger = nav.querySelector<HTMLButtonElement>('[data-tools-trigger]');
+    const dropdown = nav.querySelector<HTMLElement>('[data-tools-dropdown]');
+    if (trigger && dropdown) {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = trigger.getAttribute('aria-expanded') === 'true';
+        trigger.setAttribute('aria-expanded', String(!open));
+        dropdown.hidden = open;
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target as Node)) {
+          trigger.setAttribute('aria-expanded', 'false');
+          dropdown.hidden = true;
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && trigger.getAttribute('aria-expanded') === 'true') {
+          trigger.setAttribute('aria-expanded', 'false');
+          dropdown.hidden = true;
+          trigger.focus();
+        }
+      });
+
+      dropdown.addEventListener('click', (e) => {
+        const link = (e.target as HTMLElement).closest('a');
+        if (link) {
+          trigger.setAttribute('aria-expanded', 'false');
+          dropdown.hidden = true;
+        }
+      });
+    }
+
     // Mobile hamburger toggle.
     const hamburger = nav.querySelector<HTMLButtonElement>('.nav-hamburger');
     const navLinks = nav.querySelector<HTMLElement>('.nav-links');
@@ -106,7 +303,6 @@ const isActive = (href: string) => {
         hamburger.setAttribute('aria-expanded', String(!open));
         navLinks.dataset.open = String(!open);
       });
-      // Close menu on link click (SPA-style hash nav or same-page).
       navLinks.addEventListener('click', (e) => {
         const link = (e.target as HTMLElement).closest('a');
         if (link) {
@@ -140,7 +336,6 @@ const isActive = (href: string) => {
     background-color: color-mix(in srgb, var(--color-canvas) 80%, transparent);
   }
 
-  /* Subtle shadow on scroll. */
   .nav-bar[data-scrolled="true"] {
     box-shadow: var(--shadow-2);
     border-bottom-color: var(--color-hairline-strong);
@@ -165,6 +360,7 @@ const isActive = (href: string) => {
   .nav-link {
     display: inline-flex;
     align-items: center;
+    gap: var(--space-xxs);
     padding: var(--space-xs) var(--space-sm);
     border-radius: var(--radius-full);
     color: var(--color-body);
@@ -229,6 +425,137 @@ const isActive = (href: string) => {
     gap: var(--space-xs);
   }
 
+  /* ── Tools dropdown ──────────────────────────────────── */
+
+  .nav-dropdown {
+    position: static;
+  }
+
+  .nav-dropdown-trigger {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font: inherit;
+  }
+
+  .dropdown-arrow {
+    transition: transform var(--dur-base) var(--ease-out-quart);
+  }
+
+  .nav-dropdown-trigger[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  .nav-dropdown-panel {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background-color: var(--color-canvas);
+    border-bottom: 1px solid var(--color-hairline);
+    box-shadow: var(--shadow-3);
+    padding: var(--space-lg) 0;
+    z-index: 99;
+  }
+
+  .dropdown-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .dropdown-link-all {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    color: var(--color-link);
+    text-decoration: none;
+    width: fit-content;
+    transition:
+      color var(--dur-fast) var(--ease-out-quart),
+      background-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .dropdown-link-all:hover {
+    background-color: color-mix(in srgb, var(--color-link) 10%, transparent);
+    color: var(--color-link-deep);
+  }
+
+  .dropdown-link-all.active,
+  .dropdown-link-all[aria-current="page"] {
+    color: var(--color-link-deep);
+    background-color: color-mix(in srgb, var(--color-link) 12%, transparent);
+  }
+
+  .dropdown-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .dropdown-group-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .dropdown-group-link {
+    text-decoration: none;
+    width: fit-content;
+    padding: var(--space-xxs) var(--space-sm);
+    border-radius: var(--radius-full);
+    transition:
+      color var(--dur-fast) var(--ease-out-quart),
+      background-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .dropdown-group-link:hover {
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dropdown-group-link.active,
+  .dropdown-group-link[aria-current="page"] {
+    color: var(--color-link);
+    background-color: color-mix(in srgb, var(--color-link) 10%, transparent);
+  }
+
+  .dropdown-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xxs);
+  }
+
+  .dropdown-link {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-xxs) var(--space-sm);
+    border-radius: var(--radius-full);
+    color: var(--color-body);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      color var(--dur-fast) var(--ease-out-quart),
+      background-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .dropdown-link:hover {
+    color: var(--color-ink);
+    background-color: var(--color-canvas-soft);
+  }
+
+  .dropdown-link.active,
+  .dropdown-link[aria-current="page"] {
+    color: var(--color-link);
+    background-color: color-mix(in srgb, var(--color-link) 10%, transparent);
+  }
+
   .nav-hamburger {
     display: none;
     width: 44px;
@@ -286,6 +613,26 @@ const isActive = (href: string) => {
       padding: var(--space-sm) var(--space-md);
     }
     .nav-hamburger { display: flex; }
+
+    .nav-dropdown-panel {
+      position: static;
+      box-shadow: none;
+      border-bottom: none;
+      padding: var(--space-sm) 0;
+    }
+
+    .dropdown-inner {
+      padding: 0;
+      gap: var(--space-sm);
+    }
+
+    .dropdown-group {
+      gap: var(--space-xxs);
+    }
+
+    .dropdown-links {
+      flex-wrap: wrap;
+    }
   }
 
   .nav-progress {
@@ -307,7 +654,8 @@ const isActive = (href: string) => {
 
   @media (prefers-reduced-motion: reduce) {
     .nav-link, .nav-link::before,
-    .hamburger-line { transition: none; }
+    .hamburger-line,
+    .dropdown-arrow { transition: none; }
     .nav-progress { display: none; }
   }
 </style>
