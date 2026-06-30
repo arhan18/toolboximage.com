@@ -26,6 +26,7 @@ const isActive = (href: string) => {
 ---
 
 <header class="nav-bar">
+  <div class="nav-progress" data-nav-progress></div>
   <nav class="nav-inner" aria-label="Main navigation">
     <Logo />
 
@@ -35,6 +36,7 @@ const isActive = (href: string) => {
           href={l.href}
           class:list={['nav-link text-body-sm', { active: isActive(l.href) }]}
           aria-current={isActive(l.href) ? 'page' : undefined}
+          data-astro-prefetch="hover"
         >
           {l.label}
         </a>
@@ -42,10 +44,10 @@ const isActive = (href: string) => {
     </div>
 
     <div class="nav-actions">
-      <a href="/contact/" class="nav-link nav-link-cta text-body-sm-strong">
+      <a href="/contact/" class="nav-link nav-link-cta text-body-sm-strong" data-astro-prefetch="hover">
         Contact
       </a>
-      <ThemeToggle size="sm" />
+      <ThemeToggle />
       <button type="button" class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
@@ -56,20 +58,63 @@ const isActive = (href: string) => {
 </header>
 
 <script>
-  // Scroll shadow for the nav.
   const nav = document.querySelector<HTMLElement>('.nav-bar');
   if (nav) {
+    // Navigation progress bar.
+    const progress = nav.querySelector<HTMLElement>('[data-nav-progress]');
+    if (progress) {
+      let navTimer = 0;
+      document.addEventListener('click', (e) => {
+        const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
+        if (link && link.href && link.href.startsWith(location.origin + '/') && link.href !== location.href) {
+          progress.classList.remove('nav-progress-done');
+          progress.style.width = '0%';
+          requestAnimationFrame(() => {
+            progress.style.width = '60%';
+          });
+          clearTimeout(navTimer);
+          navTimer = window.setTimeout(() => {
+            progress.style.width = '100%';
+          }, 300);
+        }
+      });
+      window.addEventListener('pageshow', () => {
+        progress.style.width = '100%';
+        progress.classList.add('nav-progress-done');
+      });
+    }
+
+    // Scroll shadow.
     let ticking = false;
-    const update = () => {
+    const updateScroll = () => {
       nav.dataset.scrolled = window.scrollY > 8 ? 'true' : '';
     };
     document.addEventListener('scroll', () => {
       if (!ticking) {
-        requestAnimationFrame(() => { update(); ticking = false; });
+        requestAnimationFrame(() => { updateScroll(); ticking = false; });
         ticking = true;
       }
     });
-    update();
+    updateScroll();
+
+    // Mobile hamburger toggle.
+    const hamburger = nav.querySelector<HTMLButtonElement>('.nav-hamburger');
+    const navLinks = nav.querySelector<HTMLElement>('.nav-links');
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', () => {
+        const open = hamburger.getAttribute('aria-expanded') === 'true';
+        hamburger.setAttribute('aria-expanded', String(!open));
+        navLinks.dataset.open = String(!open);
+      });
+      // Close menu on link click (SPA-style hash nav or same-page).
+      navLinks.addEventListener('click', (e) => {
+        const link = (e.target as HTMLElement).closest('a');
+        if (link) {
+          hamburger.setAttribute('aria-expanded', 'false');
+          navLinks.dataset.open = 'false';
+        }
+      });
+    }
   }
 </script>
 
@@ -186,17 +231,17 @@ const isActive = (href: string) => {
 
   .nav-hamburger {
     display: none;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-xxs);
     background: transparent;
     border: 1px solid var(--color-hairline);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    padding: 6px;
+    padding: 10px;
     transition: border-color var(--dur-fast) var(--ease-out-quart);
   }
 
@@ -221,12 +266,49 @@ const isActive = (href: string) => {
   @media (max-width: 768px) {
     .nav-bar { padding: 0 var(--space-md); }
     .nav-links { display: none; }
+    .nav-links[data-open="true"] {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background-color: var(--color-canvas);
+      border-bottom: 1px solid var(--color-hairline);
+      box-shadow: var(--shadow-3);
+      padding: var(--space-sm);
+      gap: var(--space-xs);
+      z-index: 99;
+    }
+    .nav-links[data-open="true"] .nav-link {
+      width: 100%;
+      justify-content: center;
+      padding: var(--space-sm) var(--space-md);
+    }
     .nav-hamburger { display: flex; }
+  }
+
+  .nav-progress {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-link), var(--color-violet));
+    width: 0%;
+    z-index: 101;
+    transition: width 4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .nav-progress-done {
+    transition: width 0.2s ease;
+    width: 100% !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .nav-link, .nav-link::before,
     .hamburger-line { transition: none; }
+    .nav-progress { display: none; }
   }
 </style>
 </content>

@@ -55,6 +55,7 @@ import { breadcrumbSchema } from '../lib/seo';
       <div class="container stack stack-3xl">
         <Reveal>
           <PageHeader
+            as="h2"
             eyebrow="Principles"
             title="Three rules. Everything else is a detail."
             align="center"
@@ -122,6 +123,7 @@ import { breadcrumbSchema } from '../lib/seo';
       <div class="container-narrow about-story">
         <Reveal>
           <PageHeader
+            as="h2"
             eyebrow="Story"
             title="Why we started."
             lead="In 2025, one of us was preparing 400 photos for a blog post. The 'free' compressor we picked uploaded them to a server, ran ads on the result page, and asked for an email to 'unlock batch download.'"
@@ -195,6 +197,7 @@ import { breadcrumbSchema } from '../lib/seo';
       <div class="container stack stack-3xl">
         <Reveal>
           <PageHeader
+            as="h2"
             eyebrow="Roadmap"
             title="What we are working on."
             lead="One tool at a time. Every tool is fully client-side, free, and unlimited."
@@ -302,11 +305,12 @@ import { breadcrumbSchema } from '../lib/seo';
   /* ---------- Band primitives ---------- */
   .band {
     position: relative;
-    padding: var(--space-6xl) 0;
+    padding: var(--space-5xl) 0;
   }
 
   .band-soft { background-color: var(--color-canvas-soft); }
   .band-canvas { background-color: var(--color-canvas); }
+  .band-hero { padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl); }
 
   /* ---------- Principles ---------- */
   .principles-grid {

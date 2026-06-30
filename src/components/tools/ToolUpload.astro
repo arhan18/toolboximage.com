@@ -1,0 +1,157 @@
+---
+import type { ToolConfig } from '../../types';
+
+interface Props {
+  tool: ToolConfig;
+}
+
+const { tool } = Astro.props;
+
+const formatList = tool.inputFormats
+  ? tool.inputFormats
+      .map((m) => m.replace('image/', '').replace('application/', '').toUpperCase())
+      .join(', ')
+  : 'Various formats';
+---
+
+<section class="tool-upload" aria-label="Upload files">
+  <div
+    id="tool-upload-zone"
+    class="tool-upload-zone"
+    role="button"
+    tabindex="0"
+    aria-label="Drop files, click to browse, or paste from clipboard"
+    data-tool-upload
+  >
+    <div class="tool-upload-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="17 8 12 3 7 8" />
+        <line x1="12" y1="3" x2="12" y2="15" />
+      </svg>
+    </div>
+    <p class="text-display-sm tool-upload-title">Drop files here</p>
+    <p class="text-body-sm tool-upload-sub">
+      <button type="button" class="tool-upload-link" data-action="browse">Browse files</button>
+      <span class="tool-upload-divider">·</span>
+      <button type="button" class="tool-upload-link" data-action="paste">Paste from clipboard</button>
+    </p>
+    <p class="text-caption-mono tool-upload-formats">{formatList}</p>
+    <input type="file" multiple accept={tool.inputFormats?.join(',') ?? '*/*'} data-action="file-input" hidden aria-hidden="true" />
+  </div>
+  <div class="tool-upload-errors" data-tool-errors hidden role="alert" aria-live="polite">
+    <p class="text-caption-mono tool-upload-errors-label">Skipped</p>
+    <ul class="tool-upload-errors-list" data-tool-errors-list></ul>
+  </div>
+</section>
+
+<script>
+  const zone = document.querySelector<HTMLElement>('[data-tool-upload]');
+  if (zone) {
+    zone.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        zone.click();
+      }
+    });
+  }
+</script>
+
+<style>
+  .tool-upload-zone {
+    border: 1.5px dashed var(--color-hairline-strong);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4xl) var(--space-xl);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease-out-quart), background-color var(--dur-fast) var(--ease-out-quart);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    background-color: var(--color-canvas-soft);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .tool-upload-zone:hover,
+  .tool-upload-zone:focus-visible {
+    border-color: var(--color-link);
+    background-color: var(--color-canvas);
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .tool-upload-icon {
+    color: var(--color-mute);
+    margin-bottom: var(--space-xs);
+  }
+
+  .tool-upload-title {
+    margin: 0;
+  }
+
+  .tool-upload-sub {
+    color: var(--color-body);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .tool-upload-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--color-link);
+    cursor: pointer;
+    font: inherit;
+    font-size: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .tool-upload-link:hover {
+    color: var(--color-link-deep);
+  }
+
+  .tool-upload-link:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  .tool-upload-divider {
+    color: var(--color-hairline-strong);
+  }
+
+  .tool-upload-formats {
+    color: var(--color-mute);
+    margin: var(--space-sm) 0 0;
+  }
+
+  .tool-upload-errors {
+    margin-top: var(--space-sm);
+    padding: var(--space-md);
+    background-color: var(--color-error-soft);
+    border-radius: var(--radius-md);
+  }
+
+  .tool-upload-errors-label {
+    color: var(--color-error-deep);
+    margin: 0 0 var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .tool-upload-errors-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--color-error-deep);
+    font-size: var(--text-body-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+</style>

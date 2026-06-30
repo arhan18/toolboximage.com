@@ -1,0 +1,62 @@
+---
+import Layout from './Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import ToolHeader from '../components/tools/ToolHeader.astro';
+import type { ToolConfig } from '../types';
+import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
+
+interface Props {
+  tool: ToolConfig;
+}
+
+const { tool } = Astro.props;
+
+const schemas = tool.status === 'live'
+  ? [
+      softwareAppSchema({
+        name: `ToolBox Image — ${tool.name}`,
+        description: tool.longDescription ?? tool.description,
+        url: `https://toolboximage.com${tool.path}`,
+      }),
+      breadcrumbSchema([
+        { name: 'Home', href: '/' },
+        { name: tool.name, href: tool.path },
+      ]),
+    ]
+  : [
+      breadcrumbSchema([
+        { name: 'Home', href: '/' },
+        { name: tool.name, href: tool.path },
+      ]),
+    ];
+---
+
+<Layout
+  title={`${tool.name} — ToolBox Image`}
+  description={tool.longDescription ?? tool.description}
+  noIndex={tool.status !== 'live'}
+  {schemas}
+>
+  <AppShell>
+    <article class="tool-page">
+      <div class="container stack stack-xl">
+        <ToolHeader {tool} />
+        <slot name="tool-body" />
+      </div>
+    </article>
+  </AppShell>
+</Layout>
+
+<style>
+  .tool-page {
+    padding-top: var(--space-4xl);
+    padding-bottom: var(--space-6xl);
+  }
+
+  @media (max-width: 600px) {
+    .tool-page {
+      padding-top: var(--space-2xl);
+      padding-bottom: var(--space-4xl);
+    }
+  }
+</style>

@@ -8,6 +8,10 @@ export default defineConfig({
   site: 'https://toolboximage.com',
   trailingSlash: 'ignore',
   compressHTML: true,
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
   build: {
     assets: '_assets',
     inlineStylesheets: 'auto',

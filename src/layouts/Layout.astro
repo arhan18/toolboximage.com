@@ -66,14 +66,11 @@ const {
     <!-- DNS prefetch for any future CDN resources -->
     <link rel="dns-prefetch" href="https://toolboximage.com" />
 
-    <!-- Preload critical fonts -->
-    <link rel="preload" href="/fonts/geist/Geist-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/geist/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preload critical fonts (SemiBold + Regular with high priority) -->
+    <link rel="preload" href="/fonts/geist/Geist-SemiBold.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+    <link rel="preload" href="/fonts/geist/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
     <link rel="preload" href="/fonts/geist/Geist-Medium.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/geist-mono/GeistMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
-
-    <!-- Prefetch the compressor page (highest-traffic route) -->
-    <link rel="prefetch" href="/compressor/" />
 
     <!-- Theme color -->
     {!noThemeColor && (
@@ -83,8 +80,16 @@ const {
       </>
     )}
 
-    <!-- Performance: hint the browser to pre-render the compressor page on idle -->
-    <link rel="prerender" href="/compressor/" />
+    <!-- Speculation Rules: instant prefetch for all same-site navigations -->
+    <script type="speculationrules">
+      {
+        "prefetch": [{
+          "source": "document",
+          "where": { "href_matches": "/*" },
+          "eagerness": "moderate"
+        }]
+      }
+    </script>
   </head>
   <body class="min-h-screen text-ink antialiased">
     <!-- Accessibility: skip to main content for keyboard users -->

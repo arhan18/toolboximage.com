@@ -52,7 +52,7 @@ const year = new Date().getFullYear();
           <h4 class="text-caption-mono footer-column-label">{col.label}</h4>
           <ul class="footer-links">
             {col.links.map((l) => (
-              <li><a href={l.href} class="text-body-sm footer-link">{l.label}</a></li>
+              <li><a href={l.href} class="text-body-sm footer-link" data-astro-prefetch="hover">{l.label}</a></li>
             ))}
           </ul>
         </div>

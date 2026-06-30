@@ -11,14 +11,17 @@ interface Props {
   /** Optional accent color for the eyebrow mono prefix. */
   accent?: boolean;
   class?: string;
+  /** Heading level: 1 (default) for page title, 2 for section titles. */
+  as?: 'h1' | 'h2';
 }
 
-const { eyebrow, title, lead, align = 'start', accent = false, class: className = '' } = Astro.props;
+const { eyebrow, title, lead, align = 'start', accent = false, class: className = '', as = 'h1' } = Astro.props;
+const Tag = as;
 ---
 
 <header class:list={['page-header', `align-${align}`, accent ? 'with-accent' : '', className]}>
   {eyebrow && <p class="text-caption-mono page-eyebrow">{eyebrow}</p>}
-  <h1 class="text-display-xl page-title">{title}</h1>
+  <Tag class="text-display-xl page-title">{title}</Tag>
   {lead && <p class="text-body-lg page-lead">{lead}</p>}
   {Astro.slots.has('cta') && <div class="page-cta"><slot name="cta" /></div>}
 </header>

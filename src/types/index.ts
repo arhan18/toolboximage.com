@@ -92,13 +92,50 @@ export interface RoundedScale {
   full: string;
 }
 
-export type ToolId = 'compressor' | 'resizer' | 'converter' | 'cropper' | 'watermark';
+/** All known tool identifiers */
+export type ToolId =
+  | 'compressor'
+  | 'converter'
+  | 'resizer'
+  | 'cropper'
+  | 'background-remover'
+  | 'watermark-remover'
+  | 'heic-converter'
+  | 'metadata'
+  | 'blur'
+  | 'rotator'
+  | 'flipper'
+  | 'format-viewer';
+
+/** High-level grouping for navigation / marketing */
+export type ToolCategory = 'convert' | 'transform' | 'enhance' | 'analyze' | 'create';
+
+/** Where a tool is in its lifecycle */
+export type ToolStatus = 'live' | 'beta' | 'coming-soon' | 'planned';
+
+/** Workflow step a tool can participate in */
+export type ToolWorkflowStep = 'upload' | 'configure' | 'process' | 'results';
 
 export interface ToolConfig {
   id: ToolId;
   name: string;
+  shortName?: string;
   description: string;
+  longDescription?: string;
   icon: string;
   path: string;
-  available: boolean;
+  category: ToolCategory;
+  status: ToolStatus;
+  /** Accepted MIME / extension groups (e.g. ['image/*', 'application/pdf']) */
+  inputFormats?: string[];
+  /** Output format labels shown in the UI (e.g. ['JPEG','PNG','WebP']) */
+  outputFormats?: string[];
+  /** Maximum number of files the tool accepts at once */
+  maxInputs?: number;
+  /** Per-file size limit in bytes */
+  maxFileSize?: number;
+  /** Workflow steps this tool requires */
+  steps?: ToolWorkflowStep[];
+  /** If true, requires Wasm or an AI model not yet bundled client-side */
+  requiresWasm?: boolean;
 }

@@ -1,0 +1,36 @@
+---
+import Button from '../ui/Button.astro';
+import type { ToolConfig } from '../../types';
+
+interface Props {
+  tool: ToolConfig;
+  /** Override action label (from tool module info) */
+  actionLabel?: string;
+}
+---
+
+<footer class="tool-footer" data-tool-footer hidden>
+  <div class="tool-footer-actions">
+    <Button label="Clear" variant="ghost" size="lg" data-action="clear" />
+    <Button label={Astro.props.actionLabel ?? 'Process'} variant="primary" size="lg" data-action="process" />
+  </div>
+</footer>
+
+<style>
+  .tool-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background-color: var(--color-canvas-soft);
+    border-top: 1px solid var(--color-hairline);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .tool-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+</style>

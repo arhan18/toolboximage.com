@@ -1,0 +1,52 @@
+---
+import Button from '../ui/Button.astro';
+import type { ToolConfig } from '../../types';
+
+interface Props {
+  tool: ToolConfig;
+}
+---
+
+<section class="tool-results" aria-label="Results" data-tool-results hidden>
+  <header class="tool-results-header">
+    <h2 class="text-display-sm tool-results-title">Results</h2>
+    <div class="tool-results-actions">
+      <Button label="Download All" variant="primary" size="md" data-action="download-all" />
+    </div>
+  </header>
+  <div class="tool-results-body" data-tool-results-body>
+    <slot name="results-content" />
+  </div>
+</section>
+
+<style>
+  .tool-results {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    overflow: hidden;
+  }
+
+  .tool-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .tool-results-title {
+    margin: 0;
+  }
+
+  .tool-results-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .tool-results-body {
+    padding: var(--space-lg);
+  }
+</style>

@@ -14,7 +14,7 @@
   --color-on-primary: #ffffff;
   --color-ink: #171717;
   --color-body: #4d4d4d;
-  --color-mute: #888888;
+  --color-mute: #757575;
 
   /* Surfaces */
   --color-canvas: #ffffff;
@@ -75,7 +75,7 @@
   --color-on-primary: #171717;
   --color-ink: #ededed;
   --color-body: #a1a1a1;
-  --color-mute: #666666;
+  --color-mute: #999999;
 
   /* Surfaces */
   --color-canvas: #0a0a0a;
@@ -171,6 +171,10 @@
   --tracking-display-md: -0.96px;
   --tracking-display-sm: -0.6px;
   --tracking-body-sm: -0.28px;
+  --tracking-body-md: -0.16px;
+  --tracking-body-lg: 0;
+  --tracking-caption: 0.04em;
+  --tracking-button: 0;
 
   /* Font Weights */
   --weight-regular: 400;
@@ -475,7 +479,7 @@ button, a, input, select, textarea, label, [role="button"], [tabindex]:not([tabi
   font-size: var(--text-body-lg);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body-lg);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-body-lg);
   text-wrap: pretty;
 }
 
@@ -484,7 +488,7 @@ button, a, input, select, textarea, label, [role="button"], [tabindex]:not([tabi
   font-size: var(--text-body-md);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body-md);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-body-md);
 }
 
 .text-body-md-strong {
@@ -492,7 +496,7 @@ button, a, input, select, textarea, label, [role="button"], [tabindex]:not([tabi
   font-size: var(--text-body-md);
   font-weight: var(--weight-medium);
   line-height: var(--leading-body-md);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-body-md);
 }
 
 .text-body-sm {
@@ -516,7 +520,7 @@ button, a, input, select, textarea, label, [role="button"], [tabindex]:not([tabi
   font-size: var(--text-caption);
   font-weight: var(--weight-regular);
   line-height: var(--leading-caption);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-caption);
 }
 
 .text-caption-mono {
@@ -524,7 +528,7 @@ button, a, input, select, textarea, label, [role="button"], [tabindex]:not([tabi
   font-size: var(--text-caption);
   font-weight: var(--weight-regular);
   line-height: var(--leading-caption);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-caption);
   font-feature-settings: var(--tnum);
 }
 
@@ -540,6 +544,7 @@ button, a, input, select, textarea, label, [role="button"], [tabindex]:not([tabi
   font-size: var(--text-button-md);
   font-weight: var(--weight-medium);
   line-height: var(--leading-body-sm);
+  letter-spacing: var(--tracking-button);
 }
 
 .text-button-lg {
@@ -547,6 +552,7 @@ button, a, input, select, textarea, label, [role="button"], [tabindex]:not([tabi
   font-size: var(--text-button-lg);
   font-weight: var(--weight-medium);
   line-height: var(--leading-body-md);
+  letter-spacing: var(--tracking-button);
 }
 
 /* Numeric stat helper — applies tabular figures to data displays. */

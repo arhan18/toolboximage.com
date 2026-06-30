@@ -1,0 +1,52 @@
+---
+import type { ToolConfig } from '../../types';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  tool: ToolConfig;
+}
+
+const { tool } = Astro.props;
+
+const statusBadge: Record<string, { tone: 'info' | 'warning' | 'neutral' | 'success'; label: string }> = {
+  live: { tone: 'success', label: 'Live' },
+  beta: { tone: 'info', label: 'Beta' },
+  'coming-soon': { tone: 'warning', label: 'Coming soon' },
+  planned: { tone: 'neutral', label: 'Planned' },
+};
+
+const badge = statusBadge[tool.status] ?? statusBadge.planned;
+---
+
+<header class="tool-header">
+  <div class="tool-header-eyebrow">
+    <Badge tone={badge.tone} eyebrow={badge.label}>{badge.label}</Badge>
+  </div>
+  <h1 class="text-display-lg tool-header-title">{tool.name}</h1>
+  <p class="text-body-md tool-header-desc">{tool.longDescription ?? tool.description}</p>
+  <slot name="header-meta" />
+</header>
+
+<style>
+  .tool-header {
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .tool-header-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .tool-header-title {
+    margin: 0;
+  }
+
+  .tool-header-desc {
+    color: var(--color-body);
+    margin: 0;
+  }
+</style>

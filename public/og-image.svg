@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#171717"/>
+      <stop offset="100%" stop-color="#292929"/>
+    </linearGradient>
+    <linearGradient id="mesh1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7928ca" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ff0080" stop-opacity="0.1"/>
+    </linearGradient>
+    <linearGradient id="mesh2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0070f3" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#00dfd8" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="900" cy="100" r="400" fill="url(#mesh1)"/>
+  <circle cx="200" cy="500" r="350" fill="url(#mesh2)"/>
+  <text x="80" y="300" font-family="system-ui,-apple-system,sans-serif" font-size="72" font-weight="700" fill="#ffffff">ToolBox Image</text>
+  <text x="80" y="370" font-family="system-ui,-apple-system,sans-serif" font-size="32" font-weight="400" fill="#a1a1a1">Fast, private image tools in your browser</text>
+  <text x="80" y="540" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="400" fill="#666666">toolboximage.com</text>
+</svg>

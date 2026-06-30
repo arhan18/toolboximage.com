@@ -111,7 +111,7 @@ const Tag = href ? 'a' : 'button';
 
   .btn-sm {
     padding: 0 var(--space-sm);
-    height: 28px;
+    min-height: 44px;
     font-size: var(--text-button-md);
     font-weight: var(--weight-medium);
     line-height: var(--leading-body-sm);
@@ -122,9 +122,7 @@ const Tag = href ? 'a' : 'button';
   .btn-primary {
     background-color: var(--color-primary);
     color: var(--color-on-primary);
-    box-shadow:
-      0 1px 1px rgb(0 0 0 / 0.04),
-      inset 0 1px 0 rgb(255 255 255 / 0.08);
+    box-shadow: var(--shadow-1);
     position: relative;
     border-color: transparent;
   }
@@ -142,10 +140,7 @@ const Tag = href ? 'a' : 'button';
   .btn-primary:hover:not(:disabled):not([aria-disabled="true"]) {
     background-color: var(--color-primary);
     transform: translateY(-1px);
-    box-shadow:
-      0 1px 1px rgb(0 0 0 / 0.04),
-      0 6px 16px -6px rgb(0 0 0 / 0.28),
-      inset 0 1px 0 rgb(255 255 255 / 0.1);
+    box-shadow: var(--shadow-3);
   }
 
   .btn-primary:hover:not(:disabled):not([aria-disabled="true"])::after {
@@ -155,9 +150,7 @@ const Tag = href ? 'a' : 'button';
   .btn-secondary {
     background-color: var(--color-canvas);
     color: var(--color-ink);
-    box-shadow:
-      inset 0 0 0 1px var(--color-hairline),
-      0 1px 1px rgb(0 0 0 / 0.02);
+    box-shadow: var(--shadow-1);
     border-color: transparent;
     position: relative;
   }
@@ -166,10 +159,7 @@ const Tag = href ? 'a' : 'button';
     background-color: var(--color-canvas);
     color: var(--color-ink);
     transform: translateY(-1px);
-    box-shadow:
-      inset 0 0 0 1px var(--color-hairline-strong),
-      0 6px 16px -8px rgb(0 0 0 / 0.18),
-      0 1px 2px rgb(0 0 0 / 0.04);
+    box-shadow: var(--shadow-3);
   }
 
   .btn-ghost {
@@ -206,14 +196,12 @@ const Tag = href ? 'a' : 'button';
   .btn-on-dark.btn-secondary {
     background-color: color-mix(in srgb, var(--color-on-primary) 12%, transparent);
     color: var(--color-on-primary);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-on-primary) 22%, transparent);
+    box-shadow: var(--shadow-1), inset 0 0 0 1px color-mix(in srgb, var(--color-on-primary) 22%, transparent);
   }
 
   .btn-on-dark.btn-secondary:hover:not(:disabled):not([aria-disabled="true"]) {
     background-color: color-mix(in srgb, var(--color-on-primary) 18%, transparent);
-    box-shadow:
-      inset 0 0 0 1px color-mix(in srgb, var(--color-on-primary) 36%, transparent),
-      0 6px 16px -8px rgb(0 0 0 / 0.5);
+    box-shadow: var(--shadow-3), inset 0 0 0 1px color-mix(in srgb, var(--color-on-primary) 36%, transparent);
   }
 
   @media (prefers-reduced-motion: reduce) {

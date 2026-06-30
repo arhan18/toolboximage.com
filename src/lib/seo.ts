@@ -7,7 +7,7 @@ export const SITE_DESCRIPTION =
   'Fast, private image tools that run entirely in your browser. Compress, resize, convert, and optimize images without uploading.';
 export const SITE_URL = 'https://toolboximage.com';
 export const SITE_TWITTER = '@toolboximage';
-export const SITE_BASE_IMAGE = '/og-image.png';
+export const SITE_BASE_IMAGE = '/og-image.svg';
 export const SITE_LOCALE = 'en_US';
 
 export interface SeoMeta {

@@ -1,0 +1,164 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import ToolHeader from '../../components/tools/ToolHeader.astro';
+import ToolUpload from '../../components/tools/ToolUpload.astro';
+import ToolSettingsPanel from '../../components/tools/ToolSettingsPanel.astro';
+import ToolProgress from '../../components/tools/ToolProgress.astro';
+import ToolResultsSummary from '../../components/tools/ToolResultsSummary.astro';
+import ToolFooter from '../../components/tools/ToolFooter.astro';
+import { tools, getTool } from '../../lib/tools';
+import type { ToolId } from '../../types';
+
+export function getStaticPaths() {
+  return tools
+    .filter((t) => t.id !== 'compressor')
+    .map((t) => ({ params: { tool: t.id } }));
+}
+
+const { tool: toolSlug } = Astro.params;
+const tool = getTool(toolSlug as ToolId);
+
+if (!tool) {
+  return Astro.redirect('/404');
+}
+---
+
+<ToolLayout {tool}>
+  <main slot="tool-body" class="tool-body">
+    <!-- Coming-soon / planned tools get a preview card -->
+    {tool.status !== 'live' ? (
+      <article class="coming-soon">
+        <div class="coming-soon-card stack stack-lg">
+          <div class="coming-soon-preview">
+            <div class="coming-soon-illustration" aria-hidden="true">
+              <svg viewBox="0 0 80 80" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--color-hairline-strong);">
+                <rect x="8" y="8" width="64" height="64" rx="8" />
+                <circle cx="28" cy="30" r="6" />
+                <path d="M56 28L38 52l-8-10-12 16h44z" />
+              </svg>
+            </div>
+            <div class="coming-soon-info">
+              <div class="coming-soon-stat">
+                <span class="text-caption-mono coming-soon-stat-label">Input formats</span>
+                <span class="text-body-sm">{tool.inputFormats?.map((f) => f.replace('image/', '').toUpperCase()).join(', ') ?? '—'}</span>
+              </div>
+              {tool.outputFormats ? (
+                <div class="coming-soon-stat">
+                  <span class="text-caption-mono coming-soon-stat-label">Output formats</span>
+                  <span class="text-body-sm">{tool.outputFormats.join(', ')}</span>
+                </div>
+              ) : null}
+              <div class="coming-soon-stat">
+                <span class="text-caption-mono coming-soon-stat-label">Max files</span>
+                <span class="text-body-sm">{tool.maxInputs ?? '—'}</span>
+              </div>
+              {tool.requiresWasm ? (
+                <div class="coming-soon-note">
+                  <span class="text-caption-mono">Requires WebAssembly</span>
+                  <p class="text-body-sm">This tool needs a client-side Wasm module. We will ship it as soon as the model is ready.</p>
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <p class="text-body-md coming-soon-body">
+            {tool.longDescription ?? tool.description}
+          </p>
+        </div>
+      </article>
+    ) : (
+      // Live tools render the shared workflow shell
+      <article class="workflow stack stack-lg">
+        <ToolUpload {tool} />
+        <ToolSettingsPanel {tool} />
+        <ToolProgress toolId={tool.id} />
+        <ToolResultsSummary {tool}>
+          <div slot="results-content" data-tool-results-content>
+            <p class="text-body-sm" style="color:var(--color-body);">Processing output will appear here.</p>
+          </div>
+        </ToolResultsSummary>
+        <ToolFooter {tool} />
+      </article>
+    )}
+  </main>
+</ToolLayout>
+
+<style>
+  .tool-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  /* ── Coming soon card ─────────────────────────────────────── */
+  .coming-soon {
+    display: flex;
+    justify-content: center;
+  }
+
+  .coming-soon-card {
+    max-width: 540px;
+    width: 100%;
+    padding: var(--space-2xl);
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+  }
+
+  .coming-soon-preview {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-xl);
+    padding: var(--space-lg);
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-md);
+  }
+
+  .coming-soon-illustration {
+    flex-shrink: 0;
+  }
+
+  .coming-soon-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    flex: 1;
+  }
+
+  .coming-soon-stat {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+  }
+
+  .coming-soon-stat-label {
+    color: var(--color-mute);
+    min-width: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .coming-soon-note {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-warning-soft);
+    border-radius: var(--radius-sm);
+  }
+
+  .coming-soon-note .text-caption-mono {
+    color: var(--color-warning-deep);
+  }
+
+  .coming-soon-note .text-body-sm {
+    color: var(--color-body);
+    margin: var(--space-xs) 0 0;
+  }
+
+  .coming-soon-body {
+    color: var(--color-body);
+  }
+
+  /* ── Workflow shell ───────────────────────────────────────── */
+  .workflow > * {
+    min-width: 0;
+  }
+</style>

@@ -30,7 +30,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
           <header class="compressor-head stack stack-sm">
             <Badge eyebrow="Compressor" tone="info">v1.0</Badge>
             <h1 class="text-display-lg compressor-title">Add your images.</h1>
-            <p class="text-body-md" style="color:var(--color-body);max-width:56ch;">
+            <p class="text-body-md compressor-lead">
               Drop, browse, paste, or pick a folder. We'll generate previews
               locally and compress entirely in your browser.
             </p>
@@ -71,7 +71,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
             <div class="queue-loading" data-queue-loading hidden>
               <span class="queue-loading-spinner" aria-hidden="true"></span>
-              <p class="text-body-sm" style="color:var(--color-body);" data-queue-loading-text>
+              <p class="text-body-sm queue-loading-text" data-queue-loading-text>
                 Generating previews…
               </p>
             </div>
@@ -142,6 +142,8 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
   .compressor-head { max-width: 720px; }
   .compressor-title { margin: 0; }
+  .compressor-lead { color: var(--color-body); max-width: 56ch; }
+  .queue-loading-text { color: var(--color-body); }
 
   .queue-panel-wrap { display: block; }
 
@@ -274,6 +276,105 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     color: var(--color-mute);
     text-transform: uppercase;
     letter-spacing: 0.06em;
+  }
+
+  /* ---------- Before/After inline styles ---------- */
+  .compressor-ba-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 5 / 3;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-canvas-soft);
+    box-shadow: var(--shadow-5);
+    user-select: none;
+    touch-action: none;
+    isolation: isolate;
+  }
+
+  .compressor-ba-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  .compressor-ba-wrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .compressor-ba-label {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-primary) 55%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--color-on-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    pointer-events: none;
+  }
+
+  .compressor-ba-divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-canvas);
+    transform: translateX(-1px);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .compressor-ba-handle {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    cursor: ew-resize;
+    padding: 0;
+    z-index: 4;
+  }
+
+  .compressor-ba-handle-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-4);
+  }
+
+  .compressor-ba-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    z-index: 3;
   }
 
   @media (max-width: 600px) {
@@ -710,21 +811,21 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
       resultsBaMount.innerHTML = `
         <figure class="before-after ba-mode-slider" data-ba data-initial="slider" role="group" aria-label="Before and after comparison">
           <div class="ba-stage ba-stage-slider" data-ba-stage="slider">
-            <div class="ba-frame" style="position:relative;width:100%;aspect-ratio:5/3;overflow:hidden;border-radius:var(--radius-xl);background-color:var(--color-canvas-soft);box-shadow:var(--shadow-5);user-select:none;touch-action:none;isolation:isolate;">
-              <img class="ba-img ba-before" src="${beforeUrl}" alt="" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;" />
-              <div class="ba-after-wrap" style="position:absolute;inset:0;width:50%;overflow:hidden;pointer-events:none;--ba-position:50%;">
-                <img class="ba-img ba-after" src="${afterUrl}" alt="" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;" />
+            <div class="ba-frame compressor-ba-frame">
+              <img class="ba-img ba-before compressor-ba-img" src="${beforeUrl}" alt="" draggable="false" />
+              <div class="ba-after-wrap compressor-ba-wrap" style="width:50%;--ba-position:50%;">
+                <img class="ba-img ba-after compressor-ba-img" src="${afterUrl}" alt="" draggable="false" />
               </div>
-              <span style="position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);color:#fff;text-transform:uppercase;letter-spacing:0.05em;font-size:12px;font-family:Geist Mono,monospace;">Before</span>
-              <span style="position:absolute;bottom:12px;right:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);color:#fff;text-transform:uppercase;letter-spacing:0.05em;font-size:12px;font-family:Geist Mono,monospace;">After</span>
-              <div class="ba-divider" style="position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;transform:translateX(-1px);box-shadow:0 0 0 1px rgba(0,0,0,0.08);pointer-events:none;z-index:2;"></div>
-              <button type="button" class="ba-handle" aria-label="Drag to compare" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:999px;border:none;background:transparent;cursor:ew-resize;padding:0;z-index:4;">
-                <span style="position:relative;display:flex;align-items:center;justify-content:center;gap:2px;width:100%;height:100%;border-radius:999px;background:var(--color-canvas);color:var(--color-ink);box-shadow:var(--shadow-4);">
+              <span class="compressor-ba-label" style="top:12px;left:12px;">Before</span>
+              <span class="compressor-ba-label" style="bottom:12px;right:12px;">After</span>
+              <div class="ba-divider compressor-ba-divider" style="left:50%;"></div>
+              <button type="button" class="ba-handle compressor-ba-handle" aria-label="Drag to compare" style="left:50%;">
+                <span class="compressor-ba-handle-inner">
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </span>
               </button>
-              <input type="range" min="0" max="100" value="50" step="1" aria-label="Before/after divider position" style="position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:3;" />
+              <input type="range" min="0" max="100" value="50" step="1" aria-label="Before/after divider position" class="compressor-ba-range" />
             </div>
           </div>
         </figure>

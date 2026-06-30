@@ -286,10 +286,10 @@ const afterUrl = afterSrc ?? placeholderAfter;
     gap: var(--space-xs);
     padding: 6px var(--space-sm);
     border-radius: var(--radius-full);
-    background-color: rgb(0 0 0 / 0.55);
+    background-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    color: #fff;
+    color: var(--color-on-primary);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     pointer-events: none;
@@ -304,8 +304,8 @@ const afterUrl = afterSrc ?? placeholderAfter;
     width: 6px;
     height: 6px;
     border-radius: var(--radius-full);
-    background-color: #fff;
-    box-shadow: 0 0 0 2px rgb(255 255 255 / 0.25);
+    background-color: var(--color-on-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-on-primary) 25%, transparent);
   }
 
   .ba-corner-dot-accent {
@@ -341,7 +341,7 @@ const afterUrl = afterSrc ?? placeholderAfter;
   }
 
   .ba-savings-label {
-    color: rgb(255 255 255 / 0.7);
+    color: color-mix(in srgb, var(--color-on-primary) 70%, transparent);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-top: 2px;

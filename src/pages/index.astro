@@ -555,7 +555,7 @@ const faq = [
      ---------------------------------------------------------- */
   .band {
     position: relative;
-    padding: var(--space-6xl) 0;
+    padding: var(--space-5xl) 0;
   }
 
   .band-soft {
@@ -564,6 +564,11 @@ const faq = [
 
   .band-canvas {
     background-color: var(--color-canvas);
+  }
+
+  /* Hero band gets more breathing room */
+  .band-hero {
+    padding: calc(var(--space-6xl) + var(--space-3xl)) 0 var(--space-6xl);
   }
 
   /* Sections targeted by in-page anchors need scroll margin for the sticky nav. */
@@ -737,8 +742,8 @@ const faq = [
      BEFORE / AFTER
      ---------------------------------------------------------- */
   .ba-band {
-    padding-top: var(--space-6xl);
-    padding-bottom: var(--space-6xl);
+    padding-top: var(--space-5xl);
+    padding-bottom: var(--space-5xl);
   }
 
   .ba-grid {

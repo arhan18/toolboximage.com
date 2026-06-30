@@ -1,0 +1,50 @@
+---
+import type { ToolConfig } from '../../types';
+
+interface Props {
+  tool: ToolConfig;
+}
+
+const { tool } = Astro.props;
+const hasSettings = tool.steps?.includes('configure') ?? true;
+---
+
+<section class="tool-settings" aria-label="Settings" data-tool-settings hidden={!hasSettings}>
+  <header class="tool-settings-header">
+    <h2 class="text-display-sm tool-settings-title">Settings</h2>
+    <slot name="settings-actions" />
+  </header>
+  <div class="tool-settings-body" data-tool-settings-body>
+    <slot name="settings-controls">
+      <p class="text-body-sm" style="color:var(--color-body);">
+        Configure this tool once it is available.
+      </p>
+    </slot>
+  </div>
+</section>
+
+<style>
+  .tool-settings {
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    overflow: hidden;
+  }
+
+  .tool-settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .tool-settings-title {
+    margin: 0;
+  }
+
+  .tool-settings-body {
+    padding: var(--space-lg);
+  }
+</style>
