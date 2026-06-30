@@ -132,6 +132,10 @@ export class CompressionEngine {
     const sourceBytes = source.bytes;
 
     if (blob.size < sourceBytes) {
+      if (!settings.removeMetadata && marginalGain(blob.size, sourceBytes)) {
+        return this.returnOriginal(source, t0,
+          'Metadata preserved — compression savings below threshold.');
+      }
       return {
         blob,
         mime,
@@ -139,12 +143,19 @@ export class CompressionEngine {
         bytes: blob.size,
         durationMs: performance.now() - t0,
         compressed: true,
+        note: !settings.removeMetadata
+          ? 'Re-encoded — metadata stripped (browser limitation).'
+          : undefined,
       };
     }
 
     if (isLossyFormat(mime)) {
       const better = await tryProgressiveQuality(canvas, mime, quality, sourceBytes);
       if (better) {
+        if (!settings.removeMetadata && marginalGain(better.size, sourceBytes)) {
+          return this.returnOriginal(source, t0,
+            'Metadata preserved — compression savings below threshold.');
+        }
         return {
           blob: better,
           mime,
@@ -152,6 +163,9 @@ export class CompressionEngine {
           bytes: better.size,
           durationMs: performance.now() - t0,
           compressed: true,
+          note: !settings.removeMetadata
+            ? 'Re-encoded — metadata stripped (browser limitation).'
+            : undefined,
         };
       }
     }
@@ -161,7 +175,8 @@ export class CompressionEngine {
 
   private async returnOriginal(
     source: { url: string; mime: string; bytes: number },
-    t0: number
+    t0: number,
+    customNote?: string
   ): Promise<EncodeResult> {
     const res = await fetch(source.url);
     const blob = await res.blob();
@@ -172,7 +187,7 @@ export class CompressionEngine {
       bytes: blob.size,
       durationMs: performance.now() - t0,
       compressed: false,
-      note: 'Already optimized — no further compression possible without increasing file size.',
+      note: customNote ?? 'Already optimized — no further compression possible without increasing file size.',
     };
   }
 
@@ -223,6 +238,12 @@ export class CompressionEngine {
       };
     }
 
+    const svgNote = opts.settings.removeMetadata
+      ? 'Already optimized — no further compression possible without increasing file size.'
+      : blob.size > sourceBytes
+        ? 'Re-encoded SVG is larger than original — original returned.'
+        : undefined;
+
     return {
       blob,
       mime,
@@ -230,9 +251,7 @@ export class CompressionEngine {
       bytes: blob.size,
       durationMs: performance.now() - t0,
       compressed: false,
-      note: blob.size >= sourceBytes
-        ? 'Already optimized — no further compression possible without increasing file size.'
-        : undefined,
+      note: svgNote,
     };
   }
 }
@@ -337,11 +356,12 @@ async function binarySearchTargetSize(
   let lo = 0.1;
   let hi = originalQuality;
   let best: Blob | null = null;
+  let smallest: Blob | null = null;
   for (let i = 0; i < 6; i++) {
     const mid = (lo + hi) / 2;
     const blob = await canvasToBlob(canvas, mime, mid);
     validateBlob(blob);
-    if (!best) best = blob;
+    if (!smallest || blob.size < smallest.size) smallest = blob;
     if (blob.size <= target) {
       lo = mid;
       best = blob;
@@ -349,7 +369,7 @@ async function binarySearchTargetSize(
       hi = mid;
     }
   }
-  return best ?? (await canvasToBlob(canvas, mime, lo));
+  return best ?? smallest ?? (await canvasToBlob(canvas, mime, lo));
 }
 
 async function tryProgressiveQuality(
@@ -388,6 +408,13 @@ function computeResize(
 
   const scale = Math.min(target / width, target / height, 1);
   return { width: Math.round(width * scale), height: Math.round(height * scale) };
+}
+
+function marginalGain(newBytes: number, originalBytes: number): boolean {
+  const saved = originalBytes - newBytes;
+  if (saved <= 0) return true;
+  const threshold = Math.max(50 * 1024, originalBytes * 0.1);
+  return saved < threshold;
 }
 
 function extFor(mime: string): string {

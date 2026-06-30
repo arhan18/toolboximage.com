@@ -278,105 +278,6 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     letter-spacing: 0.06em;
   }
 
-  /* ---------- Before/After inline styles ---------- */
-  .compressor-ba-frame {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 5 / 3;
-    overflow: hidden;
-    border-radius: var(--radius-xl);
-    background-color: var(--color-canvas-soft);
-    box-shadow: var(--shadow-5);
-    user-select: none;
-    touch-action: none;
-    isolation: isolate;
-  }
-
-  .compressor-ba-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    pointer-events: none;
-  }
-
-  .compressor-ba-wrap {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .compressor-ba-label {
-    position: absolute;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--color-primary) 55%, transparent);
-    backdrop-filter: blur(8px);
-    color: var(--color-on-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 12px;
-    font-family: var(--font-mono);
-    pointer-events: none;
-  }
-
-  .compressor-ba-divider {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--color-canvas);
-    transform: translateX(-1px);
-    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .compressor-ba-handle {
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 44px;
-    height: 44px;
-    border-radius: 999px;
-    border: none;
-    background: transparent;
-    cursor: ew-resize;
-    padding: 0;
-    z-index: 4;
-  }
-
-  .compressor-ba-handle-inner {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    width: 100%;
-    height: 100%;
-    border-radius: 999px;
-    background: var(--color-canvas);
-    color: var(--color-ink);
-    box-shadow: var(--shadow-4);
-  }
-
-  .compressor-ba-range {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    opacity: 0;
-    cursor: ew-resize;
-    z-index: 3;
-  }
-
   @media (max-width: 600px) {
     .compressor { padding-top: var(--space-3xl); padding-bottom: var(--space-4xl); }
     .queue-header { flex-direction: column; gap: var(--space-sm); }
@@ -765,7 +666,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
         }
       }
 
-      updateResultsSummary(jobs, saved);
+      updateResultsSummary(jobs);
       if (firstDoneId && firstDoneOriginal && firstDoneResult) {
         ensureBaMounted(firstDoneOriginal, firstDoneResult);
       }
@@ -777,7 +678,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     };
 
     // ---------- Aggregate results summary + Before/After mount ------------
-    const updateResultsSummary = (jobs: ReadonlyMap<string, Job>, saved: number) => {
+    const updateResultsSummary = (jobs: ReadonlyMap<string, Job>) => {
       if (!resultsSummary) return;
       const items = store.snapshot();
       const doneJobs = Array.from(jobs.values()).filter(
@@ -815,70 +716,70 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
     // Mount the BeforeAfter demo on the first completed image.
     let baMounted = false;
+    let baBeforeUrl: string | null = null;
+    let baAfterUrl: string | null = null;
     const ensureBaMounted = async (original: Blob, after: Blob) => {
       if (baMounted || !resultsBaEl || !resultsBaMount) return;
       baMounted = true;
       resultsBaEl.hidden = false;
 
-      const beforeUrl = URL.createObjectURL(original);
-      const afterUrl = URL.createObjectURL(after);
+      if (baBeforeUrl) URL.revokeObjectURL(baBeforeUrl);
+      if (baAfterUrl) URL.revokeObjectURL(baAfterUrl);
+      baBeforeUrl = URL.createObjectURL(original);
+      baAfterUrl = URL.createObjectURL(after);
 
-      // We need to render the BeforeAfter component into the mount point.
-      // Since the component is a .astro file, the cleanest way is to clone
-      // a server-rendered <template> — but here we don't have one. Instead,
-      // we render an equivalent markup via a fragment and then run the same
-      // behavior by invoking the same DOM bindings through a small shim.
-      // For simplicity, we build the markup manually and reuse a minimal
-      // version of the slider-mode behavior (drag to compare + auto demo).
+      // Build the same HTML structure as the shared BeforeAfter component.
+      // Uses clip-path for the reveal — images stay fixed, only the mask moves.
       resultsBaMount.innerHTML = `
-        <figure class="before-after ba-mode-slider" data-ba data-initial="slider" role="group" aria-label="Before and after comparison">
+        <figure class="before-after ba-mode-slider" data-ba data-initial="slider" role="group" aria-label="Before and after comparison" style="margin:0;width:100%;display:flex;flex-direction:column;gap:var(--space-md);">
           <div class="ba-stage ba-stage-slider" data-ba-stage="slider">
-            <div class="ba-frame compressor-ba-frame">
-              <img class="ba-img ba-before compressor-ba-img" src="${beforeUrl}" alt="" draggable="false" />
-              <div class="ba-after-wrap compressor-ba-wrap" style="width:50%;--ba-position:50%;">
-                <img class="ba-img ba-after compressor-ba-img" src="${afterUrl}" alt="" draggable="false" />
+            <div class="ba-frame" data-ba-frame style="aspect-ratio:5/3;border-radius:var(--radius-xl);overflow:hidden;position:relative;background:var(--color-canvas-soft);box-shadow:var(--shadow-5);user-select:none;touch-action:none;isolation:isolate;">
+              <img class="ba-img ba-before" src="${baBeforeUrl}" alt="" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;" />
+              <div class="ba-after-clip" data-ba-after-clip style="position:absolute;inset:0;clip-path:inset(0 calc(100% - 50%) 0 0);pointer-events:none;z-index:1;">
+                <img class="ba-img ba-after" src="${baAfterUrl}" alt="" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;" />
               </div>
-              <span class="compressor-ba-label" style="top:12px;left:12px;">Before</span>
-              <span class="compressor-ba-label" style="bottom:12px;right:12px;">After</span>
-              <div class="ba-divider compressor-ba-divider" style="left:50%;"></div>
-              <button type="button" class="ba-handle compressor-ba-handle" aria-label="Drag to compare" style="left:50%;">
-                <span class="compressor-ba-handle-inner">
+              <span style="position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:color-mix(in srgb,var(--color-primary) 55%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--color-on-primary);text-transform:uppercase;letter-spacing:0.06em;pointer-events:none;font-feature-settings:'tnum';z-index:3;font-size:12px;font-family:var(--font-mono);">
+                <span style="width:6px;height:6px;border-radius:999px;background:var(--color-on-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--color-on-primary) 25%,transparent);flex-shrink:0;"></span>
+                Before
+              </span>
+              <span style="position:absolute;bottom:12px;right:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:color-mix(in srgb,var(--color-primary) 55%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--color-on-primary);text-transform:uppercase;letter-spacing:0.06em;pointer-events:none;font-feature-settings:'tnum';z-index:3;font-size:12px;font-family:var(--font-mono);">
+                <span style="width:6px;height:6px;border-radius:999px;background:var(--color-cyan);box-shadow:0 0 0 2px color-mix(in srgb,var(--color-cyan) 25%,transparent);flex-shrink:0;"></span>
+                After
+              </span>
+              <div class="ba-divider" data-ba-divider style="position:absolute;top:0;bottom:0;left:calc(50% - 1px);width:2px;background:var(--color-canvas);pointer-events:none;box-shadow:0 0 0 1px rgb(0 0 0 / 0.08);z-index:2;" aria-hidden="true"></div>
+              <button type="button" class="ba-handle" data-ba-handle aria-label="Drag to compare before and after" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:999px;border:none;cursor:ew-resize;background:transparent;padding:0;z-index:4;-webkit-tap-highlight-color:transparent;">
+                <span style="position:absolute;inset:-4px;border-radius:999px;background:radial-gradient(circle,color-mix(in srgb,var(--color-link) 35%,transparent),transparent 70%);opacity:0;transition:opacity 0.25s ease,transform 0.25s ease;pointer-events:none;" class="ba-handle-halo" aria-hidden="true"></span>
+                <span style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:2px;border-radius:999px;background:var(--color-canvas);color:var(--color-ink);box-shadow:var(--shadow-4);transition:transform 0.2s cubic-bezier(0.22,1,0.36,1),box-shadow 0.2s ease;" class="ba-handle-inner" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </span>
               </button>
-              <input type="range" min="0" max="100" value="50" step="1" aria-label="Before/after divider position" class="compressor-ba-range" />
+              <input type="range" min="0" max="100" value="50" step="1" aria-label="Before/after divider position" data-ba-range style="position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:3;-webkit-appearance:none;appearance:none;" />
             </div>
           </div>
         </figure>
       `;
 
-      wireInlineBa(resultsBaMount);
+      wireSliderBa(resultsBaMount);
     };
 
-    const wireInlineBa = (mount: HTMLElement) => {
-      const root = mount.querySelector<HTMLElement>('[data-ba]')!;
-      const frame = root.querySelector<HTMLElement>('.ba-frame')!;
-      const range = root.querySelector<HTMLInputElement>('input[type="range"]')!;
-      const after = root.querySelector<HTMLElement>('.ba-after-wrap')!;
-      const divider = root.querySelector<HTMLElement>('.ba-divider')!;
-      const handle = root.querySelector<HTMLButtonElement>('.ba-handle')!;
-      const afterImg = root.querySelector<HTMLImageElement>('.ba-after')!;
+    const wireSliderBa = (mount: HTMLElement) => {
+      const frame = mount.querySelector<HTMLElement>('[data-ba-frame]')!;
+      const afterClip = mount.querySelector<HTMLElement>('[data-ba-after-clip]')!;
+      const divider = mount.querySelector<HTMLElement>('[data-ba-divider]')!;
+      const handle = mount.querySelector<HTMLButtonElement>('[data-ba-handle]')!;
+      const range = mount.querySelector<HTMLInputElement>('input[type="range"]')!;
 
-      const syncAfterWidth = () => {
-        afterImg.style.width = `${frame.clientWidth}px`;
-      };
-
-      const setPos = (p: number) => {
-        const c = Math.max(0, Math.min(100, p));
-        after.style.setProperty('--ba-position', `${c}%`);
-        after.style.width = `${c}%`;
-        divider.style.left = `${c}%`;
+      const setPos = (pct: number) => {
+        const c = Math.max(0, Math.min(100, pct));
+        afterClip.style.setProperty('--ba-position', `${c}%`);
+        afterClip.style.clipPath = `inset(0 calc(100% - ${c}%) 0 0)`;
+        divider.style.left = `calc(${c}% - 1px)`;
         handle.style.left = `${c}%`;
+        frame.style.setProperty('--ba-position', `${c}%`);
         range.value = String(c);
       };
       setPos(50);
-      syncAfterWidth();
 
       range.addEventListener('input', () => setPos(Number(range.value)));
 
@@ -914,9 +815,6 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
         dragging = false;
         delete handle.dataset.dragging;
       });
-
-      const ro = new ResizeObserver(() => syncAfterWidth());
-      ro.observe(frame);
 
       // Auto demo.
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -1030,7 +928,12 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     });
 
     // ---------- Buttons ----------------------------------------------------
-    clearBtn?.addEventListener('click', () => { store.clear(); runner.clear(); baMounted = false; if (resultsBaMount) resultsBaMount.innerHTML = ''; });
+    clearBtn?.addEventListener('click', () => {
+      store.clear(); runner.clear(); baMounted = false;
+      if (baBeforeUrl) { URL.revokeObjectURL(baBeforeUrl); baBeforeUrl = null; }
+      if (baAfterUrl) { URL.revokeObjectURL(baAfterUrl); baAfterUrl = null; }
+      if (resultsBaMount) resultsBaMount.innerHTML = '';
+    });
     addMoreBtn?.addEventListener('click', () => {
       document.querySelector<HTMLInputElement>('[data-action="file-input"]')?.click();
     });
