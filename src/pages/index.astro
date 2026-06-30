@@ -215,6 +215,17 @@ const faq = [
       </div>
     </section>
 
+    <script>
+      import { storeFiles } from '../lib/file-transfer';
+
+      window.addEventListener('toolboximage:files', async (e) => {
+        const detail = (e as CustomEvent<{ files: File[] }>).detail;
+        if (!detail?.files?.length) return;
+        await storeFiles(detail.files);
+        window.location.href = '/compressor/';
+      });
+    </script>
+
     <!-- ============================================================
          WHY TOOLBOX IMAGE
          ============================================================ -->

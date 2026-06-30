@@ -387,6 +387,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
 <script>
   import { UploadStore, formatBytes, type UploadItem } from '../lib/upload-store';
+  import { retrieveFiles } from '../lib/file-transfer';
   import {
     DEFAULT_SETTINGS,
     MODE_PRESETS,
@@ -447,6 +448,14 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
     const store = new UploadStore();
     const runner = new CompressionJobRunner(store, settings, 4);
+
+    // Check for files transferred from homepage.
+    (async () => {
+      const files = await retrieveFiles();
+      if (files.length) {
+        await store.add(files);
+      }
+    })();
     const tpl = document.getElementById('tpl-preview-card') as HTMLTemplateElement | null;
     const cards = new Map<string, HTMLElement>();
 
