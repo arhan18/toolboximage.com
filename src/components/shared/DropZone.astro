@@ -62,6 +62,7 @@ const indicators = [
         </p>
         <p class="text-body-sm dropzone-sub">
           or <button type="button" class="dropzone-link" data-action="browse">browse files</button>
+          · <button type="button" class="dropzone-link" data-action="folder">pick a folder</button>
           · <button type="button" class="dropzone-link" data-action="paste">paste from clipboard</button>
         </p>
       </div>
@@ -80,6 +81,13 @@ const indicators = [
       data-action="file-input"
       hidden
       aria-hidden="true"
+    />
+    <input
+      type="file"
+      data-action="folder-input"
+      hidden
+      aria-hidden="true"
+      webkitdirectory
     />
   </div>
 
@@ -400,8 +408,12 @@ const indicators = [
   const dz = document.getElementById('hero-dropzone');
   if (dz) {
     const input = dz.querySelector<HTMLInputElement>('[data-action="file-input"]')!;
+    const folderInput = dz.querySelector<HTMLInputElement>('[data-action="folder-input"]')!;
     const browseBtn = dz.querySelector<HTMLButtonElement>('[data-action="browse"]')!;
+    const folderBtn = dz.querySelector<HTMLButtonElement>('[data-action="folder"]')!;
     const pasteBtn = dz.querySelector<HTMLButtonElement>('[data-action="paste"]')!;
+
+    const ACCEPTED_EXT = new Set(['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'svg', 'heic', 'heif']);
 
     const emit = (files: File[]) => {
       if (!files.length) return;
@@ -410,7 +422,11 @@ const indicators = [
       );
     };
 
-    const isImage = (f: File) => f.type.startsWith('image/');
+    const isImage = (f: File) => {
+      if (f.type.startsWith('image/')) return true;
+      const ext = f.name.split('.').pop()?.toLowerCase() ?? '';
+      return ACCEPTED_EXT.has(ext);
+    };
 
     browseBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -422,10 +438,35 @@ const indicators = [
       input.value = '';
     });
 
+    // Folder pick: use showDirectoryPicker if available, fall back to webkitdirectory.
+    folderBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try {
+        if (typeof (window as any).showDirectoryPicker === 'function') {
+          const dirHandle = await (window as any).showDirectoryPicker();
+          const files: File[] = [];
+          const paths = new Map<string, string>();
+          await walkDirectoryHandle(dirHandle, '', files, paths);
+          // Homepage emit has no paths, just files.
+          if (files.length) emit(files);
+        } else {
+          folderInput.click();
+        }
+      } catch {
+        folderInput.click();
+      }
+    });
+
+    folderInput.addEventListener('change', () => {
+      if (!folderInput.files) return;
+      emit(Array.from(folderInput.files).filter(isImage));
+      folderInput.value = '';
+    });
+
     // Open file dialog when clicking anywhere in the zone (except the paste button).
     dz.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
-      if (target.closest('[data-action="paste"]')) return;
+      if (target.closest('[data-action="paste"]') || target.closest('[data-action="folder"]')) return;
       input.click();
     });
 
@@ -436,7 +477,67 @@ const indicators = [
       }
     });
 
-    // Drag & drop.
+    // Drag & drop — recursively expand folder entries.
+    async function expandDrop(dt: DataTransfer): Promise<File[]> {
+      const files: File[] = [];
+      const items = dt.items;
+      if (items) {
+        const entryPromises: Promise<void>[] = [];
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (!item || item.kind !== 'file') continue;
+          const entry = typeof (item as any).webkitGetAsEntry === 'function'
+            ? (item as any).webkitGetAsEntry()
+            : null;
+          if (entry) {
+            entryPromises.push(walkEntry(entry, '', files));
+          } else {
+            const f = item.getAsFile();
+            if (f) files.push(f);
+          }
+        }
+        await Promise.all(entryPromises);
+      } else {
+        for (const f of Array.from(dt.files)) files.push(f);
+      }
+      return files;
+    }
+
+    function walkEntry(
+      entry: any,
+      prefix: string,
+      out: File[]
+    ): Promise<void> {
+      return new Promise((resolve) => {
+        if (entry.isFile) {
+          (entry as FileSystemFileEntry).file(
+            (file: File) => { out.push(file); resolve(); },
+            () => resolve()
+          );
+        } else if (entry.isDirectory) {
+          const reader = (entry as FileSystemDirectoryEntry).createReader();
+          const subPath = prefix + entry.name + '/';
+          const all: any[] = [];
+          const readBatch = () => {
+            reader.readEntries(
+              (entries: any[]) => {
+                if (!entries.length) {
+                  Promise.all(all.map((e) => walkEntry(e, subPath, out))).then(() => resolve());
+                  return;
+                }
+                all.push(...entries);
+                readBatch();
+              },
+              () => resolve()
+            );
+          };
+          readBatch();
+        } else {
+          resolve();
+        }
+      });
+    }
+
     ['dragenter', 'dragover'].forEach((ev) => {
       dz.addEventListener(ev, (e) => {
         e.preventDefault();
@@ -452,23 +553,11 @@ const indicators = [
       });
     });
 
-    dz.addEventListener('drop', (e) => {
+    dz.addEventListener('drop', async (e) => {
       const dt = (e as DragEvent).dataTransfer;
       if (!dt) return;
-      const files: File[] = [];
-      if (dt.items) {
-        for (const item of Array.from(dt.items)) {
-          if (item.kind === 'file') {
-            const f = item.getAsFile();
-            if (f && isImage(f)) files.push(f);
-          }
-        }
-      } else {
-        for (const f of Array.from(dt.files)) {
-          if (isImage(f)) files.push(f);
-        }
-      }
-      emit(files);
+      const files = await expandDrop(dt);
+      emit(files.filter(isImage));
     });
 
     // Paste from clipboard.
@@ -509,6 +598,23 @@ const indicators = [
         emit(files);
       }
     });
+
+    // Global helper for File System Access API directory walking.
+    async function walkDirectoryHandle(
+      dirHandle: any,
+      prefix: string,
+      out: File[],
+      _paths: Map<string, string>
+    ): Promise<void> {
+      for await (const [_name, entry] of dirHandle.entries()) {
+        if (entry.kind === 'file') {
+          const file = await entry.getFile();
+          out.push(file);
+        } else if (entry.kind === 'directory') {
+          await walkDirectoryHandle(entry, prefix + _name + '/', out, _paths);
+        }
+      }
+    }
   }
 </script>
 </content>

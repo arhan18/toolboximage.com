@@ -302,6 +302,7 @@ export class CompressionJobRunner {
   private aggregate(): AggregateProgress {
     let done = 0, errored = 0, running = 0, queued = 0;
     let savedBytes = 0;
+    const snap = this.store.snapshot();
     for (const job of this.jobs.values()) {
       switch (job.status) {
         case 'queued': queued++; break;
@@ -310,7 +311,9 @@ export class CompressionJobRunner {
         case 'done':
           done++;
           if (job.result) {
-            savedBytes += Math.max(0, (job.result.bytes ?? 0));
+            const item = snap.find((i) => i.id === job.sourceId);
+            const origBytes = item?.size ?? 0;
+            savedBytes += Math.max(0, origBytes - (job.result.bytes ?? 0));
           }
           break;
         case 'error':

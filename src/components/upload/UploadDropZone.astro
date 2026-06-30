@@ -71,13 +71,11 @@ const accept = [
     />
     <input
       type="file"
-      multiple
-      accept={accept}
       data-action="folder-input"
       hidden
       aria-hidden="true"
+      accept={accept}
       webkitdirectory
-      directory
     />
   </div>
 
@@ -395,14 +393,28 @@ const accept = [
       fileInput.click();
     });
 
-    folderBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      folderInput.click();
-    });
-
     fileInput.addEventListener('change', () => {
       if (fileInput.files) emit({ files: Array.from(fileInput.files) });
       fileInput.value = '';
+    });
+
+    // Folder pick: use showDirectoryPicker if available, fall back to webkitdirectory.
+    folderBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try {
+        if (typeof (window as any).showDirectoryPicker === 'function') {
+          const dirHandle = await (window as any).showDirectoryPicker();
+          const files: File[] = [];
+          const paths = new Map<string, string>();
+          await walkDirectoryHandle(dirHandle, '', files, paths);
+          if (files.length) emit({ files, paths });
+        } else {
+          folderInput.click();
+        }
+      } catch {
+        // User cancelled or API unavailable — fall back to webkitdirectory input.
+        folderInput.click();
+      }
     });
 
     folderInput.addEventListener('change', () => {
@@ -410,7 +422,6 @@ const accept = [
       const files = Array.from(folderInput.files);
       const paths = new Map<string, string>();
       for (const f of files) {
-        // webkitRelativePath is populated for webkitdirectory picks.
         const rel = (f as File & { webkitRelativePath?: string }).webkitRelativePath;
         if (rel) paths.set(f.name, rel);
       }
@@ -509,6 +520,24 @@ const accept = [
       if (errors.length) showErrors(errors);
       else showErrors([]);
     });
+  }
+
+  async function walkDirectoryHandle(
+    dirHandle: any,
+    prefix: string,
+    out: File[],
+    paths: Map<string, string>
+  ): Promise<void> {
+    for await (const [name, entry] of dirHandle.entries()) {
+      const fullPath = prefix + name;
+      if (entry.kind === 'file') {
+        const file = await entry.getFile();
+        out.push(file);
+        paths.set(file.name, fullPath);
+      } else if (entry.kind === 'directory') {
+        await walkDirectoryHandle(entry, fullPath + '/', out, paths);
+      }
+    }
   }
 
   function escapeHtml(s: string): string {

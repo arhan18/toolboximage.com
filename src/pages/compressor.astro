@@ -947,8 +947,9 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     runner.subscribeProgress((p) => {
       if (!queueProgressEl || !qpFill || !qpCounts || !qpEta || !qpSaved) return;
       const hasJobs = p.total > 0;
-      queueProgressEl.hidden = !hasJobs;
-      if (!hasJobs) return;
+      const allDone = hasJobs && p.done + p.errored === p.total && !p.active && p.queued === 0;
+      queueProgressEl.hidden = !hasJobs || allDone;
+      if (!hasJobs || allDone) return;
       const percent = p.total ? Math.round(((p.done + p.errored) / p.total) * 100) : 0;
       qpFill.style.width = `${percent}%`;
       if (qpBar) qpBar.setAttribute('aria-valuenow', String(percent));
