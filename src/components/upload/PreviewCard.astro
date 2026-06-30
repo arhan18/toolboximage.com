@@ -83,6 +83,7 @@ const { class: className = '' } = Astro.props;
           <span class="preview-stat-label text-caption-mono">Dimensions</span>
           <span class="preview-stat-value" data-stat="dims">—</span>
         </div>
+        <p class="preview-note text-caption" data-stat="note" hidden></p>
       </div>
     </div>
   </article>
@@ -464,6 +465,15 @@ const { class: className = '' } = Astro.props;
 
   [data-theme="dark"] .preview-stat-saved {
     color: var(--color-cyan);
+  }
+
+  .preview-note {
+    grid-column: 1 / -1;
+    color: var(--color-mute);
+    margin: 0;
+    padding-top: var(--space-xxs);
+    font-style: italic;
+    line-height: 1.4;
   }
 
   @media (max-width: 600px) {

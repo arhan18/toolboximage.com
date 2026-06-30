@@ -513,7 +513,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     };
 
     const applyMode = (mode: CompressionMode) => {
-      settings = { ...settings, ...MODE_PRESETS[mode] };
+      Object.assign(settings, MODE_PRESETS[mode]);
       settingInputs.forEach((input) => {
         const key = input.dataset.setting!;
         const value = getDeep(settings, key);
@@ -715,6 +715,16 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
           setStat(card, 'ratio', `${ratio.toFixed(2)}×`);
           setStat(card, 'dims', item.width && item.height ? `${item.width} × ${item.height}` : '—');
           statsEl?.removeAttribute('hidden');
+
+          const noteEl = card.querySelector<HTMLElement>('[data-stat="note"]');
+          if (noteEl) {
+            if (job.result.compressed === false && job.result.note) {
+              noteEl.textContent = job.result.note;
+              noteEl.hidden = false;
+            } else {
+              noteEl.hidden = true;
+            }
+          }
 
           // Capture first done for the BA demo.
           if (!firstDoneId) {
