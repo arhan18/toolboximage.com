@@ -3,7 +3,7 @@ import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
-import { faqSchema } from '../lib/seo';
+import { faqSchema, howToSchema } from '../lib/seo';
 
 const faqs = [
   {
@@ -27,17 +27,26 @@ const faqs = [
     a: 'Yes. You can drag in files from multiple locations, or use "Add more" to append files to the existing queue. The queue mixes files from any source into a single batch for unified processing.',
   },
 ];
+
+const howToSteps = [
+  { name: 'Drop a folder', text: 'Drag an entire folder onto the upload area, or click "Pick a folder" to browse. The compressor recursively scans for all supported image formats.' },
+  { name: 'Choose your settings', text: 'Set quality, output format, and resize options. All files in the batch share the same settings for consistent output.' },
+  { name: 'Compress in parallel', text: 'The queue distributes files across Web Workers, saturating all CPU cores. A progress bar shows real-time status and bytes saved.' },
+  { name: 'Download as ZIP', text: 'Save everything as a single ZIP archive with the original folder structure preserved. Individual downloads are also available.' },
+];
 ---
 
 <CompressorPageLayout
   title="Bulk Image Compressor — Free Batch Image Compression | ToolBox Image"
   description="Compress hundreds of images at once with our free bulk image compressor. Batch compress JPEG, PNG, WebP, AVIF images in parallel — no uploads, no limits."
   canonical="https://toolboximage.com/bulk-image-compressor/"
+  ogImage="/og-bulk-compressor.svg"
   breadcrumbs={[
     { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
     { name: 'Bulk Compressor', href: '/bulk-image-compressor' },
   ]}
-  schemas={[faqSchema(faqs)]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
 >
   <section slot="hero">
     <Reveal>
@@ -95,6 +104,31 @@ const faqs = [
           consistent settings across the entire batch: quality, output
           format, resize dimensions, metadata removal. You get a unified
           set of optimised images without touching each file individually.
+          For a simpler single-image workflow, try our
+          <a href="/image-compressor/" class="cp-inline-link">all-in-one compressor</a>.
+          For format-specific optimization, see our
+          <a href="/compress-jpeg/" class="cp-inline-link">JPEG</a>,
+          <a href="/compress-png/" class="cp-inline-link">PNG</a>,
+          <a href="/compress-webp/" class="cp-inline-link">WebP</a>, and
+          <a href="/compress-avif/" class="cp-inline-link">AVIF</a> compressors.
+        </p>
+        <h3 class="text-display-sm">Privacy and performance</h3>
+        <p class="text-body-md cp-body-text">
+          All processing is local — your images never leave your device. This
+          means you can process sensitive material like client photos, legal
+          documents, or personal images with complete privacy. The parallel
+          architecture ensures maximum throughput: a folder of 100 photos
+          that would take 10 minutes on a server-based tool finishes in
+          under 30 seconds on a modern laptop. There are no file size limits
+          beyond your device's available memory.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Preserve your folder structure in the ZIP download — ideal for web
+          developers who need to maintain asset directories. Want to resize
+          your batch as well? The settings panel includes resize options
+          that work across all files. Need to convert formats? Set the
+          output format and the bulk compressor handles conversion and
+          compression in one pass.
         </p>
       </Reveal>
     </div>
@@ -126,6 +160,19 @@ const faqs = [
   .cp-body-text {
     color: var(--color-body);
     max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
   }
 
   @media (max-width: 600px) {

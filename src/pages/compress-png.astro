@@ -3,7 +3,7 @@ import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
-import { faqSchema } from '../lib/seo';
+import { faqSchema, howToSchema } from '../lib/seo';
 
 const faqs = [
   {
@@ -27,18 +27,27 @@ const faqs = [
     a: 'Yes. Drop a folder of PNGs and the queue processes them in parallel. Up to 200 files at once with no individual size limit beyond your device memory.',
   },
 ];
+
+const howToSteps = [
+  { name: 'Drop your PNG', text: 'Drag and drop one or more PNG images onto the upload area, or click to browse your files.' },
+  { name: 'Choose compression mode', text: 'Select lossless mode to preserve every pixel, or lossy mode with colour quantization for dramatic size reductions.' },
+  { name: 'Preview and compare', text: 'Use the side-by-side comparison slider to verify that transparency and details are intact.' },
+  { name: 'Download your compressed PNG', text: 'Save individual files or download all images as a ZIP archive. Your originals are never uploaded.' },
+];
 ---
 
 <CompressorPageLayout
   title="Compress PNG Images Online — Free PNG Compressor | ToolBox Image"
   description="Compress PNG images online with lossless and lossy modes. Free PNG compressor — preserve transparency while reducing file size. No uploads, no limits."
   canonical="https://toolboximage.com/compress-png/"
+  ogImage="/og-compress-png.svg"
   defaultFormat="png"
   breadcrumbs={[
     { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
     { name: 'Compress PNG', href: '/compress-png' },
   ]}
-  schemas={[faqSchema(faqs)]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
 >
   <section slot="hero">
     <Reveal>
@@ -59,39 +68,85 @@ const faqs = [
   <section class="band band-canvas" slot="content">
     <div class="container-narrow stack stack-lg">
       <Reveal>
-        <h2 class="text-display-md">PNG compression with full control.</h2>
+        <h2 class="text-display-md">What does this PNG compressor do?</h2>
         <p class="text-body-md cp-body-text">
-          PNG is the go-to format for screenshots, logos, icons, and any
-          image that needs crisp edges or transparency. The trade-off is
-          file size — PNG files are typically larger than JPEG for
-          photographic content. Our compressor gives you two paths to
-          smaller PNGs: lossless and lossy.
+          This tool compresses PNG images using optimized filter strategies and maximum deflate compression.
+          PNG supports transparency — which sets it apart from JPEG. A PNG image can have a fully transparent
+          background (alpha channel), making it the standard format for logos, icons, screenshots, and UI
+          elements. PNG compression is lossless by default, meaning every pixel stays identical to the
+          original. Our compressor also offers a lossy mode that uses colour quantization to reduce palette
+          size, which can dramatically shrink PNG files that contain photographic content.
         </p>
         <p class="text-body-md cp-body-text">
-          Lossless mode re-encodes the PNG with optimized filter strategies
-          (the per-row prediction method) and maximum deflate compression.
-          Every pixel stays identical — only the file gets smaller. This is
-          ideal for design assets where pixel-perfect fidelity matters. Lossy
-          mode uses colour quantization to reduce the palette size, which can
-          dramatically cut file size for photographs stored as PNG. The
-          encoder intelligently reduces colour precision where it won't be
-          noticed, preserving edges and gradients.
+          For example, a 1920x1080 screenshot of a web page might be 2-4 MB as a PNG. Lossless compression
+          can reduce that to 1.2-2.5 MB with identical pixel data — no quality loss at all. For a PNG
+          photograph (say, a product image with a transparent background), lossy compression can cut the
+          file by 60-80% with minimal visible change, because the encoder reduces colour precision where
+          it won't be noticed — preserving edges and gradients while compressing smooth areas.
         </p>
-        <h3 class="text-display-sm">When to use PNG compression.</h3>
+
+        <h3 class="text-display-sm">When to use PNG compression</h3>
         <p class="text-body-md cp-body-text">
-          If you work with UI designs, screenshots, or images with text
-          overlays, PNG is usually the right format. Compressing those PNGs
-          before uploading them to a website or sharing them with a team
-          saves bandwidth without sacrificing the sharpness that makes PNG
-          valuable in the first place. For images that need transparency —
-          logos, icons, product cutouts — PNG is irreplaceable, and our
-          compressor keeps your alpha channel safe.
+          PNG is the right choice for any image that needs crisp edges, text legibility, or transparency.
+          Use cases include: logos and brand assets that sit on coloured backgrounds, screenshots of
+          software and websites, UI elements like buttons and icons, images with text overlays, and
+          product photos with removed backgrounds. Compression is essential for these assets because
+          PNGs are inherently larger than JPEGs — what would be a 200 KB JPEG is often a 1-2 MB PNG.
         </p>
         <p class="text-body-md cp-body-text">
-          The compressor is preconfigured for PNG output, so you can start
-          immediately. The Custom panel gives you access to all settings
-          including quality, target file size, resize options, and metadata
-          stripping.
+          If your image does not need transparency and contains smooth gradients (like a photograph),
+          our <a href="/compress-jpeg/" class="cp-inline-link">JPEG compressor</a> will produce smaller
+          files. For modern browsers, <a href="/compress-webp/" class="cp-inline-link">WebP</a> offers
+          the best of both worlds — small file sizes with full transparency support.
+        </p>
+
+        <h3 class="text-display-sm">Benefits of PNG compression</h3>
+        <p class="text-body-md cp-body-text">
+          <strong>Transparency preserved:</strong> The alpha channel is fully maintained — no white
+          backgrounds or broken edges. <strong>Lossless option:</strong> Perfect for design assets where
+          pixel-level fidelity is non-negotiable. <strong>Quantization savings:</strong> Lossy mode can
+          cut PNG file sizes by 60-80% for photographic content. <strong>Metadata stripping:</strong>
+          Remove gamma info, colour profiles, and text chunks that bloat file size. <strong>Batch
+          processing:</strong> Compress hundreds of PNGs at once with parallel web workers.
+        </p>
+
+        <h3 class="text-display-sm">Supported formats</h3>
+        <p class="text-body-md cp-body-text">
+          Our compressor accepts JPEG, PNG, WebP, AVIF, GIF, SVG, HEIC, and TIFF as input. Output is
+          optimized PNG. All processing happens in your browser — no files are ever uploaded to a server.
+        </p>
+
+        <h3 class="text-display-sm">Privacy and speed</h3>
+        <p class="text-body-md cp-body-text">
+          All PNG compression runs locally in your browser via WebAssembly. Your images never touch a
+          server — not even for a moment. Processing is parallelized across CPU cores: 50 PNG screenshots
+          can be compressed in seconds. There are no file size limits beyond your device's available
+          memory, and no registration is required.
+        </p>
+
+        <h3 class="text-display-sm">Tips for best PNG compression results</h3>
+        <p class="text-body-md cp-body-text">
+          Use lossless mode for UI assets, logos, and screenshots where every pixel matters. Switch to
+          lossy mode for PNG photographs — the palette reduction is barely visible but saves significant
+          space. Enable metadata stripping to remove unnecessary chunks (gAMA, sRGB, text). For images
+          with large uniform areas, PNG already compresses well; our encoder's filter optimization finds
+          the best per-row prediction method to squeeze out additional savings. If you need to resize
+          your PNGs, try our <a href="/tools/resizer/" class="cp-inline-link">image resizer</a> before
+          compressing for best results.
+        </p>
+
+        <h3 class="text-display-sm">How to compress a PNG — step by step</h3>
+        <p class="text-body-md cp-body-text">
+          <strong>1. Drop your image.</strong> Drag a PNG onto the upload area or click to browse.
+          <strong>2. Choose a mode.</strong> Lossless for pixel-perfect output or lossy for maximum savings.
+          <strong>3. Preview.</strong> Check that transparency and edges look correct with the comparison slider.
+          <strong>4. Download.</strong> Save individually or as a ZIP.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Need to convert your PNGs to JPEG for photographs? Use the
+          <a href="/tools/converter/" class="cp-inline-link">image converter</a>. Want to crop icons
+          or UI elements to exact dimensions? Try the
+          <a href="/tools/cropper/" class="cp-inline-link">image cropper</a>.
         </p>
       </Reveal>
     </div>
@@ -123,6 +178,19 @@ const faqs = [
   .cp-body-text {
     color: var(--color-body);
     max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
   }
 
   @media (max-width: 600px) {

@@ -3,6 +3,8 @@ import Layout from './Layout.astro';
 import AppShell from '../components/layout/AppShell.astro';
 import CompressorShell from '../components/compressor/CompressorShell.astro';
 import CompressorLinks from '../components/compressor/CompressorLinks.astro';
+import ImageToolsLinks from '../components/compressor/ImageToolsLinks.astro';
+import Breadcrumbs from '../components/shared/Breadcrumbs.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
@@ -29,6 +31,8 @@ const {
   defaultTargetSize,
   breadcrumbs,
 } = Astro.props;
+
+const currentPath = breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1].href : '';
 ---
 
 <Layout
@@ -38,7 +42,10 @@ const {
   ogImage={ogImage}
   {noIndex}
   schemas={[
-    softwareAppSchema(),
+    softwareAppSchema({
+      name: `ToolBox Image — ${breadcrumbs.length > 1 ? breadcrumbs[breadcrumbs.length - 1].name : 'Image Compressor'}`,
+      url: `https://toolboximage.com${currentPath}`,
+    }),
     breadcrumbSchema(breadcrumbs),
     ...schemas,
   ]}
@@ -46,6 +53,7 @@ const {
   <AppShell>
     <section class="cp-hero">
       <div class="container cp-hero-inner">
+        <Breadcrumbs items={breadcrumbs} />
         <slot name="hero" />
       </div>
     </section>
@@ -54,7 +62,9 @@ const {
 
     <slot name="content" />
 
-    <CompressorLinks currentPath={breadcrumbs.length > 0 ? breadcrumbs[breadcrumbs.length - 1].href : ''} />
+    <ImageToolsLinks currentPath={currentPath} />
+
+    <CompressorLinks currentPath={currentPath} />
 
     <slot name="faq" />
 

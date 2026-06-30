@@ -3,7 +3,7 @@ import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
-import { faqSchema } from '../lib/seo';
+import { faqSchema, howToSchema } from '../lib/seo';
 
 const faqs = [
   {
@@ -27,18 +27,27 @@ const faqs = [
     a: 'Yes. Drop any supported image format and set the output to AVIF. The queue processes files in parallel. AVIF encoding is slower than JPEG or WebP, so parallel processing helps maintain throughput.',
   },
 ];
+
+const howToSteps = [
+  { name: 'Drop your image', text: 'Drag and drop any image format — JPEG, PNG, WebP — onto the upload area.' },
+  { name: 'Adjust AVIF settings', text: 'Set quality (1-100) and speed preset. Slower speeds produce smaller files with better quality.' },
+  { name: 'Preview the result', text: 'Use the comparison slider to check detail retention, especially in shadows and highlights.' },
+  { name: 'Download your AVIF', text: 'Save individual AVIF files or download all as a ZIP. Nothing was ever uploaded.' },
+];
 ---
 
 <CompressorPageLayout
   title="Compress AVIF Images Online — Free AVIF Compressor | ToolBox Image"
   description="Compress AVIF images online with the AV1 codec. Free AVIF compressor — smaller files than WebP with better quality. Browser-based, private, unlimited."
   canonical="https://toolboximage.com/compress-avif/"
+  ogImage="/og-compress-avif.svg"
   defaultFormat="avif"
   breadcrumbs={[
     { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
     { name: 'Compress AVIF', href: '/compress-avif' },
   ]}
-  schemas={[faqSchema(faqs)]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
 >
   <section slot="hero">
     <Reveal>
@@ -59,38 +68,84 @@ const faqs = [
   <section class="band band-canvas" slot="content">
     <div class="container-narrow stack stack-lg">
       <Reveal>
-        <h2 class="text-display-md">AVIF compression with the AV1 codec.</h2>
+        <h2 class="text-display-md">What does this AVIF compressor do?</h2>
         <p class="text-body-md cp-body-text">
-          AVIF (AV1 Image File Format) represents the state of the art in
-          image compression. Built on the AV1 video codec from the Alliance
-          for Open Media, AVIF delivers compression efficiency that
-          significantly outperforms JPEG, PNG, and WebP — typically 50%
-          smaller than JPEG and 30% smaller than WebP at equivalent visual
-          quality.
+          This tool compresses images to AVIF using libaom — the reference AV1 encoder from the Alliance
+          for Open Media — compiled to WebAssembly. AVIF represents the state of the art in image
+          compression, delivering files that are typically 50% smaller than JPEG and 30% smaller than
+          WebP at equivalent visual quality. It uses the same AV1 codec that powers Netflix and YouTube
+          streaming, adapted for still images.
         </p>
         <p class="text-body-md cp-body-text">
-          Our compressor uses libaom — the reference AV1 encoder — compiled
-          to WebAssembly. You can adjust quality (1-100) and speed preset.
-          The speed setting trades encoding time for compression density:
-          slower speeds produce smaller files but take longer to encode. This
-          is particularly useful for batch jobs where you can let the queue
-          run while you work. AVIF also supports HDR, wide colour gamut,
-          lossless compression, and full alpha transparency — making it
-          suitable for virtually any use case.
+          For example, a 20 MB JPEG from a modern DSLR can be compressed to a 1.5 MB AVIF with no visible
+          quality difference at normal viewing sizes. That is a 92% reduction in file size. The AV1 codec
+          handles complex textures like grass, foliage, and fabric much more efficiently than JPEG's
+          block-based DCT approach, so high-detail images see the biggest savings.
         </p>
-        <h3 class="text-display-sm">Why choose AVIF compression?</h3>
+
+        <h3 class="text-display-sm">When to use AVIF compression</h3>
         <p class="text-body-md cp-body-text">
-          If you are building for the modern web, AVIF is the format that
-          future-proofs your images. The compression gains translate directly
-          to faster page loads, lower CDN bills, and better Core Web Vitals
-          scores. For photographers and designers, AVIF's support for HDR
-          and wide colour gamut means your images look better on modern
-          displays while taking up less space.
+          AVIF is ideal when you need the absolute smallest file size without compromising quality. It
+          excels at photographic content where its advanced compression algorithms have the most impact.
+          It also supports HDR (PQ and HLG), wide colour gamut (P3, Rec.2020), 10-bit and 12-bit colour
+          depth, lossless compression, and full alpha transparency — making it suitable for virtually
+          any use case. Use AVIF for hero images, product galleries, and photography portfolios where
+          every kilobyte matters.
         </p>
         <p class="text-body-md cp-body-text">
-          The compressor is preconfigured for AVIF output with optimal
-          quality settings. Use the Custom panel to tune the quality and
-          speed presets, set a target file size, or enable resize.
+          Browser coverage is over 92% globally. For the remaining 8%, serve a
+          <a href="/compress-webp/" class="cp-inline-link">WebP</a> or
+          <a href="/compress-jpeg/" class="cp-inline-link">JPEG</a> fallback using the &lt;picture&gt;
+          element. AVIF encoding is slower than WebP or JPEG, so it is best suited for build-time
+          optimization or background batch processing — both of which our parallel queue handles
+          efficiently.
+        </p>
+
+        <h3 class="text-display-sm">Benefits of AVIF compression</h3>
+        <p class="text-body-md cp-body-text">
+          <strong>Best-in-class compression:</strong> 50% smaller than JPEG, 30% smaller than WebP.
+          <strong>HDR support:</strong> Handles PQ and HLG HDR content natively. <strong>Wide colour
+          gamut:</strong> Supports P3 and Rec.2020 colour spaces. <strong>Deep colour:</strong> 10-bit
+          and 12-bit precision for smooth gradients. <strong>Transparency:</strong> Full alpha channel
+          support. <strong>Lossless:</strong> Mathematically identical compression when needed.
+          <strong>Royalty-free:</strong> Part of the open AV1 standard.
+        </p>
+
+        <h3 class="text-display-sm">Supported formats</h3>
+        <p class="text-body-md cp-body-text">
+          Our compressor accepts JPEG, PNG, WebP, AVIF, GIF, SVG, HEIC, and TIFF as input. Output is
+          optimized AVIF. All processing happens in your browser — no files are ever uploaded to a server.
+        </p>
+
+        <h3 class="text-display-sm">Privacy and speed</h3>
+        <p class="text-body-md cp-body-text">
+          All AVIF compression runs locally via WebAssembly. Your images never touch a server. AVIF
+          encoding is computationally intensive — our parallel queue compensates by processing multiple
+          images simultaneously. A batch of 20 photos might take 30-60 seconds depending on your CPU
+          and chosen speed preset, but the resulting files will be the smallest possible on the web.
+        </p>
+
+        <h3 class="text-display-sm">Tips for best AVIF compression results</h3>
+        <p class="text-body-md cp-body-text">
+          Quality 60-70 is the sweet spot for AVIF — visually lossless but dramatically smaller than the
+          original. Use speed preset 4-6 for a good balance of encoding time and compression density.
+          For maximum compression (archival, batch processing), use speed preset 0-2 — it encodes slower
+          but produces the smallest files. For HDR content, ensure your input uses PQ (ST 2084) or HLG
+          transfer characteristics — AVIF preserves the full dynamic range. If you need to resize images
+          before encoding, use our <a href="/tools/resizer/" class="cp-inline-link">image resizer</a>.
+        </p>
+
+        <h3 class="text-display-sm">How to compress an image to AVIF — step by step</h3>
+        <p class="text-body-md cp-body-text">
+          <strong>1. Drop your image.</strong> Drag any format onto the upload area.
+          <strong>2. Configure settings.</strong> Adjust quality and speed preset.
+          <strong>3. Preview.</strong> Check the result with the comparison slider — details in shadows
+          and highlights should be preserved.
+          <strong>4. Download.</strong> Save individual AVIF files or everything as a ZIP.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Browse all available <a href="/image-tools/" class="cp-inline-link">image tools</a> including
+          resizing, cropping, conversion, and more.
         </p>
       </Reveal>
     </div>
@@ -122,6 +177,19 @@ const faqs = [
   .cp-body-text {
     color: var(--color-body);
     max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
   }
 
   @media (max-width: 600px) {

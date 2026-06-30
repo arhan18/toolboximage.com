@@ -3,7 +3,7 @@ import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
-import { faqSchema } from '../lib/seo';
+import { faqSchema, howToSchema } from '../lib/seo';
 
 const faqs = [
   {
@@ -27,18 +27,27 @@ const faqs = [
     a: 'Use the target-size setting in the Custom panel — enter 8000 KB (8 MB) for free accounts or 25000 KB (25 MB) for Nitro. The encoder handles the rest, automatically finding the best quality that stays under the limit.',
   },
 ];
+
+const howToSteps = [
+  { name: 'Drop your screenshot or image', text: 'Drag any image file onto the upload area. PNG screenshots, JPEG photos, and WebP images are all supported.' },
+  { name: 'Set the Discord target size', text: 'The compressor is preconfigured for 8 MB (free Discord). Adjust to 25 MB in Custom mode if you have Nitro.' },
+  { name: 'Compress and preview', text: 'Each image is compressed to stay under the Discord limit. Use the comparison slider to verify text and detail clarity.' },
+  { name: 'Drag to Discord', text: 'Download the compressed files and drag them straight into your Discord channel. No more "file too large" errors.' },
+];
 ---
 
 <CompressorPageLayout
   title="Image Compressor for Discord — Compress Images for Discord | ToolBox Image"
   description="Compress images for Discord's upload limits. Free online image compressor — batch compress screenshots, memes, and photos before sharing on Discord. No uploads."
   canonical="https://toolboximage.com/image-compressor-for-discord/"
+  ogImage="/og-discord-compressor.svg"
   defaultTargetSize={8000}
   breadcrumbs={[
     { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
     { name: 'Discord Compressor', href: '/image-compressor-for-discord' },
   ]}
-  schemas={[faqSchema(faqs)]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
 >
   <section slot="hero">
     <Reveal>
@@ -94,7 +103,23 @@ const faqs = [
           higher quality for important screenshots and photos. You can
           also convert between formats — for example, converting a large PNG
           screenshot to high-quality JPEG or WebP for significant size
-          savings with minimal visual impact.
+          savings with minimal visual impact. For format-specific
+          compression, see our
+          <a href="/compress-jpeg/" class="cp-inline-link">JPEG compressor</a>,
+          <a href="/compress-png/" class="cp-inline-link">PNG compressor</a>,
+          <a href="/compress-webp/" class="cp-inline-link">WebP compressor</a>, and
+          <a href="/compress-avif/" class="cp-inline-link">AVIF compressor</a>.
+        </p>
+        <h3 class="text-display-sm">Tips for Discord image sharing</h3>
+        <p class="text-body-md cp-body-text">
+          For game screenshots, use PNG for text-heavy UI (setting menus,
+          chat windows) and JPEG for scenic in-game shots. WebP is a good
+          middle ground — smaller than PNG with better quality than JPEG at
+          the same size. If Discord's built-in compression degrades your
+          images noticeably, pre-compress at a slightly higher quality and
+          use the target-size mode to stay under the limit. The
+          <a href="/bulk-image-compressor/" class="cp-inline-link">bulk compressor</a>
+          is ideal for processing entire screenshot folders before uploading.
         </p>
       </Reveal>
     </div>
@@ -126,6 +151,19 @@ const faqs = [
   .cp-body-text {
     color: var(--color-body);
     max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
   }
 
   @media (max-width: 600px) {

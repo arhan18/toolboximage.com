@@ -2,6 +2,7 @@
 import Layout from './Layout.astro';
 import AppShell from '../components/layout/AppShell.astro';
 import ToolHeader from '../components/tools/ToolHeader.astro';
+import Breadcrumbs from '../components/shared/Breadcrumbs.astro';
 import type { ToolConfig } from '../types';
 import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
@@ -20,12 +21,14 @@ const schemas = tool.status === 'live'
       }),
       breadcrumbSchema([
         { name: 'Home', href: '/' },
+        { name: 'Image Tools', href: '/image-tools' },
         { name: tool.name, href: tool.path },
       ]),
     ]
   : [
       breadcrumbSchema([
         { name: 'Home', href: '/' },
+        { name: 'Image Tools', href: '/image-tools' },
         { name: tool.name, href: tool.path },
       ]),
     ];
@@ -40,6 +43,11 @@ const schemas = tool.status === 'live'
   <AppShell>
     <article class="tool-page">
       <div class="container stack stack-xl">
+        <Breadcrumbs items={[
+          { name: 'Home', href: '/' },
+          { name: 'Image Tools', href: '/image-tools' },
+          { name: tool.name, href: tool.path },
+        ]} />
         <ToolHeader {tool} />
         <slot name="tool-body" />
       </div>

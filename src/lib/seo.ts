@@ -125,23 +125,44 @@ export function articleSchema(post: {
   };
 }
 
-/** SoftwareApplication schema for the compressor tool. */
-export function softwareAppSchema() {
+/** SoftwareApplication schema for tools. */
+export function softwareAppSchema(overrides?: {
+  name?: string;
+  description?: string;
+  url?: string;
+}) {
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'ToolBox Image Compressor',
+    name: overrides?.name ?? 'ToolBox Image Compressor',
     applicationCategory: 'MultimediaApplication',
     operatingSystem: 'Any',
     description:
+      overrides?.description ??
       'Free online image compressor — compress JPG, PNG, WebP, AVIF, GIF, and SVG images entirely in your browser. No uploads, no limits, no sign-up. The best free image compressor.',
-    url: `${SITE_URL}/compressor`,
+    url: overrides?.url ?? `${SITE_URL}/compressor`,
     offers: {
       '@type': 'Offer',
       price: '0',
       priceCurrency: 'USD',
     },
     browserRequirements: 'Requires JavaScript',
+  };
+}
+
+/** HowTo schema — steps for image compression tasks. */
+export function howToSchema(steps: { name: string; text: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Compress Images',
+    description: 'A step-by-step guide to compressing images using ToolBox Image.',
+    step: steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+    })),
   };
 }
 

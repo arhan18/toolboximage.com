@@ -3,7 +3,7 @@ import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
-import { faqSchema } from '../lib/seo';
+import { faqSchema, howToSchema } from '../lib/seo';
 
 const faqs = [
   {
@@ -31,17 +31,26 @@ const faqs = [
     a: 'It depends on your settings. The Auto preset balances file size and quality so the difference is nearly imperceptible. The High quality preset preserves visual fidelity while still reducing file size. You can also use Lossless mode which keeps every pixel identical while still achieving some compression for PNG and WebP.',
   },
 ];
+
+const howToSteps = [
+  { name: 'Drop your images', text: 'Drag and drop files or a folder onto the upload area. JPEG, PNG, WebP, AVIF, GIF, and HEIC are all supported.' },
+  { name: 'Choose compression settings', text: 'Pick Auto for a balanced result, High quality for maximum fidelity, or Custom for full control over quality, format, and target size.' },
+  { name: 'Preview the results', text: 'Each compressed image gets a side-by-side comparison slider so you can verify quality before downloading.' },
+  { name: 'Download your files', text: 'Save individual images or download everything as a ZIP archive. Your files never left your device.' },
+];
 ---
 
 <CompressorPageLayout
   title="Image Compressor — Free Online Image Compression | ToolBox Image"
   description="Free online image compressor. Compress JPG, PNG, WebP, AVIF, GIF, SVG, and HEIC images directly in your browser. No uploads, no sign-up, unlimited — the best free image compressor."
   canonical="https://toolboximage.com/image-compressor/"
+  ogImage="/og-image-compressor.svg"
   breadcrumbs={[
     { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
     { name: 'Image Compressor', href: '/image-compressor' },
   ]}
-  schemas={[faqSchema(faqs)]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
 >
   <section slot="hero">
     <Reveal>
@@ -79,7 +88,9 @@ const faqs = [
           photos and compress them all at once. The compressor uses
           Mozilla's mozJPEG for JPEG, Google's libwebp for WebP, and
           libaom for AVIF — all compiled to WebAssembly for native-level
-          performance.
+          performance. It also supports format conversion, so you can drop
+          a folder full of HEIC photos from an iPhone and export them all
+          as JPEG or WebP in one batch.
         </p>
         <h3 class="text-display-sm">Why use an online image compressor?</h3>
         <p class="text-body-md cp-body-text">
@@ -89,14 +100,48 @@ const faqs = [
           creates a better experience for visitors on slow connections.
           Beyond the web, compressed images take up less storage space on
           your phone or computer and upload faster to social media, email
-          attachments, and cloud services.
+          attachments, and cloud services. A typical photo from a modern
+          smartphone is 4-8 MB. Compressed for the web, the same photo is
+          200-600 KB — a 90% reduction with no visible quality loss.
         </p>
         <p class="text-body-md cp-body-text">
           ToolBox Image handles all major formats in a single interface. You
           do not need separate tools for JPEG, PNG, and WebP — just drop
           everything into one queue, pick your settings, and download the
           results. Each image gets its own before-and-after comparison so
-          you can verify quality before saving.
+          you can verify quality before saving. For format-specific needs,
+          check our dedicated <a href="/compress-jpeg/" class="cp-inline-link">JPEG compressor</a>,
+          <a href="/compress-png/" class="cp-inline-link">PNG compressor</a>,
+          <a href="/compress-webp/" class="cp-inline-link">WebP compressor</a>, and
+          <a href="/compress-avif/" class="cp-inline-link">AVIF compressor</a> pages.
+        </p>
+        <h3 class="text-display-sm">Privacy you can trust</h3>
+        <p class="text-body-md cp-body-text">
+          Every image you compress stays on your device. There is no server
+          to upload to, no database to store your files, and no third-party
+          analytics tracking what you compress. Because the encoder runs
+          locally via WebAssembly, the only copies of your images are the
+          ones you choose to save. This is especially important for sensitive
+          documents, design assets, and personal photos — you get the utility
+          of a powerful compressor with the privacy of a desktop application.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Processing is parallelized across all available CPU cores via Web
+          Workers. A batch of 50 images compresses in seconds. The interface
+          shows real-time progress, individual file comparisons, and a
+          running tally of total bytes saved. There is no registration,
+          no email collection, no limits on usage.
+        </p>
+        <h3 class="text-display-sm">Tips for best results</h3>
+        <p class="text-body-md cp-body-text">
+          Use the Auto preset for most images — it picks the right format and
+          quality for each file individually. For design assets that need
+          pixel-perfect output, switch to Lossless mode. Use target-size mode
+          when you need to hit a specific file size for a platform like
+          Discord (<a href="/image-compressor-for-discord/" class="cp-inline-link">Discord compressor</a>)
+          or email (<a href="/image-compressor-100kb/" class="cp-inline-link">100KB compressor</a>).
+          For large batches, the <a href="/bulk-image-compressor/" class="cp-inline-link">bulk compressor</a>
+          maintains folder structure and processes everything in parallel.
         </p>
       </Reveal>
     </div>
@@ -128,6 +173,19 @@ const faqs = [
   .cp-body-text {
     color: var(--color-body);
     max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
   }
 
   @media (max-width: 600px) {

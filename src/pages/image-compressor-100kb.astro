@@ -3,7 +3,7 @@ import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
-import { faqSchema } from '../lib/seo';
+import { faqSchema, howToSchema } from '../lib/seo';
 
 const faqs = [
   {
@@ -27,18 +27,27 @@ const faqs = [
     a: 'Yes. The target size slider goes from 0 (off) to 2000 KB. Set any value that fits your platform requirement. For Discord use, target 8000 KB (free) or 25000 KB (Nitro). For email, 200-500 KB is usually safe.',
   },
 ];
+
+const howToSteps = [
+  { name: 'Drop your image', text: 'Drag any image format onto the upload area.' },
+  { name: 'Set the target size', text: 'Enable "Target size" in the Custom panel and enter 100 KB. The compressor automatically adjusts settings to hit it.' },
+  { name: 'Preview the result', text: 'Use the comparison slider to verify that the compressed image meets your quality standards at the target size.' },
+  { name: 'Download', text: 'Save your compressed image. It is guaranteed to be under your target file size.' },
+];
 ---
 
 <CompressorPageLayout
   title="Compress Images to 100KB — Free Online Image Compressor | ToolBox Image"
   description="Compress any image to under 100KB. Free online tool — perfect for websites, email attachments, and forms that require sub-100KB uploads. No uploads, no limits."
   canonical="https://toolboximage.com/image-compressor-100kb/"
+  ogImage="/og-100kb-compressor.svg"
   defaultTargetSize={100}
   breadcrumbs={[
     { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
     { name: 'Compress to 100KB', href: '/image-compressor-100kb' },
   ]}
-  schemas={[faqSchema(faqs)]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
 >
   <section slot="hero">
     <Reveal>
@@ -94,7 +103,25 @@ const faqs = [
           If 100 KB is too aggressive for a particular image, increase the
           target. If you need even smaller files for things like favicons or
           thumbnails, set a target of 10-50 KB. The algorithm handles it
-          seamlessly.
+          seamlessly. For Discord's larger limits, use our
+          <a href="/image-compressor-for-discord/" class="cp-inline-link">Discord compressor</a>
+          preconfigured at 8 MB. For general-purpose compression across
+          multiple images, try the
+          <a href="/bulk-image-compressor/" class="cp-inline-link">bulk compressor</a>.
+        </p>
+        <h3 class="text-display-sm">Supported formats</h3>
+        <p class="text-body-md cp-body-text">
+          Target-size compression works with JPEG, PNG, WebP, and AVIF output
+          formats. The input can be any supported format including HEIC and
+          TIFF. All processing is local — nothing is uploaded to a server.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Need format-specific compression? See our dedicated
+          <a href="/compress-jpeg/" class="cp-inline-link">JPEG</a>,
+          <a href="/compress-png/" class="cp-inline-link">PNG</a>,
+          <a href="/compress-webp/" class="cp-inline-link">WebP</a>, and
+          <a href="/compress-avif/" class="cp-inline-link">AVIF</a> compressors
+          for format-specific tips and examples.
         </p>
       </Reveal>
     </div>
@@ -126,6 +153,19 @@ const faqs = [
   .cp-body-text {
     color: var(--color-body);
     max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
   }
 
   @media (max-width: 600px) {

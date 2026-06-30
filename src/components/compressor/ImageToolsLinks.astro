@@ -1,0 +1,107 @@
+---
+import Reveal from '../shared/Reveal.astro';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const imageTools = [
+  { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'Optimize JPEG images with mozJPEG' },
+  { href: '/compress-png/', label: 'Compress PNG', desc: 'Lossless and lossy PNG compression' },
+  { href: '/compress-webp/', label: 'Compress WebP', desc: 'WebP optimization with libwebp' },
+  { href: '/compress-avif/', label: 'Compress AVIF', desc: 'AVIF encoding with the AV1 codec' },
+  { href: '/image-compressor/', label: 'Image Compressor', desc: 'All-in-one image compression' },
+  { href: '/tools/resizer/', label: 'Resize Image', desc: 'Resize to exact dimensions or aspect ratios' },
+  { href: '/tools/cropper/', label: 'Crop Image', desc: 'Crop with preset ratios or freeform' },
+  { href: '/tools/converter/', label: 'Convert Image', desc: 'Convert between JPEG, PNG, WebP, AVIF' },
+  { href: '/tools/rotator/', label: 'Rotate Image', desc: 'Rotate 90°, 180°, 270°, or custom angle' },
+  { href: '/tools/flipper/', label: 'Flip Image', desc: 'Flip horizontally, vertically, or both' },
+];
+---
+
+<section class="band band-soft image-tools-links">
+  <div class="container stack stack-3xl">
+    <Reveal>
+      <h2 class="text-display-md links-title">All image tools</h2>
+      <p class="text-body-md links-lead">
+        Compress, resize, crop, convert, and more — all in your browser, all private.
+      </p>
+    </Reveal>
+    <div class="links-grid">
+      {imageTools.filter((l) => l.href !== currentPath).map((link, i) => (
+        <Reveal delay={i * 40}>
+          <a href={link.href} class="link-card">
+            <h3 class="text-display-sm link-card-title">{link.label}</h3>
+            <p class="text-body-sm link-card-desc">{link.desc}</p>
+          </a>
+        </Reveal>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .image-tools-links {
+    position: relative;
+  }
+
+  .links-title {
+    margin: 0;
+  }
+
+  .links-lead {
+    color: var(--color-body);
+    margin: var(--space-xs) 0 0;
+    max-width: 48ch;
+  }
+
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-md);
+  }
+
+  .link-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-lg);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition:
+      transform var(--dur-base) var(--ease-out-quart),
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      border-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .link-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .link-card-title {
+    margin: 0;
+    color: var(--color-link);
+    font-size: var(--text-body-md);
+    font-weight: var(--weight-semibold);
+  }
+
+  .link-card-desc {
+    margin: 0;
+    color: var(--color-body);
+    font-size: var(--text-body-sm);
+  }
+
+  @media (max-width: 1023px) {
+    .links-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .links-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

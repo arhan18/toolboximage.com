@@ -3,7 +3,7 @@ import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
 import Badge from '../components/ui/Badge.astro';
 import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
-import { faqSchema } from '../lib/seo';
+import { faqSchema, howToSchema } from '../lib/seo';
 
 const faqs = [
   {
@@ -27,18 +27,27 @@ const faqs = [
     a: 'Yes. Drop an entire folder of JPEGs and the queue processes them in parallel using all available CPU cores. Up to 200 files at once, each up to 100 MB.',
   },
 ];
+
+const howToSteps = [
+  { name: 'Drop your JPEG', text: 'Drag and drop one or more JPEG images onto the upload area, or click to browse your files.' },
+  { name: 'Adjust compression settings', text: 'Use the quality slider (1-100), enable target-size mode for a specific file size, or switch to lossless mode to preserve every pixel.' },
+  { name: 'Preview the result', text: 'Drag the side-by-side comparison slider to verify quality. The compressor shows the original and compressed file sizes.' },
+  { name: 'Download your compressed JPEG', text: 'Save individual files or download all compressed images as a ZIP archive. Your files never left your device.' },
+];
 ---
 
 <CompressorPageLayout
   title="Compress JPEG Images Online — Free JPEG Compressor | ToolBox Image"
   description="Compress JPEG images online with mozJPEG. Free JPEG compressor — reduce file size without losing quality. No uploads, no limits, no sign-up. Drop and compress."
   canonical="https://toolboximage.com/compress-jpeg/"
+  ogImage="/og-compress-jpeg.svg"
   defaultFormat="jpeg"
   breadcrumbs={[
     { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
     { name: 'Compress JPEG', href: '/compress-jpeg' },
   ]}
-  schemas={[faqSchema(faqs)]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
 >
   <section slot="hero">
     <Reveal>
@@ -58,39 +67,81 @@ const faqs = [
   <section class="band band-canvas" slot="content">
     <div class="container-narrow stack stack-lg">
       <Reveal>
-        <h2 class="text-display-md">JPEG compression powered by mozJPEG.</h2>
+        <h2 class="text-display-md">What does this JPEG compressor do?</h2>
         <p class="text-body-md cp-body-text">
-          JPEG is the most widely used image format on the web, and for good
-          reason: it offers excellent compression for photographic content.
-          The key to good JPEG compression lies in the encoder. Our compressor
-          uses mozJPEG — the same encoder that powers Firefox — compiled to
-          WebAssembly. MozJPEG produces files that are 5-15% smaller than
-          standard libjpeg at the same quality setting, with fewer artefacts
-          in gradient-heavy areas like skies and skin tones.
+          This tool compresses JPEG images using Mozilla's mozJPEG encoder — the same technology that powers
+          Firefox's image rendering. JPEG is ideal for photographs and complex images with smooth gradients,
+          like portraits, landscapes, and product shots. The format achieves small file sizes by discarding
+          colour information that the human eye struggles to perceive. Our compressor gives you full control
+          over this trade-off between file size and visual quality.
         </p>
         <p class="text-body-md cp-body-text">
-          You have full control over the compression. Use the quality slider
-          (1-100) for precise control, enable target-size mode to hit a
-          specific file size in KB, or switch to lossless mode to strip
-          metadata while preserving every pixel. The progressive JPEG option
-          creates images that render gradually as they load — ideal for
-          slow connections.
+          A typical 8-megapixel JPEG photo from a modern smartphone is 4-6 MB. Compressed at quality 80,
+          the same image becomes 200-600 KB — a 90% reduction — with no visible difference at normal
+          viewing distances. For websites, this means dramatically faster load times, lower bandwidth costs,
+          and better Core Web Vitals scores.
         </p>
-        <h3 class="text-display-sm">Why compress JPEG images?</h3>
+
+        <h3 class="text-display-sm">When to use JPEG compression</h3>
         <p class="text-body-md cp-body-text">
-          JPEG compression is essential for web performance. A typical photo
-          from a modern smartphone is 4-8 MB. Compressed for the web, the
-          same photo can be 200-600 KB with no visible quality difference.
-          That is a 90% reduction in bandwidth and load time. For websites
-          with many images — portfolios, e-commerce stores, news sites —
-          this translates directly to faster pages, lower hosting costs,
-          and better search rankings.
+          JPEG is the default format for photographs, magazine-quality images, and any visual that needs
+          smooth colour transitions. If you are building an e-commerce site, a photography portfolio, or a
+          news article with embedded photos, JPEG is almost always the right choice. Compress your JPEGs
+          before uploading to save bandwidth without sacrificing the visual fidelity your audience expects.
         </p>
         <p class="text-body-md cp-body-text">
-          Our compressor is preconfigured for JPEG output. The settings panel
-          defaults to JPEG format so you can start compressing immediately.
-          All the advanced options — resize, metadata removal, progressive
-          encoding — are still available in the Custom panel.
+          JPEG is not ideal for images with sharp edges, text overlays, or transparency. For screenshots,
+          logos, and icons, our <a href="/compress-png/" class="cp-inline-link">PNG compressor</a> is a
+          better fit. If you need the smallest possible file size for modern browsers, consider
+          <a href="/compress-webp/" class="cp-inline-link">WebP</a> or
+          <a href="/compress-avif/" class="cp-inline-link">AVIF</a>, which can shrink files even further
+          at equivalent quality.
+        </p>
+
+        <h3 class="text-display-sm">Benefits of compressing JPEG images</h3>
+        <p class="text-body-md cp-body-text">
+          <strong>Faster page loads:</strong> Compressed JPEGs load 4-10x faster, improving user experience
+          and SEO rankings. <strong>Lower storage costs:</strong> A 90% reduction in file size means you
+          store 10x more images in the same space. <strong>Reduced bandwidth:</strong> Serving smaller
+          files cuts CDN bills and data transfer costs. <strong>Better Core Web Vitals:</strong> Google's
+          Largest Contentful Paint (LCP) metric rewards fast-loading images, directly boosting search
+          rankings.
+        </p>
+
+        <h3 class="text-display-sm">Supported formats</h3>
+        <p class="text-body-md cp-body-text">
+          Our compressor accepts JPEG, PNG, WebP, AVIF, GIF, SVG, HEIC, and TIFF as input. Output is
+          optimized JPEG. All processing happens in your browser — no files are ever uploaded to a server.
+        </p>
+
+        <h3 class="text-display-sm">Privacy and speed</h3>
+        <p class="text-body-md cp-body-text">
+          Every compression runs locally via WebAssembly. Your images never touch a server, our CDN, or
+          any third party. Processing is parallelized across all available CPU cores — a batch of 50 images
+          completes in seconds, not minutes. There are no file size limits beyond your device's memory.
+        </p>
+
+        <h3 class="text-display-sm">Tips for best JPEG compression results</h3>
+        <p class="text-body-md cp-body-text">
+          Start with quality 80 — it offers the best balance of file size and visual quality. Use
+          target-size mode when you need to hit a specific file size (e.g., 500 KB for an email attachment).
+          Enable progressive JPEG for images that load gradually on slow connections. Strip metadata with
+          Lossless mode to remove EXIF data like GPS coordinates and camera settings. For batch jobs, use
+          our <a href="/bulk-image-compressor/" class="cp-inline-link">bulk compressor</a> to process
+          hundreds of images in parallel.
+        </p>
+
+        <h3 class="text-display-sm">How to compress a JPEG — step by step</h3>
+        <p class="text-body-md cp-body-text">
+          <strong>1. Drop your image.</strong> Drag a JPEG onto the upload area or click to browse.
+          <strong>2. Choose your quality.</strong> Use the slider or enable target-size mode.
+          <strong>3. Preview.</strong> Drag the comparison slider to check the result.
+          <strong>4. Download.</strong> Save individual files or everything as a ZIP.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Need to resize your images before compressing? Try our
+          <a href="/tools/resizer/" class="cp-inline-link">image resizer tool</a>. Want to convert JPEGs
+          to another format? Use the <a href="/tools/converter/" class="cp-inline-link">image converter</a>.
         </p>
       </Reveal>
     </div>
@@ -122,6 +173,19 @@ const faqs = [
   .cp-body-text {
     color: var(--color-body);
     max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
   }
 
   @media (max-width: 600px) {

@@ -1,0 +1,261 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import Breadcrumbs from '../components/shared/Breadcrumbs.astro';
+import Badge from '../components/ui/Badge.astro';
+import { breadcrumbSchema, softwareAppSchema } from '../lib/seo';
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Image Tools', href: '/image-tools' },
+];
+
+const livingTools = [
+  { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any image format in your browser. No uploads.', status: 'Live' },
+  { href: '/image-compressor/', label: 'All-in-One Compressor', desc: 'Single interface for all compression needs.', status: 'Live' },
+  { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'Optimize JPEG photos with mozJPEG encoder.', status: 'Live' },
+  { href: '/compress-png/', label: 'Compress PNG', desc: 'Lossless and lossy PNG with transparency support.', status: 'Live' },
+  { href: '/compress-webp/', label: 'Compress WebP', desc: 'WebP optimization with libwebp encoder.', status: 'Live' },
+  { href: '/compress-avif/', label: 'Compress AVIF', desc: 'AVIF encoding with the AV1 codec.', status: 'Live' },
+  { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch compress hundreds of images.', status: 'Live' },
+  { href: '/image-compressor-100kb/', label: 'Compress to 100KB', desc: 'Hit exact file size targets automatically.', status: 'Live' },
+  { href: '/image-compressor-for-discord/', label: 'Discord Compressor', desc: 'Compress images for Discord upload limits.', status: 'Live' },
+];
+
+const comingSoonTools = [
+  { href: '/tools/resizer/', label: 'Resize Image', desc: 'Resize to exact dimensions or aspect ratios.' },
+  { href: '/tools/cropper/', label: 'Crop Image', desc: 'Crop with preset ratios or freeform selection.' },
+  { href: '/tools/converter/', label: 'Convert Image', desc: 'Convert between JPEG, PNG, WebP, AVIF, and more.' },
+  { href: '/tools/rotator/', label: 'Rotate Image', desc: 'Rotate 90°, 180°, 270°, or custom angle.' },
+  { href: '/tools/flipper/', label: 'Flip Image', desc: 'Flip horizontally, vertically, or both.' },
+  { href: '/tools/format-viewer/', label: 'Format Viewer', desc: 'Inspect image format details and metadata.' },
+  { href: '/tools/heic-converter/', label: 'HEIC Converter', desc: 'Convert Apple HEIC photos to JPEG or PNG.' },
+];
+
+const plannedTools = [
+  { href: '/tools/metadata/', label: 'Metadata Tools', desc: 'View, edit, and strip EXIF metadata.' },
+  { href: '/tools/blur/', label: 'Blur Tools', desc: 'Blur faces or sensitive regions in photos.' },
+  { href: '/tools/background-remover/', label: 'Background Remover', desc: 'AI-powered background removal.' },
+  { href: '/tools/watermark-remover/', label: 'Watermark Remover', desc: 'Remove watermarks from images.' },
+];
+---
+
+<Layout
+  title="All Image Tools — Free Online Image Toolkit | ToolBox Image"
+  description="Browse all free online image tools from ToolBox Image. Compress, resize, crop, convert, rotate, and optimize images entirely in your browser. No uploads, no sign-up."
+  ogImage="/og-image-tools.svg"
+  schemas={[
+    softwareAppSchema(),
+    breadcrumbSchema(breadcrumbs),
+  ]}
+>
+  <AppShell>
+    <section class="band hero-band">
+      <div class="container stack stack-lg">
+        <Breadcrumbs items={breadcrumbs} />
+        <Reveal>
+          <Badge eyebrow="ToolBox Image" tone="info">Free image tools</Badge>
+        </Reveal>
+        <Reveal delay={80}>
+          <h1 class="text-display-xl page-title">All image tools.</h1>
+        </Reveal>
+        <Reveal delay={160}>
+          <p class="text-body-lg page-lead">
+            Every tool we offer — compress, resize, crop, convert, rotate, and more.
+            All run entirely in your browser. No uploads. No sign-up. No limits.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-canvas">
+      <div class="container stack stack-3xl">
+        <Reveal>
+          <h2 class="text-display-md section-title">Available now</h2>
+        </Reveal>
+        <div class="tools-grid">
+          {livingTools.map((tool, i) => (
+            <Reveal delay={i * 40}>
+              <a href={tool.href} class="tool-card">
+                <Badge eyebrow={tool.status} tone="info">{tool.label}</Badge>
+                <p class="text-body-sm tool-desc">{tool.desc}</p>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="band band-soft">
+      <div class="container stack stack-3xl">
+        <Reveal>
+          <h2 class="text-display-md section-title">Coming soon</h2>
+          <p class="text-body-md section-lead">These tools are in development or planned.</p>
+        </Reveal>
+        <div class="tools-grid">
+          {comingSoonTools.map((tool, i) => (
+            <Reveal delay={i * 40}>
+              <a href={tool.href} class="tool-card tool-card-coming">
+                <Badge eyebrow="Coming soon" tone="warning">{tool.label}</Badge>
+                <p class="text-body-sm tool-desc">{tool.desc}</p>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="band band-canvas">
+      <div class="container stack stack-3xl">
+        <Reveal>
+          <h2 class="text-display-md section-title">Planned</h2>
+          <p class="text-body-md section-lead">On our roadmap — sign up for updates to be notified.</p>
+        </Reveal>
+        <div class="tools-grid">
+          {plannedTools.map((tool, i) => (
+            <Reveal delay={i * 40}>
+              <a href={tool.href} class="tool-card tool-card-planned">
+                <Badge eyebrow="Planned" tone="neutral">{tool.label}</Badge>
+                <p class="text-body-sm tool-desc">{tool.desc}</p>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="band cta-band">
+      <div class="container cta-inner">
+        <Reveal>
+          <p class="text-caption-mono cta-eyebrow">Get started</p>
+          <h2 class="text-display-xl cta-title">Ready to compress your first image?</h2>
+          <p class="text-body-lg cta-sub">Free. Unlimited. Your files never leave your device.</p>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+
+  .hero-band {
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-lg);
+    background-color: var(--color-canvas);
+  }
+
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .page-title {
+    margin: 0;
+    max-width: 16ch;
+  }
+
+  .page-lead {
+    margin: 0;
+    color: var(--color-body);
+    max-width: 56ch;
+  }
+
+  .section-title {
+    margin: 0;
+  }
+
+  .section-lead {
+    margin: var(--space-xs) 0 0;
+    color: var(--color-body);
+    max-width: 48ch;
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  .tool-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition:
+      transform var(--dur-base) var(--ease-out-quart),
+      box-shadow var(--dur-base) var(--ease-out-quart),
+      border-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .tool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-2);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .tool-card-coming {
+    opacity: 0.7;
+  }
+
+  .tool-card-coming:hover {
+    opacity: 1;
+  }
+
+  .tool-card-planned {
+    opacity: 0.5;
+  }
+
+  .tool-card-planned:hover {
+    opacity: 0.8;
+  }
+
+  .tool-desc {
+    margin: 0;
+    color: var(--color-body);
+  }
+
+  .cta-band {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .cta-title { margin: 0; color: var(--color-on-primary); }
+
+  .cta-sub {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+  }
+
+  @media (max-width: 1023px) {
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .hero-band { padding: var(--space-4xl) 0 var(--space-md); }
+    .band { padding: var(--space-4xl) 0; }
+    .tools-grid { grid-template-columns: 1fr; }
+  }
+</style>
