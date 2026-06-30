@@ -65,6 +65,20 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
                   Clear all
                 </button>
               </div>
+              <div class="queue-top-compress" data-top-compress hidden>
+                <Button
+                  label="Compress all"
+                  variant="primary"
+                  size="lg"
+                  class="top-compress"
+                  ariaLabel="Start compressing all ready images"
+                  data-action="compress"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                </Button>
+              </div>
             </header>
 
             <QueueProgress />
@@ -118,6 +132,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
                   size="lg"
                   class="footer-compress"
                   ariaLabel="Start compressing all ready images"
+                  data-action="compress"
                 >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
@@ -161,6 +176,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     gap: var(--space-md);
     padding: var(--space-lg);
     border-bottom: 1px solid var(--color-hairline);
+    flex-wrap: wrap;
   }
 
   .queue-summary { display: flex; flex-direction: column; gap: 2px; }
@@ -171,6 +187,14 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+  }
+
+  .queue-top-compress {
+    display: flex;
+    align-items: center;
+  }
+  .queue-top-compress[data-running="true"] {
+    display: none;
   }
 
   .queue-link {
@@ -312,7 +336,8 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
   const clearBtn = document.querySelector<HTMLButtonElement>('[data-action="clear"]');
   const cancelAllBtn = document.querySelector<HTMLButtonElement>('[data-action="cancel-all"]');
   const addMoreBtn = document.querySelector<HTMLButtonElement>('[data-action="add-more"]');
-  const compressBtn = document.querySelector<HTMLButtonElement>('.footer-compress');
+  const compressBtns = document.querySelectorAll<HTMLButtonElement>('[data-action="compress"]');
+  const topCompressWrapper = document.querySelector<HTMLElement>('[data-top-compress]');
   const cancelBtn = document.querySelector<HTMLButtonElement>('.footer-cancel');
   const queueProgressEl = document.querySelector<HTMLElement>('[data-queue-progress]');
   const qpFill = document.querySelector<HTMLElement>('[data-qp-fill]');
@@ -346,6 +371,8 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
   } else {
     let settings: CompressionSettings = { ...DEFAULT_SETTINGS };
     let compressStarted = false;
+    let settingsVersion = 0;
+    let lastCompressVersion = 0;
 
     const store = new UploadStore();
     const runner = new CompressionJobRunner(store, settings, 4);
@@ -415,6 +442,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
     const applyMode = (mode: CompressionMode) => {
       Object.assign(settings, MODE_PRESETS[mode]);
+      settingsVersion++;
       settingInputs.forEach((input) => {
         const key = input.dataset.setting!;
         const value = getDeep(settings, key);
@@ -437,7 +465,10 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
     settingInputs.forEach((input) => {
       applySettingFromInput(input);
       input.addEventListener('input', () => applySettingFromInput(input));
-      input.addEventListener('change', () => applySettingFromInput(input));
+      input.addEventListener('change', () => {
+        applySettingFromInput(input);
+        settingsVersion++;
+      });
       if (input instanceof HTMLInputElement && input.type === 'range') fillSlider(input);
     });
     modeBtns.forEach((btn) => {
@@ -507,8 +538,12 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
       if (savedSizeEl) savedSizeEl.textContent = '—';
 
       if (clearBtn) clearBtn.hidden = total === 0;
-      if (compressBtn) {
-        compressBtn.setAttribute('aria-disabled', ready === 0 ? 'true' : 'false');
+      const canCompress = ready > 0;
+      compressBtns.forEach((btn) => {
+        btn.setAttribute('aria-disabled', canCompress ? 'false' : 'true');
+      });
+      if (topCompressWrapper) {
+        topCompressWrapper.hidden = total === 0;
       }
     };
 
@@ -619,7 +654,7 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
           const noteEl = card.querySelector<HTMLElement>('[data-stat="note"]');
           if (noteEl) {
-            if (job.result.compressed === false && job.result.note) {
+            if (job.result.note) {
               noteEl.textContent = job.result.note;
               noteEl.hidden = false;
             } else {
@@ -647,8 +682,12 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
         const retry = card.querySelector<HTMLButtonElement>('[data-action="retry"]');
         if (retry) {
-          if (job.status === 'error') retry.removeAttribute('hidden');
-          else retry.setAttribute('hidden', '');
+          if (job.status === 'error' || job.status === 'done') {
+            retry.removeAttribute('hidden');
+            retry.title = job.status === 'done' ? 'Recompress' : 'Retry';
+          } else {
+            retry.setAttribute('hidden', '');
+          }
         }
       }
 
@@ -656,6 +695,9 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
         (j) => j.status === 'running' || j.status === 'retrying'
       );
       queueFooter!.dataset.running = anyActive ? 'true' : 'false';
+      if (topCompressWrapper) {
+        topCompressWrapper.dataset.running = anyActive ? 'true' : 'false';
+      }
 
       if (savedSizeEl) {
         const totalSource = items.reduce((s, i) => s + i.size, 0);
@@ -938,11 +980,18 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
       document.querySelector<HTMLInputElement>('[data-action="file-input"]')?.click();
     });
     cancelAllBtn?.addEventListener('click', () => runner.cancelAll());
-    compressBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (compressBtn.getAttribute('aria-disabled') === 'true') return;
-      compressStarted = true;
-      runner.startAll();
+    compressBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (btn.getAttribute('aria-disabled') === 'true') return;
+        const force = compressStarted && settingsVersion !== lastCompressVersion;
+        lastCompressVersion = settingsVersion;
+        compressStarted = true;
+        if (force) {
+          baMounted = false;
+        }
+        runner.startAll({ force });
+      });
     });
     cancelBtn?.addEventListener('click', (e) => {
       e.preventDefault();

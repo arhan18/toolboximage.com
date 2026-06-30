@@ -106,8 +106,15 @@ export class CompressionJobRunner {
   // ---------- Public API ----------------------------------------------------
 
   /** Queue every ready item currently in the store. */
-  startAll(): void {
+  startAll({ force = false }: { force?: boolean } = {}): void {
     this.cancelled = false;
+    if (force) {
+      for (const [id, job] of this.jobs) {
+        if (job.status === 'done' || job.status === 'error' || job.status === 'cancelled') {
+          this.jobs.delete(id);
+        }
+      }
+    }
     const items = this.store.snapshot();
     for (const item of items) {
       if (item.status !== 'ready') continue;
@@ -132,11 +139,12 @@ export class CompressionJobRunner {
   retry(itemId: string): void {
     const job = this.jobs.get(itemId);
     if (!job) return;
-    if (job.status !== 'error' && job.status !== 'cancelled') return;
+    if (job.status !== 'error' && job.status !== 'cancelled' && job.status !== 'done') return;
     this.cancelledIds.delete(itemId);
     job.status = 'queued';
     job.progress = 0;
     job.error = undefined;
+    job.result = undefined;
     this.emitJobs();
     this.pump();
   }

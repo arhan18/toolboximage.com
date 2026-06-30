@@ -24,6 +24,7 @@ const {
   disabled = false,
   ariaLabel,
   class: className = '',
+  ...rest
 } = Astro.props;
 
 const classes = ['btn', `btn-${variant}`, `btn-${size}`, className]
@@ -34,7 +35,7 @@ const Tag = href ? 'a' : 'button';
 ---
 
 {href ? (
-  <a href={href} class={classes} aria-label={ariaLabel} aria-disabled={disabled}>
+  <a href={href} class={classes} aria-label={ariaLabel} aria-disabled={disabled} {...rest}>
     {label && <span class="btn-label">{label}</span>}
     <slot />
   </a>
@@ -44,6 +45,7 @@ const Tag = href ? 'a' : 'button';
     class={classes}
     disabled={disabled}
     aria-label={ariaLabel}
+    {...rest}
   >
     {label && <span class="btn-label">{label}</span>}
     <slot />

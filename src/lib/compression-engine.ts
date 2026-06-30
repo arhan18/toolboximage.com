@@ -28,16 +28,29 @@ let formatCache = new Map<string, boolean>();
 async function supportsEncode(mime: string): Promise<boolean> {
   if (formatCache.has(mime)) return formatCache.get(mime)!;
   try {
-    if (typeof OffscreenCanvas === 'undefined') {
-      formatCache.set(mime, false);
-      return false;
+    if (typeof OffscreenCanvas !== 'undefined') {
+      const canvas = new OffscreenCanvas(2, 2);
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.fillRect(0, 0, 2, 2);
+        const blob = await canvas.convertToBlob({ type: mime, quality: 0.5 });
+        if (blob && blob.size > 0) {
+          formatCache.set(mime, true);
+          return true;
+        }
+      }
     }
-    const canvas = new OffscreenCanvas(2, 2);
+    // Fallback: use HTMLCanvasElement.toBlob
+    const canvas = document.createElement('canvas');
+    canvas.width = 2;
+    canvas.height = 2;
     const ctx = canvas.getContext('2d');
     if (!ctx) { formatCache.set(mime, false); return false; }
     ctx.fillRect(0, 0, 2, 2);
-    const blob = await canvas.convertToBlob({ type: mime, quality: 0.5 });
-    const ok = blob && blob.size > 0;
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((b) => resolve(b), mime, 0.5);
+    });
+    const ok = !!blob && blob.size > 0;
     formatCache.set(mime, ok);
     return ok;
   } catch {
@@ -113,44 +126,16 @@ export class CompressionEngine {
       if (ctx) ctx.drawImage(resized, 0, 0);
     }
 
-    const quality = qualityFor(settings, mime) / 100;
-
-    let blob = await canvasToBlob(canvas, mime, quality);
-    validateBlob(blob);
-
-    if (settings.targetSizeKb > 0 && !(mime === 'image/png' || mime === 'image/gif')) {
-      blob = await binarySearchTargetSize(
-        canvas,
-        mime,
-        quality,
-        settings.targetSizeKb * 1024,
-        blob.size
-      );
-      validateBlob(blob);
-    }
-
     const sourceBytes = source.bytes;
 
-    if (blob.size < sourceBytes) {
-      if (!settings.removeMetadata && marginalGain(blob.size, sourceBytes)) {
-        return this.returnOriginal(source, t0,
-          'Metadata preserved — compression savings below threshold.');
-      }
-      return {
-        blob,
-        mime,
-        outputExt: extFor(mime),
-        bytes: blob.size,
-        durationMs: performance.now() - t0,
-        compressed: true,
-        note: !settings.removeMetadata
-          ? 'Re-encoded — metadata stripped (browser limitation).'
-          : undefined,
-      };
-    }
+    // Try encoding with the primary format + quality
+    const primaryResult = await this.tryEncodeOnce(canvas, mime, settings, sourceBytes, t0);
+    if (primaryResult) return primaryResult;
 
+    // Try progressive quality levels for lossy formats
     if (isLossyFormat(mime)) {
-      const better = await tryProgressiveQuality(canvas, mime, quality, sourceBytes);
+      const initialQuality = qualityFor(settings, mime) / 100;
+      const better = await tryProgressiveQuality(canvas, mime, initialQuality, sourceBytes);
       if (better) {
         if (!settings.removeMetadata && marginalGain(better.size, sourceBytes)) {
           return this.returnOriginal(source, t0,
@@ -170,7 +155,100 @@ export class CompressionEngine {
       }
     }
 
+    // If the primary format didn't work, try format conversions
+    // Try WebP (lossy) first — best compression for most images
+    if (mime !== 'image/webp') {
+      const webpResult = await this.tryFormatConversion(canvas, source, 'image/webp', settings, t0);
+      if (webpResult) return webpResult;
+    }
+
+    // Try JPEG (lossy) — works well for photographic content
+    if (mime !== 'image/jpeg' && mime !== 'image/webp') {
+      const jpegResult = await this.tryFormatConversion(canvas, source, 'image/jpeg', settings, t0);
+      if (jpegResult) return jpegResult;
+    }
+
     return this.returnOriginal(source, t0);
+  }
+
+  private async tryEncodeOnce(
+    canvas: HTMLCanvasElement | OffscreenCanvas,
+    mime: string,
+    settings: CompressionSettings,
+    sourceBytes: number,
+    t0: number
+  ): Promise<EncodeResult | null> {
+    const quality = qualityFor(settings, mime) / 100;
+
+    let blob = await canvasToBlob(canvas, mime, quality);
+    validateBlob(blob);
+
+    if (settings.targetSizeKb > 0 && !(mime === 'image/png' || mime === 'image/gif')) {
+      blob = await binarySearchTargetSize(
+        canvas,
+        mime,
+        quality,
+        settings.targetSizeKb * 1024,
+        blob.size
+      );
+      validateBlob(blob);
+    }
+
+    if (blob.size < sourceBytes) {
+      if (!settings.removeMetadata && marginalGain(blob.size, sourceBytes)) {
+        return null;
+      }
+      return {
+        blob,
+        mime,
+        outputExt: extFor(mime),
+        bytes: blob.size,
+        durationMs: performance.now() - t0,
+        compressed: true,
+        note: !settings.removeMetadata
+          ? 'Re-encoded — metadata stripped (browser limitation).'
+          : undefined,
+      };
+    }
+
+    return null;
+  }
+
+  private async tryFormatConversion(
+    canvas: HTMLCanvasElement | OffscreenCanvas,
+    source: { mime: string; url: string; bytes: number },
+    targetMime: string,
+    settings: CompressionSettings,
+    t0: number
+  ): Promise<EncodeResult | null> {
+    if (!(await supportsEncode(targetMime))) return null;
+
+    const targetQuality = qualityFor(settings, targetMime) / 100;
+    const sourceBytes = source.bytes;
+
+    // Try at various quality levels for the target format
+    const qualities = [targetQuality, targetQuality * 0.7, targetQuality * 0.5, targetQuality * 0.3, 0.1];
+    for (const q of qualities) {
+      if (q < 0.05) break;
+      const blob = await canvasToBlob(canvas, targetMime, q);
+      validateBlob(blob);
+      if (blob.size < sourceBytes) {
+        if (!settings.removeMetadata && marginalGain(blob.size, sourceBytes)) {
+          return null;
+        }
+        return {
+          blob,
+          mime: targetMime,
+          outputExt: extFor(targetMime),
+          bytes: blob.size,
+          durationMs: performance.now() - t0,
+          compressed: true,
+          note: `Converted to ${targetMime === 'image/webp' ? 'WebP' : 'JPEG'} — smaller file at equivalent quality.`,
+        };
+      }
+    }
+
+    return null;
   }
 
   private async returnOriginal(
@@ -378,15 +456,19 @@ async function tryProgressiveQuality(
   initialQuality: number,
   sourceBytes: number
 ): Promise<Blob | null> {
-  const scales = [0.85, 0.7, 0.5, 0.3];
+  const scales = [0.85, 0.7, 0.5, 0.3, 0.2, 0.1];
+  let best: Blob | null = null;
   for (const scale of scales) {
     const q = initialQuality * scale;
     if (q < 0.05) break;
     const blob = await canvasToBlob(canvas, mime, q);
     validateBlob(blob);
-    if (blob.size < sourceBytes) return blob;
+    if (blob.size < sourceBytes) {
+      best = blob;
+      break;
+    }
   }
-  return null;
+  return best;
 }
 
 function computeResize(
@@ -413,7 +495,7 @@ function computeResize(
 function marginalGain(newBytes: number, originalBytes: number): boolean {
   const saved = originalBytes - newBytes;
   if (saved <= 0) return true;
-  const threshold = Math.max(50 * 1024, originalBytes * 0.1);
+  const threshold = Math.max(10 * 1024, originalBytes * 0.05);
   return saved < threshold;
 }
 
