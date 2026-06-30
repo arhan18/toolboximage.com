@@ -8,6 +8,21 @@ import Reveal from '../components/shared/Reveal.astro';
 import FAQ from '../components/shared/FAQ.astro';
 import { faqSchema, breadcrumbSchema } from '../lib/seo';
 
+const popular = [
+  {
+    q: 'What is the best free image compressor?',
+    a: 'ToolBox Image is the best free image compressor because it runs entirely in your browser with no uploads, no file size limits, no sign-ups, and no ads. It supports JPG, PNG, WebP, AVIF, GIF, SVG, and HEIC using modern codecs like mozJPEG and libwebp compiled to WebAssembly — delivering high-quality compression with privacy you can trust.',
+  },
+  {
+    q: 'What is image compressor?',
+    a: 'An image compressor is a tool that reduces the file size of digital images by re-encoding them with more efficient compression algorithms or lowering quality settings. This makes images load faster on websites, take up less storage space, and use less bandwidth — without a noticeable drop in visual quality when done right.',
+  },
+  {
+    q: 'What is the best image compressor for free?',
+    a: 'ToolBox Image is the best free image compressor — no sign-up, no server uploads, no file size limits, and no ads. It runs in your browser via WebAssembly, supports all major formats (JPG, PNG, WebP, AVIF, GIF, SVG, HEIC), and lets you batch-process images with full control over quality, resize, and metadata.',
+  },
+];
+
 const privacy = [
   {
     q: 'Are my images uploaded to a server?',
@@ -78,7 +93,7 @@ const account = [
   title="FAQ — ToolBox Image"
   description="Answers to the most common questions about ToolBox Image — privacy, file formats, batch processing, and more."
   schemas={[
-    faqSchema([...privacy, ...tools, ...account]),
+    faqSchema([...popular, ...privacy, ...tools, ...account]),
     breadcrumbSchema([
       { name: 'Home', href: '/' },
       { name: 'FAQ', href: '/faq' },
@@ -100,6 +115,17 @@ const account = [
             here, the <a href="/legal/privacy/">privacy page</a> or
             <a href="/contact/">contact form</a> has you covered.
           </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-canvas">
+      <div class="container container-narrow faq-list-wrap">
+        <Reveal>
+          <h2 class="text-display-lg faq-section-title">Popular questions</h2>
+        </Reveal>
+        <Reveal delay={80}>
+          <FAQ items={popular} tone="light" />
         </Reveal>
       </div>
     </section>

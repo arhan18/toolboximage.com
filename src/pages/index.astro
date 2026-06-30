@@ -10,6 +10,7 @@ import Reveal from '../components/shared/Reveal.astro';
 import MeshGradient from '../components/shared/MeshGradient.astro';
 import DropZone from '../components/shared/DropZone.astro';
 import BeforeAfter from '../components/shared/BeforeAfter.astro';
+import Prose from '../components/shared/Prose.astro';
 import FAQ from '../components/shared/FAQ.astro';
 import { softwareAppSchema, breadcrumbSchema, faqSchema } from '../lib/seo';
 
@@ -164,8 +165,10 @@ const faq = [
 ---
 
 <Layout
-  title="ToolBox Image — Fast, Private Image Tools"
-  description="Compress, resize, convert, and optimize images entirely in your browser. No uploads. No tracking. No sign-up."
+  title="Free Online Image Compressor — Best Image Compressor Online | ToolBox Image"
+  description="Free online image compressor — compress JPG, PNG, WebP, and AVIF images instantly in your browser. No uploads. No limits. No sign-up. The best free image compressor online."
+  ogImage="/og-image.svg"
+  ogType="website"
   schemas={[
     softwareAppSchema(),
     breadcrumbSchema([{ name: 'Home', href: '/' }]),
@@ -180,7 +183,7 @@ const faq = [
 
       <div class="container hero-inner">
         <Reveal>
-          <Badge eyebrow="v1.0" tone="info" class="hero-badge">
+          <Badge eyebrow="Free Image Compressor" tone="info" class="hero-badge">
             Image Compressor is live
           </Badge>
         </Reveal>
@@ -207,6 +210,18 @@ const faq = [
             </Button>
             <Button label="See how it works" href="#how-it-works" variant="secondary" size="lg" />
           </div>
+        </Reveal>
+
+        <Reveal delay={280}>
+          <nav class="hero-links" aria-label="More pages">
+            <a href="/about/" class="hero-link">About</a>
+            <span class="hero-link-sep" aria-hidden="true">·</span>
+            <a href="/contact/" class="hero-link">Contact</a>
+            <span class="hero-link-sep" aria-hidden="true">·</span>
+            <a href="/legal/privacy/" class="hero-link">Privacy</a>
+            <span class="hero-link-sep" aria-hidden="true">·</span>
+            <a href="/legal/terms/" class="hero-link">Terms</a>
+          </nav>
         </Reveal>
 
         <Reveal delay={300} class="hero-drop">
@@ -565,6 +580,37 @@ const faq = [
   .hero-drop {
     margin-top: var(--space-xl);
     width: 100%;
+  }
+
+  .hero-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-link {
+    color: var(--color-mute);
+    text-decoration: none;
+    font-size: var(--fs-sm);
+    transition: color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .hero-link:hover {
+    color: var(--color-ink);
+  }
+
+  .hero-link:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+    border-radius: var(--radius-xs);
+  }
+
+  .hero-link-sep {
+    color: var(--color-hairline);
+    font-size: var(--fs-sm);
+    user-select: none;
   }
 
   /* ----------------------------------------------------------
