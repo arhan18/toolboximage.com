@@ -1,0 +1,280 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Button from '../components/ui/Button.astro';
+import Badge from '../components/ui/Badge.astro';
+import Card from '../components/ui/Card.astro';
+import IconBox from '../components/ui/IconBox.astro';
+import PageHeader from '../components/shared/PageHeader.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import MeshGradient from '../components/shared/MeshGradient.astro';
+import { breadcrumbSchema } from '../lib/seo';
+---
+
+<Layout
+  title="Bulk Image Compressor — Compress Multiple Images at Once"
+  description="Compress hundreds of images in one batch. Free bulk image compressor — drag a folder and let the parallel queue handle the rest. No uploads, no limits."
+  canonical="https://toolboximage.com/bulk-image-compressor/"
+  schemas={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Bulk Compressor', href: '/bulk-image-compressor' },
+    ]),
+  ]}
+>
+  <AppShell>
+    <section class="page-hero">
+      <MeshGradient intensity="subtle" />
+      <div class="container page-hero-inner">
+        <Reveal>
+          <Badge eyebrow="Bulk Compressor" tone="info">Free</Badge>
+        </Reveal>
+        <Reveal delay={80}>
+          <h1 class="text-display-xl page-title">
+            Bulk image compressor.
+          </h1>
+        </Reveal>
+        <Reveal delay={160}>
+          <p class="text-body-lg page-lead">
+            Compress hundreds of images at once. Drop an entire folder —
+            JPEG, PNG, WebP, AVIF, GIF, HEIC — and our parallel queue
+            processes them all simultaneously using every core on your
+            device.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-soft">
+      <div class="container stack stack-3xl">
+        <Reveal>
+          <PageHeader
+            as="h2"
+            eyebrow="Batch processing"
+            title="One folder. One click. Done."
+            align="center"
+          />
+        </Reveal>
+        <div class="features-grid">
+          <Reveal delay={80}>
+            <Card>
+              <IconBox tone="ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Parallel compression</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Every file compresses in its own worker. 200 images at
+                once, saturating all CPU cores. No waiting in a single
+                queue.
+              </p>
+            </Card>
+          </Reveal>
+          <Reveal delay={160}>
+            <Card>
+              <IconBox tone="ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Unified settings</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Apply the same quality, resize, and format settings to
+                every file in the batch. Consistent output across your
+                entire image library.
+              </p>
+            </Card>
+          </Reveal>
+          <Reveal delay={240}>
+            <Card>
+              <IconBox tone="ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">ZIP export</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Download all compressed files as a single ZIP archive.
+                Original folder structure is preserved — subdirectories
+                and all.
+              </p>
+            </Card>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+
+    <section class="band band-canvas">
+      <div class="container-narrow stack stack-lg">
+        <Reveal>
+          <PageHeader
+            as="h2"
+            eyebrow="How it works"
+            title="Batch compress in your browser."
+            lead="No uploads, no servers, no limits. Drop a folder of images and our parallel queue processes them all simultaneously. Aggregate progress, ETA, and total savings — all in real time."
+          />
+        </Reveal>
+        <Reveal delay={100}>
+          <div class="steps-list">
+            <div class="step">
+              <span class="step-number text-caption-mono">01</span>
+              <div>
+                <h3 class="text-display-sm">Drop a folder</h3>
+                <p class="text-body-sm" style="color:var(--color-body);">
+                  Drag any folder onto the page. We recursively scan for
+                  images — JPEG, PNG, WebP, AVIF, GIF, SVG, HEIC. Up to
+                  200 files, each up to 100 MB.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-number text-caption-mono">02</span>
+              <div>
+                <h3 class="text-display-sm">Configure once</h3>
+                <p class="text-body-sm" style="color:var(--color-body);">
+                  Set quality, target size, resize dimensions, and output
+                  format. Every image in the batch uses the same settings
+                  for consistent results.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-number text-caption-mono">03</span>
+              <div>
+                <h3 class="text-display-sm">Compress &amp; download all</h3>
+                <p class="text-body-sm" style="color:var(--color-body);">
+                  Watch the aggregate progress bar as the queue runs.
+                  Download individual files or everything as a ZIP with
+                  folder structure intact.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band cta-band">
+      <MeshGradient intensity="ambient" />
+      <div class="container cta-inner">
+        <Reveal>
+          <p class="text-caption-mono cta-eyebrow">Ready to batch?</p>
+          <h2 class="text-display-xl cta-title">
+            Compress your entire folder now.
+          </h2>
+          <p class="text-body-lg cta-sub">
+            Free. Unlimited. Your files never leave your device.
+          </p>
+          <div class="cta-actions">
+            <Button label="Open Bulk Compressor" href="/compressor/" variant="secondary" size="lg" class="btn-on-dark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </Button>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .page-hero {
+    position: relative;
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl);
+    background-color: var(--color-canvas);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .page-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .page-title { margin: 0; max-width: 18ch; }
+  .page-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-soft { background-color: var(--color-canvas-soft); }
+  .band-canvas { background-color: var(--color-canvas); }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: var(--space-md);
+    align-items: start;
+  }
+  .step-number {
+    color: var(--color-mute);
+    margin-top: 2px;
+  }
+  .step h3 { margin: 0; }
+  .step p { margin: var(--space-xs) 0 0; }
+
+  .cta-band {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+  .cta-title { margin: 0; color: var(--color-on-primary); max-width: 18ch; }
+  .cta-sub {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+    max-width: 48ch;
+  }
+  .cta-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  @media (max-width: 1023px) {
+    .features-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+    .page-hero { padding: var(--space-4xl) 0 var(--space-3xl); }
+    .features-grid { grid-template-columns: 1fr; }
+  }
+</style>
