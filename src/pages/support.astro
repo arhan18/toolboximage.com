@@ -1,0 +1,187 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Button from '../components/ui/Button.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import { breadcrumbSchema } from '../lib/seo';
+---
+
+<Layout
+  title="Support — ToolBox Image"
+  description="Support ToolBox Image with a donation. Free and unlimited forever — your contribution keeps the tools private and ad-free."
+  schemas={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Support', href: '/support' },
+    ]),
+  ]}
+>
+  <AppShell>
+    <section class="support-hero">
+      <div class="container container-narrow">
+        <Reveal>
+          <h1 class="text-display-xl support-title">Support ToolBox Image.</h1>
+        </Reveal>
+        <Reveal delay={80}>
+          <p class="text-body-lg support-lead">
+            ToolBox Image is free, unlimited, and privacy-first — no ads, no
+            sign-up, no tracking. If the tools help you, a small donation
+            helps keep them running.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-canvas">
+      <div class="container container-narrow">
+        <div class="methods stack stack-xl">
+          <Reveal>
+            <article class="method-card">
+              <h2 class="text-display-sm method-title">PayPal</h2>
+              <p class="text-body-md method-desc">
+                Quick and secure. Select <strong>"Friends & Family"</strong> to
+                avoid fees — every penny goes to keeping the tools running.
+              </p>
+              <a
+                href="https://paypal.me/arhanahmadkhan"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-primary btn-lg"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19a.644.644 0 0 0-.635.532l-.547 3.474z"/></svg>
+                Donate with PayPal
+              </a>
+            </article>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <article class="method-card">
+              <h2 class="text-display-sm method-title">UPI (India)</h2>
+              <p class="text-body-md method-desc">
+                Instant, zero-fee transfer for Indian users. Scan or send to
+                the UPI ID below.
+              </p>
+              <div class="upi-box">
+                <span class="upi-id">8115033956@ptyes</span>
+                <button class="btn btn-secondary btn-sm" data-copy-upi>
+                  Copy UPI ID
+                </button>
+              </div>
+            </article>
+          </Reveal>
+        </div>
+
+        <Reveal delay={140}>
+          <aside class="support-note">
+            <p class="text-body-sm">
+              ToolBox Image runs entirely in your browser — no servers, no
+              upload costs. Donations go toward domain renewal, CDN costs,
+              and development time. Thank you for your support.
+            </p>
+          </aside>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<script>
+  const copyBtn = document.querySelector<HTMLButtonElement>('[data-copy-upi]');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText('8115033956@ptyes');
+        const original = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => { copyBtn.textContent = original; }, 2000);
+      } catch {}
+    });
+  }
+</script>
+
+<style>
+  .support-hero {
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-3xl);
+    background-color: var(--color-canvas);
+  }
+
+  .support-title {
+    margin: 0;
+  }
+
+  .support-lead {
+    margin: var(--space-md) 0 0;
+    color: var(--color-body);
+    max-width: 56ch;
+  }
+
+  .band {
+    padding: var(--space-5xl) 0;
+  }
+
+  .band-canvas { background-color: var(--color-canvas); }
+
+  .methods {
+    max-width: 480px;
+  }
+
+  .method-card {
+    padding: var(--space-xl);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .method-title {
+    margin: 0;
+  }
+
+  .method-desc {
+    margin: 0;
+    color: var(--color-body);
+  }
+
+  .method-card .btn {
+    align-self: flex-start;
+  }
+
+  .upi-box {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .upi-id {
+    font-family: var(--font-mono);
+    font-size: var(--text-body-sm);
+    padding: var(--space-xs) var(--space-sm);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    color: var(--color-ink);
+    user-select: all;
+  }
+
+  .support-note {
+    margin-top: var(--space-2xl);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+  }
+
+  .support-note p {
+    margin: 0;
+    color: var(--color-mute);
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+    .support-hero { padding-top: var(--space-4xl); }
+  }
+</style>

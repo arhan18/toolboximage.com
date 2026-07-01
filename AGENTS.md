@@ -18,7 +18,7 @@ Key facts about this project (read before starting new tasks):
 - **SEO:** 43 pages, sitemap auto-generated, good SEO meta + JSON-LD on all pages
 - **Blog posts (existing):** why-client-side, image-compression-basics, designing-the-compressor, introducing-toolboximage, choose-image-format, batch-compression-guide, image-size-limits-social-email, compress-to-exact-file-size, png-vs-webp-vs-avif
 - **Pending user actions:** Submit to 5 directories (AlternativeTo, FreeForDev, SaasHub, DevHunt, AwesomeList), post Show HN, set GitHub repo description/topics
-- **Monetization plan:** Buy Me a Coffee > affiliate links > Pro tier. No AdSense (breaks privacy brand)
+- **Monetization:** /support page with PayPal.Me (arhanahmadkhan) + UPI (8115033956@ptyes). Next steps: affiliate links, Pro tier. No AdSense (breaks privacy brand)
 - **Privacy/FAQ pages:** Updated to honestly disclose Cloudflare Web Analytics
 - **Font optimizations:** Only preload Regular (font-display: swap for others)
 - **Share buttons:** Added to compressor result page (Twitter/X, Reddit, Email)
