@@ -29,6 +29,7 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
   title={`${post.title} — ToolBox Image`}
   description={post.description}
   ogType="article"
+  ogImage="/og-image.svg"
   publishedTime={post.date}
   author={post.author}
   tags={[post.tag]}
@@ -76,27 +77,219 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
     <section class="band band-canvas">
       <div class="container container-narrow">
         <Reveal>
-          <Prose>
-            <slot>
-              <p>
-                Posts are written directly inside the page source. This is a
-                dynamic slug route (e.g. <code>/blog/{post.slug}</code>) so
-                each post can compose its own prose body.
-              </p>
-              <h2>The setup</h2>
-              <p>
-                We treat every blog post as a static page in <code>src/pages/blog/[slug].astro</code>.
-                The post frontmatter carries the metadata (title, description,
-                date, tag, read time); the body lives inside a
-                <code>&lt;Prose&gt;</code> slot for consistent typography.
-              </p>
-              <h2>What's next</h2>
-              <p>
-                New posts will land here. Subscribe via the blog post button
-                below or follow the GitHub repo for release notes.
-              </p>
-            </slot>
-          </Prose>
+  <Prose>
+    {
+      post.slug === 'why-client-side' && <>
+        <p>
+          Most free online image tools work the same way: you upload a file to their server, the server processes it, and you download the result. That model is simple to build, but it comes with hidden costs — your privacy, their server bills, and limits on file size and throughput.
+        </p>
+        <p>
+          ToolBox Image takes a different approach. The entire application — decoding, encoding, compression, resizing, format conversion — runs in your browser. There is no server to upload to. Your images never leave your device. This architecture was a deliberate choice, and it shaped every decision we made about the product.
+        </p>
+        <h2>Why the browser-first approach?</h2>
+        <p>
+          The obvious alternative is a traditional server-side architecture. You upload an image, the server runs it through a tool like ImageMagick or Sharp, and sends the result back. This works, but it creates a set of problems that are hard to solve:
+        </p>
+        <ul>
+          <li><strong>Privacy.</strong> Users have to trust that you won't store, analyse, or leak their images. For sensitive documents — medical images, design mockups, personal photos — that trust is hard to earn.</li>
+          <li><strong>Cost.</strong> Every compression runs on your infrastructure. The more successful you are, the more you pay. This creates pressure to limit file sizes, add queues, or introduce paid tiers.</li>
+          <li><strong>Latency.</strong> Uploading a 100 MB file over a slow connection takes minutes before processing even starts. For users in regions with poor connectivity, the tool is effectively unusable.</li>
+          <li><strong>Scale.</strong> A single server can handle dozens of concurrent compressions. But what about thousands? You need auto-scaling groups, load balancers, CDN upload endpoints — all of which add complexity and cost.</li>
+        </ul>
+        <p>
+          The browser-first model solves all of these at once. Processing is free (the user's CPU cycles), private (no data leaves the device), and infinitely scalable (every user brings their own hardware).
+        </p>
+        <h2>Making it work: WebAssembly and Web Workers</h2>
+        <p>
+          Ten years ago, running image codecs in the browser was impossible. Today, WebAssembly lets us compile C and Rust libraries directly to a format the browser can execute at near-native speed. We compile Mozilla's mozJPEG, Google's libwebp, and the libaom AVIF encoder — all written in C — to WebAssembly. The browser runs them as efficiently as if they were installed natively.
+        </p>
+        <p>
+          But single-threaded encoding is slow for large batches. That is where Web Workers come in. Each worker runs on a separate CPU core, and we spawn as many workers as the device has cores. On a modern laptop with 8 cores, that means 8 images compressing simultaneously. A batch of 200 photos that would take minutes on a single thread finishes in seconds.
+        </p>
+        <h2>What we gave up</h2>
+        <p>
+          The browser-first approach is not free. The most significant trade-off is memory. The browser tab has access to the device's RAM, but a single tab crashing because an image exceeded available memory is a bad experience. We cap individual files at 100 MB and batch sizes at 200 files to stay within safe limits.
+        </p>
+        <p>
+          We also gave up server-side features like persistent storage, email delivery, and analytics. There is no database of compressed images, no email newsletter, no tracking of which formats users prefer. This is philosophically consistent with our privacy stance, but it means we cannot offer features like "recent compressions" or "saved presets between sessions."
+        </p>
+        <h2>What's next</h2>
+        <p>
+          The browser is becoming a legitimate runtime for performance-sensitive applications. As WebAssembly gains garbage collection, threading, and SIMD support, more of the application stack can move client-side. We are exploring WebGPU for even faster pixel processing and the File System Access API for seamless folder integration.
+        </p>
+        <p>
+          For now, the compressor is live and processing thousands of images per day — all of them staying right where they belong.
+        </p>
+      </>
+    }
+    {
+      post.slug === 'image-compression-basics' && <>
+        <p>
+          Image compression is a solved problem in principle, but choosing the wrong format or quality setting can waste bandwidth, slow down your site, or produce visible artefacts. Here is a practical guide to how the major formats work and when to use each one.
+        </p>
+        <h2>Lossy vs lossless</h2>
+        <p>
+          Every image format falls into one of two categories. Lossless formats preserve every pixel of the original — the decoded image is bit-for-bit identical to the source. Lossy formats discard information that the human eye is less sensitive to, achieving much smaller file sizes at the cost of some fidelity.
+        </p>
+        <p>
+          Which one you choose depends on the use case. Photographs and gradients tolerate lossy compression well because the artefacts are hard to spot at normal viewing sizes. Screenshots, text, logos, and graphics with sharp edges need lossless encoding to stay crisp.
+        </p>
+        <h2>JPEG: the universal standard</h2>
+        <p>
+          JPEG has been the dominant image format on the web for three decades. It uses a lossy compression algorithm based on the discrete cosine transform — the same technique used in video codecs. The encoder divides the image into 8x8 pixel blocks, transforms each block into frequency space, and discards high-frequency information that the human eye perceives less acutely.
+        </p>
+        <p>
+          <strong>Strengths:</strong> Universal browser support, excellent compression for photographs, adjustable quality.
+        </p>
+        <p>
+          <strong>Weaknesses:</strong> No transparency support, visible block artefacts at low quality, poor compression for text and graphics.
+        </p>
+        <p>
+          <strong>Best for:</strong> Photographs, complex gradients, social media images, any situation where universal compatibility matters more than file size.
+        </p>
+        <h2>PNG: precision and transparency</h2>
+        <p>
+          PNG was designed as a patent-free replacement for GIF. It uses lossless Deflate compression — the same algorithm behind ZIP files — with a pre-processing step that filters each row of pixels to make it more compressible. PNG supports full alpha channel transparency, gamma correction, and embedded colour profiles.
+        </p>
+        <p>
+          <strong>Strengths:</strong> Lossless, transparency support, excellent for text and graphics, widely supported.
+        </p>
+        <p>
+          <strong>Weaknesses:</strong> Large file sizes for photographs, no multi-image or animation support (use APNG or GIF instead).
+        </p>
+        <p>
+          <strong>Best for:</strong> Logos, screenshots, UI elements, images with text, graphics with transparency.
+        </p>
+        <h2>WebP: Google's modern format</h2>
+        <p>
+          WebP was developed by Google as a web-focused replacement for both JPEG and PNG. It supports lossy compression (based on VP8 video codec prediction) and lossless compression (using a different algorithm with spatial prediction and colour cache). On average, lossy WebP is 25-35% smaller than JPEG at the same quality level.
+        </p>
+        <p>
+          <strong>Strengths:</strong> Smaller than JPEG and PNG, supports transparency and animation, near-universal browser support (97%+).
+        </p>
+        <p>
+          <strong>Weaknesses:</strong> Slightly slower to encode than JPEG, not supported by some legacy tools and CMS platforms.
+        </p>
+        <p>
+          <strong>Best for:</strong> Web images where file size matters more than universal compatibility. Modern websites should default to WebP with a JPEG fallback.
+        </p>
+        <h2>AVIF: the next generation</h2>
+        <p>
+          AVIF uses the AV1 codec developed by the Alliance for Open Media — the same codec Netflix and YouTube use for video streaming. It achieves 30-50% better compression than WebP at the same quality level, especially for photographic content. AVIF also supports HDR, wide colour gamut, 10/12-bit depth, and lossless compression.
+        </p>
+        <p>
+          <strong>Strengths:</strong> Best compression ratios, HDR support, free and open standard, transparency support.
+        </p>
+        <p>
+          <strong>Weaknesses:</strong> Slower encoding (especially at higher quality settings), lower browser support (~92%), larger decoder complexity.
+        </p>
+        <p>
+          <strong>Best for:</strong> Photographs where file size is critical, HDR content, future-proofing your image pipeline.
+        </p>
+        <h2>How to choose</h2>
+        <p>
+          Here is a simple decision tree: if you need transparency, use PNG (or WebP with fallback). If the image is a photograph, use JPEG, WebP, or AVIF — in order of decreasing file size and increasing encoding time. If the image has sharp edges or text, stick with PNG. For maximum compatibility, serve WebP with a JPEG fallback using the <code>&lt;picture&gt;</code> element.
+        </p>
+        <p>
+          Most importantly: do not manually optimise every image. Use our compressor's Auto mode, which picks the right format and quality for each file individually. It handles the decision so you do not have to.
+        </p>
+      </>
+    }
+    {
+      post.slug === 'designing-the-compressor' && <>
+        <p>
+          Building a good image compressor is hard. Building one that feels effortless, private, and respectful of your files is harder. Here are the design decisions that shaped the ToolBox Image compressor.
+        </p>
+        <h2>The upload experience</h2>
+        <p>
+          The first interaction a user has with the compressor is the upload zone. Most tools use a small, bordered box that says "Drop files here." We wanted something different — a full-width area that communicates possibility. You can click to browse, drag a single file, or drag an entire folder of 200 images. The upload area scales to fill the viewport and provides immediate visual feedback: a subtle glow, a scaling animation, and a file count badge.
+        </p>
+        <p>
+          The folder drag support was our hardest design trade-off. Supporting recursive folder scanning in the browser is technically challenging — the File System Access API is not available everywhere, and the fallback path requires manual enumeration. We invested in the fallback because the use case is clear: photographers and designers organise their work in folders. Asking them to flatten their directory structure before compressing would be a poor experience.
+        </p>
+        <h2>The comparison slider</h2>
+        <p>
+          When a user compresses an image, the single most important question is: did it lose quality? Numbers alone — "75% quality" — tell you nothing about visual fidelity. A side-by-side comparison slider lets users inspect the difference at pixel level.
+        </p>
+        <p>
+          The slider implementation was surprisingly delicate. The original and compressed images must be perfectly aligned, with synchronised pan and zoom. The slider handle must be large enough to find on mobile but unobtrusive on desktop. We settled on a 40px handle with a subtle drop shadow and a 2px divider line that stays visible regardless of image content.
+        </p>
+        <h2>Parallel progress</h2>
+        <p>
+          Batch processing with multiple workers creates a visualisation challenge: how do you show progress when eight images are compressing simultaneously? A single progress bar would jump unpredictably as fast workers finish and slow ones continue. Individual progress bars for each image would overwhelm the interface.
+        </p>
+        <p>
+          Our solution is a collapsed progress bar that shows overall completion percentage, total bytes saved, and a count of completed files. Users can expand it to see individual file status, including before-and-after sizes and quality metrics. The expanded view uses a compact, scrolled list that does not push the results below the fold.
+        </p>
+        <h2>Dark mode by default</h2>
+        <p>
+          We chose a dark interface for a practical reason: image compression is a visual task. A bright white background creates contrast that interferes with colour perception. Photos and graphics are easier to evaluate against a dark canvas. The dark theme also reduces eye strain during long batch processing sessions.
+        </p>
+        <h2>Settings, simplified</h2>
+        <p>
+          Image compression has a bewildering number of knobs: quality, format, chroma subsampling, colour space, metadata flags, progressive scan, optimisation passes. Exposing all of them would paralyse most users. We chose three presets — Auto, High Quality, and Lossless — that cover 95% of use cases. Advanced users can switch to Custom mode to access every parameter.
+        </p>
+        <p>
+          The Auto preset is the default and the one we recommend. It analyses each image individually and selects the format, quality, and optimisation level that produces the best balance of file size and quality. For most users, Auto is the only setting they will ever need.
+        </p>
+        <h2>What we learned</h2>
+        <p>
+          Designing the compressor taught us that users care deeply about three things: speed, privacy, and predictability. They want to know the tool will finish quickly, that their files are safe, and that the output will look good. Everything else — the specific format, the quality number, the compression method — is implementation detail. We built the interface around those three priorities, and early feedback suggests we made the right call.
+        </p>
+      </>
+    }
+    {
+      post.slug === 'introducing-toolboximage' && <>
+        <p>
+          Today we are launching ToolBox Image v1.0 with our first tool: the Image Compressor. It is the result of months of work on an architecture that we believe is the right way to build privacy-first web applications.
+        </p>
+        <h2>What we built</h2>
+        <p>
+          The compressor handles JPEG, PNG, WebP, AVIF, GIF, SVG, and HEIC images. It runs entirely in the browser using WebAssembly — no server processing, no uploads, no data transfer. Users can compress up to 200 images at once, with parallel encoding across all CPU cores. Each compressed image gets a side-by-side comparison slider so quality can be verified before download.
+        </p>
+        <p>
+          Key features:
+        </p>
+        <ul>
+          <li>Lossy and lossless compression for all major formats</li>
+          <li>Target-size mode that hits exact file sizes automatically</li>
+          <li>Format conversion between any supported format</li>
+          <li>Metadata stripping for privacy</li>
+          <li>Batch processing with preserved folder structure</li>
+          <li>ZIP export for bulk downloads</li>
+        </ul>
+        <h2>Why start here</h2>
+        <p>
+          Image compression is the most universally needed image tool. Every photographer, designer, developer, and social media user needs to compress images at some point. It is also a category dominated by tools that upload files to servers — a model that is fundamentally incompatible with privacy. Building a better compressor that respects user privacy felt like the right place to start.
+        </p>
+        <h2>What we are building next</h2>
+        <p>
+          The compressor is the first of many tools. Here is what is coming:
+        </p>
+        <ul>
+          <li><strong>Image Resizer</strong> — resize to exact dimensions or aspect ratios with intelligent cropping</li>
+          <li><strong>Crop Tool</strong> — preset ratios and freeform selection with guides</li>
+          <li><strong>Format Converter</strong> — batch conversion between any supported format</li>
+          <li><strong>HEIC Converter</strong> — convert Apple's HEIC photos to JPEG or PNG</li>
+          <li><strong>Metadata Viewer</strong> — inspect and strip EXIF data</li>
+          <li><strong>Rotate and Flip</strong> — basic geometric transforms</li>
+        </ul>
+        <p>
+          All tools will follow the same architecture: browser-first, private by default, free and unlimited.
+        </p>
+        <h2>Our commitments</h2>
+        <p>
+          ToolBox Image will always be free. The browser-first architecture means our operating costs are minimal — we do not pay for server processing, storage, or bandwidth for image uploads. There is no premium tier, no file size limit, no daily cap, and no sign-up required.
+        </p>
+        <p>
+          Your files stay on your device. We do not collect, store, or analyse your images. We do not use third-party analytics or tracking cookies. The only code that touches your images is the code running in your browser.
+        </p>
+        <p>
+          The compressor is live now. Try it, share it, and let us know what you think.
+        </p>
+      </>
+    }
+  </Prose>
         </Reveal>
 
         <Reveal delay={120}>

@@ -36,7 +36,7 @@ export default defineConfig({
     sitemap({
       changefreq: 'weekly',
       priority: 0.7,
-      lastmod: new Date('2026-06-30'),
+      lastmod: new Date(),
       serialize(item) {
         // Higher priority for the homepage and core tool pages.
         if (item.url === 'https://toolboximage.com/') {
