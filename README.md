@@ -1,46 +1,87 @@
-# Astro Starter Kit: Basics
+# ToolBox Image
 
-```sh
-npm create astro@latest -- --template basics
+[![Astro](https://img.shields.io/badge/Astro-7.0-BC52EE?logo=astro)](https://astro.build)
+[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com)
+[![Deployed on Cloudflare](https://img.shields.io/badge/Cloudflare_Pages-F38020?logo=cloudflare)](https://toolboximage.com)
+
+**Browser-based image compression. No uploads. No limits. Private by design.**
+
+ToolBox Image is a privacy-first image compression tool that runs entirely in your browser. Files never leave your device — all processing happens locally using Web APIs. Supports batch compression for JPG, PNG, WebP, AVIF, GIF, and SVG.
+
+**[→ toolboximage.com](https://toolboximage.com)**
+
+---
+
+## Features
+
+- **100% client-side** — images never leave your device. No server uploads, no data collection.
+- **Batch processing** — compress multiple images at once.
+- **Side-by-side preview** — compare original vs compressed before downloading.
+- **Clipboard paste** — paste images directly from your clipboard.
+- **Format support** — JPG, PNG, WebP, AVIF, GIF, SVG.
+- **Quality control** — fine-tune compression level per image.
+- **No sign-up** — no accounts, no limits, completely free.
+- **Drag & drop** — intuitive upload interface.
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | [Astro 7](https://astro.build) |
+| Styling | [Tailwind CSS v4](https://tailwindcss.com) |
+| CSS Minifier | Lightning CSS |
+| Icons | SVG inline |
+| Deployment | Cloudflare Pages |
+| Analytics | Cloudflare Web Analytics |
+
+## Getting Started
+
+```bash
+git clone https://github.com/arhan18/toolboximage.com.git
+cd toolboximage.com
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Open [http://localhost:4321](http://localhost:4321) in your browser.
 
-## 🚀 Project Structure
+### Commands
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server at `localhost:4321` |
+| `npm run build` | Build production site to `./dist/` |
+| `npm run preview` | Preview production build locally |
+| `npm run deploy` | Build + deploy to Cloudflare Pages |
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+## Project Structure
+
+```
+src/
+├── components/    # Reusable UI components
+├── layouts/       # Page layouts
+├── lib/           # Core compression logic & utilities
+├── pages/         # Route pages (Astro)
+│   ├── compressor.astro  # Main compression tool
+│   ├── about.astro
+│   ├── faq.astro
+│   └── blog/      # SEO articles & guides
+├── styles/        # Global styles
+└── types/         # TypeScript definitions
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## How It Works
 
-## 🧞 Commands
+1. User uploads or drags images into the browser
+2. Images are read via the File API — **never transmitted to a server**
+3. Compression happens client-side using Canvas API / WebAssembly
+4. User previews results side-by-side and downloads
+5. No data is stored, logged, or transmitted at any point
 
-All commands are run from the root of the project, from a terminal:
+## Design
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+The UI follows a Vercel-inspired design system —[see `DESIGN.md`](./DESIGN.md) for the full design tokens, component specs, and layout philosophy.
 
-## 👀 Want to learn more?
+## License
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+MIT
