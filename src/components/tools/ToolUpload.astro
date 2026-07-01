@@ -46,12 +46,123 @@ const formatList = tool.inputFormats
 </section>
 
 <script>
+  type FilesPayload = { files: File[] };
+
   const zone = document.querySelector<HTMLElement>('[data-tool-upload]');
   if (zone) {
+    const input = zone.querySelector<HTMLInputElement>('[data-action="file-input"]')!;
+    const browseBtn = zone.querySelector<HTMLButtonElement>('[data-action="browse"]')!;
+    const pasteBtn = zone.querySelector<HTMLButtonElement>('[data-action="paste"]')!;
+    const errorsEl = document.querySelector<HTMLElement>('[data-tool-errors]');
+    const errorsList = document.querySelector<HTMLElement>('[data-tool-errors-list]');
+
+    const ACCEPTED_EXT = new Set(['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif', 'svg', 'heic', 'heif']);
+
+    const isImage = (f: File) => {
+      if (f.type.startsWith('image/')) return true;
+      const ext = f.name.split('.').pop()?.toLowerCase() ?? '';
+      return ACCEPTED_EXT.has(ext);
+    };
+
+    const emit = (files: File[]) => {
+      if (!files.length) return;
+      window.dispatchEvent(
+        new CustomEvent<FilesPayload>('toolboximage:files', { detail: { files } })
+      );
+    };
+
+    const handleFiles = (allFiles: FileList | File[]) => {
+      const valid: File[] = [];
+      const skipped: string[] = [];
+      for (const f of Array.from(allFiles)) {
+        if (isImage(f)) valid.push(f);
+        else skipped.push(f.name);
+      }
+      if (skipped.length && errorsEl && errorsList) {
+        errorsList.innerHTML = skipped.map((n) => `<li>${n}</li>`).join('');
+        errorsEl.hidden = false;
+      }
+      emit(valid);
+    };
+
     zone.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        zone.click();
+        input.click();
+      }
+    });
+
+    browseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      input.click();
+    });
+
+    pasteBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try {
+        if (!navigator.clipboard || !('read' in navigator.clipboard)) return;
+        const items = await (navigator.clipboard as Clipboard).read();
+        const files: File[] = [];
+        for (const it of items) {
+          for (const type of it.types) {
+            if (type.startsWith('image/')) {
+              const blob = await it.getType(type);
+              files.push(new File([blob], `pasted-${Date.now()}.${type.split('/')[1]}`, { type }));
+            }
+          }
+        }
+        if (files.length) emit(files);
+      } catch {
+        // Permission denied or no image — silent
+      }
+    });
+
+    input.addEventListener('change', () => {
+      if (input.files) handleFiles(input.files);
+      input.value = '';
+    });
+
+    zone.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-action="paste"]')) return;
+      input.click();
+    });
+
+    ['dragenter', 'dragover'].forEach((ev) => {
+      zone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        zone.dataset.dragover = 'true';
+      });
+    });
+
+    ['dragleave', 'drop'].forEach((ev) => {
+      zone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        if (ev === 'dragleave' && zone.contains(e.relatedTarget as Node)) return;
+        zone.dataset.dragover = 'false';
+      });
+    });
+
+    zone.addEventListener('drop', (e) => {
+      const dt = (e as DragEvent).dataTransfer;
+      if (!dt) return;
+      handleFiles(dt.files);
+    });
+
+    document.addEventListener('paste', (e) => {
+      if (document.activeElement !== zone) return;
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      const files: File[] = [];
+      for (const it of Array.from(items)) {
+        if (it.kind === 'file') {
+          const f = it.getAsFile();
+          if (f && isImage(f)) files.push(f);
+        }
+      }
+      if (files.length) {
+        e.preventDefault();
+        emit(files);
       }
     });
   }
@@ -75,7 +186,8 @@ const formatList = tool.inputFormats
   }
 
   .tool-upload-zone:hover,
-  .tool-upload-zone:focus-visible {
+  .tool-upload-zone:focus-visible,
+  .tool-upload-zone[data-dragover="true"] {
     border-color: var(--color-link);
     background-color: var(--color-canvas);
     outline: none;

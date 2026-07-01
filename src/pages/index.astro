@@ -230,15 +230,163 @@ const faq = [
       </div>
     </section>
 
+    <!-- ============================================================
+         TOOL PICKER OVERLAY
+         ============================================================ -->
+    <div class="tool-picker-overlay" data-tool-picker-overlay hidden role="dialog" aria-label="Choose a tool" aria-modal="true">
+      <div class="tool-picker-backdrop" data-tool-picker-close></div>
+      <div class="tool-picker stack stack-lg">
+        <div class="tool-picker-heading">
+          <p class="text-display-sm tool-picker-title">
+            Your image is ready — where should we go?
+          </p>
+          <p class="text-body-sm tool-picker-sub">
+            Choose a tool to continue with your uploaded file.
+          </p>
+        </div>
+        <div class="tool-picker-grid">
+          {[
+            { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any format', icon: 'compress' },
+            { href: '/tools/rotator/', label: 'Rotate Image', desc: '90°, 180°, custom', icon: 'rotate' },
+            { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'mozJPEG encoder', icon: 'jpeg' },
+            { href: '/compress-png/', label: 'Compress PNG', desc: 'Lossless + lossy', icon: 'png' },
+            { href: '/compress-webp/', label: 'Compress WebP', desc: 'Google format', icon: 'webp' },
+            { href: '/compress-avif/', label: 'Compress AVIF', desc: 'Next-gen codec', icon: 'avif' },
+            { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch 200 files', icon: 'bulk' },
+            { href: '/image-compressor-100kb/', label: '100 KB Target', desc: 'Exact file size', icon: 'target' },
+            { href: '/image-compressor-for-discord/', label: 'Discord Limit', desc: 'Under 8 MB', icon: 'discord' },
+            { href: '/compress-for-email/', label: 'Email Attachments', desc: 'Under 25 MB', icon: 'email' },
+          ].map((tool) => (
+            <a href={tool.href} class="tool-picker-card" data-tool-picker-link>
+              <div class="tool-picker-card-icon" aria-hidden="true">
+                {tool.icon === 'compress' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>}
+                {tool.icon === 'rotate' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>}
+                {tool.icon === 'jpeg' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>}
+                {tool.icon === 'png' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8l-6 6v14a2 2 0 0 0 2 2z"/><path d="M18 13v5"/><path d="M14 13v5"/><path d="M10 13v3a2 2 0 0 0 4 0"/></svg>}
+                {tool.icon === 'webp' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h2l1.5-4 1.5 4h2"/><path d="M16 12h-2"/></svg>}
+                {tool.icon === 'avif' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><path d="M9 12h2l1-3 1 3h2"/><path d="M16 9v6"/></svg>}
+                {tool.icon === 'bulk' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>}
+                {tool.icon === 'target' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>}
+                {tool.icon === 'discord' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M8 16V8l8 4-8 4z"/></svg>}
+                {tool.icon === 'email' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>}
+              </div>
+              <p class="text-body-sm-strong tool-picker-card-label">{tool.label}</p>
+              <p class="text-caption tool-picker-card-desc">{tool.desc}</p>
+            </a>
+          ))}
+        </div>
+        <button type="button" class="tool-picker-cancel" data-tool-picker-close>
+          Cancel — remove files
+        </button>
+      </div>
+    </div>
+
     <script>
       import { storeFiles } from '../lib/file-transfer';
+
+      const overlay = document.querySelector<HTMLElement>('[data-tool-picker-overlay]');
+      const closeBtns = document.querySelectorAll<HTMLElement>('[data-tool-picker-close]');
+      const links = document.querySelectorAll<HTMLAnchorElement>('[data-tool-picker-link]');
 
       window.addEventListener('toolboximage:files', async (e) => {
         const detail = (e as CustomEvent<{ files: File[] }>).detail;
         if (!detail?.files?.length) return;
         await storeFiles(detail.files);
-        window.location.href = '/compressor/';
+        if (overlay) overlay.hidden = false;
       });
+
+      closeBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (overlay) overlay.hidden = true;
+        });
+      });
+
+      links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = link.getAttribute('href');
+          if (href) window.location.href = href;
+        });
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay && !overlay.hidden) {
+          overlay.hidden = true;
+        }
+      });
+    </script>
+
+    <!-- ============================================================
+         ALL TOOLS
+         ============================================================ -->
+    <section class="band band-canvas home-tools">
+      <div class="container stack stack-2xl">
+        <Reveal>
+          <div class="home-tools-header">
+            <Badge eyebrow="Toolbox" tone="info">All tools</Badge>
+            <a href="/image-tools/" class="home-tools-link">View all →</a>
+          </div>
+        </Reveal>
+
+        <Reveal delay={20}>
+          <div class="home-tools-search">
+            <svg class="home-tools-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" class="home-tools-search-input" data-tool-search placeholder="Search tools…" aria-label="Search tools" />
+          </div>
+        </Reveal>
+
+        <div class="home-tools-grid" data-tool-grid>
+          {[
+            { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any format', status: 'Live' },
+            { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'mozJPEG encoder', status: 'Live' },
+            { href: '/compress-png/', label: 'Compress PNG', desc: 'Lossless + lossy', status: 'Live' },
+            { href: '/compress-webp/', label: 'Compress WebP', desc: 'Google format', status: 'Live' },
+            { href: '/compress-avif/', label: 'Compress AVIF', desc: 'Next-gen codec', status: 'Live' },
+            { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch 200 files', status: 'Live' },
+            { href: '/image-compressor-100kb/', label: '100 KB Target', desc: 'Exact file size', status: 'Live' },
+            { href: '/image-compressor-for-discord/', label: 'Discord Limit', desc: 'Under 8 MB', status: 'Live' },
+            { href: '/compress-for-email/', label: 'Email Attachments', desc: 'Under 25 MB', status: 'Live' },
+            { href: '/tools/rotator/', label: 'Rotate Image', desc: '90°, 180°, custom', status: 'Live' },
+            { href: '/tools/resizer/', label: 'Resize Image', desc: 'Exact dimensions', status: 'Soon' },
+            { href: '/tools/converter/', label: 'Convert Format', desc: 'Any to any', status: 'Soon' },
+          ].map((tool, i) => (
+            <Reveal delay={i * 30}>
+              <a
+                href={tool.href}
+                class:list={['home-tool-card', tool.status !== 'Live' && 'home-tool-card-coming']}
+              >
+                <div class="home-tool-status">
+                  <span class:list={['status-dot', tool.status === 'Live' ? 'status-live' : 'status-soon']} />
+                  <span class="text-caption-mono">{tool.status === 'Live' ? 'Free' : 'Soon'}</span>
+                </div>
+                <p class="text-body-md home-tool-label">{tool.label}</p>
+                <p class="text-caption home-tool-desc">{tool.desc}</p>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <script>
+      const searchInput = document.querySelector<HTMLInputElement>('[data-tool-search]');
+      const toolGrid = document.querySelector<HTMLElement>('[data-tool-grid]');
+
+      if (searchInput && toolGrid) {
+        const cards = toolGrid.querySelectorAll<HTMLAnchorElement>('.home-tool-card');
+
+        searchInput.addEventListener('input', () => {
+          const q = searchInput.value.toLowerCase().trim();
+          cards.forEach((card) => {
+            const label = card.querySelector('.home-tool-label')?.textContent?.toLowerCase() ?? '';
+            const desc = card.querySelector('.home-tool-desc')?.textContent?.toLowerCase() ?? '';
+            const match = !q || label.includes(q) || desc.includes(q);
+            card.style.display = match ? '' : 'none';
+          });
+        });
+      }
     </script>
 
     <!-- ============================================================
@@ -529,6 +677,278 @@ const faq = [
 </Layout>
 
 <style>
+  /* ----------------------------------------------------------
+     HOME TOOLS
+     ---------------------------------------------------------- */
+  .home-tools {
+    padding: var(--space-4xl) 0 var(--space-5xl);
+  }
+
+  .home-tools-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .home-tools-link {
+    font-size: var(--text-body-sm);
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .home-tools-link:hover {
+    text-decoration: underline;
+  }
+
+  .home-tools-search {
+    position: relative;
+    max-width: 320px;
+  }
+
+  .home-tools-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-mute);
+    pointer-events: none;
+  }
+
+  .home-tools-search-input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas-soft);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    -webkit-appearance: none;
+  }
+
+  .home-tools-search-input:focus {
+    border-color: var(--color-link);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-link) 15%, transparent);
+    background: var(--color-canvas);
+  }
+
+  .home-tools-search-input::placeholder {
+    color: var(--color-mute);
+  }
+
+  .home-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .home-tool-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .home-tool-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-1);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .home-tool-card-coming {
+    opacity: 0.6;
+  }
+
+  .home-tool-card-coming:hover {
+    opacity: 1;
+  }
+
+  .home-tool-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+  }
+
+  .home-tool-status .text-caption-mono {
+    font-size: 10px;
+    color: var(--color-mute);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+  }
+
+  .status-live {
+    background-color: var(--color-cyan-deep);
+  }
+
+  .status-soon {
+    background-color: var(--color-hairline-strong);
+  }
+
+  .home-tool-label {
+    margin: 0;
+    font-weight: var(--weight-medium);
+    color: var(--color-ink);
+  }
+
+  .home-tool-desc {
+    margin: 0;
+    color: var(--color-body);
+  }
+
+  @media (max-width: 1023px) {
+    .home-tools-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .home-tools-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ----------------------------------------------------------
+     TOOL PICKER OVERLAY
+     ---------------------------------------------------------- */
+  .tool-picker-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+  }
+
+  .tool-picker-overlay[hidden] {
+    display: none;
+  }
+
+  .tool-picker-backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-ink) 45%, transparent);
+    backdrop-filter: blur(4px);
+  }
+
+  .tool-picker {
+    position: relative;
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: var(--space-2xl);
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-4);
+    animation: picker-in 0.25s var(--ease-out-quart) both;
+  }
+
+  @keyframes picker-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .tool-picker-heading {
+    text-align: center;
+  }
+
+  .tool-picker-title {
+    margin: 0;
+  }
+
+  .tool-picker-sub {
+    margin: var(--space-xs) 0 0;
+    color: var(--color-body);
+  }
+
+  .tool-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .tool-picker-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tool-picker-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-1);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .tool-picker-card:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+  }
+
+  .tool-picker-card-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    background: var(--color-canvas-soft);
+    color: var(--color-ink);
+    margin-bottom: 2px;
+  }
+
+  .tool-picker-card-label {
+    margin: 0;
+    font-weight: var(--weight-medium);
+    color: var(--color-ink);
+  }
+
+  .tool-picker-card-desc {
+    margin: 0;
+    color: var(--color-body);
+  }
+
+  .tool-picker-cancel {
+    background: none;
+    border: none;
+    padding: var(--space-sm);
+    color: var(--color-mute);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--text-body-sm);
+    text-align: center;
+    width: 100%;
+  }
+
+  .tool-picker-cancel:hover {
+    color: var(--color-body);
+  }
+
+  @media (max-width: 480px) {
+    .tool-picker-grid { grid-template-columns: 1fr; }
+  }
+
   /* ----------------------------------------------------------
      HERO
      ---------------------------------------------------------- */

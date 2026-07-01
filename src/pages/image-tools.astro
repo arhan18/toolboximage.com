@@ -5,44 +5,77 @@ import Reveal from '../components/shared/Reveal.astro';
 import Breadcrumbs from '../components/shared/Breadcrumbs.astro';
 import Badge from '../components/ui/Badge.astro';
 import { breadcrumbSchema, softwareAppSchema } from '../lib/seo';
+import { tools } from '../lib/tools';
 
 const breadcrumbs = [
   { name: 'Home', href: '/' },
   { name: 'Image Tools', href: '/image-tools' },
 ];
 
-const livingTools = [
-  { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any image format in your browser. No uploads.', status: 'Live' },
+interface ToolEntry {
+  href: string;
+  label: string;
+  desc: string;
+  status: string;
+}
+
+const compressTools: ToolEntry[] = [
+  { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any image format in your browser.', status: 'Live' },
   { href: '/image-compressor/', label: 'All-in-One Compressor', desc: 'Single interface for all compression needs.', status: 'Live' },
-  { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'Optimize JPEG photos with mozJPEG encoder.', status: 'Live' },
-  { href: '/compress-png/', label: 'Compress PNG', desc: 'Lossless and lossy PNG with transparency support.', status: 'Live' },
-  { href: '/compress-webp/', label: 'Compress WebP', desc: 'WebP optimization with libwebp encoder.', status: 'Live' },
+  { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'Optimize JPEG photos with mozJPEG.', status: 'Live' },
+  { href: '/compress-png/', label: 'Compress PNG', desc: 'Lossless and lossy PNG compression.', status: 'Live' },
+  { href: '/compress-webp/', label: 'Compress WebP', desc: 'WebP optimization with libwebp.', status: 'Live' },
   { href: '/compress-avif/', label: 'Compress AVIF', desc: 'AVIF encoding with the AV1 codec.', status: 'Live' },
   { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch compress hundreds of images.', status: 'Live' },
-  { href: '/image-compressor-100kb/', label: 'Compress to 100KB', desc: 'Hit exact file size targets automatically.', status: 'Live' },
-  { href: '/image-compressor-for-discord/', label: 'Discord Compressor', desc: 'Compress images for Discord upload limits.', status: 'Live' },
-  { href: '/compress-for-email/', label: 'Email Compressor', desc: 'Compress images for email attachments.', status: 'Live' },
-  { href: '/compress-for-whatsapp/', label: 'WhatsApp Compressor', desc: 'Optimize images before sharing on WhatsApp.', status: 'Live' },
-  { href: '/compress-for-instagram/', label: 'Instagram Compressor', desc: 'Resize and compress images for Instagram.', status: 'Live' },
-  { href: '/jpeg-vs-png-compression/', label: 'JPEG vs PNG', desc: 'Compare image formats for your use case.', status: 'Live' },
+  { href: '/image-compressor-100kb/', label: 'Compress to 100KB', desc: 'Hit exact file size targets.', status: 'Live' },
+  { href: '/image-compressor-for-discord/', label: 'Discord Compressor', desc: 'Compress for Discord limits.', status: 'Live' },
+  { href: '/compress-for-email/', label: 'Email Compressor', desc: 'Compress for email attachments.', status: 'Live' },
+  { href: '/compress-for-whatsapp/', label: 'WhatsApp Compressor', desc: 'Optimize images for WhatsApp.', status: 'Live' },
+  { href: '/compress-for-instagram/', label: 'Instagram Compressor', desc: 'Resize and compress for Instagram.', status: 'Live' },
+  { href: '/jpeg-vs-png-compression/', label: 'JPEG vs PNG', desc: 'Compare image formats.', status: 'Live' },
 ];
 
-const comingSoonTools = [
-  { href: '/tools/resizer/', label: 'Resize Image', desc: 'Resize to exact dimensions or aspect ratios.' },
-  { href: '/tools/cropper/', label: 'Crop Image', desc: 'Crop with preset ratios or freeform selection.' },
-  { href: '/tools/converter/', label: 'Convert Image', desc: 'Convert between JPEG, PNG, WebP, AVIF, and more.' },
-  { href: '/tools/rotator/', label: 'Rotate Image', desc: 'Rotate 90°, 180°, 270°, or custom angle.' },
-  { href: '/tools/flipper/', label: 'Flip Image', desc: 'Flip horizontally, vertically, or both.' },
-  { href: '/tools/format-viewer/', label: 'Format Viewer', desc: 'Inspect image format details and metadata.' },
-  { href: '/tools/heic-converter/', label: 'HEIC Converter', desc: 'Convert Apple HEIC photos to JPEG or PNG.' },
-];
+const categoryLabels: Record<string, string> = {
+  transform: 'Transform',
+  convert: 'Convert',
+  analyze: 'Analyze',
+};
 
-const plannedTools = [
-  { href: '/tools/metadata/', label: 'Metadata Tools', desc: 'View, edit, and strip EXIF metadata.' },
-  { href: '/tools/blur/', label: 'Blur Tools', desc: 'Blur faces or sensitive regions in photos.' },
-  { href: '/tools/background-remover/', label: 'Background Remover', desc: 'AI-powered background removal.' },
-  { href: '/tools/watermark-remover/', label: 'Watermark Remover', desc: 'Remove watermarks from images.' },
-];
+const categories = ['all', 'compress', ...new Set(tools.filter((t) => t.id !== 'compressor').map((t) => t.category))];
+
+function getAllTools() {
+  const dynamic = tools.filter((t) => t.id !== 'compressor').map((t) => ({
+    href: t.path,
+    label: t.name,
+    desc: t.description,
+    icon: t.icon,
+    status: t.status === 'live' ? 'Live' as const : 'Soon' as const,
+  }));
+  return [...compressTools, ...dynamic];
+}
+
+function getCompressTools() {
+  return compressTools;
+}
+
+function getToolsByCategory(cat: string): { href: string; label: string; desc: string; status: string }[] {
+  return tools
+    .filter((t) => t.id !== 'compressor' && t.category === cat)
+    .map((t) => ({
+      href: t.path,
+      label: t.name,
+      desc: t.description,
+      status: t.status === 'live' ? 'Live' : 'Soon',
+    }));
+}
+
+const tabLabels: Record<string, string> = {
+  all: 'All',
+  compress: 'Compress',
+  transform: 'Transform',
+  convert: 'Convert',
+  analyze: 'Analyze',
+};
 ---
 
 <Layout
@@ -75,57 +108,76 @@ const plannedTools = [
 
     <section class="band band-canvas">
       <div class="container stack stack-3xl">
-        <Reveal>
-          <h2 class="text-display-md section-title">Available now</h2>
-        </Reveal>
-        <div class="tools-grid">
-          {livingTools.map((tool, i) => (
-            <Reveal delay={i * 40}>
-              <a href={tool.href} class="tool-card">
-                <Badge eyebrow={tool.status} tone="info">{tool.label}</Badge>
-                <p class="text-body-sm tool-desc">{tool.desc}</p>
-              </a>
-            </Reveal>
+        <nav class="tabs" role="tablist" aria-label="Tool categories">
+          {categories.map((cat) => (
+            <button
+              type="button"
+              class="tab"
+              role="tab"
+              aria-selected={cat === 'all'}
+              data-tab={cat}
+            >
+              {tabLabels[cat] ?? cat}
+            </button>
           ))}
-        </div>
-      </div>
-    </section>
+        </nav>
 
-    <section class="band band-soft">
-      <div class="container stack stack-3xl">
-        <Reveal>
-          <h2 class="text-display-md section-title">Coming soon</h2>
-          <p class="text-body-md section-lead">These tools are in development or planned.</p>
-        </Reveal>
-        <div class="tools-grid">
-          {comingSoonTools.map((tool, i) => (
-            <Reveal delay={i * 40}>
-              <a href={tool.href} class="tool-card tool-card-coming">
-                <Badge eyebrow="Coming soon" tone="warning">{tool.label}</Badge>
-                <p class="text-body-sm tool-desc">{tool.desc}</p>
-              </a>
-            </Reveal>
-          ))}
+        <div class="tab-panel" data-panel="all">
+          <div class="tools-grid">
+            {getAllTools().map((tool, i) => (
+              <Reveal delay={i * 30}>
+                <a
+                  href={tool.href}
+                  class:list={['tool-card', tool.status === 'Soon' && 'tool-card-coming']}
+                >
+                  <Badge
+                    eyebrow={tool.status === 'Live' ? 'Free' : 'Soon'}
+                    tone={tool.status === 'Live' ? 'info' : 'warning'}
+                  >
+                    {tool.label}
+                  </Badge>
+                  <p class="text-body-sm tool-desc">{tool.desc}</p>
+                </a>
+              </Reveal>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
 
-    <section class="band band-canvas">
-      <div class="container stack stack-3xl">
-        <Reveal>
-          <h2 class="text-display-md section-title">Planned</h2>
-          <p class="text-body-md section-lead">On our roadmap — sign up for updates to be notified.</p>
-        </Reveal>
-        <div class="tools-grid">
-          {plannedTools.map((tool, i) => (
-            <Reveal delay={i * 40}>
-              <a href={tool.href} class="tool-card tool-card-planned">
-                <Badge eyebrow="Planned" tone="neutral">{tool.label}</Badge>
-                <p class="text-body-sm tool-desc">{tool.desc}</p>
-              </a>
-            </Reveal>
-          ))}
+        <div class="tab-panel" data-panel="compress" hidden>
+          <div class="tools-grid">
+            {getCompressTools().map((tool, i) => (
+              <Reveal delay={i * 30}>
+                <a href={tool.href} class="tool-card">
+                  <Badge eyebrow="Free" tone="info">{tool.label}</Badge>
+                  <p class="text-body-sm tool-desc">{tool.desc}</p>
+                </a>
+              </Reveal>
+            ))}
+          </div>
         </div>
+
+        {['transform', 'convert', 'analyze'].map((cat) => (
+          <div class="tab-panel" data-panel={cat} hidden>
+            <div class="tools-grid">
+              {getToolsByCategory(cat).map((tool, i) => (
+                <Reveal delay={i * 30}>
+                  <a
+                    href={tool.href}
+                    class:list={['tool-card', tool.status === 'Soon' && 'tool-card-coming']}
+                  >
+                    <Badge
+                      eyebrow={tool.status === 'Live' ? 'Free' : 'Soon'}
+                      tone={tool.status === 'Live' ? 'info' : 'warning'}
+                    >
+                      {tool.label}
+                    </Badge>
+                    <p class="text-body-sm tool-desc">{tool.desc}</p>
+                  </a>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
 
@@ -141,6 +193,19 @@ const plannedTools = [
   </AppShell>
 </Layout>
 
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tab]');
+  const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const id = tab.dataset.tab;
+      tabs.forEach((t) => t.ariaSelected = String(t.dataset.tab === id));
+      panels.forEach((p) => p.hidden = p.dataset.panel !== id);
+    });
+  });
+</script>
+
 <style>
   .band {
     position: relative;
@@ -153,12 +218,8 @@ const plannedTools = [
   }
 
   .band-canvas { background-color: var(--color-canvas); }
-  .band-soft { background-color: var(--color-canvas-soft); }
 
-  .page-title {
-    margin: 0;
-    max-width: 16ch;
-  }
+  .page-title { margin: 0; max-width: 16ch; }
 
   .page-lead {
     margin: 0;
@@ -166,14 +227,39 @@ const plannedTools = [
     max-width: 56ch;
   }
 
-  .section-title {
-    margin: 0;
+  .tabs {
+    display: flex;
+    gap: 2px;
+    padding: 4px;
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    width: fit-content;
+    overflow-x: auto;
   }
 
-  .section-lead {
-    margin: var(--space-xs) 0 0;
+  .tab {
+    padding: var(--space-xs) var(--space-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
     color: var(--color-body);
-    max-width: 48ch;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .tab:hover {
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
+  }
+
+  .tab[aria-selected="true"] {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-1);
   }
 
   .tools-grid {
@@ -191,10 +277,7 @@ const plannedTools = [
     border: 1px solid var(--color-hairline);
     border-radius: var(--radius-md);
     text-decoration: none;
-    transition:
-      transform var(--dur-base) var(--ease-out-quart),
-      box-shadow var(--dur-base) var(--ease-out-quart),
-      border-color var(--dur-base) var(--ease-out-quart);
+    transition: transform var(--dur-base) var(--ease-out-quart), box-shadow var(--dur-base) var(--ease-out-quart), border-color var(--dur-base) var(--ease-out-quart);
   }
 
   .tool-card:hover {
@@ -203,21 +286,8 @@ const plannedTools = [
     border-color: var(--color-hairline-strong);
   }
 
-  .tool-card-coming {
-    opacity: 0.7;
-  }
-
-  .tool-card-coming:hover {
-    opacity: 1;
-  }
-
-  .tool-card-planned {
-    opacity: 0.5;
-  }
-
-  .tool-card-planned:hover {
-    opacity: 0.8;
-  }
+  .tool-card-coming { opacity: 0.7; }
+  .tool-card-coming:hover { opacity: 1; }
 
   .tool-desc {
     margin: 0;

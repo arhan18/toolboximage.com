@@ -23,6 +23,9 @@ Key facts about this project (read before starting new tasks):
 - **Font optimizations:** Only preload Regular (font-display: swap for others)
 - **Share buttons:** Added to compressor result page (Twitter/X, Reddit, Email)
 - **Competitor reference:** https://imagetoolbox.app — they have 24+ tools (converters, PDF tools, AI tools, passport photo, background remover). User wants to build similar tools directory with working tools under hero section (pattern: "All / Convert / Resize / Edit / Optimize" tabs)
+- **Live tools:** Image Compressor, Bulk Compressor, Compress JPEG/PNG/WebP/AVIF, 100KB/Email/Discord target pages, Rotate Image (rotator tool now live), Resize Image & Convert Format (coming soon)
+- **Tools directory:** /image-tools/ has tabbed layout (All/Compress/Transform/Convert/Analyze). Homepage now has 12-card tools grid below hero, matching competitor layout
+- **Updated this session:** Homepage tools grid added with live/soon status dots, link to /image-tools/, AGENTS.md updated, ToolUpload component got live upload handling JS (fixes rotator/tool uploads), rotate tool flip buttons fixed, homepage upload now shows tool picker overlay instead of auto-redirecting to compressor, search bar added above tools grid. Rotator status changed to Live on homepage.
 
 ## Documentation
 
