@@ -43,7 +43,7 @@ export default defineConfig({
           item.priority = 1.0;
           item.changefreq = 'weekly';
         }
-        if (item.url.includes('/compressor')) {
+        if (item.url.includes('compress')) {
           item.priority = 0.9;
           item.changefreq = 'weekly';
         }
