@@ -381,6 +381,380 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
         </p>
       </>
     }
+    {
+      post.slug === 'image-size-limits-social-email' && <>
+        <p>
+          Every platform has a different file size limit for images. Discord caps attachments at 8 MB (25 MB for Nitro), WhatsApp at 16 MB, Instagram at 30 MB for photos and 650 MB for video, and most email services at 25 MB. But hitting those limits — or getting blocked before you reach them — is a daily frustration for anyone who works with images.
+        </p>
+        <p>
+          Here is a breakdown of each platform's rules and how to make sure your images always go through.
+        </p>
+        <h2>Discord: 8 MB (25 MB with Nitro)</h2>
+        <p>
+          Discord is the strictest of the four. The free tier caps file uploads at 8 MB per file, and Nitro raises it to 25 MB. For screenshots and casual photos, 8 MB is usually enough — but high-resolution photographs, layered PSD exports, or batches of screenshots can easily exceed the limit.
+        </p>
+        <p>
+          The best strategy for Discord is target-size mode: set the maximum file size to 7 MB (leaving room for metadata), and let the compressor handle the rest. It will automatically adjust quality and resolution to hit that target.
+        </p>
+        <p>
+          For server admins sharing lots of images, compress to WebP or AVIF — these formats save 30-50% more space than JPEG at the same quality, meaning more images fit in the same upload window. Use our <a href="/compress-for-discord/">Discord image compressor</a> to batch-prepare an entire folder in one go.
+        </p>
+        <h2>WhatsApp: 16 MB per image</h2>
+        <p>
+          WhatsApp allows up to 16 MB per image, but there is a catch: WhatsApp recompresses images on its own servers, often at a lower quality than you expect. A 12 MB photo sent through WhatsApp might come out looking noticeably worse than the original.
+        </p>
+        <p>
+          The workaround is to compress before you send. Reduce the file to around 1-2 MB with a quality setting of 85 — this gives WhatsApp less data to discard, and the platform's secondary compression will have less room to degrade the image. For batch sending (especially product photos or event galleries), use our <a href="/compress-for-whatsapp/">WhatsApp image compressor</a> to pre-process everything before sharing.
+        </p>
+        <h2>Instagram: 30 MB for photos</h2>
+        <p>
+          Instagram accepts photos up to 30 MB but recommends images no larger than 1080 pixels wide. The platform also applies its own compression, which can make text-heavy images or screenshots look worse than expected.
+        </p>
+        <p>
+          The ideal Instagram image is a resized JPEG or PNG at 1080 × 1080 (square), 1080 × 1350 (portrait), or 1080 × 566 (landscape), compressed to 300-500 KB. At this size, Instagram's re-compression has minimal visible effect. Use our <a href="/compress-for-instagram/">Instagram image compressor</a> to resize and compress in one step.
+        </p>
+        <h2>Email: 25 MB total (Gmail, Outlook, Yahoo)</h2>
+        <p>
+          Email attachment limits apply per message, not per file. Gmail, Outlook, and Yahoo Mail all cap messages at 25 MB total — including the email body and any inline images. Since images are base64-encoded inside the email, a 10 MB image actually takes up about 13-14 MB of attachment budget.
+        </p>
+        <p>
+          The safe target for email attachments is 3-5 MB per image if you are sending multiple files, or 10-15 MB for a single image. Use target-size mode set to 3 MB for reliable delivery. For newsletters and transactional emails, compress everything to under 200 KB each — anything larger will slow down load times and annoy recipients. Our <a href="/compress-for-email/">email image compressor</a> helps you batch-prepare attachments for any email client.
+        </p>
+        <h2>Quick reference table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Limit per file</th>
+              <th>Recommended max</th>
+              <th>Best format</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Discord (free)</td>
+              <td>8 MB</td>
+              <td>7 MB</td>
+              <td>WebP / AVIF</td>
+            </tr>
+            <tr>
+              <td>Discord (Nitro)</td>
+              <td>25 MB</td>
+              <td>24 MB</td>
+              <td>JPEG / WebP</td>
+            </tr>
+            <tr>
+              <td>WhatsApp</td>
+              <td>16 MB</td>
+              <td>1-2 MB</td>
+              <td>JPEG</td>
+            </tr>
+            <tr>
+              <td>Instagram</td>
+              <td>30 MB</td>
+              <td>300-500 KB</td>
+              <td>JPEG</td>
+            </tr>
+            <tr>
+              <td>Email (Gmail/Outlook)</td>
+              <td>25 MB (total message)</td>
+              <td>3 MB each</td>
+              <td>JPEG</td>
+            </tr>
+          </tbody>
+        </table>
+        <h2>One tool for all platforms</h2>
+        <p>
+          Instead of juggling different settings for each platform, use the compressor's target-size mode. Set your target to the platform's limit (minus a small buffer), drop your images, and the compressor handles the rest. It works for all six supported formats, preserves folder structure for batch uploads, and never sends your files to a server.
+        </p>
+        <p>
+          The <a href="/compressor/">ToolBox Image compressor</a> is free, unlimited, and runs entirely in your browser — no sign-up, no uploads, no tracking.
+        </p>
+      </>
+    }
+    {
+      post.slug === 'compress-to-exact-file-size' && <>
+        <p>
+          Need to squeeze an image under 100 KB for a form upload? Hit exactly 250 KB for a job application system? Or target 5 MB for an email attachment? Exact file size compression is one of the most requested features in any image tool — and most compressors force you to guess by adjusting a vague quality slider until you land in the right ballpark.
+        </p>
+        <p>
+          ToolBox Image's target-size mode does this automatically. Tell it the maximum file size, and it finds the right quality level, format, and resolution to hit that target. Here is how to use it.
+        </p>
+        <h2>Why exact file size matters</h2>
+        <p>
+          Most platforms don't just recommend staying under a limit — they hard-reject files that exceed it. A 101 KB file gets blocked by a 100 KB limit just as firmly as a 10 MB file. Government portals, university application systems, insurance claim forms, and many enterprise tools enforce strict limits with no wiggle room.
+        </p>
+        <p>
+          At the same time, compressing too aggressively wastes quality. A 50 KB image that could have been 95 KB without looking different is a pointless trade-off. The goal is to compress just enough to fit under the limit — no more, no less.
+        </p>
+        <h2>How target-size mode works</h2>
+        <p>
+          The compressor takes a different approach than most tools. Instead of asking you to pick a quality number and hoping the file size is acceptable, it works backwards:
+        </p>
+        <ol>
+          <li>You enter the maximum file size in KB</li>
+          <li>The compressor starts at the highest quality setting and compresses the image</li>
+          <li>If the result is still above the target, it lowers quality and tries again</li>
+          <li>Once the result fits under the target, it runs a fine-tuning pass to maximise quality while staying under the limit</li>
+        </ol>
+        <p>
+          For images that are much larger than the target (like a 10 MB photo that needs to be 100 KB), the compressor also scales down the resolution intelligently — no point keeping 4000 pixel width if the file needs to be 60× smaller.
+        </p>
+        <h2>Best targets for common use cases</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Use case</th>
+              <th>Target size</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Form uploads (strict)</td>
+              <td>100 KB</td>
+              <td>Government, education, insurance portals</td>
+            </tr>
+            <tr>
+              <td>Website thumbnails</td>
+              <td>50-150 KB</td>
+              <td>Product grids, blog cards, avatars</td>
+            </tr>
+            <tr>
+              <td>Email attachments</td>
+              <td>200-500 KB</td>
+              <td>Multiple images per message</td>
+            </tr>
+            <tr>
+              <td>Job applications</td>
+              <td>250 KB</td>
+              <td>Common ATS (Applicant Tracking System) limit</td>
+            </tr>
+            <tr>
+              <td>CDN stored images</td>
+              <td>300-800 KB</td>
+              <td>Hero images, blog content photos</td>
+            </tr>
+            <tr>
+              <td>Discord attachments (free)</td>
+              <td>8 MB (8000 KB)</td>
+              <td>Practically anything under the limit</td>
+            </tr>
+          </tbody>
+        </table>
+        <h2>Real example: compressing to 100 KB</h2>
+        <p>
+          Take a 12 MB photo from a modern smartphone (48 megapixels, 6000 × 4000 pixels). To fit under 100 KB, the compressor needs to reduce the file by a factor of 120 — a 99.2% reduction. At that compression level, JPEG alone cannot achieve acceptable quality. The compressor automatically switches to AVIF or WebP based on what produces the best result at the target size.
+        </p>
+        <p>
+          The result is typically a 100 KB file at 1200-1600 pixel width that looks fine on screen — not print-quality, but perfectly acceptable for a form upload or thumbnail. If the image needs to be larger, simply choose a higher target size.
+        </p>
+        <h2>Batch compressing to a fixed size</h2>
+        <p>
+          Target-size mode works with batch processing too. Drop 50 images into the compressor, set the target to 500 KB, and every file comes out under that limit. The compressor handles each image individually — a dark photo might need higher quality to avoid banding, while a bright landscape might compress further — so the visual result is consistent across the batch even though the encoder settings vary per file.
+        </p>
+        <p>
+          Use our <a href="/image-compressor-100kb/">100 KB image compressor</a> for quick access to the most common target, or open the <a href="/compressor/">main compressor</a> and set any target size you need.
+        </p>
+        <h2>Limitations</h2>
+        <p>
+          Very aggressive targets (under 50 KB for a full-size photo) may produce visible artifacts regardless of format. If the image needs to be legible at that size, consider reducing the output resolution first — a 800 × 500 image compressed to 50 KB looks far better than a 4000 × 3000 image forced into the same size.
+        </p>
+        <p>
+          The compressor warns you when the target is too aggressive for the resolution, and suggests a maximum output dimension that will fit. No guessing — just drag the slider until the warning disappears.
+        </p>
+      </>
+    }
+    {
+      post.slug === 'png-vs-webp-vs-avif' && <>
+        <p>
+          If you regularly save images for the web, you have noticed that file sizes vary wildly between formats. A PNG that looks identical to a WebP can be three times as large. An AVIF can be half the size of a JPEG at the same quality. But formats also trade off compatibility, encoding speed, and feature support.
+        </p>
+        <p>
+          This comparison looks at how PNG, WebP, and AVIF perform on four common image types — a photograph, a screenshot, a logo with transparency, and a graphic with text — using real compression results from ToolBox Image. All tests use the same quality setting (80) at the same resolution.
+        </p>
+        <h2>Photograph: the landscape shot</h2>
+        <p>
+          A 4000 × 2250 landscape photo shot on a modern smartphone. This is the kind of image that benefits most from modern compression — lots of smooth gradients and fine detail that the eye won't miss at moderate compression.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Format</th>
+              <th>File size (quality 80)</th>
+              <th>Savings vs PNG</th>
+              <th>Transparency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PNG (lossless)</td>
+              <td>14.2 MB</td>
+              <td>—</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>JPEG</td>
+              <td>1.8 MB</td>
+              <td>87%</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>WebP (lossy)</td>
+              <td>1.2 MB</td>
+              <td>92%</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>AVIF</td>
+              <td>720 KB</td>
+              <td>95%</td>
+              <td>Yes</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          For photographs, AVIF wins decisively — it is nearly 60% smaller than WebP and 97% smaller than the original PNG at the same quality setting. The visual difference between WebP and AVIF at quality 80 is negligible on a standard monitor. Both destroy JPEG, and none of them come close to the absurd file size of lossless PNG for photographic content.
+        </p>
+        <p>
+          Use our <a href="/compress-avif/">AVIF compressor</a> when file size is the top priority and your audience uses modern browsers. Use the <a href="/compress-webp/">WebP compressor</a> when you need near-universal browser support (97%).
+        </p>
+        <h2>Screenshot: the desktop capture</h2>
+        <p>
+          A 2560 × 1440 screen capture showing a code editor with syntax highlighting, UI chrome, and a dark theme. Screenshots contain large areas of uniform colour and sharp edges — conditions where lossy compression can introduce visible artefacts around text and window borders.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Format</th>
+              <th>File size (quality 80)</th>
+              <th>Savings vs PNG</th>
+              <th>Artefacts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PNG (lossless)</td>
+              <td>980 KB</td>
+              <td>—</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <td>WebP (lossy)</td>
+              <td>340 KB</td>
+              <td>65%</td>
+              <td>Minor</td>
+            </tr>
+            <tr>
+              <td>WebP (lossless)</td>
+              <td>620 KB</td>
+              <td>37%</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <td>AVIF</td>
+              <td>260 KB</td>
+              <td>73%</td>
+              <td>Visible</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          This is where the trade-offs become visible. AVIF achieves the smallest file size, but the AV1 codec tends to smooth out sharp edges at moderate quality settings — code text can look slightly blurry, and window borders lose some definition. Lossless WebP hits a sweet spot: 37% smaller than PNG with zero quality loss. For screenshots with text, lossless WebP is the best choice.
+        </p>
+        <p>
+          Use the <a href="/compress-png/">PNG compressor</a> when you need universal compatibility and quality is non-negotiable. Use WebP lossless for smaller files with identical quality.
+        </p>
+        <h2>Logo with transparency: the brand mark</h2>
+        <p>
+          A 1200 × 400 brand logo with a transparent background, a gradient fill, and a small text tagline. Transparency support varies by format — PNG supports it natively, WebP supports it, and AVIF supports it.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Format</th>
+              <th>File size</th>
+              <th>Transparency</th>
+              <th>Best use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PNG (lossless)</td>
+              <td>140 KB</td>
+              <td>Yes</td>
+              <td>Universal, any context</td>
+            </tr>
+            <tr>
+              <td>WebP (lossless)</td>
+              <td>95 KB</td>
+              <td>Yes</td>
+              <td>Web, 97% browser support</td>
+            </tr>
+            <tr>
+              <td>AVIF</td>
+              <td>52 KB</td>
+              <td>Yes</td>
+              <td>Modern browsers only</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          For logos, the file size differences are less dramatic because the images are smaller to begin with. Lossless WebP saves about 30% over PNG with identical visual output — a meaningful improvement for a site that might serve hundreds of logo impressions per page. AVIF cuts the size almost in half again, but with lower browser support (92%) and slower encoding.
+        </p>
+        <h2>Graphic with text: the infographic</h2>
+        <p>
+          A 1920 × 1080 infographic containing multiple text blocks, charts, icons, and gradient backgrounds — the kind of image that needs to stay completely clean at all zoom levels.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Format</th>
+              <th>File size</th>
+              <th>Text clarity</th>
+              <th>Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>PNG (lossless)</td>
+              <td>2.1 MB</td>
+              <td>Perfect</td>
+              <td>Baseline</td>
+            </tr>
+            <tr>
+              <td>WebP (lossless)</td>
+              <td>1.3 MB</td>
+              <td>Perfect</td>
+              <td>Best balance</td>
+            </tr>
+            <tr>
+              <td>AVIF (lossy)</td>
+              <td>520 KB</td>
+              <td>Fuzzy around text</td>
+              <td>Too aggressive</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          Infographics and text-heavy graphics are the case against AVIF. The format's encoding blurs small text and chart labels noticeably at moderate quality. Lossless WebP matches PNG's perfect text clarity while saving 38% in file size. If you serve a lot of text-based images, lossless WebP is the clear choice.
+        </p>
+        <h2>Which format should you use?</h2>
+        <p>
+          The answer depends on your image type and audience. Here is a simple rule of thumb:
+        </p>
+        <ul>
+          <li><strong>Photographs:</strong> AVIF if your audience uses modern browsers; WebP lossy if you need wider support</li>
+          <li><strong>Screenshots with text:</strong> WebP lossless — same quality as PNG at 37% smaller</li>
+          <li><strong>Logos and icons:</strong> WebP lossless for web, PNG for maximum compatibility</li>
+          <li><strong>Infographics and text-heavy graphics:</strong> WebP lossless — never use lossy compression on text</li>
+          <li><strong>Email and social media:</strong> JPEG — universal support and simple fallbacks</li>
+        </ul>
+        <p>
+          ToolBox Image's compressor handles all of these formats. Drop an image, and the Auto mode picks the best format for the content — lossless WebP for screenshots, AVIF for photos, WebP lossy for graphics. You can also switch to manual mode and pick any format, quality, and target size individually. Try it on the <a href="/compressor/">main compressor page</a> with any image to see the real-world difference between formats.
+        </p>
+      </>
+    }
   </Prose>
         </Reveal>
 

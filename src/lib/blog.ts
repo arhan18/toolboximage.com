@@ -74,6 +74,36 @@ export const posts: BlogPost[] = [
     tag: 'engineering',
     readMinutes: 4,
   },
+  {
+    slug: 'image-size-limits-social-email',
+    title: 'Image size limits for Discord, WhatsApp, Instagram, and email — how to stay under them',
+    description:
+      'Every platform has a different file size limit. Here is how to compress your images for Discord, WhatsApp, Instagram, and email so they always go through.',
+    date: '2026-07-02',
+    author: 'ToolBox Image team',
+    tag: 'engineering',
+    readMinutes: 5,
+  },
+  {
+    slug: 'compress-to-exact-file-size',
+    title: 'How to compress an image to exactly 100 KB (or any target size)',
+    description:
+      'Need an image under 100 KB for a form upload, database limit, or platform requirement? Here is how to hit any exact file size with ToolBox Image.',
+    date: '2026-07-02',
+    author: 'ToolBox Image team',
+    tag: 'engineering',
+    readMinutes: 4,
+  },
+  {
+    slug: 'png-vs-webp-vs-avif',
+    title: 'PNG vs WebP vs AVIF — which format saves the most space?',
+    description:
+      'We compare PNG, WebP, and AVIF compression on real images — photographs, screenshots, logos, and graphics — to see which format wins for file size, quality, and compatibility.',
+    date: '2026-07-02',
+    author: 'ToolBox Image team',
+    tag: 'engineering',
+    readMinutes: 5,
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {

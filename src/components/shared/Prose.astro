@@ -157,6 +157,31 @@ const { class: className = '' } = Astro.props;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-hairline);
   }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-body-sm);
+    line-height: var(--leading-body-sm);
+  }
+
+  .prose :global(th) {
+    text-align: left;
+    font-weight: var(--weight-semibold);
+    color: var(--color-ink);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 2px solid var(--color-hairline-strong);
+  }
+
+  .prose :global(td) {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--color-hairline);
+    color: var(--color-body);
+  }
+
+  .prose :global(tr:last-child td) {
+    border-bottom: none;
+  }
 </style>
 </content>
 </invoke>

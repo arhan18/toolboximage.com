@@ -4,6 +4,7 @@ import SettingsPanel from '../upload/SettingsPanel.astro';
 import QueueProgress from '../upload/QueueProgress.astro';
 import ResultsSummary from '../upload/ResultsSummary.astro';
 import PreviewCard from '../upload/PreviewCard.astro';
+import ShareResult from './ShareResult.astro';
 import Reveal from '../shared/Reveal.astro';
 
 export interface Props {
@@ -88,6 +89,8 @@ const { defaultFormat, defaultTargetSize } = Astro.props;
         <ul class="queue-list" data-queue-list role="list" hidden></ul>
 
         <ResultsSummary />
+
+        <ShareResult />
 
         <footer class="queue-footer" data-queue-footer hidden>
           <div class="queue-footer-stats">
