@@ -30,11 +30,11 @@ const privacy = [
   },
   {
     q: "What does the privacy page actually mean by 'no tracking'?",
-    a: 'No analytics scripts, no third-party cookies, no fingerprinting techniques, no pixel beacons. The only thing we store is your theme preference in your browser’s localStorage.',
+    a: 'No personal analytics, no third-party cookies, no fingerprinting techniques, no pixel beacons. We use Cloudflare Web Analytics for anonymous, aggregated page view counts — no personal data, no cookies. The only thing we store in your browser is your theme preference in localStorage.',
   },
   {
     q: 'Can I verify the privacy claim myself?',
-    a: 'Yes. Open DevTools → Network → reload any page. Every request is for static assets served from our CDN. There are no analytics endpoints.',
+    a: 'Yes. Open DevTools → Network → reload any page. The only analytics request is to Cloudflare\'s own endpoint for anonymous page view counting — no third-party services, no tracking scripts.',
   },
   {
     q: 'Do you log IP addresses?',
