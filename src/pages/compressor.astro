@@ -8,6 +8,7 @@ import UploadDropZone from '../components/upload/UploadDropZone.astro';
 import SettingsPanel from '../components/upload/SettingsPanel.astro';
 import QueueProgress from '../components/upload/QueueProgress.astro';
 import ResultsSummary from '../components/upload/ResultsSummary.astro';
+import ShareResult from '../components/compressor/ShareResult.astro';
 import PreviewCard from '../components/upload/PreviewCard.astro';
 import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 ---
@@ -107,6 +108,8 @@ import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
 
             <!-- Results summary — appears when first job finishes. -->
             <ResultsSummary />
+
+            <ShareResult />
 
             <footer class="queue-footer" data-queue-footer hidden>
               <div class="queue-footer-stats">
