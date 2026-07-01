@@ -1,22 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#171717"/>
-      <stop offset="100%" stop-color="#292929"/>
-    </linearGradient>
-    <linearGradient id="mesh1" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#7928ca" stop-opacity="0.3"/>
-      <stop offset="100%" stop-color="#ff0080" stop-opacity="0.1"/>
-    </linearGradient>
-    <linearGradient id="mesh2" x1="1" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0070f3" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#00dfd8" stop-opacity="0.05"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <circle cx="900" cy="100" r="400" fill="url(#mesh1)"/>
-  <circle cx="200" cy="500" r="350" fill="url(#mesh2)"/>
-  <text x="80" y="300" font-family="system-ui,-apple-system,sans-serif" font-size="72" font-weight="700" fill="#ffffff">Bulk Image Compressor</text>
-  <text x="80" y="370" font-family="system-ui,-apple-system,sans-serif" font-size="32" font-weight="400" fill="#a1a1a1">Batch compress hundreds of images in parallel — no uploads</text>
-  <text x="80" y="540" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="400" fill="#666666">toolboximage.com/bulk-image-compressor</text>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f0f0f"/><stop offset="100%" stop-color="#1a1a1a"/></linearGradient><linearGradient id="glow1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7928ca" stop-opacity="0.35"/><stop offset="100%" stop-color="#ff0080" stop-opacity="0.15"/></linearGradient><linearGradient id="glow2" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0070f3" stop-opacity="0.2"/><stop offset="100%" stop-color="#00dfd8" stop-opacity="0.08"/></linearGradient><linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1e1e1e"/><stop offset="100%" stop-color="#151515"/></linearGradient><linearGradient id="upload" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2a2a2a"/><stop offset="100%" stop-color="#222222"/></linearGradient><linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7928ca"/><stop offset="100%" stop-color="#ff0080"/></linearGradient><linearGradient id="accent2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00dfd8"/><stop offset="100%" stop-color="#0070f3"/></linearGradient><filter id="shadow"><feDropShadow dx="0" dy="4" stdDeviation="24" flood-color="#000" flood-opacity="0.5"/></filter></defs>
+  <rect width="1200" height="630" fill="url(#bg)"/><circle cx="950" cy="150" r="350" fill="url(#glow1)"/><circle cx="200" cy="500" r="300" fill="url(#glow2)"/>
+  <rect x="60" y="50" width="36" height="36" rx="10" fill="url(#accent)"/><text x="108" y="76" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="700" fill="#ffffff" letter-spacing="-0.3">ToolBox Image</text>
+  <text x="60" y="200" font-family="system-ui,-apple-system,sans-serif" font-size="56" font-weight="700" fill="#ffffff" letter-spacing="-1">Bulk Image Compressor</text>
+  <text x="60" y="248" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="400" fill="#999" letter-spacing="-0.2">Batch compress hundreds of images in parallel</text>
+  <rect x="60" y="290" width="1080" height="280" rx="16" fill="url(#card)" stroke="#2a2a2a" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="60" y="290" width="1080" height="48" rx="16" fill="#1a1a1a"/><rect x="60" y="322" width="1080" height="16" fill="#1a1a1a"/>
+  <circle cx="86" cy="314" r="6" fill="#ff5f56"/><circle cx="106" cy="314" r="6" fill="#ffbd2e"/><circle cx="126" cy="314" r="6" fill="#27c93f"/>
+  <text x="160" y="320" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="500" fill="#666">toolboximage.com / bulk-image-compressor</text>
+  <rect x="90" y="360" width="480" height="180" rx="12" fill="url(#upload)" stroke="#333" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <path d="M330 410 L330 480 M300 450 L330 480 L360 450" stroke="#555" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="330" y="510" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="500" fill="#666" text-anchor="middle">Drop your folder here</text>
+  <text x="330" y="528" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="400" fill="#555" text-anchor="middle">Up to 200 files</text>
+  <rect x="600" y="360" width="510" height="50" rx="8" fill="#242424"/>
+  <rect x="614" y="374" width="24" height="24" rx="4" fill="url(#accent2)"/><text x="646" y="391" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="500" fill="#ccc">product-photos/img_001.jpg</text><text x="1020" y="391" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="500" fill="#888" text-anchor="end">4.2 MB → 480 KB</text>
+  <rect x="600" y="418" width="510" height="50" rx="8" fill="#242424"/>
+  <rect x="614" y="432" width="24" height="24" rx="4" fill="url(#accent2)"/><text x="646" y="449" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="500" fill="#ccc">screenshots/ui-v2.png</text><text x="1020" y="449" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="500" fill="#888" text-anchor="end">1.8 MB → 620 KB</text>
+  <rect x="600" y="476" width="510" height="50" rx="8" fill="#242424"/>
+  <rect x="614" y="490" width="24" height="24" rx="4" fill="url(#accent2)"/><text x="646" y="507" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="500" fill="#ccc">banners/holiday-sale.webp</text><text x="1020" y="507" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="500" fill="#888" text-anchor="end">892 KB → 210 KB</text>
+  <rect x="90" y="364" width="56" height="20" rx="4" fill="url(#accent)" opacity="0.9"/><text x="118" y="378" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#fff" text-anchor="middle">3 FILES</text>
+  <rect x="640" y="364" width="56" height="20" rx="4" fill="url(#accent2)" opacity="0.9"/><text x="676" y="378" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#000" text-anchor="middle">BATCH</text>
+  <rect x="90" y="490" width="140" height="36" rx="18" fill="url(#accent)"/><text x="160" y="514" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#fff" text-anchor="middle">Compress All</text>
+  <text x="60" y="595" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="500" fill="#555">toolboximage.com/bulk-image-compressor</text>
 </svg>

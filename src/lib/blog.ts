@@ -54,6 +54,26 @@ export const posts: BlogPost[] = [
     tag: 'announcement',
     readMinutes: 3,
   },
+  {
+    slug: 'choose-image-format',
+    title: 'How to choose the right image format for your website',
+    description:
+      'JPEG, PNG, WebP, AVIF — which one should you use? A practical guide to picking the best format for every image on your site.',
+    date: '2026-06-28',
+    author: 'ToolBox Image team',
+    tag: 'engineering',
+    readMinutes: 5,
+  },
+  {
+    slug: 'batch-compression-guide',
+    title: 'Batch image compression: save hours with parallel processing',
+    description:
+      'Stop compressing images one by one. Here is how batch processing with parallel workers can save you hours of manual work.',
+    date: '2026-07-01',
+    author: 'ToolBox Image team',
+    tag: 'engineering',
+    readMinutes: 4,
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {

@@ -289,6 +289,98 @@ const toneByTag: Record<string, 'info' | 'success' | 'warning'> = {
         </p>
       </>
     }
+    {
+      post.slug === 'choose-image-format' && <>
+        <p>
+          Choosing the wrong image format is one of the most common performance mistakes on the web. A JPEG photo that should be 200 KB ends up as a 2 MB PNG. A WebP image gets served to a browser that does not support it. Here is how to make the right call every time.
+        </p>
+        <h2>The quick decision tree</h2>
+        <p>
+          Ask yourself three questions. Does the image need transparency? Use PNG or WebP. Is it a photograph or complex gradient? Use JPEG, WebP, or AVIF. Does it have sharp edges, text, or logos? Use PNG.
+        </p>
+        <p>
+          For modern browsers, WebP is the best default — it supports both transparency and lossy compression, and it is supported by 97% of browsers. Use a JPEG fallback for the remaining 3% via the <code>&lt;picture&gt;</code> element. If file size is your absolute priority and your audience uses modern browsers, AVIF offers the best compression ratios.
+        </p>
+        <h2>JPEG: when compatibility matters most</h2>
+        <p>
+          JPEG has been the web standard for photographs since the 1990s. Every device, CMS, social media platform, and email client supports it. The compression works by dividing the image into 8x8 pixel blocks and discarding high-frequency detail that the human eye is less sensitive to.
+        </p>
+        <p>
+          Use JPEG when universal compatibility is non-negotiable: email attachments, CMS uploads, social media, and legacy systems. The quality slider of 75-85 offers the best balance of file size and visual quality for most photographs. Below 50, block artefacts become visible, especially in sky gradients and shadows.
+        </p>
+        <h2>PNG: precision and transparency</h2>
+        <p>
+          PNG uses lossless Deflate compression with a pre-processing filter that makes each row of pixels more compressible. It preserves every pixel exactly, supports full alpha transparency, and handles sharp edges and text perfectly.
+        </p>
+        <p>
+          Use PNG for screenshots, logos, UI elements, infographics, and any image with text. The trade-off is file size — a photograph saved as PNG can be 3-5 times larger than the same image as JPEG. For photographs that need transparency, consider WebP instead, which supports alpha while keeping file sizes much smaller.
+        </p>
+        <h2>WebP: the modern default</h2>
+        <p>
+          WebP was designed specifically for the web. It supports lossy compression (based on VP8 video intra-frame coding) and lossless compression (using spatial prediction and colour cache). Lossy WebP is typically 25-35% smaller than JPEG at the same quality, and lossless WebP is 20-30% smaller than PNG.
+        </p>
+        <p>
+          Use WebP as your default format for web images. Browser support covers Chrome, Firefox, Safari (14+), Edge, and Opera — over 97% of global usage. Serve WebP with a JPEG fallback using the <code>&lt;picture&gt;</code> element for maximum compatibility.
+        </p>
+        <h2>AVIF: maximum compression</h2>
+        <p>
+          AVIF uses the AV1 codec and achieves 30-50% better compression than WebP. It supports HDR, wide colour gamut, 10/12-bit depth, transparency, and lossless mode. Netflix and YouTube use the same underlying codec for video streaming.
+        </p>
+        <p>
+          Use AVIF when file size is critical and your audience uses modern browsers (92% support). It is ideal for photographic content on performance-sensitive pages. The trade-off is encoding speed — AVIF compression takes longer than JPEG or WebP, which is why our batch compressor processes images in parallel across all CPU cores.
+        </p>
+        <h2>A practical workflow</h2>
+        <p>
+          Start with our compressor's Auto mode. It analyses each image and picks the best format and quality setting automatically. For most images, Auto produces the smallest file size at acceptable quality. If you need manual control, switch to Custom mode where you can set format, quality, target size, and resolution independently.
+        </p>
+      </>
+    }
+    {
+      post.slug === 'batch-compression-guide' && <>
+        <p>
+          If you are still compressing images one at a time, you are wasting hours of your life. A typical designer or developer handles hundreds of images per week — product photos, screenshots, social media assets, email attachments. Doing each one manually through a drag-and-drop interface quickly becomes unsustainable.
+        </p>
+        <h2>The problem with single-file compression</h2>
+        <p>
+          Most image compressors are designed for a single image workflow: upload one file, wait for processing, download the result, repeat. For a batch of 50 product photos, that means 50 uploads, 50 downloads, and 50 manual clicks. Even at 30 seconds per image, a batch of 50 takes 25 minutes of active attention.
+        </p>
+        <p>
+          The real cost is not the time itself — it is the context switching. Every manual compression interrupts your workflow. You cannot start a batch and walk away. You have to sit through each one, which means you either batch it on a slow afternoon or procrastinate and leave images uncompressed.
+        </p>
+        <h2>How parallel processing changes the game</h2>
+        <p>
+          Instead of compressing images sequentially, a parallel compressor splits the work across all available CPU cores. If your device has 8 cores, 8 images compress simultaneously. A batch of 200 images that would take 30 minutes sequentially finishes in under 4 minutes.
+        </p>
+        <p>
+          ToolBox Image achieves this with Web Workers — a browser API that lets JavaScript run on separate threads. Each worker is assigned one image from the queue. When a worker finishes, it picks up the next image. The main thread stays responsive so you can browse other tabs while the batch runs.
+        </p>
+        <h2>Batch features that matter</h2>
+        <p>
+          Not all batch compression is created equal. Here is what to look for in a batch-capable tool:
+        </p>
+        <ul>
+          <li><strong>Folder drag support.</strong> You should be able to drop an entire folder onto the tool without flattening your directory structure first. The folder hierarchy should be preserved in the output.</li>
+          <li><strong>Unified settings.</strong> All files in a batch should share the same compression settings for consistent output. If you need different settings per file, run separate batches.</li>
+          <li><strong>Parallel execution.</strong> The tool should use all available CPU cores, not process files one at a time.</li>
+          <li><strong>ZIP export.</strong> Downloading 50 individual files is almost as tedious as uploading them one at a time. A single ZIP archive with preserved folder structure is essential.</li>
+          <li><strong>Real-time progress.</strong> You should see progress, bytes saved, and individual file status without having to open a separate dialog.</li>
+        </ul>
+        <h2>Real-world batch scenarios</h2>
+        <p>
+          <strong>E-commerce:</strong> A product catalogue of 200 photos needs to be compressed for the website. Set output to WebP with quality 80, drop the entire product folder, and let the batch run. The result is consistently compressed images with preserved subdirectories for each product category.
+        </p>
+        <p>
+          <strong>Social media:</strong> A batch of 50 screenshots needs to be under Discord's 8 MB upload limit. Set target-size mode to 8000 KB and drop all the screenshots. Every file comes out under the limit without manual quality adjustment per file.
+        </p>
+        <p>
+          <strong>Email attachments:</strong> A batch of 30 high-resolution photos needs to be under 200 KB each for email. Set target size to 200 KB and enable auto-resize for large images. The batch runs unattended while you focus on writing the email.
+        </p>
+        <h2>Tips for efficient batch processing</h2>
+        <p>
+          Organise your images into folders before compressing — the compressor preserves folder structure in the ZIP output. Use target-size mode when you need to meet specific platform limits. For mixed content (photos and screenshots in the same batch), run separate batches with different settings. And always use the comparison slider on a sample image to verify quality before committing to a full batch.
+        </p>
+      </>
+    }
   </Prose>
         </Reveal>
 
