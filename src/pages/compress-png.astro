@@ -135,6 +135,44 @@ const howToSteps = [
           compressing for best results.
         </p>
 
+        <h3 class="text-display-sm">Palette optimization: 24-bit vs 8-bit PNG</h3>
+        <p class="text-body-md cp-body-text">
+          One of the most effective compression techniques for PNG is reducing the colour depth from
+          24-bit (16.7 million colours) down to 8-bit (256 colours) or lower. This is called palette
+          optimization or colour quantization. For images with a limited colour range — icons, logos,
+          flat illustrations, diagrams, and screenshots of code — the visual difference between 24-bit
+          and 8-bit is often imperceptible, yet the file size reduction can be 50-75%. A 24-bit icon
+          set totalling 1.2 MB may shrink to under 300 KB after palette optimization with zero visible
+          degradation. Our lossy mode applies this technique automatically, analysing the image to
+          build an optimal palette that preserves edges, dithers smooth areas, and discards unused
+          colours. The result is a PNG that looks identical to the untrained eye but loads
+          significantly faster.
+        </p>
+        <p class="text-body-md cp-body-text">
+          <strong>Real-world bandwidth savings:</strong> Consider an e-commerce site with 50 product
+          thumbnails, each a 24-bit PNG at 400 KB — that is 20 MB of PNG images per page load. After
+          lossless compression, those 400 KB files drop to roughly 200 KB each, cutting the page to
+          10 MB. Apply lossy palette reduction on suitable images (icons, badges, simple graphics) and
+          the average drops further to 120 KB per image — just 6 MB total. For a site serving 100,000
+          page views per month, that is the difference between 2 TB and 600 GB of monthly bandwidth.
+          On a CDN costing $0.08/GB, this represents a cost saving of roughly $112 per month, with
+          no perceptible quality loss for visitors. The same principle applies to mobile app assets,
+          email signatures, ad creatives, and any other scenario where PNGs are served at scale.
+        </p>
+        <p class="text-body-md cp-body-text">
+          <strong>PNG in web design vs photography:</strong> In web design, PNG is the go-to format
+          for anything requiring transparency, sharp text, or exact pixel alignment — buttons, nav
+          icons, hero section graphics, and product cutouts. A photography portfolio, by contrast,
+          rarely benefits from PNG because photographs contain smooth colour gradients that PNG's
+          filtering algorithm handles inefficiently compared to JPEG or WebP. A 2 MB JPEG photograph
+          re-saved as PNG balloons to 8-12 MB with no visible improvement. The rule of thumb: use
+          PNG when your image has hard edges, text, transparency, or fewer than a few hundred unique
+          colours. Use JPEG, WebP, or AVIF for photographs, gradients, and natural scenes. Our
+          compressor makes it easy to identify which assets truly need PNG and which can be converted
+          to more efficient formats — just examine the preview and file size comparison before
+          downloading.
+        </p>
+
         <h3 class="text-display-sm">How to compress a PNG — step by step</h3>
         <p class="text-body-md cp-body-text">
           <strong>1. Drop your image.</strong> Drag a PNG onto the upload area or click to browse.

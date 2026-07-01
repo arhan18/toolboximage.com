@@ -1,0 +1,327 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Breadcrumbs from '../components/shared/Breadcrumbs.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import Badge from '../components/ui/Badge.astro';
+import { breadcrumbSchema, faqSchema } from '../lib/seo';
+
+const breadcrumbs = [
+  { name: 'Home', href: '/' },
+  { name: 'Image Tools', href: '/image-tools' },
+  { name: 'JPEG vs PNG Comparison', href: '/jpeg-vs-png-compression' },
+];
+
+const faqs = [
+  {
+    q: 'Which is better for photos — JPEG or PNG?',
+    a: 'JPEG is almost always better for photographs. It supports millions of colours with efficient compression, producing files 5-10x smaller than PNG at equivalent quality. PNG photographs are needlessly large — a 5 MB JPEG might be 15-25 MB as PNG.',
+  },
+  {
+    q: 'Which is better for screenshots — JPEG or PNG?',
+    a: 'PNG is better for screenshots with text, UI elements, or sharp edges. The lossless compression preserves text clarity perfectly. JPEG introduces blurry artefacts around text at low quality settings. For screenshots, use PNG lossless compression — our tool reduces PNG size by 10-40% with no quality loss.',
+  },
+  {
+    q: 'Does JPEG or PNG support transparency?',
+    a: 'Only PNG supports transparency (alpha channel). JPEG has no alpha support — areas that should be transparent appear white instead. For logos, icons, and overlays that need transparency, PNG is the only choice between these two formats.',
+  },
+  {
+    q: 'Can I convert between JPEG and PNG?',
+    a: 'Yes — our compressor supports format conversion. Converting PNG to JPEG saves significant file size but loses transparency. Converting JPEG to PNG preserves every pixel but produces much larger files. Use our image converter tool for batch format conversion.',
+  },
+  {
+    q: 'Which format loads faster on websites?',
+    a: 'JPEG loads faster on slow connections because the files are 5-10x smaller. However, PNG loads faster on fast connections for images with few colours (like flat-design icons) because the decoding is simpler. For photographs on any connection, JPEG is faster.',
+  },
+  {
+    q: 'Which format is better for printing?',
+    a: 'PNG is preferred for printing when lossless quality is required — for logos, line art, and text. JPEG with minimal compression (quality 95-100) is fine for photographic prints. Most print shops accept both, but PNG avoids any risk of JPEG compression artefacts in the final print.',
+  },
+];
+
+const comparisonTable = [
+  { feature: 'Compression type', jpeg: 'Lossy (discards data)', png: 'Lossless (preserves all data)' },
+  { feature: 'File size (photo)', jpeg: 'Small (200-600 KB for web)', png: 'Large (2-5 MB for same photo)' },
+  { feature: 'File size (screenshot)', jpeg: 'Medium (100-400 KB)', png: 'Medium (200-800 KB)' },
+  { feature: 'Transparency', jpeg: 'Not supported', png: 'Full alpha channel' },
+  { feature: 'Colour depth', jpeg: '24-bit (16.7M colours)', png: '24-bit + 8-bit alpha (or indexed)' },
+  { feature: 'Text and sharp edges', jpeg: 'Artefacts at low quality', png: 'Crisp and sharp' },
+  { feature: 'Animation', jpeg: 'Not supported', png: 'Not supported (APNG limited)' },
+  { feature: 'Browser support', jpeg: '100%', png: '100%' },
+  { feature: 'Best for', jpeg: 'Photographs, gradients, web', png: 'Logos, screenshots, transparency' },
+];
+---
+
+<Layout
+  title="JPEG vs PNG Compression — Which Format is Better? | ToolBox Image"
+  description="JPEG vs PNG compression comparison — learn when to use each format. JPEG is best for photos, PNG for transparency and sharp edges. Free comparison guide."
+  canonical="https://toolboximage.com/jpeg-vs-png-compression/"
+  ogImage="/og-image.svg"
+  schemas={[
+    breadcrumbSchema(breadcrumbs),
+    faqSchema(faqs),
+  ]}
+>
+  <AppShell>
+    <section class="band hero-band">
+      <div class="container stack stack-lg">
+        <Breadcrumbs items={breadcrumbs} />
+        <Reveal>
+          <Badge eyebrow="Comparison" tone="info">Format guide</Badge>
+        </Reveal>
+        <Reveal delay={80}>
+          <h1 class="text-display-xl page-title">JPEG vs PNG compression.</h1>
+        </Reveal>
+        <Reveal delay={160}>
+          <p class="text-body-lg page-lead">
+            JPEG and PNG are the two most common image formats on the web.
+            Each is optimised for a different use case — choosing the wrong
+            one wastes bandwidth, storage, and quality. Here is exactly when
+            to use each.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-canvas">
+      <div class="container-narrow stack stack-lg">
+        <Reveal>
+          <h2 class="text-display-md">Quick comparison</h2>
+          <div class="table-wrap">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>JPEG</th>
+                  <th>PNG</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonTable.map((row) => (
+                  <tr>
+                    <td class="compare-feature">{row.feature}</td>
+                    <td class="compare-jpeg">{row.jpeg}</td>
+                    <td class="compare-png">{row.png}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Reveal>
+
+        <Reveal>
+          <h2 class="text-display-md">When to use JPEG</h2>
+          <p class="text-body-md cp-body-text">
+            JPEG is the default choice for photographs, product images, and any
+            visual with smooth colour transitions. It achieves dramatic file size
+            reduction — typically 80-90% — by discarding colour information that
+            the human eye struggles to perceive. A photograph that is 5 MB as a
+            TIFF or 15 MB as a PNG becomes 200-500 KB as a JPEG at quality 80,
+            with no visible difference at normal viewing sizes.
+          </p>
+          <p class="text-body-md cp-body-text">
+            JPEG uses a block-based DCT (Discrete Cosine Transform) algorithm
+            that excels at compressing smooth gradients and fine textures. It is
+            the standard format for digital cameras, web content, and social media.
+            Use our <a href="/compress-jpeg/" class="cp-inline-link">JPEG compressor</a>
+            to optimise your JPEG images with Mozilla's mozJPEG encoder, which
+            produces smaller files than standard JPEG at the same quality setting.
+            For bulk photo optimisation, the
+            <a href="/bulk-image-compressor/" class="cp-inline-link">bulk compressor</a>
+            processes hundreds of images in parallel.
+          </p>
+
+          <h2 class="text-display-md">When to use PNG</h2>
+          <p class="text-body-md cp-body-text">
+            PNG is the right choice for images that need crisp edges, text
+            legibility, or transparency. Logos, screenshots, UI elements, icons,
+            and images with text overlays all benefit from PNG's lossless
+            compression, which preserves every pixel exactly. PNG also supports
+            an alpha channel for variable transparency — essential for logos that
+            sit on different coloured backgrounds and UI assets.
+          </p>
+          <p class="text-body-md cp-body-text">
+            PNG uses deflate compression (the same algorithm as ZIP) combined
+            with per-row pixel filtering. For images with large uniform areas or
+            limited colour palettes, PNG can achieve excellent compression ratios.
+            Our <a href="/compress-png/" class="cp-inline-link">PNG compressor</a>
+            supports both lossless mode (pixel-perfect output with optimised
+            filtering) and lossy mode (colour quantization for dramatic size
+            reduction on PNG photographs). For batch processing, use the
+            <a href="/bulk-image-compressor/" class="cp-inline-link">bulk compressor</a>.
+          </p>
+
+          <h2 class="text-display-md">JPEG vs PNG: file size comparison</h2>
+          <p class="text-body-md cp-body-text">
+            A 12-megapixel photo (4000×3000px) from a modern smartphone:
+            <strong>JPEG at quality 80:</strong> 400-800 KB.
+            <strong>PNG lossless:</strong> 10-20 MB.
+            <strong>Difference:</strong> PNG is 15-30× larger with no visual
+            benefit for photographic content.
+          </p>
+          <p class="text-body-md cp-body-text">
+            A 1920×1080 screenshot of a web page:
+            <strong>JPEG at quality 80:</strong> 150-400 KB (visible artefacts
+            around text).
+            <strong>PNG lossless:</strong> 400-1200 KB (crisp text).
+            <strong>Difference:</strong> PNG is 2-4× larger but text is sharp
+            and perfectly readable.
+          </p>
+          <p class="text-body-md cp-body-text">
+            A 512×512 logo with transparency:
+            <strong>JPEG:</strong> Not suitable (no transparency support).
+            <strong>PNG-32:</strong> 5-20 KB (lossless, transparent background).
+            <strong>Winner:</strong> PNG is the only viable choice for logos
+            and icons with transparent backgrounds.
+          </p>
+
+          <h2 class="text-display-md">Modern alternatives: WebP and AVIF</h2>
+          <p class="text-body-md cp-body-text">
+            For new projects, consider <a href="/compress-webp/" class="cp-inline-link">WebP</a>
+            and <a href="/compress-avif/" class="cp-inline-link">AVIF</a>, which offer
+            the best of both worlds: small file sizes like JPEG with full
+            transparency support like PNG. WebP is supported by 97% of browsers
+            and typically produces files 25-35% smaller than JPEG. AVIF achieves
+            50% smaller files than JPEG with even better quality. Both support
+            lossless and lossy compression with alpha channels.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band band-soft">
+      <div class="container container-narrow stack stack-lg">
+        <Reveal>
+          <h2 class="text-display-lg">Frequently asked questions</h2>
+        </Reveal>
+        <Reveal delay={80}>
+          <FAQ items={faqs} tone="light" />
+        </Reveal>
+      </div>
+    </section>
+
+    <section class="band cta-band">
+      <div class="container cta-inner">
+        <Reveal>
+          <p class="text-caption-mono cta-eyebrow">Get started</p>
+          <h2 class="text-display-xl cta-title">Ready to compress your images?</h2>
+          <p class="text-body-lg cta-sub">Free. Unlimited. Your files never leave your device.</p>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+
+  .hero-band {
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-lg);
+    background-color: var(--color-canvas);
+  }
+
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .page-title {
+    margin: 0;
+    max-width: 20ch;
+  }
+
+  .page-lead {
+    margin: 0;
+    color: var(--color-body);
+    max-width: 56ch;
+  }
+
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-body-md);
+  }
+
+  .compare-table th {
+    text-align: left;
+    font-weight: var(--weight-semibold);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 2px solid var(--color-hairline-strong);
+    color: var(--color-ink);
+  }
+
+  .compare-table td {
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--color-hairline);
+    color: var(--color-body);
+  }
+
+  .compare-table tbody tr:hover {
+    background-color: var(--color-canvas-soft);
+  }
+
+  .compare-feature {
+    font-weight: var(--weight-medium);
+    color: var(--color-ink) !important;
+    white-space: nowrap;
+  }
+
+  .cta-band {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .cta-title { margin: 0; color: var(--color-on-primary); }
+
+  .cta-sub {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+  }
+
+  @media (max-width: 600px) {
+    .hero-band { padding: var(--space-4xl) 0 var(--space-md); }
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

@@ -131,6 +131,43 @@ const howToSteps = [
           hundreds of images in parallel.
         </p>
 
+        <p class="text-body-md cp-body-text">
+          The real-world savings add up fast. A photography portfolio with 50 full-resolution JPEGs at
+          5 MB each totals 250 MB. Compressing each to 500 KB with no visible quality loss brings that
+          down to 25 MB — a 10x reduction that turns a sluggish gallery into a snappy one. An e-commerce
+          catalogue with 1,000 product images at 2 MB each drops from 2 GB to roughly 200 MB. For email
+          marketing, reducing a hero image from 1.5 MB to 300 KB means it renders instantly instead of
+          showing a broken placeholder while the recipient waits. Social media managers compressing
+          batches of 30–50 images before uploading can cut monthly bandwidth from several gigabytes to
+          a few hundred megabytes, keeping team workflows fast and cloud storage bills low.
+        </p>
+
+        <p class="text-body-md cp-body-text">
+          JPEG handles different kinds of images in very different ways. High-detail photographs —
+          landscapes with foliage, cityscapes with brickwork, or macro shots with fine texture — benefit
+          most from quality settings of 85–95, where the encoder preserves the high-frequency detail the
+          eye expects. Smooth-gradient images like portraits, skies, or product shots on seamless
+          backgrounds compress extremely well at quality 60–75 because large areas of similar colour
+          are aggressively encoded with no visible difference. The one weak spot: sharp edges and
+          high-contrast text. JPEG's 8×8 block-based compression introduces visible ringing and
+          blocking artefacts around text overlays, logos, and screenshots, which is why those are
+          better served by PNG's lossless approach. Understanding your image type lets you choose
+          the right quality setting instead of blindly using a single preset for everything.
+        </p>
+
+        <p class="text-body-md cp-body-text">
+          JPEG files almost always carry hidden metadata. EXIF data stored by your camera or phone
+          includes the make and model, lens and focal length, aperture, shutter speed, ISO, flash
+          settings, and often GPS coordinates of where the photo was taken. There is also IPTC and
+          XMP metadata for captions, keywords, copyright, and author information. A single raw image
+          from a DSLR may contain 50–100 KB of metadata — that is 5–10&nbsp;% of an already-compressed
+          JPEG. Our compressor's Lossless mode strips all of this automatically, which is useful for
+          privacy (removing location data before sharing online) and for saving every last kilobyte.
+          You can also choose to preserve metadata for copyright and author credits if your workflow
+          requires it. Either way, being aware of what is hidden inside your JPEGs helps you make
+          intentional decisions about privacy, storage, and image provenance.
+        </p>
+
         <h3 class="text-display-sm">How to compress a JPEG — step by step</h3>
         <p class="text-body-md cp-body-text">
           <strong>1. Drop your image.</strong> Drag a JPEG onto the upload area or click to browse.

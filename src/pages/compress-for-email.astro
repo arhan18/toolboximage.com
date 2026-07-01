@@ -1,0 +1,166 @@
+---
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
+import Badge from '../components/ui/Badge.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema, howToSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'What is the best image size for email?',
+    a: 'Aim for images under 500 KB — most email clients display images up to 600-800px wide without scaling. Larger files may fail to send or display slowly. Our compressor with target-size mode set to 500 KB gives you email-ready images every time.',
+  },
+  {
+    q: 'Does Gmail compress images?',
+    a: 'Yes. Gmail resizes images larger than 2048px wide and strips metadata. Pre-compressing to under 500 KB gives you control over quality before Gmail applies its own processing. Attachments are limited to 25 MB total.',
+  },
+  {
+    q: 'What format is best for email attachments?',
+    a: 'JPEG for photographs and images with gradients — it offers the smallest file sizes. PNG for screenshots, logos, and images with sharp edges or transparency. WebP is not supported by all email clients, so JPEG or PNG are safer choices.',
+  },
+  {
+    q: 'How do I compress an image for email without losing quality?',
+    a: 'Use quality 80-85 for JPEG photos — visually lossless with 80-90% size reduction. For PNG screenshots, use lossless mode to preserve text clarity. The side-by-side comparison slider lets you verify quality before downloading.',
+  },
+  {
+    q: 'Can I batch compress images for email?',
+    a: 'Yes. Drop multiple images at once and the compressor processes them in parallel. Each image is compressed to your target size. Download individual files or everything as a ZIP — perfect for emailing multiple photos.',
+  },
+  {
+    q: 'What are common email image size limits?',
+    a: 'Gmail/Outlook: 25 MB total per email. Yahoo: 25 MB. Proton Mail: 25 MB (free). Compressing each image to 200-500 KB means you can attach 50+ images per email. For single images, 100 KB is usually safe for quick-loading inline display.',
+  },
+];
+
+const howToSteps = [
+  { name: 'Drop your image', text: 'Drag any image format onto the upload area — JPEG, PNG, WebP, or HEIC are all supported.' },
+  { name: 'Set email-friendly size', text: 'Enable "Target size" mode and enter 500 KB. The compressor automatically finds the best quality to stay under the limit.' },
+  { name: 'Preview the result', text: 'Use the side-by-side comparison slider to verify the image looks good at the compressed size.' },
+  { name: 'Download and attach', text: 'Save your compressed image and attach it to your email. No more "file too large" bounce-backs.' },
+];
+---
+
+<CompressorPageLayout
+  title="Compress Images for Email — Free Email Image Compressor | ToolBox Image"
+  description="Compress images for email attachments — under 500 KB, perfect for Gmail, Outlook, and Yahoo Mail. Free online email image compressor. No uploads, no limits."
+  canonical="https://toolboximage.com/compress-for-email/"
+  ogImage="/og-image.svg"
+  defaultTargetSize={500}
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
+    { name: 'Email Compressor', href: '/compress-for-email' },
+  ]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
+>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="Email Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress images for email.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Email services reject attachments over 25 MB and often silently
+        downgrade image quality. Pre-compress to 500 KB or less — your
+        photos arrive sharp and your recipients don't wait to download them.
+      </p>
+    </Reveal>
+  </section>
+
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">Never exceed an email attachment limit again.</h2>
+        <p class="text-body-md cp-body-text">
+          Email attachment limits exist for a reason — large files clog inboxes, slow
+          down delivery, and bounce back when they exceed the provider's cap. Gmail,
+          Outlook, Yahoo, and Proton Mail all limit total attachment size to 25 MB.
+          A single photo from a modern smartphone (8-12 MB) takes up half that budget.
+          Three photos and you hit the limit.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Our compressor solves this with target-size mode. Set the target to 500 KB
+          per image — a size that looks great on any screen — and the encoder
+          automatically finds the optimal quality and resolution to hit it. A batch of
+          10 photos that would have been 100 MB raw becomes 5 MB, well within any
+          email provider's limit. The compressor runs entirely in your browser, so your
+          sensitive documents and personal photos never leave your device.
+        </p>
+
+        <h3 class="text-display-sm">Best practices for email images</h3>
+        <p class="text-body-md cp-body-text">
+          For photographs embedded in an email body, resize to 600-800px wide and use
+          JPEG quality 80. For email attachments that will be downloaded and viewed
+          full-size, quality 85-90 preserves more detail while still keeping files under
+          1 MB. PNG screenshots of documents or presentations should use lossless mode
+          to preserve text sharpness. Always preview your compressed image with the
+          comparison slider before attaching — what looks good in the compressor may
+          reveal artefacts when viewed at full resolution.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Different email providers handle images differently. Gmail strips EXIF metadata
+          automatically. Outlook renders images at 72 DPI regardless of source. By
+          pre-compressing with our tool, you control exactly what the recipient sees.
+          For format-specific compression, see our dedicated
+          <a href="/compress-jpeg/" class="cp-inline-link">JPEG compressor</a>,
+          <a href="/compress-png/" class="cp-inline-link">PNG compressor</a>, and
+          <a href="/compress-webp/" class="cp-inline-link">WebP compressor</a>.
+        </p>
+
+        <h3 class="text-display-sm">Supported formats for email</h3>
+        <p class="text-body-md cp-body-text">
+          Our compressor accepts JPEG, PNG, WebP, AVIF, GIF, SVG, HEIC, and TIFF as
+          input. For email, JPEG is best for photos and PNG for screenshots. All
+          processing happens locally in your browser.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
+
+<style>
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

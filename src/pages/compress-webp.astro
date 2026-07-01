@@ -134,6 +134,42 @@ const howToSteps = [
           <a href="/tools/resizer/" class="cp-inline-link">image resizer</a>.
         </p>
 
+        <p class="text-body-md cp-body-text">
+          WebP achieves its compression advantage through predictive coding — a fundamentally
+          different approach from JPEG's discrete cosine transform (DCT). While JPEG processes
+          8x8 pixel blocks independently using frequency-domain math, WebP's VP8 encoder looks
+          at neighboring pixels to predict what each block should contain, then stores only the
+          difference between the prediction and the actual image. This prediction step is
+          remarkably effective on smooth gradients and flat areas — precisely where JPEG tends to
+          introduce blocking artifacts. The result is cleaner-looking images at lower bitrates,
+          especially for modern web graphics with large uniform backgrounds, soft gradients, and
+          text overlays where JPEG's 8x8 block boundaries become visible.
+        </p>
+        <p class="text-body-md cp-body-text">
+          The bandwidth savings from switching to WebP are substantial at scale. Consider a site
+          with 100,000 monthly visitors and 10 images per page averaging 150 KB as JPEGs. That
+          is 150 GB of image data transferred per month. Converting those images to WebP at the
+          same visual quality reduces each file to roughly 100 KB — a 33% savings — bringing the
+          total down to 100 GB per month. At typical CDN bandwidth pricing of $0.08/GB, that
+          translates to $4,000 in annual savings on data transfer alone, plus faster page loads
+          that directly improve Core Web Vitals and search rankings. For high-traffic e-commerce
+          and media sites, those numbers scale into the tens of thousands of dollars per year.
+        </p>
+        <p class="text-body-md cp-body-text">
+          To serve WebP without breaking support for older browsers, pair it with the native
+          <code class="cp-inline-code">&lt;picture&gt;</code> element. The pattern is
+          straightforward: list the WebP source first inside an
+          <code class="cp-inline-code">&lt;source&gt;</code> element with
+          <code class="cp-inline-code">type="image/webp"</code>, then provide a JPEG or PNG
+          fallback inside a standard <code class="cp-inline-code">&lt;img&gt;</code> tag.
+          Browsers that support WebP will load the first matching source and ignore the
+          fallback; older browsers skip the unknown <code class="cp-inline-code">&lt;source&gt;</code>
+          and fall through to the <code class="cp-inline-code">&lt;img&gt;</code>. This technique
+          also works with <code class="cp-inline-code">srcset</code> for responsive images, so you
+          can combine format optimization with art direction and resolution switching — getting
+          both modern compression and universal compatibility from a single markup pattern.
+        </p>
+
         <h3 class="text-display-sm">How to compress a WebP — step by step</h3>
         <p class="text-body-md cp-body-text">
           <strong>1. Drop your image.</strong> Drag any image format onto the upload area.

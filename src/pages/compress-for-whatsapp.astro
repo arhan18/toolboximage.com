@@ -1,0 +1,155 @@
+---
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
+import Badge from '../components/ui/Badge.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema, howToSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'What is the WhatsApp image size limit?',
+    a: 'WhatsApp allows images up to 16 MB. However, WhatsApp resizes and recompresses all images server-side — a 16 MB photo gets compressed to approximately 100-200 KB. Pre-compressing your images before sending gives you more control over the final quality.',
+  },
+  {
+    q: 'Does WhatsApp compress images I send?',
+    a: 'Yes. WhatsApp aggressively compresses images to save bandwidth — typically reducing a 4 MB photo to 100-200 KB. This can introduce visible artefacts, especially in text-heavy screenshots. Pre-compressing at a moderate quality level (70-80) before sending preserves more detail than WhatsApp\'s own compression.',
+  },
+  {
+    q: 'How do I send high-quality photos on WhatsApp?',
+    a: 'WhatsApp offers a "HD quality" toggle when sharing photos, which sends at higher resolution. For maximum quality, send as a document (not a photo) — this bypasses WhatsApp\'s image compression entirely. Use our compressor to stay under the 2 GB document size limit.',
+  },
+  {
+    q: 'What is the best format for WhatsApp images?',
+    a: 'JPEG is most widely supported and gives the smallest file sizes. PNG preserves sharp edges for screenshots but results in larger files. WhatsApp converts all images to JPEG anyway, so sending JPEG pre-compressed with our tool avoids double-compression artefacts.',
+  },
+  {
+    q: 'Can I batch compress images for WhatsApp?',
+    a: 'Yes. Drop multiple images and the queue processes them in parallel. Each is compressed to your target size. When sending multiple photos, enable "HD quality" in WhatsApp — our pre-compression ensures they stay within the size limit while looking their best.',
+  },
+];
+
+const howToSteps = [
+  { name: 'Drop your photo or screenshot', text: 'Drag any image onto the upload area — JPEG photos, PNG screenshots, and WebP images all work.' },
+  { name: 'Choose WhatsApp-friendly settings', text: 'Set quality to 75-85 for photos or use lossless mode for screenshots with text. Target-size mode helps stay under WhatsApp\'s limits.' },
+  { name: 'Preview the result', text: 'WhatsApp\'s own compression will re-encode your image — pre-compressing at a reasonable quality ensures the final result looks good.' },
+  { name: 'Send to WhatsApp', text: 'Download your compressed image, tap the attachment icon in WhatsApp, and share. Your images were processed entirely on your device.' },
+];
+---
+
+<CompressorPageLayout
+  title="Compress Images for WhatsApp — Free WhatsApp Image Compressor | ToolBox Image"
+  description="Compress images for WhatsApp — avoid quality loss from WhatsApp's server-side compression. Free online WhatsApp image compressor. No uploads, no limits."
+  canonical="https://toolboximage.com/compress-for-whatsapp/"
+  ogImage="/og-image.svg"
+  defaultTargetSize={16000}
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
+    { name: 'WhatsApp Compressor', href: '/compress-for-whatsapp' },
+  ]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
+>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="WhatsApp Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress images for WhatsApp.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        WhatsApp compresses every image you send — often more aggressively
+        than necessary. Pre-compress your photos and screenshots to control
+        quality before WhatsApp gets to them.
+      </p>
+    </Reveal>
+  </section>
+
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">Beat WhatsApp's image compression.</h2>
+        <p class="text-body-md cp-body-text">
+          When you send a photo on WhatsApp, the app uploads it to Meta's servers,
+          which re-encode the image with aggressive compression — typically reducing
+          a 4 MB smartphone photo to 100-200 KB. For text-heavy screenshots, this
+          compression introduces blocky artefacts around letters and sharp edges. For
+          product photos shared with clients, the quality loss can be frustrating.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Our compressor lets you take control. Pre-compress your images to quality
+          80-85 before sending — WhatsApp will still apply its own compression, but
+          starting from a cleaner image means the final result retains more detail.
+          Alternatively, disable our compression entirely and send the original via
+          WhatsApp's "Send as document" feature, which bypasses image re-encoding
+          and preserves full quality. Our batch queue is ideal for compressing a
+          folder of photos before a group share.
+        </p>
+
+        <h3 class="text-display-sm">Tips for WhatsApp image sharing</h3>
+        <p class="text-body-md cp-body-text">
+          For personal photos shared in groups, quality 75 balanced with target-size
+          mode at 500 KB produces images that look great on phone screens and load
+          instantly. For business images — product shots, menus, portfolios — use
+          quality 85-90 and send as documents to preserve maximum detail. Screenshots
+          with text should be saved as PNG with lossless mode, then compressed at
+          quality 80 as JPEG to reduce file size while keeping text readable.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Remember that WhatsApp displays images at a maximum width of 1600px on
+          most devices. Resizing very large photos (e.g., 48 MP camera output) to
+          2000px wide before compressing saves significant file size with no visible
+          difference on recipients' phones. Our compressor handles resizing and
+          compression in one pass. For format-specific compression, see
+          <a href="/compress-jpeg/" class="cp-inline-link">JPEG</a> and
+          <a href="/compress-png/" class="cp-inline-link">PNG</a> compressors.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
+
+<style>
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

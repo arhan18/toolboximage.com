@@ -1,0 +1,154 @@
+---
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
+import Badge from '../components/ui/Badge.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema, howToSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'What is the best image size for Instagram?',
+    a: 'Instagram recommends square posts at 1080×1080px, portrait at 1080×1350px, and landscape at 1080×566px. The platform compresses images server-side, so uploading at exactly these dimensions prevents unnecessary re-scaling. Keep file sizes under 1 MB for fast uploads.',
+  },
+  {
+    q: 'Does Instagram compress images?',
+    a: 'Yes. Instagram re-encodes all uploaded images to JPEG with a maximum width of 1080px and a quality setting around 70-80. Non-square images are cropped or letterboxed. Pre-compressing to the correct aspect ratio and quality gives you more control over the final look.',
+  },
+  {
+    q: 'What format does Instagram use?',
+    a: 'Instagram converts all uploads to JPEG. Uploading a JPEG directly avoids a format conversion pass, which can introduce additional artefacts. PNG uploads are converted to JPEG, which may cause colour shifts and quality loss for images with fine gradients.',
+  },
+  {
+    q: 'What is the Instagram file size limit?',
+    a: 'Instagram allows image uploads up to 20 MB on the web and up to 30 MB on mobile. For optimal upload speed and quality, aim for 500 KB to 1 MB per image. Our target-size mode makes this easy — set it and the encoder handles the rest.',
+  },
+  {
+    q: 'Can I batch compress images for Instagram?',
+    a: 'Yes. Drop multiple images and they process in parallel. Set a consistent target size and aspect ratio for a cohesive feed. The ZIP download makes it easy to upload everything to Instagram in one session.',
+  },
+];
+
+const howToSteps = [
+  { name: 'Drop your photo', text: 'Drag any image onto the upload area — JPEG, PNG, HEIC, or WebP are all accepted.' },
+  { name: 'Resize to Instagram dimensions', text: 'Use the resize option to set the width to 1080px. Choose the aspect ratio: square (1:1), portrait (4:5), or landscape (1.91:1).' },
+  { name: 'Set quality', text: 'Quality 80-85 gives excellent results on phone screens while keeping files under 1 MB for fast uploads.' },
+  { name: 'Upload to Instagram', text: 'Download your optimized image and upload to Instagram. Your photo was processed entirely on your device — no uploads, no tracking.' },
+];
+---
+
+<CompressorPageLayout
+  title="Compress Images for Instagram — Free Instagram Image Compressor | ToolBox Image"
+  description="Compress images for Instagram — resize to 1080px, optimize quality, and beat Instagram's server-side compression. Free online Instagram image compressor. No uploads."
+  canonical="https://toolboximage.com/compress-for-instagram/"
+  ogImage="/og-image.svg"
+  defaultTargetSize={1000}
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
+    { name: 'Instagram Compressor', href: '/compress-for-instagram' },
+  ]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
+>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="Instagram Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress images for Instagram.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Instagram compresses every upload to 1080px width with JPEG quality
+        around 75. Pre-compress your photos to the right dimensions and
+        quality — your feed stays sharp and your uploads are instant.
+      </p>
+    </Reveal>
+  </section>
+
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">Optimise your photos for Instagram's pipeline.</h2>
+        <p class="text-body-md cp-body-text">
+          Every image uploaded to Instagram goes through Meta's server-side
+          processing pipeline: resizing to a maximum width of 1080px, conversion
+          to JPEG, and compression at an internal quality setting. If you upload a
+          12 MP photo from a modern phone, Instagram downsamples it aggressively
+          — and the resulting quality depends on the source image's resolution and
+          compression state.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Pre-compressing your images gives you control. Resize to exactly 1080px
+          wide (at the correct aspect ratio: 1:1 for square, 4:5 for portrait, or
+          1.91:1 for landscape) so Instagram doesn't need to crop or scale. Set
+          JPEG quality to 80-85 — Instagram will apply slight additional compression,
+          but starting from a clean image ensures the final result maintains detail
+          in shadows, highlights, and skin tones. Our compressor handles resize and
+          compression in a single pass, entirely in your browser.
+        </p>
+
+        <h3 class="text-display-sm">Instagram image specifications</h3>
+        <p class="text-body-md cp-body-text">
+          Square feed posts: 1080×1080px, JPEG quality 80, under 1 MB. Portrait
+          feed posts: 1080×1350px (4:5 ratio). Landscape feed posts: 1080×566px
+          (1.91:1 ratio). Instagram Stories: 1080×1920px. Profile pictures:
+          320×320px. For carousel posts (multiple images), apply consistent
+          dimensions and quality to every slide for a professional look.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Our batch compressor is ideal for preparing an entire Instagram carousel
+          or a week's worth of posts. Drop all your images, set 1080px width as
+          the resize target, choose quality 80, and download everything as a ZIP
+          with consistent output. For format-specific needs, check our
+          <a href="/compress-jpeg/" class="cp-inline-link">JPEG compressor</a> and
+          <a href="/compress-png/" class="cp-inline-link">PNG compressor</a> pages.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
+
+<style>
+  .cp-title { margin: 0; max-width: 18ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

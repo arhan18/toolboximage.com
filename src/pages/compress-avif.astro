@@ -135,6 +135,40 @@ const howToSteps = [
           before encoding, use our <a href="/tools/resizer/" class="cp-inline-link">image resizer</a>.
         </p>
 
+        <h3 class="text-display-sm">Real-world performance: AVIF in production</h3>
+        <p class="text-body-md cp-body-text">
+          A photography portfolio containing 200 high-resolution JPEG images totalling 50 MB can be
+          re-encoded to AVIF at quality 65 and weigh under 10 MB — an 80% reduction with no perceptible
+          quality loss at standard screen resolutions. E-commerce sites see similar gains: a product
+          catalogue of 10,000 images might drop from 2 GB to 400 MB, dramatically improving page load
+          times and Core Web Vitals scores. The savings compound on slow connections — a 1.5 MB AVIF hero
+          image loads 6&#215; faster than the equivalent 9 MB JPEG on a 3G network.
+        </p>
+        <p class="text-body-md cp-body-text">
+          For publishers serving millions of image views per month, the bandwidth cost reduction is
+          substantial. Serving AVIF instead of JPEG can cut CDN egress costs by 50-70% while actually
+          improving visual quality. Combined with a WebP fallback via the &lt;picture&gt; element, you
+          cover over 99% of modern browsers with the most efficient format each supports.
+        </p>
+
+        <h3 class="text-display-sm">AVIF HDR and wide colour gamut support</h3>
+        <p class="text-body-md cp-body-text">
+          AVIF is the only widely supported image format that natively handles HDR content. It supports
+          both PQ (Perceptual Quantizer, ST 2084) and HLG (Hybrid Log-Gamma) transfer functions, along
+          with wide colour gamut spaces such as Display P3 and Rec.2020. This means images retain their
+          full luminance range and colour volume — highlights stay bright, shadows stay deep, and colours
+          remain accurate — across HDR-capable displays like MacBook Pros, iPads, iPhones, and high-end
+          monitors. Standard formats like JPEG and PNG are limited to sRGB and standard dynamic range,
+          which clips bright highlights and compresses the colour space.
+        </p>
+        <p class="text-body-md cp-body-text">
+          For photographers and designers working in wide gamut workflows, AVIF eliminates the need for
+          tone-mapping or gamut reduction during export. An image edited in Display P3 can be saved
+          directly as AVIF without conversion, preserving the original intent. As HDR displays become
+          the norm on desktop and mobile devices, publishing images in AVIF ensures they look their best
+          on every screen — from SDR fallback on older monitors to full HDR on the latest panels.
+        </p>
+
         <h3 class="text-display-sm">How to compress an image to AVIF — step by step</h3>
         <p class="text-body-md cp-body-text">
           <strong>1. Drop your image.</strong> Drag any format onto the upload area.
