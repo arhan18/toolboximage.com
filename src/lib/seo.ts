@@ -7,7 +7,7 @@ export const SITE_DESCRIPTION =
   'Free online image compressor — compress JPG, PNG, WebP, AVIF, and GIF images directly in your browser. No uploads, no sign-up, unlimited. The best free image compressor online.';
 export const SITE_URL = 'https://toolboximage.com';
 export const SITE_TWITTER = '@toolboximage';
-export const SITE_BASE_IMAGE = '/og-image.svg';
+export const SITE_BASE_IMAGE = '/og-image.png';
 export const SITE_LOCALE = 'en_US';
 
 export interface SeoMeta {

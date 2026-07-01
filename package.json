@@ -7,9 +7,10 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "gen-og-images": "node scripts/generate-og-images.mjs",
+    "build": "npm run gen-og-images && astro build",
     "preview": "astro preview",
-    "deploy": "astro build && npx wrangler pages deploy dist --project-name toolboximage-com --commit-dirty=true",
+    "deploy": "npm run gen-og-images && astro build && npx wrangler pages deploy dist --project-name toolboximage-com --commit-dirty=true",
     "astro": "astro"
   },
   "dependencies": {
