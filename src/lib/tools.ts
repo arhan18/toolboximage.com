@@ -42,7 +42,7 @@ export const tools: ToolConfig[] = [
     icon: 'resize',
     path: '/tools/resizer/',
     category: 'transform',
-    status: 'coming-soon',
+    status: 'live',
     inputFormats: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
     maxInputs: 50,
     steps: ['upload', 'configure', 'process', 'results'],

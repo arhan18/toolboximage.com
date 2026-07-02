@@ -7,6 +7,7 @@ import ToolResultsSummary from '../../components/tools/ToolResultsSummary.astro'
 import ToolFooter from '../../components/tools/ToolFooter.astro';
 import RotatorTool from '../../components/tools/RotatorTool.astro';
 import ConverterTool from '../../components/tools/ConverterTool.astro';
+import ResizerTool from '../../components/tools/ResizerTool.astro';
 import { tools, getTool } from '../../lib/tools';
 import type { ToolId } from '../../types';
 
@@ -71,6 +72,8 @@ if (!tool) {
           <RotatorTool />
         ) : tool.id === 'converter' ? (
           <ConverterTool />
+        ) : tool.id === 'resizer' ? (
+          <ResizerTool />
         ) : (
           <>
             <ToolUpload {tool} />

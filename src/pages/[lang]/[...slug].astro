@@ -11,6 +11,7 @@ import BlogPostContent from '../../components/blog/BlogPostContent.astro';
 import CompressorTool from '../../components/tools/CompressorTool.astro';
 import RotatorTool from '../../components/tools/RotatorTool.astro';
 import ConverterTool from '../../components/tools/ConverterTool.astro';
+import ResizerTool from '../../components/tools/ResizerTool.astro';
 import { tools } from '../../lib/tools';
 import { useTranslations, LANG_CODES, type LangCode } from '../../i18n';
 import { posts, formatDate, getAllTags, getPost, getTranslatedTitle, getTranslatedDescription, getTranslatedTags } from '../../lib/blog';
@@ -132,7 +133,8 @@ function getToolsByCategory(cat: string, _lang: string) {
 const isCompressorPage = slug === 'compressor' || slug === 'bulk-image-compressor' || slug === 'image-compressor-100kb' || slug === 'image-compressor-for-discord' || slug === 'compress-for-email' || slug === 'compress-jpeg' || slug === 'compress-png' || slug === 'compress-webp' || slug === 'compress-avif' || slug === 'compress-for-instagram' || slug === 'compress-for-whatsapp';
 const isRotatorPage = slug === 'tools/rotator';
 const isConverterPage = slug === 'tools/converter';
-const isLiveTool = isCompressorPage || isRotatorPage || isConverterPage;
+const isResizerPage = slug === 'tools/resizer';
+const isLiveTool = isCompressorPage || isRotatorPage || isConverterPage || isResizerPage;
 const isBlogSlug = slug?.startsWith('blog/');
 const isBlogIndex = slug === 'blog';
 const isFaq = slug === 'faq';
@@ -325,7 +327,7 @@ const faqItems = [
         </div>
       </section>
     ) : isLiveTool ? (
-      isCompressorPage ? <CompressorTool lang={langCode} /> : isRotatorPage ? <RotatorTool lang={langCode} /> : isConverterPage ? <ConverterTool lang={langCode} /> : null
+      isCompressorPage ? <CompressorTool lang={langCode} /> : isRotatorPage ? <RotatorTool lang={langCode} /> : isConverterPage ? <ConverterTool lang={langCode} /> : isResizerPage ? <ResizerTool lang={langCode} /> : null
     ) : (
       <section class="band band-canvas">
         <div class="container" style="padding-top: var(--space-5xl); max-width: 640px; text-align: center;">

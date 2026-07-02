@@ -1,0 +1,520 @@
+---
+import ToolUpload from './ToolUpload.astro';
+import ToolSettingsPanel from './ToolSettingsPanel.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('resizer')!;
+
+const socialPresets: { label: string; w: number; h: number }[] = [
+  { label: 'Instagram Square', w: 1080, h: 1080 },
+  { label: 'Instagram Portrait', w: 1080, h: 1350 },
+  { label: 'Instagram Story', w: 1080, h: 1920 },
+  { label: 'Facebook Post', w: 1200, h: 630 },
+  { label: 'X / Twitter Post', w: 1200, h: 675 },
+  { label: 'X / Twitter Header', w: 1500, h: 500 },
+  { label: 'LinkedIn Banner', w: 1584, h: 396 },
+  { label: 'YouTube Thumbnail', w: 1280, h: 720 },
+  { label: 'HD (1280×720)', w: 1280, h: 720 },
+  { label: 'Full HD (1920×1080)', w: 1920, h: 1080 },
+];
+---
+<section class="resizer-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <ToolSettingsPanel {tool} {lang}>
+    <div slot="settings-actions">
+      <button type="button" class="resizer-clear-btn" data-resizer-clear hidden>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+    <div slot="settings-controls">
+      <div class="resizer-dimensions">
+        <div class="resizer-dim-row">
+          <label class="text-caption-mono resizer-label" for="resizer-width">{_('resizer.width')}</label>
+          <div class="resizer-dim-input-wrap">
+            <input type="number" id="resizer-width" class="resizer-dim-input" data-resizer-width min="1" value="800" />
+            <span class="text-caption resizer-dim-unit">{_('resizer.pixels')}</span>
+          </div>
+          <button type="button" class="resizer-lock-btn" data-resizer-lock aria-label={_('resizer.locked')} aria-pressed="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </button>
+          <div class="resizer-dim-input-wrap">
+            <input type="number" id="resizer-height" class="resizer-dim-input" data-resizer-height min="1" value="800" />
+            <span class="text-caption resizer-dim-unit">{_('resizer.pixels')}</span>
+          </div>
+        </div>
+        <div class="resizer-dim-row">
+          <label class="text-caption-mono resizer-label" for="resizer-presets">{_('resizer.presets')}</label>
+          <select id="resizer-presets" class="resizer-select" data-resizer-presets>
+            <option value="">{_('resizer.custom')}</option>
+            {socialPresets.map((p) => (
+              <option value={`${p.w}x${p.h}`}>{p.label} — {p.w}×{p.h}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div class="resizer-mode-row">
+        <label class="text-caption-mono resizer-label">{_('resizer.mode')}</label>
+        <div class="resizer-mode-group" data-resizer-modes>
+          <button type="button" class="resizer-mode-btn" data-resizer-mode="fit" data-active="true">{_('resizer.fit')}</button>
+          <button type="button" class="resizer-mode-btn" data-resizer-mode="fill">{_('resizer.fill')}</button>
+          <button type="button" class="resizer-mode-btn" data-resizer-mode="stretch">{_('resizer.stretch')}</button>
+        </div>
+      </div>
+      <fieldset class="resizer-formats">
+        <legend class="text-caption-mono resizer-label">{_('resizer.outputFormat')}</legend>
+        <div class="resizer-format-group" data-resizer-formats>
+          {['JPEG', 'PNG', 'WebP'].map((fmt) => (
+            <button type="button" class="resizer-format-btn" data-resizer-format={fmt.toLowerCase()}>
+              {fmt}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <div class="resizer-quality">
+        <label class="text-caption-mono resizer-label" for="resizer-quality">{_('resizer.quality')}</label>
+        <div class="resizer-quality-row">
+          <input type="range" id="resizer-quality" class="resizer-range" data-resizer-quality min="1" max="100" value="92" />
+          <span class="text-body-sm-strong resizer-quality-value" data-resizer-quality-value>92%</span>
+        </div>
+      </div>
+    </div>
+  </ToolSettingsPanel>
+
+  <section class="resizer-preview" data-resizer-preview hidden>
+    <div class="resizer-preview-cols">
+      <figure class="resizer-preview-fig">
+        <figcaption class="text-caption-mono resizer-preview-label">{_('resizer.original')}</figcaption>
+        <div class="resizer-preview-frame">
+          <img data-resizer-original alt={_('resizer.original')} class="resizer-preview-img" />
+        </div>
+        <p class="text-caption resizer-preview-size" data-resizer-original-size></p>
+      </figure>
+      <div class="resizer-preview-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <figure class="resizer-preview-fig">
+        <figcaption class="text-caption-mono resizer-preview-label" data-resizer-result-label>{_('resizer.result')}</figcaption>
+        <div class="resizer-preview-frame">
+          <img data-resizer-result alt={_('resizer.result')} class="resizer-preview-img" />
+        </div>
+        <p class="text-caption resizer-preview-size" data-resizer-result-size></p>
+      </figure>
+    </div>
+    <div class="resizer-actions" data-resizer-actions hidden>
+      <button type="button" class="resizer-action-link" data-resizer-replace>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        {_('resizer.replace')}
+      </button>
+      <button type="button" class="resizer-action-link resizer-action-link-danger" data-resizer-clear>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+  </section>
+
+  <section class="resizer-download" data-resizer-download hidden>
+    <div class="resizer-download-bar">
+      <div class="resizer-download-info">
+        <p class="text-caption-mono resizer-download-label">{_('resizer.downloadBtn')}</p>
+        <p class="text-body-sm-strong" data-resizer-download-name></p>
+      </div>
+      <div class="resizer-download-actions">
+        <button type="button" class="results-btn results-btn-ghost" data-resizer-clear>
+          {_('tool.clear')}
+        </button>
+        <button type="button" class="results-btn results-btn-primary" data-resizer-download-btn>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          {_('resizer.downloadBtn')}
+        </button>
+      </div>
+    </div>
+  </section>
+</section>
+
+<script>
+  const mimeMap: Record<string, string> = {
+    jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp',
+  };
+
+  const widthInput = document.querySelector<HTMLInputElement>('[data-resizer-width]');
+  const heightInput = document.querySelector<HTMLInputElement>('[data-resizer-height]');
+  const lockBtn = document.querySelector<HTMLButtonElement>('[data-resizer-lock]');
+  const presetsSelect = document.querySelector<HTMLSelectElement>('[data-resizer-presets]');
+  const modeBtns = document.querySelectorAll<HTMLButtonElement>('[data-resizer-mode]');
+  const formatBtns = document.querySelectorAll<HTMLButtonElement>('[data-resizer-format]');
+  const qualityInput = document.querySelector<HTMLInputElement>('[data-resizer-quality]');
+  const qualityValue = document.querySelector<HTMLElement>('[data-resizer-quality-value]');
+  const previewArea = document.querySelector<HTMLElement>('[data-resizer-preview]');
+  const origImg = document.querySelector<HTMLImageElement>('[data-resizer-original]');
+  const resultImg = document.querySelector<HTMLImageElement>('[data-resizer-result]');
+  const origSizeEl = document.querySelector<HTMLElement>('[data-resizer-original-size]');
+  const resultSizeEl = document.querySelector<HTMLElement>('[data-resizer-result-size]');
+  const resultLabel = document.querySelector<HTMLElement>('[data-resizer-result-label]');
+  const downloadSection = document.querySelector<HTMLElement>('[data-resizer-download]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-resizer-download-btn]');
+  const downloadNameEl = document.querySelector<HTMLElement>('[data-resizer-download-name]');
+  const clearBtns = document.querySelectorAll<HTMLButtonElement>('[data-resizer-clear]');
+  const replaceBtn = document.querySelector<HTMLButtonElement>('[data-resizer-replace]');
+  const actionsBar = document.querySelector<HTMLElement>('[data-resizer-actions]');
+  const settingsClearBtn = document.querySelector<HTMLButtonElement>('[data-resizer-clear-btn]');
+
+  const i18n = (key: string): string => {
+    const el = document.querySelector<HTMLElement>(`[data-i18n="${key}"]`);
+    return el?.textContent ?? key;
+  };
+
+  let currentFile: File | null = null;
+  let currentImg: HTMLImageElement | null = null;
+  let currentBlob: Blob | null = null;
+  let currentBlobUrl: string | null = null;
+  let aspectRatio = 1;
+  let isLocked = true;
+  let selectedFormat = 'jpeg';
+  let selectedQuality = 92;
+  let selectedMode: 'fit' | 'fill' | 'stretch' = 'fit';
+
+  const formatBytes = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const calcDimensions = (srcW: number, srcH: number, tgtW: number, tgtH: number): { w: number; h: number; offX: number; offY: number } => {
+    const srcRatio = srcW / srcH;
+    const tgtRatio = tgtW / tgtH;
+    let w = tgtW;
+    let h = tgtH;
+    let offX = 0;
+    let offY = 0;
+
+    if (selectedMode === 'fit') {
+      if (srcRatio > tgtRatio) { h = Math.round(tgtW / srcRatio); offY = Math.round((tgtH - h) / 2); }
+      else { w = Math.round(tgtH * srcRatio); offX = Math.round((tgtW - w) / 2); }
+    } else if (selectedMode === 'fill') {
+      if (srcRatio > tgtRatio) { w = Math.round(tgtH * srcRatio); offX = Math.round((tgtW - w) / 2); }
+      else { h = Math.round(tgtW / srcRatio); offY = Math.round((tgtH - h) / 2); }
+    }
+    // stretch: keep w,h as tgtW,tgtH, no offset
+
+    return { w, h, offX, offY };
+  };
+
+  const stepDownResize = (img: HTMLImageElement | HTMLCanvasElement, tgtW: number, tgtH: number): HTMLCanvasElement => {
+    let src: HTMLCanvasElement | HTMLImageElement = img;
+    let cw = typeof img.width === 'number' ? img.width : (img as HTMLImageElement).naturalWidth;
+    let ch = typeof img.height === 'number' ? img.height : (img as HTMLImageElement).naturalHeight;
+
+    while (cw > tgtW * 2 || ch > tgtH * 2) {
+      cw = Math.floor(cw * 0.5);
+      ch = Math.floor(ch * 0.5);
+      const temp = document.createElement('canvas');
+      temp.width = cw;
+      temp.height = ch;
+      const tCtx = temp.getContext('2d')!;
+      tCtx.imageSmoothingEnabled = true;
+      tCtx.imageSmoothingQuality = 'high';
+      tCtx.drawImage(src, 0, 0, cw, ch);
+      src = temp;
+    }
+
+    const final = document.createElement('canvas');
+    final.width = tgtW;
+    final.height = tgtH;
+    const fCtx = final.getContext('2d')!;
+    if (selectedMode === 'fit') {
+      fCtx.fillStyle = '#FFFFFF';
+      fCtx.fillRect(0, 0, tgtW, tgtH);
+    }
+    fCtx.imageSmoothingEnabled = true;
+    fCtx.imageSmoothingQuality = 'high';
+    const { w, h, offX, offY } = calcDimensions(
+      typeof img.width === 'number' ? img.width : (img as HTMLImageElement).naturalWidth,
+      typeof img.height === 'number' ? img.height : (img as HTMLImageElement).naturalHeight,
+      tgtW, tgtH
+    );
+    fCtx.drawImage(src, offX, offY, w, h);
+
+    return final;
+  };
+
+  const resize = (img: HTMLImageElement, tgtW: number, tgtH: number, mime: string, quality: number): Promise<Blob> =>
+    new Promise((resolve, reject) => {
+      try {
+        const canvas = stepDownResize(img, tgtW, tgtH);
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Resize failed'));
+        }, mime, quality / 100);
+      } catch (e) {
+        reject(e);
+      }
+    });
+
+  const getTargetDims = (): { w: number; h: number } => {
+    const w = Math.max(1, parseInt(widthInput?.value || '800', 10) || 800);
+    const h = Math.max(1, parseInt(heightInput?.value || '800', 10) || 800);
+    return { w, h };
+  };
+
+  const updatePreview = async () => {
+    if (!currentImg) return;
+    const mime = mimeMap[selectedFormat] || 'image/jpeg';
+    const { w, h } = getTargetDims();
+    currentBlob = await resize(currentImg, w, h, mime, selectedQuality);
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentBlobUrl = URL.createObjectURL(currentBlob);
+    if (resultImg) resultImg.src = currentBlobUrl;
+    if (resultSizeEl) resultSizeEl.textContent = `${w} × ${h} · ${formatBytes(currentBlob.size)}`;
+    if (resultLabel) resultLabel.textContent = `${w} × ${h}`;
+    if (downloadSection) downloadSection.hidden = false;
+    if (downloadNameEl && currentFile) {
+      downloadNameEl.textContent = currentFile.name.replace(/\.[^.]+$/, '') + '.' + selectedFormat;
+    }
+  };
+
+  const updateFromWidth = () => {
+    if (isLocked && currentImg && widthInput) {
+      const w = Math.max(1, parseInt(widthInput.value, 10) || 1);
+      const h = Math.round(w / aspectRatio);
+      if (heightInput) heightInput.value = String(h);
+    }
+    if (previewArea && !previewArea.hidden) updatePreview();
+  };
+
+  const updateFromHeight = () => {
+    if (isLocked && currentImg && heightInput) {
+      const h = Math.max(1, parseInt(heightInput.value, 10) || 1);
+      const w = Math.round(h * aspectRatio);
+      if (widthInput) widthInput.value = String(w);
+    }
+    if (previewArea && !previewArea.hidden) updatePreview();
+  };
+
+  if (widthInput) widthInput.addEventListener('input', updateFromWidth);
+  if (heightInput) heightInput.addEventListener('input', updateFromHeight);
+
+  if (lockBtn) {
+    lockBtn.addEventListener('click', () => {
+      isLocked = !isLocked;
+      lockBtn.setAttribute('aria-pressed', String(isLocked));
+      lockBtn.setAttribute('aria-label', isLocked ? i18n('resizer.locked') : i18n('resizer.unlocked'));
+      lockBtn.innerHTML = isLocked
+        ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+        : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-3"/><line x1="2" y1="2" x2="22" y2="22"/></svg>';
+    });
+  }
+
+  if (presetsSelect) {
+    presetsSelect.addEventListener('change', () => {
+      const val = presetsSelect.value;
+      if (!val) return;
+      const [w, h] = val.split('x').map(Number);
+      if (widthInput) widthInput.value = String(w);
+      if (heightInput) heightInput.value = String(h);
+      if (currentImg) {
+        aspectRatio = (currentImg as HTMLImageElement).naturalWidth / (currentImg as HTMLImageElement).naturalHeight;
+      }
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  }
+
+  modeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      modeBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      selectedMode = btn.dataset.resizerMode as typeof selectedMode;
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  });
+  if (modeBtns[0]) modeBtns[0].dataset.active = 'true';
+
+  formatBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      formatBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      selectedFormat = btn.dataset.resizerFormat!;
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  });
+  if (formatBtns[0]) formatBtns[0].dataset.active = 'true';
+
+  if (qualityInput && qualityValue) {
+    const fillSlider = (input: HTMLInputElement) => {
+      const min = Number(input.min || 0);
+      const max = Number(input.max || 100);
+      const val = Number(input.value || 0);
+      const pct = ((val - min) / (max - min)) * 100;
+      input.style.setProperty('--fill', `${pct}%`);
+    };
+    fillSlider(qualityInput);
+    qualityInput.addEventListener('input', () => {
+      selectedQuality = Number(qualityInput.value);
+      qualityValue.textContent = selectedQuality + '%';
+      fillSlider(qualityInput);
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  }
+
+  const doClear = () => {
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentFile = null;
+    currentImg = null;
+    currentBlob = null;
+    currentBlobUrl = null;
+    if (widthInput) widthInput.value = '800';
+    if (heightInput) heightInput.value = '800';
+    if (presetsSelect) presetsSelect.value = '';
+    if (previewArea) previewArea.hidden = true;
+    if (downloadSection) downloadSection.hidden = true;
+    if (actionsBar) actionsBar.hidden = true;
+    if (settingsClearBtn) settingsClearBtn.hidden = true;
+    if (origImg) origImg.src = '';
+    if (resultImg) resultImg.src = '';
+    if (origSizeEl) origSizeEl.textContent = '';
+    if (resultSizeEl) resultSizeEl.textContent = '';
+    const uploadZone = document.querySelector<HTMLElement>('[data-tool-upload]');
+    uploadZone?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  clearBtns.forEach((btn) => btn.addEventListener('click', doClear));
+
+  if (replaceBtn) {
+    replaceBtn.addEventListener('click', () => {
+      const input = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
+      input?.click();
+    });
+  }
+
+  if (settingsClearBtn) settingsClearBtn.hidden = true;
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!currentFile || !currentBlobUrl) return;
+      const name = currentFile.name.replace(/\.[^.]+$/, '') + '.' + selectedFormat;
+      const a = document.createElement('a');
+      a.href = currentBlobUrl;
+      a.download = name;
+      a.click();
+    });
+  }
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+    const file = files[0];
+    currentFile = file;
+    const origUrl = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load'));
+      img.src = origUrl;
+    });
+    currentImg = img;
+    aspectRatio = img.naturalWidth / img.naturalHeight;
+    if (widthInput) widthInput.value = String(img.naturalWidth);
+    if (heightInput) heightInput.value = String(img.naturalHeight);
+    if (presetsSelect) presetsSelect.value = '';
+    if (origImg) origImg.src = origUrl;
+    if (origSizeEl) origSizeEl.textContent = `${img.naturalWidth} × ${img.naturalHeight} · ${formatBytes(file.size)}`;
+    if (previewArea) previewArea.hidden = false;
+    if (actionsBar) actionsBar.hidden = false;
+    if (settingsClearBtn) settingsClearBtn.hidden = false;
+    if (resultSizeEl) resultSizeEl.textContent = '—';
+    if (resultLabel) resultLabel.textContent = i18n('resizer.result');
+    if (downloadSection) downloadSection.hidden = true;
+    previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    await updatePreview();
+  };
+
+  window.addEventListener('toolboximage:files', async (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) onFilesReceived(detail.files);
+  });
+
+  (async () => {
+    const { retrieveFiles } = await import('../../lib/file-transfer');
+    const files = await retrieveFiles();
+    if (files.length) onFilesReceived(files);
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile) {
+      import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
+    }
+  });
+</script>
+
+<style>
+  .resizer-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+  .resizer-dimensions { display: flex; flex-direction: column; gap: var(--space-md); }
+  .resizer-dim-row { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+  .resizer-dim-input-wrap { display: flex; align-items: center; gap: var(--space-xs); }
+  .resizer-dim-input { width: 100px; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); font-size: var(--text-body-sm); font-family: var(--font-mono); text-align: center; }
+  .resizer-dim-input:focus { outline: none; border-color: var(--color-link); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-link) 20%, transparent); }
+  .resizer-dim-unit { color: var(--color-mute); min-width: 20px; }
+  .resizer-label { color: var(--color-mute); margin: 0 var(--space-sm) 0 0; display: inline-flex; align-items: center; flex-shrink: 0; min-width: 60px; }
+  .resizer-lock-btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid var(--color-hairline); border-radius: var(--radius-md); background: var(--color-canvas); color: var(--color-body); cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .resizer-lock-btn:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+  .resizer-lock-btn[aria-pressed="true"] { color: var(--color-link); border-color: var(--color-link); }
+  .resizer-select { padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); font-size: var(--text-body-sm); font-family: inherit; cursor: pointer; min-width: 220px; }
+  .resizer-select:focus { outline: none; border-color: var(--color-link); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-link) 20%, transparent); }
+  .resizer-mode-row { display: flex; align-items: center; gap: var(--space-sm); }
+  .resizer-mode-group { display: flex; gap: 2px; padding: 2px; background: var(--color-canvas-soft); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); }
+  .resizer-mode-btn { appearance: none; border: none; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-sm); background: transparent; color: var(--color-body); font-size: var(--text-body-sm); font-family: inherit; cursor: pointer; transition: background 0.15s ease, color 0.15s ease; }
+  .resizer-mode-btn[data-active="true"] { background: var(--color-canvas); color: var(--color-ink); box-shadow: var(--shadow-1); }
+  .resizer-mode-btn:hover:not([data-active="true"]) { color: var(--color-ink); background: color-mix(in srgb, var(--color-ink) 5%, transparent); }
+  .resizer-formats { border: none; margin: 0; padding: 0; }
+  .resizer-format-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xs); }
+  .resizer-format-btn { padding: var(--space-sm) var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-family: var(--font-mono); font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background 0.15s ease, border-color 0.15s ease; }
+  .resizer-format-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .resizer-format-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .resizer-format-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+  .resizer-quality { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .resizer-quality-row { display: flex; align-items: center; gap: var(--space-md); }
+  .resizer-range { flex: 1; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--color-link) var(--fill, 92%), var(--color-hairline) var(--fill, 92%)); outline: none; cursor: pointer; }
+  .resizer-range::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--color-canvas); border: 2px solid var(--color-link); cursor: pointer; box-shadow: var(--shadow-1); }
+  .resizer-range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--color-canvas); border: 2px solid var(--color-link); cursor: pointer; box-shadow: var(--shadow-1); }
+  .resizer-quality-value { min-width: 48px; text-align: right; font-feature-settings: 'tnum'; }
+  .resizer-preview { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; padding: var(--space-lg); }
+  .resizer-preview-cols { display: flex; align-items: center; gap: var(--space-md); }
+  .resizer-preview-fig { margin: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .resizer-preview-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .resizer-preview-frame { position: relative; width: 100%; min-height: 200px; display: flex; align-items: center; justify-content: center; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; border-radius: var(--radius-sm); overflow: hidden; }
+  .resizer-preview-img { max-width: 100%; max-height: 320px; object-fit: contain; display: block; }
+  .resizer-preview-size { margin: 0; color: var(--color-body); }
+  .resizer-preview-arrow { flex-shrink: 0; color: var(--color-mute); }
+  .resizer-actions { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) 0 0; }
+  .resizer-action-link { appearance: none; border: none; background: none; padding: var(--space-xs) var(--space-sm); color: var(--color-link); cursor: pointer; font: inherit; font-size: var(--text-body-sm); display: inline-flex; align-items: center; gap: var(--space-xs); border-radius: var(--radius-sm); transition: background-color 0.15s ease, color 0.15s ease; }
+  .resizer-action-link:hover { background-color: var(--color-canvas-soft); color: var(--color-link-deep); }
+  .resizer-action-link-danger { color: var(--color-error-deep); }
+  .resizer-action-link-danger:hover { background-color: var(--color-error-soft); color: var(--color-error-deep); }
+  .resizer-clear-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-md); cursor: pointer; font: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .resizer-clear-btn:hover { border-color: var(--color-hairline-strong); color: var(--color-error-deep); background-color: var(--color-error-soft); }
+  .resizer-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .resizer-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
+  .resizer-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .resizer-download-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .resizer-download-actions { display: flex; align-items: center; gap: var(--space-sm); }
+  .resizer-download .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .resizer-download .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .resizer-download .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .resizer-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .resizer-download .results-btn-ghost { background: transparent; color: var(--color-body); border-color: var(--color-hairline); }
+  .resizer-download .results-btn-ghost:hover { background: var(--color-canvas-soft); color: var(--color-error-deep); border-color: var(--color-hairline-strong); }
+  @media (max-width: 600px) {
+    .resizer-format-group { grid-template-columns: repeat(3, 1fr); }
+    .resizer-preview-cols { flex-direction: column; }
+    .resizer-preview-arrow { transform: rotate(90deg); }
+    .resizer-dim-row { flex-direction: column; align-items: stretch; }
+    .resizer-select { min-width: auto; width: 100%; }
+  }
+</style>
