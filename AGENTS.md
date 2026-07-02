@@ -16,7 +16,8 @@ Key facts about this project (read before starting new tasks):
 - **Deploy:** Cloudflare Pages via `npm run deploy` (wrangler). Production branch is `main`
 - **Analytics:** Cloudflare Web Analytics (cookieless, no consent banner needed)
 - **SEO:** 43 pages, sitemap auto-generated, good SEO meta + JSON-LD on all pages
-- **Blog posts (existing):** why-client-side, image-compression-basics, designing-the-compressor, introducing-toolboximage, choose-image-format, batch-compression-guide, image-size-limits-social-email, compress-to-exact-file-size, png-vs-webp-vs-avif
+- **Blog posts (17 total):** why-client-side, image-compression-basics, designing-the-compressor, introducing-toolboximage, choose-image-format, batch-compression-guide, image-size-limits-social-email, compress-to-exact-file-size, png-vs-webp-vs-avif, heic-to-jpg-guide, social-media-image-sizes, image-compression-ecommerce, privacy-first-image-tools, optimize-images-wordpress, remove-exif-data-online, webp-vs-avif-comparison, reduce-image-size-without-losing-quality
+- **Blog infrastructure:** Categories (guides/tutorials/technology/privacy/general + "All Posts" filter tabs), multiple tags per post with clickable tag cloud sidebar, featured posts, related posts sidebar, tag-based URL filtering
 - **Pending user actions:** Submit to 5 directories (AlternativeTo, FreeForDev, SaasHub, DevHunt, AwesomeList), post Show HN, set GitHub repo description/topics
 - **Monetization:** /support page with PayPal.Me (arhanahmadkhan) + UPI (8115033956@ptyes). Next steps: affiliate links, Pro tier. No AdSense (breaks privacy brand)
 - **Privacy/FAQ pages:** Updated to honestly disclose Cloudflare Web Analytics

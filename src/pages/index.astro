@@ -203,12 +203,12 @@ const faq = [
 
         <Reveal delay={220}>
           <div class="hero-actions">
-            <Button label="Try the Compressor" href="/compressor/" variant="primary" size="lg">
+            <Button label="Try the Tools" href="/image-tools/" variant="primary" size="lg">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
             </Button>
-            <Button label="See how it works" href="#how-it-works" variant="secondary" size="lg" />
+            <Button label="Try the Compressor" href="/compressor/" variant="secondary" size="lg" />
           </div>
         </Reveal>
 
@@ -224,7 +224,16 @@ const faq = [
           </nav>
         </Reveal>
 
-        <Reveal delay={300} class="hero-drop">
+        <Reveal delay={300}>
+          <div class="hero-search">
+            <svg class="hero-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" class="hero-search-input" data-tool-search placeholder="Search tools…" aria-label="Search tools" />
+          </div>
+        </Reveal>
+
+        <Reveal delay={360} class="hero-drop">
           <DropZone />
         </Reveal>
       </div>
@@ -248,10 +257,6 @@ const faq = [
           {[
             { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any format', icon: 'compress' },
             { href: '/tools/rotator/', label: 'Rotate Image', desc: '90°, 180°, custom', icon: 'rotate' },
-            { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'mozJPEG encoder', icon: 'jpeg' },
-            { href: '/compress-png/', label: 'Compress PNG', desc: 'Lossless + lossy', icon: 'png' },
-            { href: '/compress-webp/', label: 'Compress WebP', desc: 'Google format', icon: 'webp' },
-            { href: '/compress-avif/', label: 'Compress AVIF', desc: 'Next-gen codec', icon: 'avif' },
             { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch 200 files', icon: 'bulk' },
             { href: '/image-compressor-100kb/', label: '100 KB Target', desc: 'Exact file size', icon: 'target' },
             { href: '/image-compressor-for-discord/', label: 'Discord Limit', desc: 'Under 8 MB', icon: 'discord' },
@@ -317,7 +322,7 @@ const faq = [
     </script>
 
     <!-- ============================================================
-         ALL TOOLS
+         TOOLS — TABS + GRID
          ============================================================ -->
     <section class="band band-canvas home-tools">
       <div class="container stack stack-2xl">
@@ -328,65 +333,169 @@ const faq = [
           </div>
         </Reveal>
 
-        <Reveal delay={20}>
-          <div class="home-tools-search">
-            <svg class="home-tools-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input type="search" class="home-tools-search-input" data-tool-search placeholder="Search tools…" aria-label="Search tools" />
-          </div>
+        <!-- Tab bar -->
+        <Reveal delay={10}>
+          <nav class="tools-tabs" role="tablist" aria-label="Tool categories">
+            {['All', 'Optimize', 'Convert', 'Resize', 'Edit'].map((tab, i) => (
+              <button
+                type="button"
+                class:list={['tools-tab', i === 0 && 'tools-tab-active']}
+                role="tab"
+                aria-selected={i === 0}
+                data-tools-tab={tab}
+              >{tab}</button>
+            ))}
+          </nav>
         </Reveal>
 
-        <div class="home-tools-grid" data-tool-grid>
+        <!-- Tool grid -->
+        <div class="tools-grid" data-tool-grid>
           {[
-            { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any format', status: 'Live' },
-            { href: '/compress-jpeg/', label: 'Compress JPEG', desc: 'mozJPEG encoder', status: 'Live' },
-            { href: '/compress-png/', label: 'Compress PNG', desc: 'Lossless + lossy', status: 'Live' },
-            { href: '/compress-webp/', label: 'Compress WebP', desc: 'Google format', status: 'Live' },
-            { href: '/compress-avif/', label: 'Compress AVIF', desc: 'Next-gen codec', status: 'Live' },
-            { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch 200 files', status: 'Live' },
-            { href: '/image-compressor-100kb/', label: '100 KB Target', desc: 'Exact file size', status: 'Live' },
-            { href: '/image-compressor-for-discord/', label: 'Discord Limit', desc: 'Under 8 MB', status: 'Live' },
-            { href: '/compress-for-email/', label: 'Email Attachments', desc: 'Under 25 MB', status: 'Live' },
-            { href: '/tools/rotator/', label: 'Rotate Image', desc: '90°, 180°, custom', status: 'Live' },
-            { href: '/tools/resizer/', label: 'Resize Image', desc: 'Exact dimensions', status: 'Soon' },
-            { href: '/tools/converter/', label: 'Convert Format', desc: 'Any to any', status: 'Soon' },
-          ].map((tool, i) => (
-            <Reveal delay={i * 30}>
-              <a
-                href={tool.href}
-                class:list={['home-tool-card', tool.status !== 'Live' && 'home-tool-card-coming']}
-              >
-                <div class="home-tool-status">
-                  <span class:list={['status-dot', tool.status === 'Live' ? 'status-live' : 'status-soon']} />
-                  <span class="text-caption-mono">{tool.status === 'Live' ? 'Free' : 'Soon'}</span>
-                </div>
-                <p class="text-body-md home-tool-label">{tool.label}</p>
-                <p class="text-caption home-tool-desc">{tool.desc}</p>
-              </a>
-            </Reveal>
+            { href: '/compressor/', label: 'Image Compressor', desc: 'Batch image compressor with adjustable quality. 100% secure & offline.', cat: 'Optimize', status: 'Live' },
+            { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch process up to 200 images in parallel.', cat: 'Optimize', status: 'Live' },
+            { href: '/image-compressor-100kb/', label: 'Compress to 100 KB', desc: 'Compress images to exactly 100 KB or less.', cat: 'Optimize', status: 'Live' },
+            { href: '/image-compressor-for-discord/', label: 'Discord Image Limit', desc: 'Compress images to stay under Discord\'s 8 MB limit.', cat: 'Optimize', status: 'Live' },
+            { href: '/compress-for-email/', label: 'Email Image Size', desc: 'Shrink images for email attachments (under 25 MB).', cat: 'Optimize', status: 'Live' },
+            { href: '/tools/rotator/', label: 'Rotate Image', desc: 'Rotate and flip images with precision controls.', cat: 'Edit', status: 'Live' },
+            { href: '/tools/converter/', label: 'Format Converter', desc: 'Convert images between JPEG, PNG, WebP, AVIF & more.', cat: 'Convert', status: 'Soon' },
+            { href: '/tools/resizer/', label: 'Image Resizer', desc: 'Resize images to exact dimensions or aspect ratios.', cat: 'Resize', status: 'Soon' },
+            { href: '/tools/cropper/', label: 'Image Cropper', desc: 'Crop images with preset ratios or freeform selection.', cat: 'Resize', status: 'Soon' },
+            { href: '/tools/flipper/', label: 'Image Flipper', desc: 'Flip images horizontally, vertically, or both.', cat: 'Edit', status: 'Soon' },
+            { href: '/tools/heic-converter/', label: 'HEIC to JPEG', desc: 'Convert Apple HEIC/HEIF photos to JPEG or PNG.', cat: 'Convert', status: 'Soon' },
+            { href: '/tools/background-remover/', label: 'Background Remover', desc: 'Remove image backgrounds automatically.', cat: 'Edit', status: 'Planned' },
+            { href: '/tools/blur/', label: 'Blur Image', desc: 'Blur faces, license plates, or custom regions.', cat: 'Edit', status: 'Planned' },
+          ].map((tool) => (
+            <a
+              href={tool.href}
+              class:list={['tool-card', tool.status !== 'Live' && 'tool-card-dim']}
+              data-tool-cat={tool.cat}
+              data-tool-status={tool.status}
+            >
+              <span class="tool-card-badge">{tool.cat.toUpperCase()}</span>
+              <p class="text-body-sm-strong tool-card-label">{tool.label}</p>
+              <p class="text-caption tool-card-desc">{tool.desc}</p>
+              <span class="tool-card-status">
+                {tool.status === 'Live' ? 'Free' : tool.status === 'Soon' ? 'Coming soon' : 'Planned'}
+              </span>
+            </a>
           ))}
+        </div>
+
+        <!-- Pagination -->
+        <div class="tools-pagination" data-tools-pagination>
+          <span class="tools-pagination-count text-caption" data-tools-count></span>
+          <nav class="tools-pagination-nav" aria-label="Tool pages">
+            <button type="button" class="tools-page-btn" data-page-prev disabled>Previous</button>
+            <div class="tools-page-numbers" data-page-numbers></div>
+            <button type="button" class="tools-page-btn" data-page-next disabled>Next</button>
+          </nav>
         </div>
       </div>
     </section>
 
     <script>
+      const PER_PAGE = 9;
       const searchInput = document.querySelector<HTMLInputElement>('[data-tool-search]');
       const toolGrid = document.querySelector<HTMLElement>('[data-tool-grid]');
+      const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tools-tab]');
+      const countEl = document.querySelector<HTMLElement>('[data-tools-count]');
+      const prevBtn = document.querySelector<HTMLButtonElement>('[data-page-prev]');
+      const nextBtn = document.querySelector<HTMLButtonElement>('[data-page-next]');
+      const pageNumbersEl = document.querySelector<HTMLElement>('[data-page-numbers]');
 
-      if (searchInput && toolGrid) {
-        const cards = toolGrid.querySelectorAll<HTMLAnchorElement>('.home-tool-card');
+      let activeTab = 'All';
+      let currentPage = 1;
+      let filteredCards: HTMLAnchorElement[] = [];
 
-        searchInput.addEventListener('input', () => {
-          const q = searchInput.value.toLowerCase().trim();
-          cards.forEach((card) => {
-            const label = card.querySelector('.home-tool-label')?.textContent?.toLowerCase() ?? '';
-            const desc = card.querySelector('.home-tool-desc')?.textContent?.toLowerCase() ?? '';
-            const match = !q || label.includes(q) || desc.includes(q);
-            card.style.display = match ? '' : 'none';
-          });
+      const getFiltered = (): HTMLAnchorElement[] => {
+        if (!toolGrid) return [];
+        const cards = Array.from(toolGrid.querySelectorAll<HTMLAnchorElement>('.tool-card'));
+        const q = searchInput?.value.toLowerCase().trim() || '';
+
+        return cards.filter((card) => {
+          const cat = card.dataset.toolCat || '';
+          const label = card.querySelector('.tool-card-label')?.textContent?.toLowerCase() || '';
+          const matchCat = activeTab === 'All' || cat === activeTab;
+          const words = q ? label.split(' ') : [];
+          const matchSearch = !q || label.startsWith(q) || words.some((w) => w.startsWith(q));
+          return matchCat && matchSearch;
         });
+      };
+
+      const renderPage = () => {
+        const total = filteredCards.length;
+        const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const start = (currentPage - 1) * PER_PAGE;
+        const end = Math.min(start + PER_PAGE, total);
+
+        // Show/hide cards
+        toolGrid?.querySelectorAll<HTMLAnchorElement>('.tool-card').forEach((card, i) => {
+          const inPage = i >= start && i < end;
+          const isFiltered = filteredCards.includes(card);
+          card.style.display = isFiltered && inPage ? '' : 'none';
+        });
+
+        // Count text
+        if (countEl) {
+          if (total === 0) {
+            countEl.textContent = 'No tools found';
+          } else {
+            countEl.textContent = `Showing ${start + 1}–${end} of ${total} tools`;
+          }
+        }
+
+        // Prev/Next
+        if (prevBtn) prevBtn.disabled = currentPage <= 1;
+        if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+
+        // Page numbers
+        if (pageNumbersEl) {
+          pageNumbersEl.innerHTML = '';
+          for (let p = 1; p <= totalPages; p++) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = `tools-page-num${p === currentPage ? ' tools-page-num-active' : ''}`;
+            btn.textContent = String(p);
+            btn.addEventListener('click', () => { currentPage = p; renderPage(); });
+            pageNumbersEl.appendChild(btn);
+          }
+        }
+      };
+
+      const updateTools = () => {
+        currentPage = 1;
+        filteredCards = getFiltered();
+        renderPage();
+      };
+
+      // Tab clicks
+      tabs.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabs.forEach((b) => {
+            b.classList.remove('tools-tab-active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('tools-tab-active');
+          btn.setAttribute('aria-selected', 'true');
+          activeTab = btn.dataset.toolsTab || 'All';
+          updateTools();
+        });
+      });
+
+      // Search
+      if (searchInput) {
+        searchInput.addEventListener('input', updateTools);
       }
+
+      // Prev/Next
+      prevBtn?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderPage(); } });
+      nextBtn?.addEventListener('click', () => { if (currentPage < Math.ceil(filteredCards.length / PER_PAGE)) { currentPage++; renderPage(); } });
+
+      // Initial
+      updateTools();
     </script>
 
     <!-- ============================================================
@@ -678,7 +787,48 @@ const faq = [
 
 <style>
   /* ----------------------------------------------------------
-     HOME TOOLS
+     HERO SEARCH
+     ---------------------------------------------------------- */
+  .hero-search {
+    position: relative;
+    max-width: 400px;
+    margin: var(--space-lg) auto 0;
+  }
+
+  .hero-search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-mute);
+    pointer-events: none;
+  }
+
+  .hero-search-input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    -webkit-appearance: none;
+  }
+
+  .hero-search-input:focus {
+    border-color: var(--color-link);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 15%, transparent), var(--shadow-2);
+  }
+
+  .hero-search-input::placeholder {
+    color: var(--color-mute);
+  }
+
+  /* ----------------------------------------------------------
+     TOOLS TABS + GRID
      ---------------------------------------------------------- */
   .home-tools {
     padding: var(--space-4xl) 0 var(--space-5xl);
@@ -701,119 +851,175 @@ const faq = [
     text-decoration: underline;
   }
 
-  .home-tools-search {
-    position: relative;
-    max-width: 320px;
-  }
-
-  .home-tools-search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-mute);
-    pointer-events: none;
-  }
-
-  .home-tools-search-input {
-    width: 100%;
-    padding: 10px 12px 10px 36px;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--color-hairline);
+  .tools-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
     background: var(--color-canvas-soft);
-    color: var(--color-ink);
-    font-size: var(--text-body-sm);
+    border-radius: var(--radius-pill);
+    width: fit-content;
+  }
+
+  .tools-tab {
+    appearance: none;
+    border: none;
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-body);
     font-family: inherit;
-    outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    -webkit-appearance: none;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
   }
 
-  .home-tools-search-input:focus {
-    border-color: var(--color-link);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-link) 15%, transparent);
-    background: var(--color-canvas);
+  .tools-tab:hover {
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
   }
 
-  .home-tools-search-input::placeholder {
-    color: var(--color-mute);
+  .tools-tab-active {
+    background: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+    box-shadow: var(--shadow-1);
   }
 
-  .home-tools-grid {
+  .tools-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--space-sm);
   }
 
-  .home-tool-card {
+  .tool-card {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: var(--space-md);
+    gap: 6px;
+    padding: var(--space-md) var(--space-lg);
     border-radius: var(--radius-md);
     border: 1px solid var(--color-hairline);
-    background-color: var(--color-canvas);
+    background: var(--color-canvas);
     text-decoration: none;
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
 
-  .home-tool-card:hover {
+  .tool-card:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow-1);
     border-color: var(--color-hairline-strong);
   }
 
-  .home-tool-card-coming {
-    opacity: 0.6;
+  .tool-card-dim {
+    opacity: 0.55;
   }
 
-  .home-tool-card-coming:hover {
+  .tool-card-dim:hover {
     opacity: 1;
   }
 
-  .home-tool-status {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 2px;
-  }
-
-  .home-tool-status .text-caption-mono {
+  .tool-card-badge {
     font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
     color: var(--color-mute);
+    text-transform: uppercase;
   }
 
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 999px;
-  }
-
-  .status-live {
-    background-color: var(--color-cyan-deep);
-  }
-
-  .status-soon {
-    background-color: var(--color-hairline-strong);
-  }
-
-  .home-tool-label {
+  .tool-card-label {
     margin: 0;
-    font-weight: var(--weight-medium);
     color: var(--color-ink);
   }
 
-  .home-tool-desc {
+  .tool-card-desc {
     margin: 0;
     color: var(--color-body);
+    line-height: 1.4;
   }
 
-  @media (max-width: 1023px) {
-    .home-tools-grid { grid-template-columns: repeat(3, 1fr); }
+  .tool-card-status {
+    font-size: 11px;
+    color: var(--color-mute);
+    margin-top: 2px;
   }
 
-  @media (max-width: 600px) {
-    .home-tools-grid { grid-template-columns: repeat(2, 1fr); }
+  .tools-pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .tools-pagination-count {
+    color: var(--color-mute);
+  }
+
+  .tools-pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .tools-page-btn {
+    appearance: none;
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tools-page-btn:hover:not(:disabled) {
+    background: var(--color-canvas-soft);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .tools-page-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .tools-page-numbers {
+    display: flex;
+    gap: 4px;
+  }
+
+  .tools-page-num {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-body);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tools-page-num:hover {
+    background: var(--color-canvas-soft);
+    color: var(--color-ink);
+  }
+
+  .tools-page-num-active {
+    background: var(--color-primary) !important;
+    color: var(--color-on-primary) !important;
+    border-color: var(--color-primary);
+  }
+
+  @media (max-width: 900px) {
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 500px) {
+    .tools-grid { grid-template-columns: 1fr; }
+    .tools-tabs { flex-wrap: wrap; width: 100%; justify-content: center; }
   }
 
   /* ----------------------------------------------------------
@@ -954,11 +1160,10 @@ const faq = [
      ---------------------------------------------------------- */
   .hero {
     position: relative;
-    padding: calc(var(--space-6xl) + var(--space-3xl)) 0 var(--space-6xl);
+    padding: var(--space-5xl) 0 var(--space-3xl);
     background-color: var(--color-canvas);
     overflow: hidden;
     isolation: isolate;
-    min-height: 88vh;
   }
 
   .hero-inner {
@@ -968,11 +1173,11 @@ const faq = [
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: var(--space-lg);
+    gap: var(--space-sm);
   }
 
   .hero-badge {
-    margin-bottom: var(--space-xs);
+    margin-bottom: 0;
   }
 
   .hero-title {
@@ -994,11 +1199,11 @@ const faq = [
     gap: var(--space-sm);
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: var(--space-xs);
+    margin-top: 0;
   }
 
   .hero-drop {
-    margin-top: var(--space-xl);
+    margin-top: var(--space-sm);
     width: 100%;
   }
 
@@ -1433,8 +1638,7 @@ const faq = [
 
   @media (max-width: 600px) {
     .hero {
-      padding: var(--space-4xl) 0 var(--space-3xl);
-      min-height: auto;
+      padding: var(--space-3xl) 0 var(--space-2xl);
     }
 
     .hero-title {

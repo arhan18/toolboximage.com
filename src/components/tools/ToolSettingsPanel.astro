@@ -9,7 +9,7 @@ const { tool } = Astro.props;
 const hasSettings = tool.steps?.includes('configure') ?? true;
 ---
 
-<section class="tool-settings" aria-label="Settings" data-tool-settings hidden={!hasSettings}>
+<section class="tool-settings" aria-label="Settings" data-tool-settings data-tool-id={tool.id} hidden={!hasSettings}>
   <header class="tool-settings-header">
     <h2 class="text-display-sm tool-settings-title">Settings</h2>
     <slot name="settings-actions" />

@@ -66,55 +66,100 @@ if (!tool) {
         </div>
       </article>
     ) : (
-      // Live tools render the shared workflow shell
+      // Live tools
       <article class="workflow stack stack-lg">
         <ToolUpload {tool} />
-        <ToolSettingsPanel {tool}>
-          <div slot="settings-controls">
-            {tool.id === 'rotator' && (
-              <div class="rotator-controls">
-                <fieldset class="rotator-presets">
-                  <legend class="text-caption-mono rotator-label">Rotate</legend>
-                  <div class="rotator-grid">
-                    {[
-                      { deg: 90, label: '90° CW', icon: 'cw' },
-                      { deg: 180, label: '180°', icon: '180' },
-                      { deg: 270, label: '90° CCW', icon: 'ccw' },
-                      { deg: -90, label: 'Flip H', icon: 'flip-h' },
-                      { deg: -180, label: 'Flip V', icon: 'flip-v' },
-                    ].map((btn) => (
-                      <button
-                        type="button"
-                        class="rotator-btn"
-                        data-rotator-preset={btn.deg}
-                        aria-label={btn.label}
-                      >
-                        {btn.icon === 'cw' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>}
-                        {btn.icon === '180' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 14 12 21 19 14"/></svg>}
-                        {btn.icon === 'ccw' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.12-9.36L1 10"/></svg>}
-                        {btn.icon === 'flip-h' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M12 3v18"/><path d="M3 12h18"/></svg>}
-                        {btn.icon === 'flip-v' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 12h18"/></svg>}
-                        <span class="rotator-btn-label">{btn.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-                <label class="rotator-custom">
-                  <span class="text-caption-mono rotator-label">Custom angle</span>
-                  <input type="number" class="rotator-input" data-rotator-custom min="-360" max="360" value="0" step="1" />
-                  <span class="text-caption rotator-unit">degrees</span>
-                </label>
+
+        {tool.id === 'rotator' ? (
+          <>
+            <!-- Side-by-side preview -->
+            <section class="rotator-preview-area" data-rotator-preview hidden>
+              <figure class="rotator-preview-fig">
+                <figcaption class="text-caption-mono rotator-preview-label">Original</figcaption>
+                <div class="rotator-preview-frame">
+                  <img data-rotator-original-img alt="" class="rotator-preview-img" />
+                </div>
+                <p class="text-caption rotator-preview-size" data-rotator-original-size></p>
+              </figure>
+              <div class="rotator-preview-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
               </div>
-            )}
-          </div>
-        </ToolSettingsPanel>
-        <ToolProgress toolId={tool.id} />
-        <ToolResultsSummary {tool}>
-          <div slot="results-content" data-tool-results-content>
-            <p class="text-body-sm" style="color:var(--color-body);">Processing output will appear here.</p>
-          </div>
-        </ToolResultsSummary>
-        <ToolFooter {tool} />
+              <figure class="rotator-preview-fig">
+                <figcaption class="text-caption-mono rotator-preview-label" data-rotator-result-label>Preview</figcaption>
+                <div class="rotator-preview-frame">
+                  <img data-rotator-result-img alt="" class="rotator-preview-img" />
+                </div>
+                <p class="text-caption rotator-preview-size" data-rotator-result-size></p>
+              </figure>
+            </section>
+
+            <ToolSettingsPanel {tool}>
+              <div slot="settings-controls">
+                <div class="rotator-controls">
+                  <fieldset class="rotator-presets">
+                    <legend class="text-caption-mono rotator-label">Rotate</legend>
+                    <div class="rotator-grid">
+                      {[
+                        { deg: 90, label: '90° CW', icon: 'cw' },
+                        { deg: 180, label: '180°', icon: '180' },
+                        { deg: 270, label: '90° CCW', icon: 'ccw' },
+                        { deg: -90, label: 'Flip H', icon: 'flip-h' },
+                        { deg: -180, label: 'Flip V', icon: 'flip-v' },
+                      ].map((btn) => (
+                        <button
+                          type="button"
+                          class="rotator-btn"
+                          data-rotator-preset={btn.deg}
+                          aria-label={btn.label}
+                        >
+                          {btn.icon === 'cw' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>}
+                          {btn.icon === '180' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 14 12 21 19 14"/></svg>}
+                          {btn.icon === 'ccw' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.12-9.36L1 10"/></svg>}
+                          {btn.icon === 'flip-h' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M12 3v18"/><path d="M3 12h18"/></svg>}
+                          {btn.icon === 'flip-v' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 12h18"/></svg>}
+                          <span class="rotator-btn-label">{btn.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+                  <label class="rotator-custom">
+                    <span class="text-caption-mono rotator-label">Custom angle</span>
+                    <input type="number" class="rotator-input" data-rotator-custom min="-360" max="360" value="0" step="1" />
+                    <span class="text-caption rotator-unit">degrees</span>
+                  </label>
+                </div>
+              </div>
+            </ToolSettingsPanel>
+
+            <section class="rotator-download" data-rotator-download hidden>
+              <div class="rotator-download-bar">
+                <div class="rotator-download-info" data-rotator-download-info>
+                  <p class="text-caption-mono rotator-download-label">Result</p>
+                  <p class="text-body-sm-strong" data-rotator-download-name></p>
+                </div>
+                <button type="button" class="results-btn results-btn-primary" data-rotator-download-btn>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download
+                </button>
+              </div>
+            </section>
+          </>
+        ) : (
+          <>
+            <ToolSettingsPanel {tool}>
+              <div slot="settings-controls">
+                <p class="text-body-sm" style="color:var(--color-body);">Configure this tool once it is available.</p>
+              </div>
+            </ToolSettingsPanel>
+            <ToolProgress toolId={tool.id} />
+            <ToolResultsSummary {tool}>
+              <div slot="results-content" data-tool-results-content>
+                <p class="text-body-sm" style="color:var(--color-body);">Processing output will appear here.</p>
+              </div>
+            </ToolResultsSummary>
+            <ToolFooter {tool} />
+          </>
+        )}
       </article>
     )}
   </main>
@@ -288,9 +333,143 @@ if (!tool) {
     color: var(--color-mute);
   }
 
+  /* ── Rotator live preview ──────────────────────────────────── */
+  .rotator-preview-area {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+  }
+
+  .rotator-preview-fig {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .rotator-preview-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .rotator-preview-frame {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .rotator-preview-img {
+    max-width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .rotator-preview-size {
+    margin: 0;
+    color: var(--color-body);
+  }
+
+  .rotator-preview-arrow {
+    flex-shrink: 0;
+    color: var(--color-mute);
+  }
+
+  /* ── Rotator download ──────────────────────────────────────── */
+  .rotator-download {
+    background: var(--color-canvas);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    overflow: hidden;
+  }
+
+  .rotator-download-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+  }
+
+  .rotator-download-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .rotator-download-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .rotator-download-info .text-body-sm-strong {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .rotator-download .results-btn {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    height: 40px;
+    padding: 0 var(--space-md);
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    transition: background-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart), transform var(--dur-fast) var(--ease-out-quart), box-shadow var(--dur-fast) var(--ease-out-quart);
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .rotator-download .results-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+  }
+
+  .rotator-download .results-btn:active:not(:disabled) {
+    transform: scale(0.985);
+  }
+
+  .rotator-download .results-btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .rotator-download .results-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28);
+  }
+
   @media (max-width: 600px) {
     .rotator-grid {
       grid-template-columns: repeat(3, 1fr);
+    }
+    .rotator-preview-area {
+      flex-direction: column;
+    }
+    .rotator-preview-arrow {
+      transform: rotate(90deg);
     }
   }
 </style>
@@ -302,153 +481,26 @@ if (!tool) {
   if (el && el.dataset.toolId === 'rotator') {
     const presetBtns = document.querySelectorAll<HTMLButtonElement>('[data-rotator-preset]');
     const customInput = document.querySelector<HTMLInputElement>('[data-rotator-custom]');
-    const toolFooter = document.querySelector<HTMLElement>('[data-tool-footer]');
-    const resultsContent = document.querySelector<HTMLElement>('[data-tool-results-content]');
-    const progressEl = document.querySelector<HTMLElement>('[data-tool-progress]');
+    const previewArea = document.querySelector<HTMLElement>('[data-rotator-preview]');
+    const origImg = document.querySelector<HTMLImageElement>('[data-rotator-original-img]');
+    const origSize = document.querySelector<HTMLElement>('[data-rotator-original-size]');
+    const resultImg = document.querySelector<HTMLImageElement>('[data-rotator-result-img]');
+    const resultSize = document.querySelector<HTMLElement>('[data-rotator-result-size]');
+    const resultLabel = document.querySelector<HTMLElement>('[data-rotator-result-label]');
+    const downloadSection = document.querySelector<HTMLElement>('[data-rotator-download]');
+    const downloadBtn = document.querySelector<HTMLButtonElement>('[data-rotator-download-btn]');
 
-    type RotateJob = {
-      id: string;
-      file: File;
-      angle: number;
-      status: 'queued' | 'processing' | 'done' | 'error';
-      result?: { blob: Blob; width: number; height: number };
-      error?: string;
-    };
+    const downloadNameEl = document.querySelector<HTMLElement>('[data-rotator-download-name]');
+    let currentFile: File | null = null;
+    let originalImg: HTMLImageElement | null = null;
+    let currentImg: HTMLImageElement | null = null;
+    let currentBlobUrl: string | null = null;
+    let transformCount = 0;
 
-    let jobs: RotateJob[] = [];
-    let currentAngle = 0;
-    let activeCount = 0;
-
-    const selectPreset = (btn: HTMLButtonElement, deg: number) => {
-      presetBtns.forEach((b) => b.dataset.active = String(b === btn));
-      currentAngle = deg;
-      if (customInput) customInput.value = '0';
-    };
-
-    presetBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const deg = Number(btn.dataset.rotatorPreset);
-        selectPreset(btn, deg);
-      });
-    });
-
-    if (customInput) {
-      customInput.addEventListener('input', () => {
-        presetBtns.forEach((b) => b.dataset.active = 'false');
-        currentAngle = Number(customInput.value) || 0;
-      });
-    }
-
-    // Listen for files uploaded via ToolUpload
-    const processQueue = async (files: File[]) => {
-      if (!files.length) return;
-      const angle = currentAngle;
-      if (!angle) return;
-
-      const tool = getTool('rotator');
-      if (!tool) return;
-
-      // Show progress
-      if (progressEl) progressEl.hidden = false;
-
-      const results: { original: File; blob: Blob; width: number; height: number }[] = [];
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (progressEl) {
-          const verb = angle === -90 || angle === -180 ? 'Flipping' : 'Rotating';
-          progressEl.textContent = `${verb} ${i + 1} of ${files.length}...`;
-        }
-
-        try {
-          const img = await loadImage(file);
-          const { blob, width, height } = processImage(img, angle);
-          results.push({ original: file, blob, width, height });
-        } catch (e) {
-          console.error('Rotate failed:', file.name, e);
-        }
-      }
-
-      // Show results
-      if (resultsContent) {
-        resultsContent.innerHTML = results.map((r) => {
-          const origSize = formatBytes(r.original.size);
-          const newSize = formatBytes(r.blob.size);
-          const ext = r.original.name.split('.').pop() || 'jpg';
-              const suffix = angle === -90 ? 'flipped-h' : angle === -180 ? 'flipped-v' : 'rotated';
-              const name = r.original.name.replace(/\.[^.]+$/, '') + '_' + suffix + '.' + ext;
-          const url = URL.createObjectURL(r.blob);
-          return `
-            <div class="tool-result-item" style="display:flex;align-items:center;gap:var(--space-md);padding:var(--space-md);border:1px solid var(--color-hairline);border-radius:var(--radius-md);">
-              <img src="${url}" alt="" style="width:64px;height:64px;object-fit:cover;border-radius:var(--radius-sm);flex-shrink:0;" />
-              <div style="flex:1;min-width:0;">
-                <p class="text-body-sm" style="margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</p>
-                <p class="text-caption" style="margin:var(--space-xs) 0 0;color:var(--color-body);">${r.width} × ${r.height} · ${newSize}</p>
-              </div>
-              <a href="${url}" download="${name}" class="btn btn-secondary btn-sm" style="flex-shrink:0;">Download</a>
-            </div>
-          `;
-        }).join('');
-      }
-
-      if (toolFooter) {
-        toolFooter.hidden = false;
-        const dlAll = toolFooter.querySelector<HTMLButtonElement>('[data-action="download-all"]');
-        if (dlAll) {
-          dlAll.onclick = async () => {
-            const zip = await Promise.all(results.map(async (r) => {
-              const ext = r.original.name.split('.').pop() || 'jpg';
-          const suffix = angle === -90 ? 'flipped-h' : angle === -180 ? 'flipped-v' : 'rotated';
-          const name = r.original.name.replace(/\.[^.]+$/, '') + '_' + suffix + '.' + ext;
-              return { name, blob: r.blob };
-            }));
-            downloadAll(zip);
-          };
-        }
-      }
-
-      if (progressEl) progressEl.hidden = true;
-    };
-
-    const loadImage = (file: File): Promise<HTMLImageElement> =>
-      new Promise((resolve, reject) => {
-        const img = new Image();
-        const url = URL.createObjectURL(file);
-        img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to load')); };
-        img.src = url;
-      });
-
-    const processImage = (img: HTMLImageElement, transform: number): { blob: Blob; width: number; height: number } => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d')!;
-      const w = img.width;
-      const h = img.height;
-
-      if (transform === -90) {
-        canvas.width = w;
-        canvas.height = h;
-        ctx.translate(w, 0);
-        ctx.scale(-1, 1);
-        ctx.drawImage(img, 0, 0);
-      } else if (transform === -180) {
-        canvas.width = w;
-        canvas.height = h;
-        ctx.translate(0, h);
-        ctx.scale(1, -1);
-        ctx.drawImage(img, 0, 0);
-      } else {
-        const rad = (transform * Math.PI) / 180;
-        const sin = Math.abs(Math.sin(rad));
-        const cos = Math.abs(Math.cos(rad));
-        canvas.width = Math.round(w * cos + h * sin);
-        canvas.height = Math.round(w * sin + h * cos);
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate(rad);
-        ctx.drawImage(img, -w / 2, -h / 2);
-      }
-
-      return { blob: dataUrlToBlob(canvas.toDataURL('image/png')), width: canvas.width, height: canvas.height };
+    const formatBytes = (bytes: number): string => {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     };
 
     const dataUrlToBlob = (dataUrl: string): Blob => {
@@ -460,29 +512,157 @@ if (!tool) {
       return new Blob([arr], { type: mime });
     };
 
-    const formatBytes = (bytes: number): string => {
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    const transformOne = (img: HTMLImageElement, transform: number): { blob: Blob; width: number; height: number } => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d')!;
+      const w = img.width;
+      const h = img.height;
+
+      if (transform === -90) {
+        canvas.width = w; canvas.height = h;
+        ctx.translate(w, 0); ctx.scale(-1, 1);
+        ctx.drawImage(img, 0, 0);
+      } else if (transform === -180) {
+        canvas.width = w; canvas.height = h;
+        ctx.translate(0, h); ctx.scale(1, -1);
+        ctx.drawImage(img, 0, 0);
+      } else if (transform === 0) {
+        canvas.width = w; canvas.height = h;
+        ctx.drawImage(img, 0, 0);
+      } else {
+        const rad = (transform * Math.PI) / 180;
+        const sin = Math.abs(Math.sin(rad));
+        const cos = Math.abs(Math.cos(rad));
+        canvas.width = Math.round(w * cos + h * sin);
+        canvas.height = Math.round(w * sin + h * cos);
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate(rad);
+        ctx.drawImage(img, -w / 2, -h / 2);
+      }
+      return { blob: dataUrlToBlob(canvas.toDataURL('image/png')), width: canvas.width, height: canvas.height };
     };
 
-    const downloadAll = async (files: { name: string; blob: Blob }[]) => {
-      const { downloadFiles } = await import('../../lib/download');
-      await downloadFiles(files, 'rotated-images.zip');
+    const loadBlob = (blob: Blob): Promise<HTMLImageElement> =>
+      new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = URL.createObjectURL(blob);
+      });
+
+    const applyAndShow = async (transform: number) => {
+      if (!currentImg) return;
+
+      // Apply transform to currentImg (which is the latest state)
+      const result = transformOne(currentImg, transform);
+
+      // Revoke old blob URL
+      if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+
+      // Create new blob URL for preview + future transforms
+      currentBlobUrl = URL.createObjectURL(result.blob);
+
+      // Update preview
+      if (resultImg) resultImg.src = currentBlobUrl;
+      if (resultSize) resultSize.textContent = `${result.width} × ${result.height} · ${formatBytes(result.blob.size)}`;
+      if (downloadSection) downloadSection.hidden = false;
+
+      // Load result into currentImg for the next transform
+      const nextImg = await loadBlob(result.blob);
+      nextImg.width = result.width;
+      nextImg.height = result.height;
+      currentImg = nextImg;
+      transformCount++;
+
+      // Update label
+      if (resultLabel) {
+        const name = transform === -90 ? 'Flip H' : transform === -180 ? 'Flip V' : `Rotate ${transform}°`;
+        resultLabel.textContent = `Step ${transformCount}: ${name}`;
+      }
+
+      // Update download info
+      if (downloadNameEl && currentFile) {
+        const ext = currentFile.name.split('.').pop() || 'jpg';
+        downloadNameEl.textContent = currentFile.name.replace(/\.[^.]+$/, '') + '_edited.' + ext;
+      }
     };
 
-    // Listen for file selection event
+    // Preset clicks — apply transform to current state
+    presetBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const deg = Number(btn.dataset.rotatorPreset);
+        presetBtns.forEach((b) => b.dataset.active = String(b === btn));
+        if (customInput) customInput.value = '0';
+        applyAndShow(deg);
+      });
+    });
+
+    if (customInput) {
+      customInput.addEventListener('input', () => {
+        presetBtns.forEach((b) => b.dataset.active = 'false');
+        const deg = Number(customInput.value) || 0;
+        applyAndShow(deg);
+      });
+    }
+
+    // Download — saves current preview
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', () => {
+        if (!currentFile || !currentBlobUrl) return;
+        const ext = currentFile.name.split('.').pop() || 'jpg';
+        const name = currentFile.name.replace(/\.[^.]+$/, '') + '_edited.' + ext;
+        const a = document.createElement('a');
+        a.href = currentBlobUrl;
+        a.download = name;
+        a.click();
+      });
+    }
+
+    // Called when files arrive
+    const onFilesReceived = async (files: File[]) => {
+      if (!files.length) return;
+      const file = files[0];
+      currentFile = file;
+      transformCount = 0;
+
+      const origUrl = URL.createObjectURL(file);
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load'));
+        img.src = origUrl;
+      });
+
+      originalImg = img;
+      currentImg = img;
+
+      // Show original
+      if (origImg) origImg.src = origUrl;
+      if (origSize) origSize.textContent = `${img.width} × ${img.height} · ${formatBytes(file.size)}`;
+
+      if (previewArea) previewArea.hidden = false;
+
+      // Show preview = original
+      if (resultImg) resultImg.src = origUrl;
+      if (resultSize) resultSize.textContent = `${img.width} × ${img.height} · ${formatBytes(file.size)}`;
+      if (resultLabel) resultLabel.textContent = 'Original';
+      if (downloadSection) downloadSection.hidden = true;
+    };
+
+    // Listen for file selection
     window.addEventListener('toolboximage:files', async (e: Event) => {
       const detail = (e as CustomEvent).detail;
       if (detail?.files?.length) {
-        await processQueue(detail.files);
+        onFilesReceived(detail.files);
       }
     });
 
-    // Set default active preset
-    const firstBtn = presetBtns[0];
-    if (firstBtn) {
-      selectPreset(firstBtn, Number(firstBtn.dataset.rotatorPreset));
-    }
+    // Retrieve files from IndexedDB (homepage picker)
+    (async () => {
+      const { retrieveFiles } = await import('../../lib/file-transfer');
+      const files = await retrieveFiles();
+      if (files.length) {
+        onFilesReceived(files);
+      }
+    })();
   }
 </script>

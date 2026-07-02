@@ -1,16 +1,13 @@
-/**
- * Blog registry — single source of truth for posts.
- * Renders to /blog/index.astro and /blog/[slug].astro.
- */
-
 export interface BlogPost {
   slug: string;
   title: string;
   description: string;
-  date: string; // ISO 8601
+  date: string;
   author: string;
-  tag: 'engineering' | 'design' | 'announcement';
+  category: 'guides' | 'tutorials' | 'technology' | 'privacy' | 'general';
+  tags: string[];
   readMinutes: number;
+  featured?: boolean;
 }
 
 export const posts: BlogPost[] = [
@@ -21,8 +18,10 @@ export const posts: BlogPost[] = [
       'A walkthrough of the architecture behind a privacy-first image toolkit — and why the browser turned out to be the right place for it.',
     date: '2026-06-22',
     author: 'ToolBox Image team',
-    tag: 'engineering',
+    category: 'technology',
+    tags: ['privacy', 'architecture', 'webassembly', 'client-side'],
     readMinutes: 6,
+    featured: true,
   },
   {
     slug: 'image-compression-basics',
@@ -31,7 +30,8 @@ export const posts: BlogPost[] = [
       'JPEG, WebP, AVIF — what they do, what they trade off, and how to pick the right encoder for the job.',
     date: '2026-06-15',
     author: 'ToolBox Image team',
-    tag: 'engineering',
+    category: 'guides',
+    tags: ['compression', 'jpeg', 'webp', 'avif', 'image-formats'],
     readMinutes: 5,
   },
   {
@@ -41,7 +41,8 @@ export const posts: BlogPost[] = [
       'Notes from the design process — how we made a tool that feels fast and respectful of your files.',
     date: '2026-06-08',
     author: 'ToolBox Image team',
-    tag: 'design',
+    category: 'general',
+    tags: ['design', 'ux', 'interface'],
     readMinutes: 4,
   },
   {
@@ -51,7 +52,8 @@ export const posts: BlogPost[] = [
       'The Compressor is live. Here is what we are building next and why.',
     date: '2026-06-01',
     author: 'ToolBox Image team',
-    tag: 'announcement',
+    category: 'general',
+    tags: ['announcement', 'product', 'launch'],
     readMinutes: 3,
   },
   {
@@ -61,7 +63,8 @@ export const posts: BlogPost[] = [
       'JPEG, PNG, WebP, AVIF — which one should you use? A practical guide to picking the best format for every image on your site.',
     date: '2026-06-28',
     author: 'ToolBox Image team',
-    tag: 'engineering',
+    category: 'guides',
+    tags: ['jpeg', 'png', 'webp', 'avif', 'image-formats', 'optimization'],
     readMinutes: 5,
   },
   {
@@ -71,7 +74,8 @@ export const posts: BlogPost[] = [
       'Stop compressing images one by one. Here is how batch processing with parallel workers can save you hours of manual work.',
     date: '2026-07-01',
     author: 'ToolBox Image team',
-    tag: 'engineering',
+    category: 'tutorials',
+    tags: ['batch', 'compression', 'workflow', 'productivity'],
     readMinutes: 4,
   },
   {
@@ -81,7 +85,8 @@ export const posts: BlogPost[] = [
       'Every platform has a different file size limit. Here is how to compress your images for Discord, WhatsApp, Instagram, and email so they always go through.',
     date: '2026-07-02',
     author: 'ToolBox Image team',
-    tag: 'engineering',
+    category: 'guides',
+    tags: ['social-media', 'email', 'discord', 'whatsapp', 'instagram', 'file-size'],
     readMinutes: 5,
   },
   {
@@ -91,7 +96,8 @@ export const posts: BlogPost[] = [
       'Need an image under 100 KB for a form upload, database limit, or platform requirement? Here is how to hit any exact file size with ToolBox Image.',
     date: '2026-07-02',
     author: 'ToolBox Image team',
-    tag: 'engineering',
+    category: 'tutorials',
+    tags: ['compression', 'file-size', 'target-size', 'optimization'],
     readMinutes: 4,
   },
   {
@@ -101,13 +107,124 @@ export const posts: BlogPost[] = [
       'We compare PNG, WebP, and AVIF compression on real images — photographs, screenshots, logos, and graphics — to see which format wins for file size, quality, and compatibility.',
     date: '2026-07-02',
     author: 'ToolBox Image team',
-    tag: 'engineering',
+    category: 'guides',
+    tags: ['png', 'webp', 'avif', 'image-formats', 'comparison', 'compression'],
     readMinutes: 5,
+    featured: true,
+  },
+  {
+    slug: 'heic-to-jpg-guide',
+    title: 'How to convert HEIC photos to JPG on any device',
+    description:
+      'Apple devices save photos in HEIC format, but not every platform supports it. Here is how to convert HEIC to JPG on Windows, Mac, iPhone, and online — all for free.',
+    date: '2026-07-04',
+    author: 'ToolBox Image team',
+    category: 'tutorials',
+    tags: ['heic', 'jpg', 'conversion', 'iphone', 'apple'],
+    readMinutes: 5,
+  },
+  {
+    slug: 'social-media-image-sizes',
+    title: 'The complete guide to social media image sizes in 2026',
+    description:
+      'Every platform has different dimension requirements. Here is the definitive cheat sheet for Instagram, Facebook, Twitter, LinkedIn, and YouTube image sizes.',
+    date: '2026-07-05',
+    author: 'ToolBox Image team',
+    category: 'guides',
+    tags: ['social-media', 'dimensions', 'instagram', 'facebook', 'linkedin', 'youtube'],
+    readMinutes: 6,
+  },
+  {
+    slug: 'image-compression-ecommerce',
+    title: 'Image compression for e-commerce: speed up your store without losing quality',
+    description:
+      'Product images are the heaviest assets on any online store. Learn how to compress them effectively for faster page loads, better SEO, and higher conversion rates.',
+    date: '2026-07-06',
+    author: 'ToolBox Image team',
+    category: 'guides',
+    tags: ['ecommerce', 'image-optimization', 'compression', 'product-photos', 'seo'],
+    readMinutes: 5,
+  },
+  {
+    slug: 'privacy-first-image-tools',
+    title: 'Why privacy-first image tools matter for your data',
+    description:
+      'Most online image tools upload your files to remote servers. Here is why browser-based processing is safer, and how ToolBox Image keeps your images entirely on your device.',
+    date: '2026-07-07',
+    author: 'ToolBox Image team',
+    category: 'privacy',
+    tags: ['privacy', 'security', 'data-protection', 'client-side', 'browser'],
+    readMinutes: 4,
+    featured: true,
+  },
+  {
+    slug: 'optimize-images-wordpress',
+    title: 'How to optimize images for WordPress without plugins',
+    description:
+      'Tired of bloated optimization plugins slowing down your WordPress admin? Here is how to compress and serve optimized images without installing anything — straight from your browser.',
+    date: '2026-07-08',
+    author: 'ToolBox Image team',
+    category: 'tutorials',
+    tags: ['wordpress', 'image-compression', 'web-performance', 'seo', 'optimization'],
+    readMinutes: 5,
+  },
+  {
+    slug: 'remove-exif-data-online',
+    title: 'Remove hidden EXIF data from photos before sharing online',
+    description:
+      'Your photos contain hidden metadata — location, camera model, timestamp. Here is how to strip EXIF data from images before sharing them online, protecting your privacy.',
+    date: '2026-07-09',
+    author: 'ToolBox Image team',
+    category: 'privacy',
+    tags: ['exif', 'metadata', 'privacy', 'photo-security', 'client-side'],
+    readMinutes: 4,
+  },
+  {
+    slug: 'webp-vs-avif-comparison',
+    title: 'WebP vs AVIF: which next-gen format saves more space?',
+    description:
+      'Both WebP and AVIF promise better compression than JPEG. We put them head-to-head on real images to see which format delivers the smallest files without sacrificing quality.',
+    date: '2026-07-10',
+    author: 'ToolBox Image team',
+    category: 'guides',
+    tags: ['webp', 'avif', 'image-formats', 'web-performance', 'comparison', 'compression'],
+    readMinutes: 5,
+  },
+  {
+    slug: 'reduce-image-size-without-losing-quality',
+    title: 'How to reduce image file size without losing quality',
+    description:
+      'Five proven techniques to shrink image file sizes while keeping every pixel sharp. From format selection to smart resizing — get the smallest files with zero visible loss.',
+    date: '2026-07-11',
+    author: 'ToolBox Image team',
+    category: 'tutorials',
+    tags: ['compression', 'optimization', 'file-size', 'quality', 'workflow'],
+    readMinutes: 5,
+    featured: true,
   },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {
   return posts.find((p) => p.slug === slug);
+}
+
+export function getAllCategories(): string[] {
+  const cats = new Set(posts.map((p) => p.category));
+  return Array.from(cats).sort();
+}
+
+export function getAllTags(): string[] {
+  const tags = new Set(posts.flatMap((p) => p.tags));
+  return Array.from(tags).sort();
+}
+
+export function getPostsByCategory(category: string): BlogPost[] {
+  if (category === 'all') return posts;
+  return posts.filter((p) => p.category === category);
+}
+
+export function getFeaturedPosts(): BlogPost[] {
+  return posts.filter((p) => p.featured);
 }
 
 export function formatDate(iso: string): string {
