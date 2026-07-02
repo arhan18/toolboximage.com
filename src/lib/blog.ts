@@ -1,3 +1,33 @@
+import { blogTranslations, type BlogTranslation } from './blog-content';
+import type { LangCode } from '../i18n';
+
+export function getTranslatedSlugs(lang: LangCode): BlogPost[] {
+  return posts.filter((p) => blogTranslations[p.slug]);
+}
+
+export function getTranslatedTitle(slug: string, lang: LangCode): string {
+  return blogTranslations[slug]?.title[lang] || blogTranslations[slug]?.title.en || slug;
+}
+
+export function getTranslatedDescription(slug: string, lang: LangCode): string {
+  return blogTranslations[slug]?.description[lang] || blogTranslations[slug]?.description.en || '';
+}
+
+export function getTranslatedTags(slug: string, lang: LangCode): string[] {
+  return blogTranslations[slug]?.tags[lang] || blogTranslations[slug]?.tags.en || [];
+}
+
+export function getTranslatedBody(slug: string, lang: LangCode): string {
+  return blogTranslations[slug]?.body[lang] || blogTranslations[slug]?.body.en || '';
+}
+
+export function getTranslatedPost(slug: string, lang: LangCode): (BlogPost & { translation: BlogTranslation }) | undefined {
+  const post = posts.find((p) => p.slug === slug);
+  const translation = blogTranslations[slug];
+  if (!post || !translation) return undefined;
+  return { ...post, translation };
+}
+
 export interface BlogPost {
   slug: string;
   title: string;

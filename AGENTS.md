@@ -62,3 +62,35 @@ Consult these guides before working on related tasks:
 8. **Language switcher**: Uses `translatePath()` which already handles lang-prefixed URLs correctly — never construct lang URLs manually.
 9. **Nav/Footer links**: Use `langPath(lang, href)` for all internal links to preserve the current language.
 10. **SEO**: Pass `lang` to Layout and use `localeFromLang()` for `og:locale` and Schema.org `inLanguage`.
+
+## Tool Development & Research Rules
+
+### 1. Research Before Building
+- Research high-quality open-source implementations on GitHub (multiple repos, not one).
+- Study architecture, algorithms, browser APIs, performance, UX, error handling, accessibility, edge cases, memory management, file handling, security.
+- Learn from the best implementations, then build an original implementation. Do not copy code.
+- Reuse existing shared components.
+
+### 2. Browser First
+- Prefer browser-native processing. Avoid paid APIs and third-party services.
+- Only use third-party services if free, no hidden limits, improves the product, and doesn't compromise privacy.
+- Process files locally. Keep images on device. Avoid uploads.
+
+### 3. Reusable Architecture
+Every new tool must reuse shared layouts, components, UI, upload/download systems, and localization. Never duplicate existing code.
+
+### 4. SEO Requirements (Mandatory)
+Research keywords with Ahrefs Free Keyword Generator. Identify primary, secondary, long-tail, low-competition, high-traffic, question keywords.
+
+Every tool needs:
+- SEO-friendly URL, title tag, meta description, H1, H2/H3 headings
+- 600-1000+ words unique SEO content
+- FAQ section, JSON-LD FAQ Schema, Breadcrumb Schema, SoftwareApplication Schema
+- Open Graph tags, Twitter Card tags, internal links, related tools section
+- Supporting landing pages where appropriate
+
+### 5. Content
+Every tool page needs: overview, features, benefits, step-by-step guide, supported formats, best practices, common use cases, SEO FAQ, CTA, related tools links.
+
+### 6. Quality Assurance
+Before marking complete verify: upload, drag & drop, multi-upload, folder upload, clipboard paste, processing, preview, download, output validity, file sizes, statistics, responsive layout, dark mode, accessibility, all languages, SEO metadata, structured data.
