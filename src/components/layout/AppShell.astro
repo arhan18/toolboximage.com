@@ -1,19 +1,12 @@
 ---
-/**
- * AppShell — wraps a page with Navbar + Footer + main slot.
- * Use inside <Layout> on every page that should have the full chrome.
- */
 import Navbar from '../nav/Navbar.astro';
 import Footer from '../base/Footer.astro';
+import { currentLangFromPath, type LangCode } from '../../i18n';
 
 interface Props {
-  /** Hide the navbar for full-screen tool UIs. */
   hideNavbar?: boolean;
-  /** Hide the footer for tool pages. */
   hideFooter?: boolean;
-  /** Class applied to <main> for page-level layout overrides. */
   mainClass?: string;
-  /** ID applied to <main> for skip-link targeting. */
   mainId?: string;
 }
 
@@ -25,21 +18,21 @@ const {
 } = Astro.props;
 
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const lang: LangCode = currentLangFromPath(Astro.url.pathname);
 ---
 
-{!hideNavbar && <Navbar currentPath={currentPath} />}
+{!hideNavbar && <Navbar currentPath={currentPath} lang={lang} />}
 
 <main id={mainId} tabindex="-1" class:list={['app-main', mainClass]}>
   <slot />
 </main>
 
-{!hideFooter && <Footer />}
+{!hideFooter && <Footer lang={lang} />}
 
 <style>
   .app-main {
     display: block;
     min-height: calc(100vh - 64px);
-    /* Smooth scroll offset for in-page anchors, accounting for the sticky nav. */
     scroll-margin-top: 80px;
   }
 
@@ -47,5 +40,3 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
     outline: none;
   }
 </style>
-</content>
-</invoke>

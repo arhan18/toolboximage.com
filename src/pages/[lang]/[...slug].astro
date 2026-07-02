@@ -1,0 +1,276 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AppShell from '../../components/layout/AppShell.astro';
+import Button from '../../components/ui/Button.astro';
+import FAQ from '../../components/shared/FAQ.astro';
+import SectionHeader from '../../components/shared/SectionHeader.astro';
+import Prose from '../../components/shared/Prose.astro';
+import BlogPostContent from '../../components/blog/BlogPostContent.astro';
+import CompressorTool from '../../components/tools/CompressorTool.astro';
+import RotatorTool from '../../components/tools/RotatorTool.astro';
+import { useTranslations, LANG_CODES, type LangCode } from '../../i18n';
+import { posts, formatDate, getAllTags, getPost } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const langs = LANG_CODES.filter((l) => l !== 'en');
+  const slugs = [
+    'compressor', 'bulk-image-compressor', 'image-compressor-100kb',
+    'image-compressor-for-discord', 'compress-for-email',
+    'compress-jpeg', 'compress-png', 'compress-webp', 'compress-avif',
+    'compress-for-instagram', 'compress-for-whatsapp',
+    'image-tools', 'blog', 'blog/heic-to-jpg-guide',
+    'blog/social-media-image-sizes', 'blog/image-compression-ecommerce',
+    'blog/privacy-first-image-tools', 'blog/optimize-images-wordpress',
+    'blog/remove-exif-data-online', 'blog/webp-vs-avif-comparison',
+    'blog/reduce-image-size-without-losing-quality', 'blog/why-client-side',
+    'blog/image-compression-basics', 'blog/designing-the-compressor',
+    'blog/introducing-toolboximage', 'blog/choose-image-format',
+    'blog/batch-compression-guide', 'blog/image-size-limits-social-email',
+    'blog/compress-to-exact-file-size', 'blog/png-vs-webp-vs-avif',
+    'faq', 'about', 'contact', 'support',
+    'legal/privacy', 'legal/terms',
+    'tools/rotator', 'tools/converter', 'tools/resizer',
+    'tools/cropper', 'tools/flipper', 'tools/heic-converter',
+    'tools/background-remover', 'tools/blur', 'tools/format-viewer', 'tools/metadata',
+  ];
+  const paths: { params: { lang: string; slug: string } }[] = [];
+  for (const lang of langs) {
+    for (const slug of slugs) {
+      paths.push({ params: { lang, slug } });
+    }
+  }
+  return paths;
+}
+
+const { lang, slug } = Astro.params;
+const langCode: LangCode = (lang as LangCode) || 'en';
+const _ = useTranslations(langCode);
+const isEn = langCode === 'en';
+
+function titleCase(s: string): string {
+  return s.split(/[-/]/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function pageTitle(slug: string): string {
+  const parts = slug.split('/');
+  const last = parts[parts.length - 1];
+  const map: Record<string, string> = {
+    compressor: _('nav.compressor'),
+    'bulk-image-compressor': _('tools.bulk'),
+    'image-compressor-100kb': _('tools.target'),
+    'image-compressor-for-discord': _('tools.discord'),
+    'compress-for-email': _('tools.email'),
+    'compress-jpeg': _('nav.compressJpeg'),
+    'compress-png': _('nav.compressPng'),
+    'compress-webp': _('nav.compressWebp'),
+    'compress-avif': _('nav.compressAvif'),
+    'compress-for-instagram': _('tools.instagram'),
+    'compress-for-whatsapp': _('tools.whatsapp'),
+    'image-tools': _('nav.allTools'),
+    blog: _('nav.blog'),
+    faq: _('nav.faq'),
+    about: _('nav.about'),
+    contact: _('nav.contact'),
+    support: _('footer.support'),
+    'legal/privacy': _('footer.privacy'),
+    'legal/terms': _('footer.terms'),
+    rotator: 'Rotate Image',
+    converter: 'Format Converter',
+    resizer: 'Image Resizer',
+    cropper: 'Image Cropper',
+    flipper: 'Image Flipper',
+    'heic-converter': 'HEIC to JPEG',
+    'background-remover': 'Background Remover',
+    blur: 'Blur Image',
+    'format-viewer': 'Format Viewer',
+    metadata: 'Metadata Viewer',
+  };
+  return map[slug] || map[last] || titleCase(last);
+}
+
+function pageDesc(slug: string): string {
+  const map: Record<string, string> = {
+    compressor: _('tools.compressorDesc'),
+    faq: _('page.desc.faq'),
+    about: _('page.desc.about'),
+    contact: _('page.desc.contact'),
+  };
+  return map[slug] || `ToolBox Image — ${pageTitle(slug)}`;
+}
+
+const isCompressorPage = slug === 'compressor' || slug === 'bulk-image-compressor' || slug === 'image-compressor-100kb' || slug === 'image-compressor-for-discord' || slug === 'compress-for-email' || slug === 'compress-jpeg' || slug === 'compress-png' || slug === 'compress-webp' || slug === 'compress-avif' || slug === 'compress-for-instagram' || slug === 'compress-for-whatsapp';
+const isRotatorPage = slug === 'tools/rotator';
+const isLiveTool = isCompressorPage || isRotatorPage;
+const isBlogSlug = slug?.startsWith('blog/');
+const isBlogIndex = slug === 'blog';
+const isFaq = slug === 'faq';
+
+const faqItems = [
+  { q: _('faq.q1'), a: _('faq.a1') },
+  { q: _('faq.q2'), a: _('faq.a2') },
+  { q: _('faq.q3'), a: _('faq.a3') },
+  { q: _('faq.q4'), a: _('faq.a4') },
+  { q: _('faq.q5'), a: _('faq.a5') },
+  { q: _('faq.q6'), a: _('faq.a6') },
+];
+---
+
+<Layout
+  title={`${pageTitle(slug || '')} | ToolBox Image`}
+  description={pageDesc(slug || '')}
+  lang={langCode}
+  ogImage="/og-image.png"
+  ogType="website"
+>
+  <AppShell>
+    {isFaq ? (
+      <section class="band band-canvas" id="faq-page">
+        <div class="container faq-container stack stack-3xl" style="padding-top: var(--space-5xl);">
+          <SectionHeader eyebrow={_('faq.title')} leadMaxWidth="560px">
+            <h2 class="text-display-lg">{_('faq.title')}</h2>
+          </SectionHeader>
+          <FAQ items={faqItems} />
+        </div>
+      </section>
+    ) : slug === 'about' ? (
+      <section class="band band-canvas">
+        <div class="container" style="padding-top: var(--space-5xl); max-width: 720px; margin: 0 auto;">
+          <h1 class="text-display-lg" style="margin-bottom: var(--space-lg);">{_('nav.about')}</h1>
+          <p class="text-body-lg" style="color: var(--color-body); line-height: 1.7;">
+            {_('page.about.text')}
+          </p>
+          <div class="cta-actions" style="margin-top: var(--space-xl)">
+            <Button label={_('hero.cta')} href="/compressor/" variant="primary" size="lg" />
+          </div>
+        </div>
+      </section>
+    ) : slug === 'contact' ? (
+      <section class="band band-canvas">
+        <div class="container" style="padding-top: var(--space-5xl); max-width: 640px;">
+          <h1 class="text-display-lg" style="margin-bottom: var(--space-lg);">{_('nav.contact')}</h1>
+          <p class="text-body-lg" style="color: var(--color-body);">
+            {_('page.contact.text')}
+          </p>
+          <p class="text-display-sm" style="margin-top: var(--space-md);">
+            <a href="mailto:toolboximageofficial@gmail.com" style="color: var(--color-link);">toolboximageofficial@gmail.com</a>
+          </p>
+        </div>
+      </section>
+    ) : slug === 'support' ? (
+      <section class="band band-canvas">
+        <div class="container" style="padding-top: var(--space-5xl); max-width: 640px;">
+          <h1 class="text-display-lg" style="margin-bottom: var(--space-lg);">{_('footer.support')}</h1>
+          <p class="text-body-lg" style="color: var(--color-body);">
+            {_('page.support.text')}
+          </p>
+          <div style="margin-top: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-sm);">
+            <a href="https://paypal.me/arhanahmadkhan" class="text-body-lg" style="color: var(--color-link);">PayPal.Me/arhanahmadkhan</a>
+            <p class="text-body-sm" style="color: var(--color-body);">UPI: 8115033956@ptyes</p>
+          </div>
+        </div>
+      </section>
+    ) : slug === 'legal/privacy' || slug === 'legal/terms' ? (
+      <section class="band band-canvas">
+        <div class="container" style="padding-top: var(--space-5xl); max-width: 720px;">
+          <h1 class="text-display-lg" style="margin-bottom: var(--space-lg);">{pageTitle(slug || '')}</h1>
+          <p class="text-body-lg" style="color: var(--color-body);">
+            {_('page.legal.available')}
+          </p>
+          <a href={`/${slug}`} class="text-body-lg" style="color: var(--color-link); display: inline-block; margin-top: var(--space-md);">
+            {_('page.legal.cta')} →
+          </a>
+        </div>
+      </section>
+    ) : isBlogIndex ? (
+      <section class="band band-canvas">
+        <div class="container" style="padding-top: var(--space-5xl); max-width: 720px;">
+          <h1 class="text-display-lg" style="margin-bottom: var(--space-lg);">{_('page.blog.title')}</h1>
+          <ul style="margin-top: var(--space-lg); list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--space-sm);">
+            {posts.map((p) => (
+              <li style="border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); padding: var(--space-lg);">
+                <a href={`/${lang}/blog/${p.slug}/`} style="color: var(--color-link); font-size: var(--text-body-md); font-weight: var(--weight-semibold); text-decoration: none;">{p.title}</a>
+                <p style="color: var(--color-body); font-size: var(--text-body-sm); margin: var(--space-xs) 0 0;">{p.description}</p>
+                <span style="color: var(--color-mute); font-size: var(--text-caption);">{formatDate(p.date)} — {p.readMinutes} min read</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ) : isBlogSlug ? (
+      (() => {
+        const slugPart = slug!.replace('blog/', '');
+        const post = getPost(slugPart);
+        if (!post) {
+          return <section class="band band-canvas">
+            <div class="container" style="padding-top: var(--space-5xl); max-width: 640px; text-align: center;">
+              <h1 class="text-display-lg" style="margin-bottom: var(--space-md);">{_('page.blog.title')}</h1>
+              <p class="text-body-lg" style="color: var(--color-body);">{_('page.other.available')}</p>
+              <Button label={_('page.other.cta')} href={`/blog/${slugPart}/`} variant="primary" size="lg" />
+            </div>
+          </section>;
+        }
+        const allTags = getAllTags();
+        const related = posts.filter((p) => p.slug !== slugPart && (p.category === post.category || p.tags.some((t) => post.tags.includes(t)))).slice(0, 3);
+        return <>
+          <section class="band band-canvas">
+            <div class="container" style="padding-top: var(--space-5xl); max-width: 720px; margin: 0 auto;">
+              <a href={`/${lang}/blog/`} class="text-body-sm" style="color: var(--color-mute); text-decoration: none; text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: var(--space-xs); margin-bottom: var(--space-lg);">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                {_('page.blog.cta')}
+              </a>
+              <h1 class="text-display-xl" style="margin: 0; max-width: 24ch; text-wrap: balance;">{post.title}</h1>
+              <p class="text-body-lg" style="color: var(--color-body); margin-top: var(--space-md);">{post.description}</p>
+              <p class="text-caption" style="color: var(--color-mute); margin-top: var(--space-lg);">{formatDate(post.date)} — {post.readMinutes} min read</p>
+            </div>
+          </section>
+          <section class="band band-canvas">
+            <div class="container" style="max-width: 720px; margin: 0 auto;">
+              <Prose>
+                <BlogPostContent slug={slugPart} />
+              </Prose>
+              {post.tags.length > 0 && (
+                <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-xl); padding: var(--space-lg) 0; border-top: 1px solid var(--color-hairline); border-bottom: 1px solid var(--color-hairline);">
+                  {post.tags.map((tag) => (
+                    <span style="padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-full); font-size: var(--font-size-xs); border: 1px solid var(--color-hairline);">#{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        </>;
+      })()
+    ) : slug === 'image-tools' ? (
+      <section class="band band-canvas">
+        <div class="container" style="padding-top: var(--space-5xl); text-align: center;">
+          <h1 class="text-display-lg" style="margin-bottom: var(--space-md);">{_('page.imageTools.title')}</h1>
+          <p class="text-body-lg" style="color: var(--color-body); margin-bottom: var(--space-lg); max-width: 560px; margin-left: auto; margin-right: auto;">
+            {_('page.imageTools.desc')}
+          </p>
+          <Button label={_('page.imageTools.cta')} href="/image-tools/" variant="primary" size="lg" />
+        </div>
+      </section>
+    ) : isLiveTool ? (
+      isCompressorPage ? <CompressorTool lang={langCode} /> : isRotatorPage ? <RotatorTool lang={langCode} /> : null
+    ) : (
+      <section class="band band-canvas">
+        <div class="container" style="padding-top: var(--space-5xl); max-width: 640px; text-align: center;">
+          <h1 class="text-display-lg" style="margin-bottom: var(--space-md);">{pageTitle(slug || '')}</h1>
+          <p class="text-body-lg" style="color: var(--color-body); margin-bottom: var(--space-lg);">
+            {_('page.other.available')}
+          </p>
+          <Button label={_('page.other.cta')} href={`/${slug}`} variant="primary" size="lg" />
+        </div>
+      </section>
+    )}
+  </AppShell>
+</Layout>
+
+<style>
+  .faq-container { max-width: 760px; margin: 0 auto; }
+  .band { position: relative; padding: var(--space-5xl) 0; }
+  .band-canvas { background-color: var(--color-canvas); }
+  .cta-actions { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

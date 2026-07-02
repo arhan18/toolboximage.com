@@ -1,36 +1,39 @@
 ---
 import Logo from '../brand/Logo.astro';
 import LanguageSwitcher from '../ui/LanguageSwitcher.astro';
+import { useTranslations, langPath, type LangCode } from '../../i18n';
 
 interface Props {
   class?: string;
+  lang?: LangCode;
 }
 
-const { class: className = '' } = Astro.props;
+const { class: className = '', lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
 
 const columns = [
   {
-    label: 'Tools',
+    label: _('footer.tools'),
     links: [
-      { href: '/compressor/', label: 'Compressor' },
-      { href: '/blog/compression-basics/', label: 'How compression works' },
+      { href: langPath(lang, '/compressor/'), label: _('nav.compressor') },
+      { href: langPath(lang, '/image-tools/'), label: _('nav.allTools') },
     ],
   },
   {
-    label: 'Resources',
+    label: _('footer.resources'),
     links: [
-      { href: '/blog/', label: 'Blog' },
-      { href: '/faq/', label: 'FAQ' },
+      { href: langPath(lang, '/blog/'), label: _('nav.blog') },
+      { href: langPath(lang, '/faq/'), label: _('nav.faq') },
     ],
   },
   {
-    label: 'Company',
+    label: _('footer.company'),
     links: [
-      { href: '/about/', label: 'About' },
-      { href: '/support/', label: 'Support' },
-      { href: '/contact/', label: 'Contact' },
-      { href: '/legal/privacy/', label: 'Privacy' },
-      { href: '/legal/terms/', label: 'Terms' },
+      { href: langPath(lang, '/about/'), label: _('nav.about') },
+      { href: langPath(lang, '/support/'), label: _('footer.support') },
+      { href: langPath(lang, '/contact/'), label: _('nav.contact') },
+      { href: langPath(lang, '/legal/privacy/'), label: _('footer.privacy') },
+      { href: langPath(lang, '/legal/terms/'), label: _('footer.terms') },
     ],
   },
 ];
@@ -43,8 +46,7 @@ const year = new Date().getFullYear();
     <div class="footer-brand">
       <Logo size={20} />
       <p class="text-caption footer-tagline">
-        Fast, private image tools that run entirely in your browser.
-        No uploads. No tracking. No compromises.
+        {_('footer.tagline')}
       </p>
     </div>
 
@@ -64,13 +66,13 @@ const year = new Date().getFullYear();
 
   <div class="footer-bottom container">
     <p class="text-caption footer-copy">
-      &copy; {year} ToolBox Image. All rights reserved.
+      &copy; {year} ToolBox Image. {_('footer.copyright')}
     </p>
     <div class="footer-bottom-right">
       <LanguageSwitcher variant="footer" />
       <p class="text-caption footer-status">
         <span class="footer-status-dot" aria-hidden="true"></span>
-        All systems operational
+        {_('footer.status')}
       </p>
     </div>
   </div>
@@ -234,5 +236,3 @@ const year = new Date().getFullYear();
     }
   }
 </style>
-</content>
-</invoke>

@@ -1,11 +1,14 @@
 ---
 import type { ToolConfig } from '../../types';
+import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
   tool: ToolConfig;
+  lang?: LangCode;
 }
 
-const { tool } = Astro.props;
+const { tool, lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
 
 const formatList = tool.inputFormats
   ? tool.inputFormats
@@ -14,13 +17,13 @@ const formatList = tool.inputFormats
   : 'Various formats';
 ---
 
-<section class="tool-upload" aria-label="Upload files">
+<section class="tool-upload" aria-label={_('upload.dropzone')}>
   <div
     id="tool-upload-zone"
     class="tool-upload-zone"
     role="button"
     tabindex="0"
-    aria-label="Drop files, click to browse, or paste from clipboard"
+    aria-label={_('upload.dropzone')}
     data-tool-upload
   >
     <div class="tool-upload-icon" aria-hidden="true">
@@ -30,17 +33,17 @@ const formatList = tool.inputFormats
         <line x1="12" y1="3" x2="12" y2="15" />
       </svg>
     </div>
-    <p class="text-display-sm tool-upload-title">Drop files here</p>
+    <p class="text-display-sm tool-upload-title">{_('upload.dropzone')}</p>
     <p class="text-body-sm tool-upload-sub">
-      <button type="button" class="tool-upload-link" data-action="browse">Browse files</button>
+      <button type="button" class="tool-upload-link" data-action="browse">{_('upload.browse')}</button>
       <span class="tool-upload-divider">·</span>
-      <button type="button" class="tool-upload-link" data-action="paste">Paste from clipboard</button>
+      <button type="button" class="tool-upload-link" data-action="paste">{_('upload.paste')}</button>
     </p>
     <p class="text-caption-mono tool-upload-formats">{formatList}</p>
     <input type="file" multiple accept={tool.inputFormats?.join(',') ?? '*/*'} data-action="file-input" hidden aria-hidden="true" />
   </div>
   <div class="tool-upload-errors" data-tool-errors hidden role="alert" aria-live="polite">
-    <p class="text-caption-mono tool-upload-errors-label">Skipped</p>
+    <p class="text-caption-mono tool-upload-errors-label" data-i18n="upload.skipped">{_('upload.skipped')}</p>
     <ul class="tool-upload-errors-list" data-tool-errors-list></ul>
   </div>
 </section>

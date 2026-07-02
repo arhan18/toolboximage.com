@@ -1,8 +1,6 @@
 ---
-/**
- * LanguageSwitcher — dropdown for selecting site language.
- * Currently English-only; more languages coming soon.
- */
+import { currentLangFromPath, translatePath, type LangCode, LANG_CODES, LANG_INFO } from '../../i18n';
+
 interface Props {
   variant?: 'nav' | 'footer';
   class?: string;
@@ -10,14 +8,10 @@ interface Props {
 
 const { variant = 'nav', class: className = '' } = Astro.props;
 
-const languages = [
-  { code: 'en', label: 'English', active: true },
-  { code: 'es', label: 'Español', active: false },
-  { code: 'fr', label: 'Français', active: false },
-  { code: 'de', label: 'Deutsch', active: false },
-  { code: 'pt', label: 'Português', active: false },
-  { code: 'hi', label: 'हिन्दी', active: false },
-];
+const currentLang: LangCode = currentLangFromPath(Astro.url.pathname);
+const currentPath = Astro.url.pathname;
+
+const others = LANG_CODES.filter((l) => l !== currentLang);
 ---
 
 <div class:list={['lang-switcher', `lang-${variant}`, className]}>
@@ -33,32 +27,38 @@ const languages = [
       <line x1="2" y1="12" x2="22" y2="12"/>
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
     </svg>
-    <span class="lang-code">EN</span>
+    <span class="lang-code">{currentLang.toUpperCase()}</span>
     <svg class="lang-arrow" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <polyline points="6 9 12 15 18 9"/>
     </svg>
   </button>
   <div class="lang-dropdown" data-lang-dropdown hidden>
     <div class="lang-list">
-      {languages.map((lang) => (
-        <span
-          class:list={['lang-item', lang.active && 'lang-item-active']}
-          aria-current={lang.active ? 'true' : undefined}
-        >
-          <span class="lang-item-code">{lang.code.toUpperCase()}</span>
-          <span class="lang-item-label">{lang.label}</span>
-          {lang.active && <span class="lang-item-check">✓</span>}
-          {!lang.active && <span class="lang-item-coming text-caption">Soon</span>}
-        </span>
-      ))}
+{LANG_CODES.map((code) => {
+          const targetUrl = translatePath(currentPath, currentLang, code);
+          return (
+            <a
+              href={targetUrl}
+              class:list={['lang-item', currentLang === code && 'lang-item-active']}
+              aria-current={currentLang === code ? 'true' : undefined}
+            >
+              <span class="lang-item-code">{code.toUpperCase()}</span>
+              <span class="lang-item-label">{LANG_INFO[code].label}</span>
+              {currentLang === code && <span class="lang-item-check">✓</span>}
+            </a>
+          );
+        })}
     </div>
   </div>
 </div>
 
 <script>
+  const currentPath = window.location.pathname;
+
   const triggers = document.querySelectorAll<HTMLButtonElement>('[data-lang-trigger]');
   triggers.forEach((trigger) => {
-    const dropdown = trigger.parentElement?.querySelector<HTMLElement>('[data-lang-dropdown]');
+    const parent = trigger.parentElement;
+    const dropdown = parent?.querySelector<HTMLElement>('[data-lang-dropdown]');
     if (!dropdown) return;
 
     trigger.addEventListener('click', (e) => {
@@ -69,7 +69,7 @@ const languages = [
     });
 
     document.addEventListener('click', (e) => {
-      if (!trigger.parentElement?.contains(e.target as Node)) {
+      if (!parent?.contains(e.target as Node)) {
         trigger.setAttribute('aria-expanded', 'false');
         dropdown.hidden = true;
       }
@@ -81,6 +81,11 @@ const languages = [
         dropdown.hidden = true;
         trigger.focus();
       }
+    });
+
+    dropdown.addEventListener('click', () => {
+      trigger.setAttribute('aria-expanded', 'false');
+      dropdown.hidden = true;
     });
   });
 </script>
@@ -134,19 +139,21 @@ const languages = [
     position: absolute;
     top: calc(100% + 4px);
     right: 0;
-    min-width: 180px;
+    min-width: 190px;
+    max-height: 360px;
+    overflow-y: auto;
     background-color: var(--color-canvas);
     border: 1px solid var(--color-hairline);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-3);
     z-index: 110;
-    overflow: hidden;
   }
 
   .lang-list {
     display: flex;
     flex-direction: column;
     padding: var(--space-xs);
+    gap: 2px;
   }
 
   .lang-item {
@@ -155,7 +162,9 @@ const languages = [
     gap: var(--space-sm);
     padding: var(--space-xs) var(--space-sm);
     border-radius: var(--radius-sm);
-    cursor: default;
+    text-decoration: none;
+    color: var(--color-body);
+    cursor: pointer;
     transition: background-color var(--dur-fast) var(--ease-out-quart);
   }
 
@@ -166,6 +175,7 @@ const languages = [
   .lang-item-active {
     color: var(--color-ink);
     font-weight: var(--weight-medium);
+    cursor: default;
   }
 
   .lang-item:not(.lang-item-active) {
@@ -176,7 +186,7 @@ const languages = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
+    width: 30px;
     height: 20px;
     border-radius: var(--radius-xs);
     background-color: var(--color-canvas-soft);
@@ -184,6 +194,7 @@ const languages = [
     font-weight: var(--weight-semibold);
     letter-spacing: 0.04em;
     color: var(--color-body);
+    flex-shrink: 0;
   }
 
   .lang-item-active .lang-item-code {
@@ -198,22 +209,17 @@ const languages = [
   .lang-item-label {
     flex: 1;
     font-size: var(--font-size-sm);
+    white-space: nowrap;
   }
 
   .lang-item-check {
     font-size: 12px;
     color: var(--color-link-deep);
+    flex-shrink: 0;
   }
 
   [data-theme="dark"] .lang-item-check {
     color: var(--color-link);
-  }
-
-  .lang-item-coming {
-    font-size: 10px;
-    color: var(--color-mute);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
   }
 
   /* Footer variant */

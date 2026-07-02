@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import HomeContent from '../components/home/HomeContent.astro';
+import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
+import { useTranslations, LANG_CODES, type LangCode } from '../i18n';
+
+export function getStaticPaths() {
+  return LANG_CODES.filter((l) => l !== 'en').map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const langCode: LangCode = (lang as LangCode) || 'en';
+const _ = useTranslations(langCode);
+---
+<Layout
+  title={_('meta.title')}
+  description={_('meta.desc')}
+  lang={langCode}
+  ogImage="/og-image.png"
+  ogType="website"
+  schemas={[
+    softwareAppSchema(),
+    breadcrumbSchema([{ name: _('nav.allTools'), href: '/' }]),
+  ]}
+>
+  <AppShell>
+    <HomeContent lang={langCode} />
+  </AppShell>
+</Layout>

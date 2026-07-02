@@ -1,11 +1,11 @@
 ---
 import ToolLayout from '../../layouts/ToolLayout.astro';
-import ToolHeader from '../../components/tools/ToolHeader.astro';
 import ToolUpload from '../../components/tools/ToolUpload.astro';
 import ToolSettingsPanel from '../../components/tools/ToolSettingsPanel.astro';
 import ToolProgress from '../../components/tools/ToolProgress.astro';
 import ToolResultsSummary from '../../components/tools/ToolResultsSummary.astro';
 import ToolFooter from '../../components/tools/ToolFooter.astro';
+import RotatorTool from '../../components/tools/RotatorTool.astro';
 import { tools, getTool } from '../../lib/tools';
 import type { ToolId } from '../../types';
 
@@ -23,9 +23,8 @@ if (!tool) {
 }
 ---
 
-<ToolLayout {tool}>
+<ToolLayout {tool} lang="en">
   <main slot="tool-body" class="tool-body">
-    <!-- Coming-soon / planned tools get a preview card -->
     {tool.status !== 'live' ? (
       <article class="coming-soon">
         <div class="coming-soon-card stack stack-lg">
@@ -66,86 +65,12 @@ if (!tool) {
         </div>
       </article>
     ) : (
-      // Live tools
       <article class="workflow stack stack-lg">
-        <ToolUpload {tool} />
-
         {tool.id === 'rotator' ? (
-          <>
-            <!-- Side-by-side preview -->
-            <section class="rotator-preview-area" data-rotator-preview hidden>
-              <figure class="rotator-preview-fig">
-                <figcaption class="text-caption-mono rotator-preview-label">Original</figcaption>
-                <div class="rotator-preview-frame">
-                  <img data-rotator-original-img alt="" class="rotator-preview-img" />
-                </div>
-                <p class="text-caption rotator-preview-size" data-rotator-original-size></p>
-              </figure>
-              <div class="rotator-preview-arrow" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-              </div>
-              <figure class="rotator-preview-fig">
-                <figcaption class="text-caption-mono rotator-preview-label" data-rotator-result-label>Preview</figcaption>
-                <div class="rotator-preview-frame">
-                  <img data-rotator-result-img alt="" class="rotator-preview-img" />
-                </div>
-                <p class="text-caption rotator-preview-size" data-rotator-result-size></p>
-              </figure>
-            </section>
-
-            <ToolSettingsPanel {tool}>
-              <div slot="settings-controls">
-                <div class="rotator-controls">
-                  <fieldset class="rotator-presets">
-                    <legend class="text-caption-mono rotator-label">Rotate</legend>
-                    <div class="rotator-grid">
-                      {[
-                        { deg: 90, label: '90° CW', icon: 'cw' },
-                        { deg: 180, label: '180°', icon: '180' },
-                        { deg: 270, label: '90° CCW', icon: 'ccw' },
-                        { deg: -90, label: 'Flip H', icon: 'flip-h' },
-                        { deg: -180, label: 'Flip V', icon: 'flip-v' },
-                      ].map((btn) => (
-                        <button
-                          type="button"
-                          class="rotator-btn"
-                          data-rotator-preset={btn.deg}
-                          aria-label={btn.label}
-                        >
-                          {btn.icon === 'cw' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>}
-                          {btn.icon === '180' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="5 14 12 21 19 14"/></svg>}
-                          {btn.icon === 'ccw' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.12-9.36L1 10"/></svg>}
-                          {btn.icon === 'flip-h' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M12 3v18"/><path d="M3 12h18"/></svg>}
-                          {btn.icon === 'flip-v' && <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z"/><path d="M3 12h18"/></svg>}
-                          <span class="rotator-btn-label">{btn.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </fieldset>
-                  <label class="rotator-custom">
-                    <span class="text-caption-mono rotator-label">Custom angle</span>
-                    <input type="number" class="rotator-input" data-rotator-custom min="-360" max="360" value="0" step="1" />
-                    <span class="text-caption rotator-unit">degrees</span>
-                  </label>
-                </div>
-              </div>
-            </ToolSettingsPanel>
-
-            <section class="rotator-download" data-rotator-download hidden>
-              <div class="rotator-download-bar">
-                <div class="rotator-download-info" data-rotator-download-info>
-                  <p class="text-caption-mono rotator-download-label">Result</p>
-                  <p class="text-body-sm-strong" data-rotator-download-name></p>
-                </div>
-                <button type="button" class="results-btn results-btn-primary" data-rotator-download-btn>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  Download
-                </button>
-              </div>
-            </section>
-          </>
+          <RotatorTool />
         ) : (
           <>
+            <ToolUpload {tool} />
             <ToolSettingsPanel {tool}>
               <div slot="settings-controls">
                 <p class="text-body-sm" style="color:var(--color-body);">Configure this tool once it is available.</p>

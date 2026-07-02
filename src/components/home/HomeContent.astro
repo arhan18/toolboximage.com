@@ -1,0 +1,1553 @@
+---
+import Button from '../ui/Button.astro';
+import Card from '../ui/Card.astro';
+import IconBox from '../ui/IconBox.astro';
+import Badge from '../ui/Badge.astro';
+import SectionHeader from '../shared/SectionHeader.astro';
+import Reveal from '../shared/Reveal.astro';
+import MeshGradient from '../shared/MeshGradient.astro';
+import DropZone from '../shared/DropZone.astro';
+import BeforeAfter from '../shared/BeforeAfter.astro';
+import FAQ from '../shared/FAQ.astro';
+import { useTranslations, LANG_CODES, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = useTranslations(lang);
+const isEn = lang === 'en';
+const p = (key: string) => t(key);
+
+const whyItems = [
+  { title: p('why.shield.title'), body: p('why.shield.body'), icon: 'shield' },
+  { title: p('why.user.title'), body: p('why.user.body'), icon: 'user' },
+  { title: p('why.eye.title'), body: p('why.eye.body'), icon: 'eye' },
+];
+
+const features = [
+  { title: isEn ? 'Drag & drop.' : p('step1.title'), body: isEn ? 'Drop a folder of 500 photos. We will handle the queue.' : p('step1.body'), icon: 'mouse' },
+  { title: isEn ? 'Paste from clipboard.' : 'क्लिपबोर्ड से पेस्ट करें.', body: isEn ? 'Screenshot, ⌘V, done. No intermediate file.' : 'Screenshot लें, ⌘V दबाएं, हो गया।', icon: 'clipboard' },
+  { title: isEn ? 'Batch processing.' : 'एकसाथ प्रोसेसिंग।', body: isEn ? 'Process hundreds of images in parallel on web workers.' : 'एक साथ सैकड़ों इमेज प्रोसेस करें।', icon: 'stack' },
+  { title: isEn ? 'Format conversion.' : 'फ़ॉर्मैट बदलें।', body: isEn ? 'JPG → WebP, PNG → AVIF — pick any source, any target.' : 'JPG → WebP, PNG → AVIF — कोई भी सोर्स, कोई भी टार्गेट।', icon: 'swap' },
+  { title: isEn ? 'Quality controls.' : 'क्वालिटी कंट्रोल।', body: isEn ? 'Fine-tune quality, target size, or visual parity per image.' : 'हर इमेज की क्वालिटी, साइज़ या विज़ुअल पैरिटी सेट करें।', icon: 'sliders' },
+  { title: isEn ? 'Side-by-side preview.' : 'साथ-साथ प्रीव्यू।', body: isEn ? 'Compare before and after at full resolution before you download.' : 'डाउनलोड करने से पहले फुल रिज़ॉल्यूशन में तुलना करें।', icon: 'compare' },
+];
+
+const steps = [
+  { n: '01', title: p('step1.title'), body: p('step1.body') },
+  { n: '02', title: p('step2.title'), body: p('step2.body') },
+  { n: '03', title: p('step3.title'), body: p('step3.body') },
+  { n: '04', title: p('step4.title'), body: p('step4.body') },
+];
+
+const upcoming = [
+  { title: 'Image Resizer', body: isEn ? 'Pixel-perfect resize with smart cropping and aspect-ratio lock.' : 'स्मार्ट क्रॉपिंग के साथ रीसाइज़ करें।', status: 'Next' },
+  { title: 'Image Converter', body: isEn ? 'Convert between JPG, PNG, WebP, AVIF with one click.' : 'एक क्लिक में JPG, PNG, WebP, AVIF में बदलें।', status: 'Soon' },
+  { title: 'Image Cropper', body: isEn ? 'Drag-to-crop with safe-area guides for social platforms.' : 'सोशल प्लेटफ़ॉर्म के लिए क्रॉप गाइड।', status: 'Soon' },
+  { title: 'Watermark', body: isEn ? 'Tile or corner watermarks with opacity, scale, and rotation controls.' : 'वॉटरमार्क जोड़ें — ओपैसिटी, स्केल और रोटेशन कंट्रोल।', status: 'Planned' },
+  { title: 'Background Remover', body: isEn ? 'One-click subject isolation. WebGPU-accelerated.' : 'एक क्लिक में बैकग्राउंड हटाएं।', status: 'Planned' },
+  { title: 'EXIF Cleaner', body: isEn ? 'Strip metadata before sharing — keep the pixels, lose the trail.' : 'शेयर करने से पहले मेटाडेटा हटाएं।', status: 'Planned' },
+];
+
+const faqItems = [
+  { q: p('faq.q1'), a: p('faq.a1') },
+  { q: p('faq.q2'), a: p('faq.a2') },
+  { q: p('faq.q3'), a: p('faq.a3') },
+  { q: p('faq.q4'), a: p('faq.a4') },
+  { q: p('faq.q5'), a: p('faq.a5') },
+  { q: p('faq.q6'), a: p('faq.a6') },
+];
+
+const toolsGrid = [
+  { href: isEn ? '/compressor/' : `/${lang}/compressor/`, label: isEn ? 'Image Compressor' : p('tools.compressor'), desc: isEn ? 'Batch image compressor with adjustable quality. 100% secure & offline.' : p('tools.compressorDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/bulk-image-compressor/' : `/${lang}/bulk-image-compressor/`, label: isEn ? 'Bulk Compressor' : p('tools.bulk'), desc: isEn ? 'Batch process up to 200 images in parallel.' : p('tools.bulkDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/image-compressor-100kb/' : `/${lang}/image-compressor-100kb/`, label: isEn ? 'Compress to 100 KB' : p('tools.target'), desc: isEn ? 'Compress images to exactly 100 KB or less.' : p('tools.targetDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/image-compressor-for-discord/' : `/${lang}/image-compressor-for-discord/`, label: isEn ? 'Discord Image Limit' : p('tools.discord'), desc: isEn ? 'Compress images to stay under Discord\'s 8 MB limit.' : p('tools.discordDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/compress-for-email/' : `/${lang}/compress-for-email/`, label: isEn ? 'Email Image Size' : p('tools.email'), desc: isEn ? 'Shrink images for email attachments (under 25 MB).' : p('tools.emailDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/tools/rotator/' : `/${lang}/tools/rotator/`, label: 'Rotate Image', desc: 'Rotate and flip images with precision controls.', cat: 'Edit', status: 'Live' },
+  { href: isEn ? '/tools/converter/' : `/${lang}/tools/converter/`, label: 'Format Converter', desc: 'Convert images between JPEG, PNG, WebP, AVIF & more.', cat: 'Convert', status: 'Soon' },
+  { href: isEn ? '/tools/resizer/' : `/${lang}/tools/resizer/`, label: 'Image Resizer', desc: 'Resize images to exact dimensions or aspect ratios.', cat: 'Resize', status: 'Soon' },
+  { href: isEn ? '/tools/cropper/' : `/${lang}/tools/cropper/`, label: 'Image Cropper', desc: 'Crop images with preset ratios or freeform selection.', cat: 'Resize', status: 'Soon' },
+  { href: isEn ? '/tools/flipper/' : `/${lang}/tools/flipper/`, label: 'Image Flipper', desc: 'Flip images horizontally, vertically, or both.', cat: 'Edit', status: 'Soon' },
+  { href: isEn ? '/tools/heic-converter/' : `/${lang}/tools/heic-converter/`, label: 'HEIC to JPEG', desc: 'Convert Apple HEIC/HEIF photos to JPEG or PNG.', cat: 'Convert', status: 'Soon' },
+  { href: isEn ? '/tools/background-remover/' : `/${lang}/tools/background-remover/`, label: 'Background Remover', desc: 'Remove image backgrounds automatically.', cat: 'Edit', status: 'Planned' },
+  { href: isEn ? '/tools/blur/' : `/${lang}/tools/blur/`, label: 'Blur Image', desc: 'Blur faces, license plates, or custom regions.', cat: 'Edit', status: 'Planned' },
+];
+
+const pickerTools = [
+  { href: isEn ? '/compressor/' : `/${lang}/compressor/`, label: isEn ? 'Image Compressor' : p('tools.compressor'), desc: isEn ? 'Compress any format' : p('tools.compressorDesc'), icon: 'compress' },
+  { href: isEn ? '/tools/rotator/' : `/${lang}/tools/rotator/`, label: 'Rotate Image', desc: '90°, 180°, custom', icon: 'rotate' },
+  { href: isEn ? '/bulk-image-compressor/' : `/${lang}/bulk-image-compressor/`, label: isEn ? 'Bulk Compressor' : p('tools.bulk'), desc: 'Batch 200 files', icon: 'bulk' },
+  { href: isEn ? '/image-compressor-100kb/' : `/${lang}/image-compressor-100kb/`, label: isEn ? '100 KB Target' : p('tools.target'), desc: isEn ? 'Exact file size' : p('tools.targetDesc'), icon: 'target' },
+  { href: isEn ? '/image-compressor-for-discord/' : `/${lang}/image-compressor-for-discord/`, label: isEn ? 'Discord Limit' : p('tools.discord'), desc: 'Under 8 MB', icon: 'discord' },
+  { href: isEn ? '/compress-for-email/' : `/${lang}/compress-for-email/`, label: isEn ? 'Email Attachments' : p('tools.email'), desc: 'Under 25 MB', icon: 'email' },
+];
+
+const langInfo: Record<string, { label: string; flag: string }> = {
+  en: { label: 'English', flag: '🇬🇧' }, es: { label: 'Español', flag: '🇪🇸' },
+  fr: { label: 'Français', flag: '🇫🇷' }, de: { label: 'Deutsch', flag: '🇩🇪' },
+  it: { label: 'Italiano', flag: '🇮🇹' }, pt: { label: 'Português', flag: '🇵🇹' },
+  ru: { label: 'Русский', flag: '🇷🇺' }, zh: { label: '中文', flag: '🇨🇳' },
+  ja: { label: '日本語', flag: '🇯🇵' }, ko: { label: '한국어', flag: '🇰🇷' },
+  ar: { label: 'العربية', flag: '🇸🇦' }, hi: { label: 'हिन्दी', flag: '🇮🇳' },
+  tr: { label: 'Türkçe', flag: '🇹🇷' },
+};
+---
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero">
+  <MeshGradient intensity="normal" />
+
+  <div class="container hero-inner">
+    <Reveal>
+      <Badge eyebrow={isEn ? 'Free Image Compressor' : p('hero.badge')} tone="info" class="hero-badge">
+        {isEn ? 'Image Compressor is live' : p('tools.live')}
+      </Badge>
+    </Reveal>
+
+    <Reveal delay={80}>
+      <h1 class="text-display-xl hero-title">
+        {p('hero.title')}
+      </h1>
+    </Reveal>
+
+    <Reveal delay={160}>
+      <p class="text-body-lg hero-subtitle">
+        {p('hero.lead')}
+      </p>
+    </Reveal>
+
+    <Reveal delay={220}>
+      <div class="hero-actions">
+        <Button label={isEn ? 'Try the Tools' : p('hero.cta')} href={isEn ? '/image-tools/' : `/${lang}/image-tools/`} variant="primary" size="lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </Button>
+        <Button label={isEn ? 'Try the Compressor' : p('nav.compressor')} href={isEn ? '/compressor/' : `/${lang}/compressor/`} variant="secondary" size="lg" />
+      </div>
+    </Reveal>
+
+    <Reveal delay={280}>
+      <nav class="hero-links" aria-label="More pages">
+        <a href={isEn ? '/about/' : `/${lang}/about/`} class="hero-link">{p('nav.about')}</a>
+        <span class="hero-link-sep" aria-hidden="true">·</span>
+        <a href={isEn ? '/contact/' : `/${lang}/contact/`} class="hero-link">{p('nav.contact')}</a>
+        <span class="hero-link-sep" aria-hidden="true">·</span>
+        <a href={isEn ? '/legal/privacy/' : `/${lang}/legal/privacy/`} class="hero-link">{p('footer.privacy')}</a>
+        <span class="hero-link-sep" aria-hidden="true">·</span>
+        <a href={isEn ? '/legal/terms/' : `/${lang}/legal/terms/`} class="hero-link">{p('footer.terms')}</a>
+      </nav>
+    </Reveal>
+
+    <Reveal delay={300}>
+      <div class="hero-search">
+        <svg class="hero-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="search" class="hero-search-input" data-tool-search placeholder={isEn ? 'Search tools…' : 'टूल्स खोजें…'} aria-label={isEn ? 'Search tools' : 'टूल्स खोजें'} />
+      </div>
+    </Reveal>
+
+    <Reveal delay={360} class="hero-drop">
+      <DropZone />
+    </Reveal>
+  </div>
+</section>
+
+<!-- ============================================================
+     TOOL PICKER OVERLAY
+     ============================================================ -->
+<div class="tool-picker-overlay" data-tool-picker-overlay hidden role="dialog" aria-label={isEn ? 'Choose a tool' : 'टूल चुनें'} aria-modal="true">
+  <div class="tool-picker-backdrop" data-tool-picker-close></div>
+  <div class="tool-picker stack stack-lg">
+    <div class="tool-picker-heading">
+      <p class="text-display-sm tool-picker-title">
+        {isEn ? 'Your image is ready — where should we go?' : 'आपकी इमेज तैयार है — कहाँ जाएँ?'}
+      </p>
+      <p class="text-body-sm tool-picker-sub">
+        {isEn ? 'Choose a tool to continue with your uploaded file.' : 'अपलोड की गई फ़ाइल के लिए एक टूल चुनें।'}
+      </p>
+    </div>
+    <div class="tool-picker-grid">
+      {pickerTools.map((tool) => (
+        <a href={tool.href} class="tool-picker-card" data-tool-picker-link>
+          <div class="tool-picker-card-icon" aria-hidden="true">
+            {tool.icon === 'compress' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>}
+            {tool.icon === 'rotate' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>}
+            {tool.icon === 'bulk' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>}
+            {tool.icon === 'target' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>}
+            {tool.icon === 'discord' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M8 16V8l8 4-8 4z"/></svg>}
+            {tool.icon === 'email' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>}
+          </div>
+          <p class="text-body-sm-strong tool-picker-card-label">{tool.label}</p>
+          <p class="text-caption tool-picker-card-desc">{tool.desc}</p>
+        </a>
+      ))}
+    </div>
+    <button type="button" class="tool-picker-cancel" data-tool-picker-close>
+      {isEn ? 'Cancel — remove files' : 'रद्द करें — फ़ाइलें हटाएँ'}
+    </button>
+  </div>
+</div>
+
+<script>
+  import { storeFiles } from '../../lib/file-transfer';
+
+  const overlay = document.querySelector<HTMLElement>('[data-tool-picker-overlay]');
+  const closeBtns = document.querySelectorAll<HTMLElement>('[data-tool-picker-close]');
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-tool-picker-link]');
+
+  window.addEventListener('toolboximage:files', async (e) => {
+    const detail = (e as CustomEvent<{ files: File[] }>).detail;
+    if (!detail?.files?.length) return;
+    await storeFiles(detail.files);
+    if (overlay) overlay.hidden = false;
+  });
+
+  closeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (overlay) overlay.hidden = true;
+    });
+  });
+
+  links.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const href = link.getAttribute('href');
+      if (href) window.location.href = href;
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay && !overlay.hidden) {
+      overlay.hidden = true;
+    }
+  });
+</script>
+
+<!-- ============================================================
+     TOOLS — TABS + GRID
+     ============================================================ -->
+<section class="band band-canvas home-tools">
+  <div class="container stack stack-2xl">
+    <Reveal>
+      <div class="home-tools-header">
+        <Badge eyebrow="Toolbox" tone="info">{isEn ? 'All tools' : p('tools.title')}</Badge>
+        <a href={isEn ? '/image-tools/' : `/${lang}/image-tools/`} class="home-tools-link">{isEn ? 'View all →' : 'सब देखें →'}</a>
+      </div>
+    </Reveal>
+
+    <Reveal delay={10}>
+      <nav class="tools-tabs" role="tablist" aria-label={isEn ? 'Tool categories' : 'टूल कैटेगरी'}>
+        {['All', 'Optimize', 'Convert', 'Resize', 'Edit'].map((tab, i) => (
+          <button
+            type="button"
+            class:list={['tools-tab', i === 0 && 'tools-tab-active']}
+            role="tab"
+            aria-selected={i === 0}
+            data-tools-tab={tab}
+          >{tab}</button>
+        ))}
+      </nav>
+    </Reveal>
+
+    <div class="tools-grid" data-tool-grid>
+      {toolsGrid.map((tool) => (
+        <a
+          href={tool.href}
+          class:list={['tool-card', tool.status !== 'Live' && 'tool-card-dim']}
+          data-tool-cat={tool.cat}
+          data-tool-status={tool.status}
+        >
+          <span class="tool-card-badge">{tool.cat.toUpperCase()}</span>
+          <p class="text-body-sm-strong tool-card-label">{tool.label}</p>
+          <p class="text-caption tool-card-desc">{tool.desc}</p>
+          <span class="tool-card-status">
+            {tool.status === 'Live' ? 'Free' : tool.status === 'Soon' ? (isEn ? 'Coming soon' : 'जल्द आ रहा है') : (isEn ? 'Planned' : 'आने वाला है')}
+          </span>
+        </a>
+      ))}
+    </div>
+
+    <div class="tools-pagination" data-tools-pagination>
+      <span class="tools-pagination-count text-caption" data-tools-count></span>
+      <nav class="tools-pagination-nav" aria-label={isEn ? 'Tool pages' : 'टूल पेज'}>
+        <button type="button" class="tools-page-btn" data-page-prev disabled>{isEn ? 'Previous' : 'पिछला'}</button>
+        <div class="tools-page-numbers" data-page-numbers></div>
+        <button type="button" class="tools-page-btn" data-page-next disabled>{isEn ? 'Next' : 'अगला'}</button>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<script>
+  const PER_PAGE = 9;
+  const searchInput = document.querySelector<HTMLInputElement>('[data-tool-search]');
+  const toolGrid = document.querySelector<HTMLElement>('[data-tool-grid]');
+  const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tools-tab]');
+  const countEl = document.querySelector<HTMLElement>('[data-tools-count]');
+  const prevBtn = document.querySelector<HTMLButtonElement>('[data-page-prev]');
+  const nextBtn = document.querySelector<HTMLButtonElement>('[data-page-next]');
+  const pageNumbersEl = document.querySelector<HTMLElement>('[data-page-numbers]');
+
+  let activeTab = 'All';
+  let currentPage = 1;
+  let filteredCards: HTMLAnchorElement[] = [];
+
+  const getFiltered = (): HTMLAnchorElement[] => {
+    if (!toolGrid) return [];
+    const cards = Array.from(toolGrid.querySelectorAll<HTMLAnchorElement>('.tool-card'));
+    const q = searchInput?.value.toLowerCase().trim() || '';
+    return cards.filter((card) => {
+      const cat = card.dataset.toolCat || '';
+      const label = card.querySelector('.tool-card-label')?.textContent?.toLowerCase() || '';
+      const matchCat = activeTab === 'All' || cat === activeTab;
+      const words = q ? label.split(' ') : [];
+      const matchSearch = !q || label.startsWith(q) || words.some((w) => w.startsWith(q));
+      return matchCat && matchSearch;
+    });
+  };
+
+  const renderPage = () => {
+    const total = filteredCards.length;
+    const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+    const start = (currentPage - 1) * PER_PAGE;
+    const end = Math.min(start + PER_PAGE, total);
+    toolGrid?.querySelectorAll<HTMLAnchorElement>('.tool-card').forEach((card, i) => {
+      const inPage = i >= start && i < end;
+      const isFiltered = filteredCards.includes(card);
+      card.style.display = isFiltered && inPage ? '' : 'none';
+    });
+    if (countEl) {
+      if (total === 0) {
+        countEl.textContent = 'No tools found';
+      } else {
+        countEl.textContent = `Showing ${start + 1}–${end} of ${total} tools`;
+      }
+    }
+    if (prevBtn) prevBtn.disabled = currentPage <= 1;
+    if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    if (pageNumbersEl) {
+      pageNumbersEl.innerHTML = '';
+      for (let p = 1; p <= totalPages; p++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `tools-page-num${p === currentPage ? ' tools-page-num-active' : ''}`;
+        btn.textContent = String(p);
+        btn.addEventListener('click', () => { currentPage = p; renderPage(); });
+        pageNumbersEl.appendChild(btn);
+      }
+    }
+  };
+
+  const updateTools = () => {
+    currentPage = 1;
+    filteredCards = getFiltered();
+    renderPage();
+  };
+
+  tabs.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      tabs.forEach((b) => {
+        b.classList.remove('tools-tab-active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('tools-tab-active');
+      btn.setAttribute('aria-selected', 'true');
+      activeTab = btn.dataset.toolsTab || 'All';
+      updateTools();
+    });
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener('input', updateTools);
+  }
+
+  prevBtn?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderPage(); } });
+  nextBtn?.addEventListener('click', () => { if (currentPage < Math.ceil(filteredCards.length / PER_PAGE)) { currentPage++; renderPage(); } });
+
+  updateTools();
+</script>
+
+<!-- ============================================================
+     WHY TOOLBOX IMAGE
+     ============================================================ -->
+<section class="band band-soft" id="why">
+  <div class="container stack stack-3xl">
+    <SectionHeader eyebrow={isEn ? 'Why ToolBox Image' : p('features.why.title')} leadMaxWidth="560px">
+      <h2 class="text-display-lg">{isEn ? "Privacy isn't a feature. It's the architecture." : p('features.why.title')}</h2>
+      <p class="lead">
+        {isEn ? 'Most "free" image tools earn their keep by uploading your files, training on them, or showing you ads. We earn it by being the fastest, cleanest, most private tool on the web.' : p('features.why.lead')}
+      </p>
+    </SectionHeader>
+
+    <div class="why-grid">
+      {whyItems.map((w, i) => (
+        <Reveal delay={i * 80}>
+          <Card>
+            <IconBox tone="soft">
+              {w.icon === 'shield' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              )}
+              {w.icon === 'user' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              )}
+              {w.icon === 'eye' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              )}
+            </IconBox>
+            <h3 class="text-display-sm">{w.title}</h3>
+            <p class="text-body-md" style="color:var(--color-body);">{w.body}</p>
+          </Card>
+        </Reveal>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FEATURES GRID
+     ============================================================ -->
+<section class="band band-canvas" id="features">
+  <div class="container stack stack-3xl">
+    <SectionHeader eyebrow="Features" leadMaxWidth="600px">
+      <h2 class="text-display-lg">{isEn ? "Everything you need. Nothing you don't." : 'सब कुछ जो चाहिए। कुछ नहीं जो नहीं चाहिए।'}</h2>
+      <p class="lead">
+        {isEn ? 'A focused toolkit that does the boring stuff brilliantly and gets out of your way.' : 'एक फोकस्ड टूलकिट जो ज़रूरी काम बढ़िया करती है और रास्ते से हट जाती है।'}
+      </p>
+    </SectionHeader>
+
+    <div class="feature-grid">
+      {features.map((f, i) => (
+        <Reveal delay={i * 60}>
+          <article class="feature">
+            <span class="feature-icon" aria-hidden="true">
+              {f.icon === 'mouse' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 3l7 18 2-8 8-2z"/>
+                </svg>
+              )}
+              {f.icon === 'clipboard' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="8" y="2" width="8" height="4" rx="1"/>
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                </svg>
+              )}
+              {f.icon === 'stack' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                  <polyline points="2 17 12 22 22 17"/>
+                  <polyline points="2 12 12 17 22 12"/>
+                </svg>
+              )}
+              {f.icon === 'swap' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="17 1 21 5 17 9"/>
+                  <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                  <polyline points="7 23 3 19 7 15"/>
+                  <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                </svg>
+              )}
+              {f.icon === 'sliders' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"/>
+                  <line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/>
+                  <line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/>
+                  <line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+              )}
+              {f.icon === 'compare' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="8" height="18" rx="1"/>
+                  <rect x="13" y="3" width="8" height="18" rx="1"/>
+                  <line x1="12" y1="3" x2="12" y2="21"/>
+                </svg>
+              )}
+            </span>
+            <h3 class="text-body-md-strong">{f.title}</h3>
+            <p class="text-body-sm" style="color:var(--color-body);">{f.body}</p>
+          </article>
+        </Reveal>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     HOW IT WORKS
+     ============================================================ -->
+<section class="band band-soft" id="how-it-works">
+  <div class="container stack stack-3xl">
+    <SectionHeader eyebrow={isEn ? 'How it works' : p('steps.title')} leadMaxWidth="560px">
+      <h2 class="text-display-lg">{isEn ? 'Four steps. Zero servers.' : p('steps.title')}</h2>
+      <p class="lead">
+        {isEn ? 'A workflow designed to disappear into your day. No friction, no learning curve, no fine print.' : p('steps.lead')}
+      </p>
+    </SectionHeader>
+
+    <ol class="steps" role="list">
+      {steps.map((s, i) => (
+        <Reveal delay={i * 90} class="step-wrap">
+          <li class="step">
+            <span class="step-num text-caption-mono">{s.n}</span>
+            <h3 class="text-display-sm">{s.title}</h3>
+            <p class="text-body-md" style="color:var(--color-body);">{s.body}</p>
+          </li>
+          {i < steps.length - 1 && (
+            <span class="step-connector" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
+          )}
+        </Reveal>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================
+     INTERACTIVE BEFORE / AFTER
+     ============================================================ -->
+<section class="band band-canvas ba-band">
+  <div class="container ba-grid">
+    <Reveal class="ba-copy">
+      <p class="text-caption-mono" style="color:var(--color-mute);text-transform:uppercase;letter-spacing:0.06em;">
+        {isEn ? 'See it' : 'देखें'}
+      </p>
+      <h2 class="text-display-lg">{isEn ? 'Drag the divider.' : 'डिवाइडर खींचें।'}</h2>
+      <p class="text-body-lg" style="color:var(--color-body);max-width:480px;">
+        {isEn ? '1.8 MB down to 312 KB. Visually identical at normal viewing distances. The Compressor picks the right codec per image — JPEG, WebP, or AVIF — to maximize quality at your target size.' : '1.8 MB से 312 KB तक। आम देखने की दूरी पर बिल्कुल एक जैसा दिखता है। कंप्रेसर हर इमेज के लिए सही कोडेक चुनता है — JPEG, WebP, या AVIF।'}
+      </p>
+      <ul class="ba-stats" role="list">
+        <li class="ba-stat">
+          <span class="text-display-md ba-stat-value">−82%</span>
+          <span class="text-caption ba-stat-label">{isEn ? 'Avg. file size' : 'औसत साइज़'}</span>
+        </li>
+        <li class="ba-stat">
+          <span class="text-display-md ba-stat-value">&lt;1s</span>
+          <span class="text-caption ba-stat-label">{isEn ? 'Per image' : 'प्रति इमेज'}</span>
+        </li>
+        <li class="ba-stat">
+          <span class="text-display-md ba-stat-value">6</span>
+          <span class="text-caption ba-stat-label">{isEn ? 'Formats' : 'फ़ॉर्मैट'}</span>
+        </li>
+      </ul>
+    </Reveal>
+    <Reveal delay={120} class="ba-figure-wrap">
+      <BeforeAfter
+        beforeSrc="/images/demo-before.jpg"
+        afterSrc="/images/demo-after.jpg"
+        beforeSize="125 KB"
+        afterSize="46 KB"
+        savings="−63%"
+      />
+      <p class="ba-hint text-caption-mono" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+          <polyline points="9 18 3 12 9 6" transform="translate(9 0)"/>
+        </svg>
+        {isEn ? 'Drag · or use ← →' : 'खींचें · या ← → दबाएं'}
+      </p>
+    </Reveal>
+  </div>
+</section>
+
+<!-- ============================================================
+     UPCOMING TOOLS
+     ============================================================ -->
+<section class="band band-soft">
+  <div class="container stack stack-3xl">
+    <SectionHeader eyebrow={isEn ? 'Coming next' : 'आगे क्या'} leadMaxWidth="600px">
+      <h2 class="text-display-lg">{isEn ? 'One toolkit. Many tools.' : 'एक टूलकिट। कई टूल्स।'}</h2>
+      <p class="lead">
+        {isEn ? 'Image Compressor is the first of many. Every tool follows the same rules: privacy-first, browser-native, no sign-up.' : 'इमेज कंप्रेसर पहला टूल है और आने वाले और भी हैं। हर टूल एक ही नियम पर चलता है: प्राइवेसी पहले, ब्राउज़र में, कोई साइन-अप नहीं।'}
+      </p>
+    </SectionHeader>
+
+    <div class="upcoming-grid">
+      {upcoming.map((t, i) => (
+        <Reveal delay={i * 60}>
+          <article class="upcoming-card">
+            <header class="upcoming-head">
+              <Badge
+                eyebrow={t.status}
+                tone={t.status === 'Next' ? 'info' : t.status === 'Soon' ? 'warning' : 'neutral'}
+              >
+                {t.title}
+              </Badge>
+            </header>
+            <p class="text-body-sm" style="color:var(--color-body);">{t.body}</p>
+          </article>
+        </Reveal>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ
+     ============================================================ -->
+<section class="band band-canvas" id="faq">
+  <div class="container faq-container stack stack-3xl">
+    <SectionHeader eyebrow={isEn ? 'FAQ' : p('faq.title')} leadMaxWidth="560px">
+      <h2 class="text-display-lg">{isEn ? 'Frequently asked.' : p('faq.title')}</h2>
+      <p class="lead">
+        {isEn ? "Quick answers to the questions we get most. If yours isn't here, the privacy page has the long version." : 'सबसे ज़्यादा पूछे जाने वाले सवालों के जवाब।'}
+      </p>
+    </SectionHeader>
+    <Reveal>
+      <FAQ items={faqItems} />
+    </Reveal>
+    <div style="text-align:center;">
+      <Button label={isEn ? 'Read the full privacy story' : p('footer.privacy')} href={isEn ? '/legal/privacy/' : `/${lang}/legal/privacy/`} variant="secondary" size="md" />
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     LANGUAGE — global audience
+     ============================================================ -->
+<section class="band band-soft lang-band">
+  <div class="container" style="text-align:center;">
+    <Reveal>
+      <p class="text-caption-mono lang-eyebrow">{p('lang.heading')}</p>
+    </Reveal>
+    <Reveal delay={60}>
+      <div class="lang-grid">
+        {LANG_CODES.map((l) => {
+          const info = langInfo[l] || { label: l.toUpperCase(), flag: '' };
+          const active = l === lang;
+          const href = l === 'en' ? '/' : `/${l}/`;
+          return active
+            ? (
+              <span class="lang-chip lang-chip-active">
+                <span class="lang-chip-code">{l.toUpperCase()}</span>
+                {info.label}
+                <span class="lang-chip-badge">{p('lang.now')}</span>
+              </span>
+            )
+            : (
+              <a href={href} class="lang-chip lang-chip-link">
+                <span class="lang-chip-code">{l.toUpperCase()}</span>
+                {info.label}
+                <span class="lang-chip-badge">{p('lang.soon')}</span>
+              </a>
+            );
+        })}
+      </div>
+    </Reveal>
+  </div>
+</section>
+
+<!-- ============================================================
+     FINAL CTA — polarity-flipped dark band
+     ============================================================ -->
+<section class="band cta-band">
+  <MeshGradient intensity="ambient" />
+
+  <div class="container cta-inner">
+    <Reveal>
+      <p class="text-caption-mono cta-eyebrow">{p('cta.eyebrow')}</p>
+      <h2 class="text-display-xl cta-title">
+        {p('cta.title')}
+      </h2>
+      <p class="text-body-lg cta-sub">
+        {p('cta.sub')}
+      </p>
+      <div class="cta-actions">
+        <Button label={p('cta.button')} href={isEn ? '/compressor/' : `/${lang}/compressor/`} variant="secondary" size="lg" class="btn-on-dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </Button>
+        <Button label={p('nav.faq')} href={isEn ? '/faq/' : `/${lang}/faq/`} variant="ghost" size="lg" class="cta-ghost" />
+      </div>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  /* ----------------------------------------------------------
+     HERO SEARCH
+     ---------------------------------------------------------- */
+  .hero-search {
+    position: relative;
+    max-width: 400px;
+    margin: var(--space-lg) auto 0;
+  }
+
+  .hero-search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-mute);
+    pointer-events: none;
+  }
+
+  .hero-search-input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    -webkit-appearance: none;
+  }
+
+  .hero-search-input:focus {
+    border-color: var(--color-link);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-link) 15%, transparent), var(--shadow-2);
+  }
+
+  .hero-search-input::placeholder {
+    color: var(--color-mute);
+  }
+
+  /* ----------------------------------------------------------
+     TOOLS TABS + GRID
+     ---------------------------------------------------------- */
+  .home-tools {
+    padding: var(--space-4xl) 0 var(--space-5xl);
+  }
+
+  .home-tools-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .home-tools-link {
+    font-size: var(--text-body-sm);
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .home-tools-link:hover {
+    text-decoration: underline;
+  }
+
+  .tools-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--color-canvas-soft);
+    border-radius: var(--radius-pill);
+    width: fit-content;
+  }
+
+  .tools-tab {
+    appearance: none;
+    border: none;
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-body);
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .tools-tab:hover {
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
+  }
+
+  .tools-tab-active {
+    background: var(--color-canvas) !important;
+    color: var(--color-ink) !important;
+    box-shadow: var(--shadow-1);
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .tool-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tool-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-1);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .tool-card-dim {
+    opacity: 0.55;
+  }
+
+  .tool-card-dim:hover {
+    opacity: 1;
+  }
+
+  .tool-card-badge {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    color: var(--color-mute);
+    text-transform: uppercase;
+  }
+
+  .tool-card-label {
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .tool-card-desc {
+    margin: 0;
+    color: var(--color-body);
+    line-height: 1.4;
+  }
+
+  .tool-card-status {
+    font-size: 11px;
+    color: var(--color-mute);
+    margin-top: 2px;
+  }
+
+  .tools-pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .tools-pagination-count {
+    color: var(--color-mute);
+  }
+
+  .tools-pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .tools-page-btn {
+    appearance: none;
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tools-page-btn:hover:not(:disabled) {
+    background: var(--color-canvas-soft);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .tools-page-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .tools-page-numbers {
+    display: flex;
+    gap: 4px;
+  }
+
+  .tools-page-num {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-body);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tools-page-num:hover {
+    background: var(--color-canvas-soft);
+    color: var(--color-ink);
+  }
+
+  .tools-page-num-active {
+    background: var(--color-primary) !important;
+    color: var(--color-on-primary) !important;
+    border-color: var(--color-primary);
+  }
+
+  @media (max-width: 900px) {
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 500px) {
+    .tools-grid { grid-template-columns: 1fr; }
+    .tools-tabs { flex-wrap: wrap; width: 100%; justify-content: center; }
+  }
+
+  /* ----------------------------------------------------------
+     TOOL PICKER OVERLAY
+     ---------------------------------------------------------- */
+  .tool-picker-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+  }
+
+  .tool-picker-overlay[hidden] {
+    display: none;
+  }
+
+  .tool-picker-backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-ink) 45%, transparent);
+    backdrop-filter: blur(4px);
+  }
+
+  .tool-picker {
+    position: relative;
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: var(--space-2xl);
+    background-color: var(--color-canvas);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-4);
+    animation: picker-in 0.25s var(--ease-out-quart) both;
+  }
+
+  @keyframes picker-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .tool-picker-heading {
+    text-align: center;
+  }
+
+  .tool-picker-title { margin: 0; }
+  .tool-picker-sub { margin: var(--space-xs) 0 0; color: var(--color-body); }
+
+  .tool-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .tool-picker-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tool-picker-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-1);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .tool-picker-card:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+  }
+
+  .tool-picker-card-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    background: var(--color-canvas-soft);
+    color: var(--color-ink);
+    margin-bottom: 2px;
+  }
+
+  .tool-picker-card-label { margin: 0; font-weight: var(--weight-medium); color: var(--color-ink); }
+  .tool-picker-card-desc { margin: 0; color: var(--color-body); }
+
+  .tool-picker-cancel {
+    background: none;
+    border: none;
+    padding: var(--space-sm);
+    color: var(--color-mute);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--text-body-sm);
+    text-align: center;
+    width: 100%;
+  }
+
+  .tool-picker-cancel:hover { color: var(--color-body); }
+
+  @media (max-width: 480px) {
+    .tool-picker-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ----------------------------------------------------------
+     HERO
+     ---------------------------------------------------------- */
+  .hero {
+    position: relative;
+    padding: var(--space-5xl) 0 var(--space-3xl);
+    background-color: var(--color-canvas);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-sm);
+  }
+
+  .hero-badge { margin-bottom: 0; }
+
+  .hero-title {
+    margin: 0;
+    max-width: 18ch;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .hero-subtitle {
+    margin: 0;
+    color: var(--color-body);
+    max-width: 56ch;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0;
+  }
+
+  .hero-drop {
+    margin-top: var(--space-sm);
+    width: 100%;
+  }
+
+  .hero-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-link {
+    color: var(--color-mute);
+    text-decoration: none;
+    font-size: var(--fs-sm);
+    transition: color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .hero-link:hover { color: var(--color-ink); }
+
+  .hero-link:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring-tight);
+    border-radius: var(--radius-xs);
+  }
+
+  .hero-link-sep {
+    color: var(--color-hairline);
+    font-size: var(--fs-sm);
+    user-select: none;
+  }
+
+  /* ----------------------------------------------------------
+     BAND PRIMITIVES
+     ---------------------------------------------------------- */
+  .band { position: relative; padding: var(--space-5xl) 0; }
+  .band-soft { background-color: var(--color-canvas-soft); }
+  .band-canvas { background-color: var(--color-canvas); }
+
+  .band-hero {
+    padding: calc(var(--space-6xl) + var(--space-3xl)) 0 var(--space-6xl);
+  }
+
+  .band[id] { scroll-margin-top: 80px; }
+
+  /* ----------------------------------------------------------
+     WHY GRID
+     ---------------------------------------------------------- */
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  /* ----------------------------------------------------------
+     FEATURE GRID
+     ---------------------------------------------------------- */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xl) var(--space-2xl);
+  }
+
+  .feature {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    margin: -var(--space-md);
+    border-radius: var(--radius-md);
+    transition: transform var(--dur-base) var(--ease-out-quart), background-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .feature:hover {
+    transform: translateY(-2px);
+    background-color: var(--color-canvas-soft);
+  }
+
+  .feature-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    color: var(--color-ink);
+    margin-bottom: var(--space-xs);
+    transition: transform var(--dur-base) var(--ease-spring), border-color var(--dur-base) var(--ease-out-quart), color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .feature:hover .feature-icon {
+    transform: rotate(-4deg) scale(1.04);
+    border-color: var(--color-hairline-strong);
+    color: var(--color-link);
+  }
+
+  .feature-icon svg { width: 18px; height: 18px; }
+
+  .feature h3 { margin: 0; color: var(--color-ink); letter-spacing: -0.01em; }
+  .feature p { margin: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feature, .feature-icon { transition: none; }
+  }
+
+  /* ----------------------------------------------------------
+     STEPS
+     ---------------------------------------------------------- */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg);
+    align-items: stretch;
+  }
+
+  .step-wrap { display: contents; }
+
+  .step {
+    position: relative;
+    padding: var(--space-xl);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    height: 100%;
+    transition: transform var(--dur-base) var(--ease-out-quart), box-shadow var(--dur-base) var(--ease-out-quart), border-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .step:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-3);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .step-num {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-feature-settings: var(--tnum);
+    font-weight: var(--weight-medium);
+  }
+
+  .step h3 { margin: 0; text-wrap: balance; }
+  .step p { margin: 0; }
+
+  .step-connector {
+    position: absolute;
+    top: 50%;
+    right: calc(var(--space-lg) * -1 + 8px);
+    transform: translate(50%, -50%);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    color: var(--color-mute);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    transition: transform var(--dur-base) var(--ease-out-quart), color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .step:hover + .step-connector { color: var(--color-link); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step, .step-connector { transition: none; }
+  }
+
+  /* ----------------------------------------------------------
+     BEFORE / AFTER
+     ---------------------------------------------------------- */
+  .ba-band {
+    padding-top: var(--space-5xl);
+    padding-bottom: var(--space-5xl);
+  }
+
+  .ba-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: var(--space-4xl);
+    align-items: center;
+  }
+
+  .ba-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .ba-copy h2 { margin: 0; }
+
+  .ba-stats {
+    list-style: none;
+    margin: var(--space-lg) 0 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-xl);
+  }
+
+  .ba-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ba-stat-value {
+    color: var(--color-ink);
+    font-feature-settings: var(--tnum);
+    background: linear-gradient(100deg, var(--color-ink), color-mix(in srgb, var(--color-ink) 70%, var(--color-link)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .ba-stat-label {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: var(--weight-medium);
+  }
+
+  .ba-figure-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    align-items: stretch;
+  }
+
+  .ba-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    align-self: center;
+    margin: 0;
+  }
+
+  .ba-hint svg { flex-shrink: 0; }
+
+  .upcoming-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  .upcoming-card {
+    padding: var(--space-lg);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    transition: transform var(--dur-base) var(--ease-out-quart), box-shadow var(--dur-base) var(--ease-out-quart), border-color var(--dur-base) var(--ease-out-quart);
+  }
+
+  .upcoming-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-3);
+    border-color: var(--color-hairline-strong);
+  }
+
+  .upcoming-head { display: flex; align-items: center; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .upcoming-card { transition: none; }
+  }
+
+  /* ----------------------------------------------------------
+     FAQ
+     ---------------------------------------------------------- */
+  .faq-container {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* ----------------------------------------------------------
+     LANGUAGE
+     ---------------------------------------------------------- */
+  .lang-band { padding: var(--space-4xl) 0; }
+
+  .lang-eyebrow {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-lg);
+  }
+
+  .lang-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .lang-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    font-size: var(--font-size-sm);
+    color: var(--color-mute);
+  }
+
+  .lang-chip-active {
+    border-color: var(--color-link);
+    color: var(--color-ink);
+    font-weight: var(--weight-medium);
+  }
+
+  .lang-chip-link {
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease-out-quart), transform var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .lang-chip-link:hover {
+    border-color: var(--color-hairline-strong);
+    transform: translateY(-1px);
+    color: var(--color-ink);
+  }
+
+  .lang-chip-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 18px;
+    border-radius: var(--radius-xs);
+    background-color: var(--color-canvas-soft);
+    font-size: 10px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.04em;
+    color: var(--color-body);
+  }
+
+  .lang-chip-active .lang-chip-code {
+    background-color: var(--color-link-bg-soft);
+    color: var(--color-link-deep);
+  }
+
+  [data-theme="dark"] .lang-chip-active .lang-chip-code { color: var(--color-link); }
+
+  .lang-chip-badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-mute);
+  }
+
+  .lang-chip-active .lang-chip-badge {
+    color: var(--color-link-deep);
+    font-weight: var(--weight-semibold);
+  }
+
+  [data-theme="dark"] .lang-chip-active .lang-chip-badge { color: var(--color-link); }
+
+  /* ----------------------------------------------------------
+     CTA
+     ---------------------------------------------------------- */
+  .cta-band {
+    position: relative;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .cta-title {
+    margin: 0;
+    color: var(--color-on-primary);
+    max-width: 18ch;
+  }
+
+  .cta-sub {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+    max-width: 48ch;
+  }
+
+  .cta-actions {
+    margin-top: var(--space-md);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cta-ghost { color: var(--color-on-primary) !important; }
+
+  .cta-ghost:hover:not(:disabled):not([aria-disabled="true"]) {
+    background-color: color-mix(in srgb, var(--color-on-primary) 10%, transparent) !important;
+  }
+
+  /* ----------------------------------------------------------
+     RESPONSIVE
+     ---------------------------------------------------------- */
+  @media (max-width: 1023px) {
+    .why-grid,
+    .feature-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .steps { grid-template-columns: repeat(2, 1fr); }
+    .step-connector { display: none; }
+
+    .ba-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+
+    .upcoming-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: var(--space-3xl) 0 var(--space-2xl); }
+    .hero-title { max-width: 100%; }
+
+    .band { padding: var(--space-4xl) 0; }
+
+    .why-grid,
+    .feature-grid,
+    .steps,
+    .upcoming-grid { grid-template-columns: 1fr; }
+
+    .ba-stats { flex-wrap: wrap; gap: var(--space-lg); }
+    .cta-title { max-width: 100%; }
+  }
+</style>

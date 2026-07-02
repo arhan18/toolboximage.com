@@ -3,24 +3,27 @@ import Logo from '../brand/Logo.astro';
 import ThemeToggle from '../theme/ThemeToggle.astro';
 import LanguageSwitcher from '../ui/LanguageSwitcher.astro';
 import { tools } from '../../lib/tools';
+import { useTranslations, langPath, removeLangPrefix, type LangCode } from '../../i18n';
 
 interface Props {
   currentPath?: string;
+  lang?: LangCode;
 }
 
-const { currentPath = '/' } = Astro.props;
+const { currentPath = '/', lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
 
 const stripSlash = (s: string) => s.length > 1 && s.endsWith('/') ? s.slice(0, -1) : s;
 
+const cleanPath = removeLangPrefix(stripSlash(currentPath));
+
 const isToolsActive = () => {
-  const cp = stripSlash(currentPath);
-  return cp.startsWith('/image-tools') || cp.startsWith('/compressor') || cp.startsWith('/compress-') || cp.startsWith('/tools/');
+  return cleanPath.startsWith('/image-tools') || cleanPath.startsWith('/compressor') || cleanPath.startsWith('/compress-') || cleanPath.startsWith('/tools/');
 };
 
 const isActive = (href: string) => {
-  const cp = stripSlash(currentPath);
   const h = stripSlash(href);
-  return cp === h || (h !== '/' && cp.startsWith(h + '/'));
+  return cleanPath === h || (h !== '/' && cleanPath.startsWith(h + '/'));
 };
 
 const comingSoonLinks = tools
@@ -46,7 +49,7 @@ const plannedLinks = tools
           aria-controls="tools-dropdown"
           data-tools-trigger
         >
-          Tools
+          {_('nav.tools')}
           <svg class="dropdown-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <polyline points="6 9 12 15 18 9"/>
           </svg>
@@ -54,7 +57,7 @@ const plannedLinks = tools
         <div class="nav-dropdown-panel" id="tools-dropdown" data-tools-dropdown hidden>
           <div class="dropdown-inner">
             <a
-              href="/image-tools/"
+              href={langPath(lang, '/image-tools/')}
               class:list={['dropdown-link dropdown-link-all text-body-sm-strong', { active: isActive('/image-tools/') }]}
               aria-current={isActive('/image-tools/') ? 'page' : undefined}
               data-astro-prefetch="hover"
@@ -65,88 +68,81 @@ const plannedLinks = tools
                 <rect x="3" y="14" width="7" height="7"/>
                 <rect x="14" y="14" width="7" height="7"/>
               </svg>
-              All Image Tools
+              {_('nav.allTools')}
             </a>
 
             <div class="dropdown-group">
-              <a
-                href="/image-compressor/"
-                class:list={['dropdown-group-label text-caption-mono dropdown-group-link', { active: isActive('/image-compressor/') }]}
-                aria-current={isActive('/image-compressor/') ? 'page' : undefined}
-                data-astro-prefetch="hover"
-              >
-                Image Compressor
-              </a>
+              <span class="dropdown-group-label text-caption-mono">{_('nav.compressor')}</span>
               <div class="dropdown-links">
                 <a
-                  href="/image-compressor/"
+                  href={langPath(lang, '/image-compressor/')}
                   class:list={['dropdown-link text-body-sm', { active: isActive('/image-compressor/') }]}
                   aria-current={isActive('/image-compressor/') ? 'page' : undefined}
                   data-astro-prefetch="hover"
                 >
-                  Image Compressor
+                  {_('nav.compressor')}
                 </a>
                 <a
-                  href="/compress-jpeg/"
+                  href={langPath(lang, '/compress-jpeg/')}
                   class:list={['dropdown-link text-body-sm', { active: isActive('/compress-jpeg/') }]}
                   aria-current={isActive('/compress-jpeg/') ? 'page' : undefined}
                   data-astro-prefetch="hover"
                 >
-                  Compress JPEG
+                  {_('nav.compressJpeg')}
                 </a>
                 <a
-                  href="/compress-png/"
+                  href={langPath(lang, '/compress-png/')}
                   class:list={['dropdown-link text-body-sm', { active: isActive('/compress-png/') }]}
                   aria-current={isActive('/compress-png/') ? 'page' : undefined}
                   data-astro-prefetch="hover"
                 >
-                  Compress PNG
+                  {_('nav.compressPng')}
                 </a>
                 <a
-                  href="/compress-webp/"
+                  href={langPath(lang, '/compress-webp/')}
                   class:list={['dropdown-link text-body-sm', { active: isActive('/compress-webp/') }]}
                   aria-current={isActive('/compress-webp/') ? 'page' : undefined}
                   data-astro-prefetch="hover"
                 >
-                  Compress WebP
+                  {_('nav.compressWebp')}
                 </a>
                 <a
-                  href="/compress-avif/"
+                  href={langPath(lang, '/compress-avif/')}
                   class:list={['dropdown-link text-body-sm', { active: isActive('/compress-avif/') }]}
                   aria-current={isActive('/compress-avif/') ? 'page' : undefined}
                   data-astro-prefetch="hover"
                 >
-                  Compress AVIF
+                  {_('nav.compressAvif')}
                 </a>
                 <a
-                  href="/bulk-image-compressor/"
+                  href={langPath(lang, '/bulk-image-compressor/')}
                   class:list={['dropdown-link text-body-sm', { active: isActive('/bulk-image-compressor/') }]}
                   aria-current={isActive('/bulk-image-compressor/') ? 'page' : undefined}
                   data-astro-prefetch="hover"
                 >
-                  Bulk Compressor
+                  {_('nav.bulkCompressor')}
                 </a>
                 <a
-                  href="/image-compressor-100kb/"
+                  href={langPath(lang, '/image-compressor-100kb/')}
                   class:list={['dropdown-link text-body-sm', { active: isActive('/image-compressor-100kb/') }]}
                   aria-current={isActive('/image-compressor-100kb/') ? 'page' : undefined}
                   data-astro-prefetch="hover"
                 >
-                  Compress to 100KB
+                  {_('nav.compress100kb')}
                 </a>
                 <a
-                  href="/image-compressor-for-discord/"
+                  href={langPath(lang, '/image-compressor-for-discord/')}
                   class:list={['dropdown-link text-body-sm', { active: isActive('/image-compressor-for-discord/') }]}
                   aria-current={isActive('/image-compressor-for-discord/') ? 'page' : undefined}
                   data-astro-prefetch="hover"
                 >
-                  Discord Compressor
+                  {_('nav.discordCompressor')}
                 </a>
               </div>
             </div>
 
             <div class="dropdown-group">
-              <span class="dropdown-group-label text-caption-mono">Coming Soon</span>
+              <span class="dropdown-group-label text-caption-mono">{_('nav.comingSoon')}</span>
               <div class="dropdown-links">
                 {comingSoonLinks.map((l) => (
                   <a
@@ -162,7 +158,7 @@ const plannedLinks = tools
             </div>
 
             <div class="dropdown-group">
-              <span class="dropdown-group-label text-caption-mono">Planned</span>
+              <span class="dropdown-group-label text-caption-mono">{_('nav.planned')}</span>
               <div class="dropdown-links">
                 {plannedLinks.map((l) => (
                   <a
@@ -181,35 +177,35 @@ const plannedLinks = tools
       </div>
 
       <a
-        href="/blog/"
+        href={langPath(lang, '/blog/')}
         class:list={['nav-link text-body-sm', { active: isActive('/blog/') }]}
         aria-current={isActive('/blog/') ? 'page' : undefined}
         data-astro-prefetch="hover"
       >
-        Blog
+        {_('nav.blog')}
       </a>
       <a
-        href="/faq/"
+        href={langPath(lang, '/faq/')}
         class:list={['nav-link text-body-sm', { active: isActive('/faq/') }]}
         aria-current={isActive('/faq/') ? 'page' : undefined}
         data-astro-prefetch="hover"
       >
-        FAQ
+        {_('nav.faq')}
       </a>
       <a
-        href="/about/"
+        href={langPath(lang, '/about/')}
         class:list={['nav-link text-body-sm', { active: isActive('/about/') }]}
         aria-current={isActive('/about/') ? 'page' : undefined}
         data-astro-prefetch="hover"
       >
-        About
+        {_('nav.about')}
       </a>
     </div>
 
     <div class="nav-actions">
       <LanguageSwitcher variant="nav" />
-      <a href="/contact/" class="nav-link nav-link-cta text-body-sm-strong" data-astro-prefetch="hover">
-        Contact
+      <a href={langPath(lang, '/contact/')} class="nav-link nav-link-cta text-body-sm-strong" data-astro-prefetch="hover">
+        {_('nav.contact')}
       </a>
       <ThemeToggle />
       <button type="button" class="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false">
@@ -224,7 +220,6 @@ const plannedLinks = tools
 <script>
   const nav = document.querySelector<HTMLElement>('.nav-bar');
   if (nav) {
-    // Navigation progress bar.
     const progress = nav.querySelector<HTMLElement>('[data-nav-progress]');
     if (progress) {
       let navTimer = 0;
@@ -248,7 +243,6 @@ const plannedLinks = tools
       });
     }
 
-    // Scroll shadow.
     let ticking = false;
     const updateScroll = () => {
       nav.dataset.scrolled = window.scrollY > 8 ? 'true' : '';
@@ -261,7 +255,6 @@ const plannedLinks = tools
     });
     updateScroll();
 
-    // Tools dropdown toggle.
     const trigger = nav.querySelector<HTMLButtonElement>('[data-tools-trigger]');
     const dropdown = nav.querySelector<HTMLElement>('[data-tools-dropdown]');
     if (trigger && dropdown) {
@@ -296,7 +289,6 @@ const plannedLinks = tools
       });
     }
 
-    // Mobile hamburger toggle.
     const hamburger = nav.querySelector<HTMLButtonElement>('.nav-hamburger');
     const navLinks = nav.querySelector<HTMLElement>('.nav-links');
     if (hamburger && navLinks) {
@@ -427,11 +419,7 @@ const plannedLinks = tools
     gap: var(--space-xs);
   }
 
-  /* ── Tools dropdown ──────────────────────────────────── */
-
-  .nav-dropdown {
-    position: static;
-  }
+  .nav-dropdown { position: static; }
 
   .nav-dropdown-trigger {
     cursor: pointer;
@@ -628,13 +616,8 @@ const plannedLinks = tools
       gap: var(--space-sm);
     }
 
-    .dropdown-group {
-      gap: var(--space-xxs);
-    }
-
-    .dropdown-links {
-      flex-wrap: wrap;
-    }
+    .dropdown-group { gap: var(--space-xxs); }
+    .dropdown-links { flex-wrap: wrap; }
   }
 
   .nav-progress {
@@ -661,5 +644,3 @@ const plannedLinks = tools
     .nav-progress { display: none; }
   }
 </style>
-</content>
-</invoke>

@@ -1,18 +1,21 @@
 ---
 import type { ToolConfig } from '../../types';
 import Badge from '../ui/Badge.astro';
+import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
   tool: ToolConfig;
+  lang?: LangCode;
 }
 
-const { tool } = Astro.props;
+const { tool, lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
 
 const statusBadge: Record<string, { tone: 'info' | 'warning' | 'neutral' | 'success'; label: string }> = {
-  live: { tone: 'success', label: 'Live' },
+  live: { tone: 'success', label: _('tools.live') },
   beta: { tone: 'info', label: 'Beta' },
-  'coming-soon': { tone: 'warning', label: 'Coming soon' },
-  planned: { tone: 'neutral', label: 'Planned' },
+  'coming-soon': { tone: 'warning', label: _('tools.soon') },
+  planned: { tone: 'neutral', label: _('nav.planned') },
 };
 
 const badge = statusBadge[tool.status] ?? statusBadge.planned;

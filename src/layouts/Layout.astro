@@ -8,6 +8,7 @@ import type { SeoMeta } from '../lib/seo';
 import { SITE_URL, SITE_BASE_IMAGE } from '../lib/seo';
 
 interface Props extends SeoMeta {
+  lang?: string;
   noThemeColor?: boolean;
   /** When true, skip default Organization+WebSite JSON-LD schemas. */
   noDefaultSchema?: boolean;
@@ -25,6 +26,7 @@ const {
   author,
   tags,
   noIndex = false,
+  lang = 'en',
   noThemeColor = false,
   noDefaultSchema = false,
   schemas,
@@ -32,7 +34,7 @@ const {
 ---
 
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang={lang} data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -45,6 +47,7 @@ const {
     <SeoHead
       {title}
       {description}
+      lang={lang}
       canonical={canonical ?? `${SITE_URL}${Astro.url.pathname}`}
       {ogImage}
       {ogType}

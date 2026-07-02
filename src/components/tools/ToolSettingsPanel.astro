@@ -1,17 +1,20 @@
 ---
 import type { ToolConfig } from '../../types';
+import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
   tool: ToolConfig;
+  lang?: LangCode;
 }
 
-const { tool } = Astro.props;
+const { tool, lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
 const hasSettings = tool.steps?.includes('configure') ?? true;
 ---
 
-<section class="tool-settings" aria-label="Settings" data-tool-settings data-tool-id={tool.id} hidden={!hasSettings}>
+<section class="tool-settings" aria-label={_('settings.title')} data-tool-settings data-tool-id={tool.id} hidden={!hasSettings}>
   <header class="tool-settings-header">
-    <h2 class="text-display-sm tool-settings-title">Settings</h2>
+    <h2 class="text-display-sm tool-settings-title">{_('settings.title')}</h2>
     <slot name="settings-actions" />
   </header>
   <div class="tool-settings-body" data-tool-settings-body>

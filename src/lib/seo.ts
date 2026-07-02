@@ -2,6 +2,8 @@
  * SEO utilities — structured data builders and shared metadata constants.
  */
 
+import { localeFromLang, type LangCode } from '../i18n';
+
 export const SITE_NAME = 'ToolBox Image';
 export const SITE_DESCRIPTION =
   'Free online image compressor — compress JPG, PNG, WebP, AVIF, and GIF images directly in your browser. No uploads, no sign-up, unlimited. The best free image compressor online.';
@@ -44,14 +46,15 @@ export function organizationSchema() {
 }
 
 /** WebSite schema — enriches search result appearance. */
-export function websiteSchema() {
+export function websiteSchema(lang: LangCode = 'en') {
+  const locale = localeFromLang(lang);
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
     url: SITE_URL,
     description: SITE_DESCRIPTION,
-    inLanguage: 'en-US',
+    inLanguage: locale,
   };
 }
 

@@ -1,18 +1,23 @@
 ---
 import Button from '../ui/Button.astro';
 import type { ToolConfig } from '../../types';
+import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
   tool: ToolConfig;
+  lang?: LangCode;
   /** Override action label (from tool module info) */
   actionLabel?: string;
 }
+
+const { tool, lang = 'en', actionLabel } = Astro.props;
+const _ = useTranslations(lang);
 ---
 
 <footer class="tool-footer" data-tool-footer hidden>
   <div class="tool-footer-actions">
-    <Button label="Clear" variant="ghost" size="lg" data-action="clear" />
-    <Button label={Astro.props.actionLabel ?? 'Process'} variant="primary" size="lg" data-action="process" />
+    <Button label={_('tool.clear')} variant="ghost" size="lg" data-action="clear" />
+    <Button label={actionLabel ?? _('tool.process')} variant="primary" size="lg" data-action="process" />
   </div>
 </footer>
 

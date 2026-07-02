@@ -1,17 +1,22 @@
 ---
 import Button from '../ui/Button.astro';
 import type { ToolConfig } from '../../types';
+import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
   tool: ToolConfig;
+  lang?: LangCode;
 }
+
+const { tool, lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
 ---
 
-<section class="tool-results" aria-label="Results" data-tool-results hidden>
+<section class="tool-results" aria-label={_('results.title')} data-tool-results hidden>
   <header class="tool-results-header">
-    <h2 class="text-display-sm tool-results-title">Results</h2>
+    <h2 class="text-display-sm tool-results-title">{_('results.title')}</h2>
     <div class="tool-results-actions">
-      <Button label="Download All" variant="primary" size="md" data-action="download-all" />
+      <Button label={_('results.downloadAll')} variant="primary" size="md" data-action="download-all" />
     </div>
   </header>
   <div class="tool-results-body" data-tool-results-body>
