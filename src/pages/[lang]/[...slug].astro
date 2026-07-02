@@ -2,12 +2,15 @@
 import Layout from '../../layouts/Layout.astro';
 import AppShell from '../../components/layout/AppShell.astro';
 import Button from '../../components/ui/Button.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Reveal from '../../components/shared/Reveal.astro';
 import FAQ from '../../components/shared/FAQ.astro';
 import SectionHeader from '../../components/shared/SectionHeader.astro';
 import Prose from '../../components/shared/Prose.astro';
 import BlogPostContent from '../../components/blog/BlogPostContent.astro';
 import CompressorTool from '../../components/tools/CompressorTool.astro';
 import RotatorTool from '../../components/tools/RotatorTool.astro';
+import { tools } from '../../lib/tools';
 import { useTranslations, LANG_CODES, type LangCode } from '../../i18n';
 import { posts, formatDate, getAllTags, getPost, getTranslatedTitle, getTranslatedDescription, getTranslatedTags } from '../../lib/blog';
 
@@ -99,6 +102,30 @@ function pageDesc(slug: string): string {
     contact: _('page.desc.contact'),
   };
   return map[slug] || `ToolBox Image — ${pageTitle(slug)}`;
+}
+
+const compressTools = [
+  { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any image format in your browser.' },
+  { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch compress hundreds of images.' },
+  { href: '/image-compressor-100kb/', label: 'Compress to 100KB', desc: 'Hit exact file size targets.' },
+  { href: '/image-compressor-for-discord/', label: 'Discord Compressor', desc: 'Compress for Discord limits.' },
+  { href: '/compress-for-email/', label: 'Email Compressor', desc: 'Compress for email attachments.' },
+  { href: '/compress-for-whatsapp/', label: 'WhatsApp Compressor', desc: 'Optimize images for WhatsApp.' },
+  { href: '/compress-for-instagram/', label: 'Instagram Compressor', desc: 'Resize and compress for Instagram.' },
+  { href: '/jpeg-vs-png-compression/', label: 'JPEG vs PNG', desc: 'Compare image formats.' },
+];
+function getAllTools(_lang: string) {
+  const dynamic = tools.filter((t) => t.id !== 'compressor').map((t) => ({
+    href: t.path, label: t.name, desc: t.description, icon: t.icon,
+    status: t.status === 'live' ? 'Live' as const : 'Soon' as const,
+  }));
+  return [...compressTools, ...dynamic];
+}
+function getToolsByCategory(cat: string, _lang: string) {
+  return tools.filter((t) => t.id !== 'compressor' && t.category === cat).map((t) => ({
+    href: t.path, label: t.name, desc: t.description,
+    status: t.status === 'live' ? 'Live' as const : 'Soon' as const,
+  }));
 }
 
 const isCompressorPage = slug === 'compressor' || slug === 'bulk-image-compressor' || slug === 'image-compressor-100kb' || slug === 'image-compressor-for-discord' || slug === 'compress-for-email' || slug === 'compress-jpeg' || slug === 'compress-png' || slug === 'compress-webp' || slug === 'compress-avif' || slug === 'compress-for-instagram' || slug === 'compress-for-whatsapp';
@@ -245,13 +272,54 @@ const faqItems = [
         </>;
       })()
     ) : slug === 'image-tools' ? (
+      <section class="band hero-band">
+        <div class="container stack stack-lg">
+          <Reveal>
+            <Badge eyebrow="ToolBox Image" tone="info">{_('page.imageTools.title')}</Badge>
+          </Reveal>
+          <Reveal delay={80}>
+            <h1 class="text-display-xl page-title">{_('page.imageTools.title')}</h1>
+          </Reveal>
+          <Reveal delay={160}>
+            <p class="text-body-lg page-lead">{_('page.imageTools.desc')}</p>
+          </Reveal>
+        </div>
+      </section>
       <section class="band band-canvas">
-        <div class="container" style="padding-top: var(--space-5xl); text-align: center;">
-          <h1 class="text-display-lg" style="margin-bottom: var(--space-md);">{_('page.imageTools.title')}</h1>
-          <p class="text-body-lg" style="color: var(--color-body); margin-bottom: var(--space-lg); max-width: 560px; margin-left: auto; margin-right: auto;">
-            {_('page.imageTools.desc')}
-          </p>
-          <Button label={_('page.imageTools.cta')} href="/image-tools/" variant="primary" size="lg" />
+        <div class="container stack stack-3xl">
+          <nav class="tabs" role="tablist" aria-label="Tool categories">
+            {['all', 'compress', 'transform', 'convert', 'analyze'].map((cat) => (
+              <button type="button" class="tab" role="tab" aria-selected={cat === 'all'} data-tab={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
+            ))}
+          </nav>
+          <div class="tab-panel" data-panel="all">
+            <div class="tools-grid">
+              {getAllTools(langCode).map((tool, i) => (
+                <Reveal delay={i * 30}>
+                  <a href={tool.href} class:list={['tool-card', tool.status === 'Soon' && 'tool-card-coming']}>
+                    <Badge eyebrow={tool.status === 'Live' ? 'Free' : _('tools.soon')} tone={tool.status === 'Live' ? 'info' : 'warning'}>{tool.label}</Badge>
+                    <p class="text-body-sm tool-desc">{tool.desc}</p>
+                  </a>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+          {['compress', 'transform', 'convert', 'analyze'].map((cat) => (
+            <div class="tab-panel" data-panel={cat} hidden>
+              <div class="tools-grid">
+                {getToolsByCategory(cat, langCode).map((tool, i) => (
+                  <Reveal delay={i * 30}>
+                    <a href={tool.href} class:list={['tool-card', tool.status === 'Soon' && 'tool-card-coming']}>
+                      <Badge eyebrow={tool.status === 'Live' ? 'Free' : _('tools.soon')} tone={tool.status === 'Live' ? 'info' : 'warning'}>{tool.label}</Badge>
+                      <p class="text-body-sm tool-desc">{tool.desc}</p>
+                    </a>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     ) : isLiveTool ? (
@@ -270,12 +338,81 @@ const faqItems = [
   </AppShell>
 </Layout>
 
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tab]');
+  const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const id = tab.dataset.tab;
+      tabs.forEach((t) => t.ariaSelected = String(t.dataset.tab === id));
+      panels.forEach((p) => p.hidden = p.dataset.panel !== id);
+    });
+  });
+</script>
+
 <style>
   .faq-container { max-width: 760px; margin: 0 auto; }
   .band { position: relative; padding: var(--space-5xl) 0; }
   .band-canvas { background-color: var(--color-canvas); }
   .cta-actions { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+
+  .hero-band {
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-lg);
+    background-color: var(--color-canvas);
+  }
+  .page-title { margin: 0; max-width: 16ch; }
+  .page-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+
+  .tabs {
+    display: flex; gap: 2px; padding: 4px;
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-hairline);
+    width: fit-content; overflow-x: auto;
+  }
+  .tab {
+    padding: var(--space-xs) var(--space-lg); border: none;
+    border-radius: var(--radius-md); background: transparent;
+    color: var(--color-body); font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium); cursor: pointer; white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .tab:hover {
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-ink) 5%, transparent);
+  }
+  .tab[aria-selected="true"] {
+    background: var(--color-canvas); color: var(--color-ink);
+    box-shadow: var(--shadow-1);
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+  .tool-card {
+    display: flex; flex-direction: column; gap: var(--space-sm);
+    padding: var(--space-lg);
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md); text-decoration: none;
+    transition: transform var(--dur-base) var(--ease-out-quart), box-shadow var(--dur-base) var(--ease-out-quart), border-color var(--dur-base) var(--ease-out-quart);
+  }
+  .tool-card:hover {
+    transform: translateY(-2px); box-shadow: var(--shadow-2);
+    border-color: var(--color-hairline-strong);
+  }
+  .tool-card-coming { opacity: 0.7; }
+  .tool-card-coming:hover { opacity: 1; }
+  .tool-desc { margin: 0; color: var(--color-body); }
+
+  @media (max-width: 1023px) {
+    .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  }
   @media (max-width: 600px) {
+    .hero-band { padding: var(--space-4xl) 0 var(--space-md); }
     .band { padding: var(--space-4xl) 0; }
+    .tools-grid { grid-template-columns: 1fr; }
   }
 </style>

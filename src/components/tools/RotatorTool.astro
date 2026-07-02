@@ -227,6 +227,7 @@ const tool = getTool('rotator')!;
     if (resultSize) resultSize.textContent = `${img.width} × ${img.height} · ${formatBytes(file.size)}`;
     if (resultLabel) resultLabel.textContent = i18n('rotator.original');
     if (downloadSection) downloadSection.hidden = true;
+    previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   window.addEventListener('toolboximage:files', async (e: Event) => {
@@ -239,6 +240,12 @@ const tool = getTool('rotator')!;
     const files = await retrieveFiles();
     if (files.length) onFilesReceived(files);
   })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile) {
+      import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
+    }
+  });
 </script>
 
 <style>

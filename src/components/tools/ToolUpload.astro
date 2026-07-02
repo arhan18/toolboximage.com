@@ -67,11 +67,19 @@ const formatList = tool.inputFormats
       return ACCEPTED_EXT.has(ext);
     };
 
+    const scrollToContent = () => {
+      const next = zone?.closest('.tool-upload')?.nextElementSibling as HTMLElement | null;
+      if (next) {
+        setTimeout(() => next.scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
+      }
+    };
+
     const emit = (files: File[]) => {
       if (!files.length) return;
       window.dispatchEvent(
         new CustomEvent<FilesPayload>('toolboximage:files', { detail: { files } })
       );
+      scrollToContent();
     };
 
     const handleFiles = (allFiles: FileList | File[]) => {

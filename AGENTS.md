@@ -26,7 +26,7 @@ Key facts about this project (read before starting new tasks):
 - **Competitor reference:** https://imagetoolbox.app — they have 24+ tools (converters, PDF tools, AI tools, passport photo, background remover). User wants to build similar tools directory with working tools under hero section (pattern: "All / Convert / Resize / Edit / Optimize" tabs)
 - **Live tools:** Image Compressor, Bulk Compressor, Compress JPEG/PNG/WebP/AVIF, 100KB/Email/Discord target pages, Rotate Image (rotator tool now live), Resize Image & Convert Format (coming soon)
 - **Tools directory:** /image-tools/ has tabbed layout (All/Compress/Transform/Convert/Analyze). Homepage now has 12-card tools grid below hero, matching competitor layout
-- **Updated this session:** Homepage tools grid added with live/soon status dots, link to /image-tools/, AGENTS.md updated, ToolUpload component got live upload handling JS (fixes rotator/tool uploads), rotate tool flip buttons fixed, homepage upload now shows tool picker overlay instead of auto-redirecting to compressor, search bar added above tools grid. Rotator status changed to Live on homepage.
+- **Updated this session:** Homepage tools grid added with live/soon status dots, link to /image-tools/, ToolUpload component got live upload handling JS (fixes rotator/tool uploads), rotate tool flip buttons fixed, homepage upload now shows tool picker overlay instead of auto-redirecting to compressor, search bar added above tools grid. Rotator status changed to Live on homepage. Playwright E2E tests added (pages.spec.ts, language.spec.ts, tools.spec.ts, translations.spec.ts). Full tools directory (/image-tools/) now renders correctly in all 13 language pages. Auto-scroll on upload added to all tools (CompressorTool, ToolUpload, RotatorTool). File persistence across language switch added via beforeunload + IndexedDB.
 - **i18n system (current session):** Full multi-language support for 13 languages (EN, ES, FR, DE, IT, PT, RU, ZH, JA, KO, AR, HI, TR). Homepage content extracted into `src/components/home/HomeContent.astro` shared component used by both `index.astro` and `[lang].astro`. Catch-all route `[lang]/[...slug].astro` serves translated pages for all tools, blog, FAQ, about, contact, legal pages (616 total pages). Hindi translations rewritten to use conversational/natural Hindi. Language-prefixed links throughout (e.g., `/hi/compressor/` instead of `/compressor/`).
 - **Tool i18n pattern:** Tool components are extracted into `src/components/tools/` (e.g., `CompressorTool.astro`, `RotatorTool.astro`) so they can be reused in both English pages and language routes. When adding a new live tool:
   1. Create a `{ToolName}Tool.astro` component in `src/components/tools/` with the tool's HTML/JS (no Layout/AppShell wrapper)
@@ -117,3 +117,40 @@ Every tool page needs: overview, features, benefits, step-by-step guide, support
 
 ### 6. Quality Assurance
 Before marking complete verify: upload, drag & drop, multi-upload, folder upload, clipboard paste, processing, preview, download, output validity, file sizes, statistics, responsive layout, dark mode, accessibility, all languages, SEO metadata, structured data.
+
+## Testing with Playwright
+
+The project uses Playwright for end-to-end testing. Tests are in `e2e/`.
+
+### Commands
+```
+npm run test           # Run all tests
+npm run test:ui        # Run with interactive UI mode
+npm run test:headed    # Run with visible browser (debugging)
+```
+
+### Workflow
+1. First build: `npm run build` (tests read sitemap from `dist/`)
+2. Then preview: `npx astro preview` (serves from `dist/` on port 4321)
+3. Then test: `npx playwright test`
+
+Or use the convenience script: `npm run test:full` (builds, waits, then tests).
+
+### What tests exist
+- **pages.spec.ts** — Loads every page from the sitemap (652 pages across 13 languages), checks for 200 status and zero console errors
+- **language.spec.ts** — Verifies language switcher works, translated content renders on each language's pages, no English fallback leaks
+- **tools.spec.ts** — Tests Compressor and Rotator upload flows: zone visibility, file acceptance, preview rendering, no console errors
+- **translations.spec.ts** — Asserts specific translated strings appear on the correct language pages and English strings don't appear where they shouldn't
+
+### Adding new tests
+When adding a new tool or page:
+1. Add the slug to `e2e/helpers.ts` `LIVE_TOOL_PAGES` array if it's a live tool
+2. Add upload + process + download test in `e2e/tools.spec.ts`
+3. Add translation checks in `e2e/translations.spec.ts`
+4. Run `npm run test:full` to verify everything passes
+
+### Rules
+- Always build before running tests (tests parse the sitemap from `dist/`)
+- Tests are fully parallel by default (652 pages in ~30s)
+- Failed tests capture screenshots and traces in `test-results/`
+- Do not skip console-error checks — a page with JS errors is a broken page

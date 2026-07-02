@@ -226,8 +226,17 @@ const _ = useTranslations(lang);
       const files = await retrieveFiles();
       if (files.length) {
         await store.add(files);
+        queuePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     })();
+
+    window.addEventListener('beforeunload', () => {
+      const items = store.snapshot();
+      const files = items.map(i => i.file).filter(Boolean);
+      if (files.length) {
+        import('../../lib/file-transfer').then(m => m.storeFiles(files));
+      }
+    });
     const tpl = document.getElementById('tpl-preview-card') as HTMLTemplateElement | null;
     const cards = new Map<string, HTMLElement>();
 
@@ -727,6 +736,9 @@ const _ = useTranslations(lang);
       const detail = (e as CustomEvent<FilesDetail>).detail;
       if (!detail?.files?.length) return;
       const result = await store.add(detail.files, detail.paths);
+      if (result.added.length && queuePanel) {
+        queuePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
       if (result.errors.length) {
         const toast = (window as any).toast;
         if (typeof toast === 'function') {
