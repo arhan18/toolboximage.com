@@ -55,6 +55,7 @@ export const LIVE_TOOL_PAGES = [
   '/compress-jpeg/', '/compress-png/', '/compress-webp/', '/compress-avif/',
   '/compress-for-instagram/', '/compress-for-whatsapp/',
   '/tools/rotator/',
+  '/tools/converter/',
 ];
 
 export function isLiveToolPage(pathname: string): boolean {

@@ -33,6 +33,22 @@ test.describe('Image Rotator tool', () => {
   });
 });
 
+test.describe('Image Converter tool', () => {
+  test('upload zone is visible', async ({ page }) => {
+    await page.goto('/tools/converter/', { waitUntil: 'load' });
+    await expect(page.locator('[data-tool-upload]')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('no console errors on load', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('console', (msg) => { if (msg.type() === 'error') errors.push(msg.text()); });
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    await page.goto('/tools/converter/', { waitUntil: 'load' });
+    expect(errors).toEqual([]);
+  });
+});
+
 test.describe('Tools directory page', () => {
   test('tabs switch panels', async ({ page }) => {
     await page.goto('/image-tools/', { waitUntil: 'load' });

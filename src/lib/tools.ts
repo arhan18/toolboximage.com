@@ -27,7 +27,7 @@ export const tools: ToolConfig[] = [
     icon: 'convert',
     path: '/tools/converter/',
     category: 'convert',
-    status: 'coming-soon',
+    status: 'live',
     inputFormats: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'image/svg+xml', 'image/heic'],
     outputFormats: ['JPEG', 'PNG', 'WebP', 'AVIF', 'GIF', 'SVG'],
     maxInputs: 50,

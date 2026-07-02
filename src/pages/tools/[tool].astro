@@ -6,6 +6,7 @@ import ToolProgress from '../../components/tools/ToolProgress.astro';
 import ToolResultsSummary from '../../components/tools/ToolResultsSummary.astro';
 import ToolFooter from '../../components/tools/ToolFooter.astro';
 import RotatorTool from '../../components/tools/RotatorTool.astro';
+import ConverterTool from '../../components/tools/ConverterTool.astro';
 import { tools, getTool } from '../../lib/tools';
 import type { ToolId } from '../../types';
 
@@ -68,6 +69,8 @@ if (!tool) {
       <article class="workflow stack stack-lg">
         {tool.id === 'rotator' ? (
           <RotatorTool />
+        ) : tool.id === 'converter' ? (
+          <ConverterTool />
         ) : (
           <>
             <ToolUpload {tool} />

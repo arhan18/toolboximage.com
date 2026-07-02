@@ -1,0 +1,325 @@
+---
+import ToolUpload from './ToolUpload.astro';
+import ToolSettingsPanel from './ToolSettingsPanel.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('converter')!;
+---
+<section class="converter-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <ToolSettingsPanel {tool} {lang}>
+    <div slot="settings-actions">
+      <button type="button" class="converter-clear-btn" data-converter-clear hidden>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+    <div slot="settings-controls">
+      <fieldset class="converter-formats">
+        <legend class="text-caption-mono converter-label">{_('converter.targetFormat')}</legend>
+        <div class="converter-format-grid" data-converter-formats>
+          {['JPEG', 'PNG', 'WebP', 'AVIF'].map((fmt) => (
+            <button type="button" class="converter-format-btn" data-converter-format={fmt.toLowerCase()}>
+              {fmt}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <div class="converter-quality">
+        <label class="text-caption-mono converter-label" for="converter-quality">{_('converter.quality')}</label>
+        <div class="converter-quality-row">
+          <input type="range" id="converter-quality" class="converter-range" data-converter-quality min="1" max="100" value="92" />
+          <span class="text-body-sm-strong converter-quality-value" data-converter-quality-value>92%</span>
+        </div>
+      </div>
+    </div>
+  </ToolSettingsPanel>
+
+  <section class="converter-preview" data-converter-preview hidden>
+    <div class="converter-preview-cols">
+      <figure class="converter-preview-fig">
+        <figcaption class="text-caption-mono converter-preview-label">{_('converter.original')}</figcaption>
+        <div class="converter-preview-frame">
+          <img data-converter-original alt={_('converter.original')} class="converter-preview-img" />
+        </div>
+        <p class="text-caption converter-preview-size" data-converter-original-size></p>
+      </figure>
+      <div class="converter-preview-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <figure class="converter-preview-fig">
+        <figcaption class="text-caption-mono converter-preview-label" data-converter-result-label>{_('converter.result')}</figcaption>
+        <div class="converter-preview-frame">
+          <img data-converter-result alt={_('converter.result')} class="converter-preview-img" />
+        </div>
+        <p class="text-caption converter-preview-size" data-converter-result-size></p>
+      </figure>
+    </div>
+    <div class="converter-actions" data-converter-actions hidden>
+      <button type="button" class="converter-action-link" data-converter-replace>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        {_('converter.replace')}
+      </button>
+      <button type="button" class="converter-action-link converter-action-link-danger" data-converter-clear>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+  </section>
+
+  <section class="converter-download" data-converter-download hidden>
+    <div class="converter-download-bar">
+      <div class="converter-download-info">
+        <p class="text-caption-mono converter-download-label">{_('converter.downloadBtn')}</p>
+        <p class="text-body-sm-strong" data-converter-download-name></p>
+      </div>
+      <button type="button" class="results-btn results-btn-primary" data-converter-download-btn>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        {_('converter.downloadBtn')}
+      </button>
+      <button type="button" class="results-btn results-btn-ghost" data-converter-clear>
+        {_('tool.clear')}
+      </button>
+    </div>
+  </section>
+</section>
+
+<script>
+  const mimeMap: Record<string, string> = {
+    jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', avif: 'image/avif',
+  };
+
+  const formatBtns = document.querySelectorAll<HTMLButtonElement>('[data-converter-format]');
+  const qualityInput = document.querySelector<HTMLInputElement>('[data-converter-quality]');
+  const qualityValue = document.querySelector<HTMLElement>('[data-converter-quality-value]');
+  const previewArea = document.querySelector<HTMLElement>('[data-converter-preview]');
+  const origImg = document.querySelector<HTMLImageElement>('[data-converter-original]');
+  const resultImg = document.querySelector<HTMLImageElement>('[data-converter-result]');
+  const origSizeEl = document.querySelector<HTMLElement>('[data-converter-original-size]');
+  const resultSizeEl = document.querySelector<HTMLElement>('[data-converter-result-size]');
+  const resultLabel = document.querySelector<HTMLElement>('[data-converter-result-label]');
+  const downloadSection = document.querySelector<HTMLElement>('[data-converter-download]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-converter-download-btn]');
+  const downloadNameEl = document.querySelector<HTMLElement>('[data-converter-download-name]');
+  const clearBtns = document.querySelectorAll<HTMLButtonElement>('[data-converter-clear]');
+  const replaceBtn = document.querySelector<HTMLButtonElement>('[data-converter-replace]');
+  const actionsBar = document.querySelector<HTMLElement>('[data-converter-actions]');
+  const settingsClearBtn = document.querySelector<HTMLButtonElement>('[data-converter-clear-btn]');
+
+  const i18n = (key: string): string => {
+    const el = document.querySelector<HTMLElement>(`[data-i18n="${key}"]`);
+    return el?.textContent ?? key;
+  };
+
+  let currentFile: File | null = null;
+  let currentImg: HTMLImageElement | null = null;
+  let currentBlob: Blob | null = null;
+  let currentBlobUrl: string | null = null;
+  let selectedFormat = 'jpeg';
+  let selectedQuality = 92;
+
+  const formatBytes = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const convert = (img: HTMLImageElement, mime: string, quality: number): Promise<Blob> =>
+    new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d')!;
+      if (mime === 'image/jpeg') {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      ctx.drawImage(img, 0, 0);
+      try {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Conversion failed'));
+        }, mime, quality / 100);
+      } catch (e) {
+        reject(e);
+      }
+    });
+
+  const updatePreview = async () => {
+    if (!currentImg) return;
+    const mime = mimeMap[selectedFormat] || 'image/jpeg';
+    currentBlob = await convert(currentImg, mime, selectedQuality);
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentBlobUrl = URL.createObjectURL(currentBlob);
+    if (resultImg) resultImg.src = currentBlobUrl;
+    if (resultSizeEl) resultSizeEl.textContent = formatBytes(currentBlob.size);
+    if (resultLabel) resultLabel.textContent = selectedFormat.toUpperCase();
+    if (downloadSection) downloadSection.hidden = false;
+    if (downloadNameEl && currentFile) {
+      downloadNameEl.textContent = currentFile.name.replace(/\.[^.]+$/, '') + '.' + selectedFormat;
+    }
+  };
+
+  formatBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      formatBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      selectedFormat = btn.dataset.converterFormat!;
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  });
+  if (formatBtns[0]) formatBtns[0].dataset.active = 'true';
+
+  if (qualityInput && qualityValue) {
+    const fillSlider = (input: HTMLInputElement) => {
+      const min = Number(input.min || 0);
+      const max = Number(input.max || 100);
+      const val = Number(input.value || 0);
+      const pct = ((val - min) / (max - min)) * 100;
+      input.style.setProperty('--fill', `${pct}%`);
+    };
+    fillSlider(qualityInput);
+    qualityInput.addEventListener('input', () => {
+      selectedQuality = Number(qualityInput.value);
+      qualityValue.textContent = selectedQuality + '%';
+      fillSlider(qualityInput);
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  }
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!currentFile || !currentBlobUrl) return;
+      const name = currentFile.name.replace(/\.[^.]+$/, '') + '.' + selectedFormat;
+      const a = document.createElement('a');
+      a.href = currentBlobUrl;
+      a.download = name;
+      a.click();
+    });
+  }
+
+  const doClear = () => {
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentFile = null;
+    currentImg = null;
+    currentBlob = null;
+    currentBlobUrl = null;
+    if (previewArea) previewArea.hidden = true;
+    if (downloadSection) downloadSection.hidden = true;
+    if (actionsBar) actionsBar.hidden = true;
+    if (settingsClearBtn) settingsClearBtn.hidden = true;
+    if (origImg) origImg.src = '';
+    if (resultImg) resultImg.src = '';
+    if (origSizeEl) origSizeEl.textContent = '';
+    if (resultSizeEl) resultSizeEl.textContent = '';
+    const uploadZone = document.querySelector<HTMLElement>('[data-tool-upload]');
+    uploadZone?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  clearBtns.forEach((btn) => btn.addEventListener('click', doClear));
+
+  if (replaceBtn) {
+    replaceBtn.addEventListener('click', () => {
+      const input = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
+      input?.click();
+    });
+  }
+
+  if (settingsClearBtn) settingsClearBtn.hidden = true;
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+    const file = files[0];
+    currentFile = file;
+    const origUrl = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load'));
+      img.src = origUrl;
+    });
+    currentImg = img;
+    if (origImg) origImg.src = origUrl;
+    if (origSizeEl) origSizeEl.textContent = `${img.naturalWidth} × ${img.naturalHeight} · ${formatBytes(file.size)}`;
+    if (previewArea) previewArea.hidden = false;
+    if (actionsBar) actionsBar.hidden = false;
+    if (settingsClearBtn) settingsClearBtn.hidden = false;
+    if (resultSizeEl) resultSizeEl.textContent = '—';
+    if (resultLabel) resultLabel.textContent = i18n('converter.original');
+    if (downloadSection) downloadSection.hidden = true;
+    previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    await updatePreview();
+  };
+
+  window.addEventListener('toolboximage:files', async (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) onFilesReceived(detail.files);
+  });
+
+  (async () => {
+    const { retrieveFiles } = await import('../../lib/file-transfer');
+    const files = await retrieveFiles();
+    if (files.length) onFilesReceived(files);
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile) {
+      import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
+    }
+  });
+</script>
+
+<style>
+  .converter-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+  .converter-formats { border: none; margin: 0; padding: 0; }
+  .converter-label { color: var(--color-mute); margin: 0 0 var(--space-sm); display: block; }
+  .converter-format-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xs); }
+  .converter-format-btn { padding: var(--space-sm) var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-family: var(--font-mono); font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background 0.15s ease, border-color 0.15s ease; }
+  .converter-format-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .converter-format-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .converter-format-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+  .converter-quality { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .converter-quality-row { display: flex; align-items: center; gap: var(--space-md); }
+  .converter-range { flex: 1; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--color-link) var(--fill, 92%), var(--color-hairline) var(--fill, 92%)); outline: none; cursor: pointer; }
+  .converter-range::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--color-canvas); border: 2px solid var(--color-link); cursor: pointer; box-shadow: var(--shadow-1); }
+  .converter-range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--color-canvas); border: 2px solid var(--color-link); cursor: pointer; box-shadow: var(--shadow-1); }
+  .converter-quality-value { min-width: 48px; text-align: right; font-feature-settings: 'tnum'; }
+  .converter-preview { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; padding: var(--space-lg); }
+  .converter-preview-cols { display: flex; align-items: center; gap: var(--space-md); }
+  .converter-preview-fig { margin: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .converter-preview-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .converter-preview-frame { position: relative; width: 100%; min-height: 200px; display: flex; align-items: center; justify-content: center; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; border-radius: var(--radius-sm); overflow: hidden; }
+  .converter-preview-img { max-width: 100%; max-height: 320px; object-fit: contain; display: block; }
+  .converter-preview-size { margin: 0; color: var(--color-body); }
+  .converter-preview-arrow { flex-shrink: 0; color: var(--color-mute); }
+  .converter-actions { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) 0 0; }
+  .converter-action-link { appearance: none; border: none; background: none; padding: var(--space-xs) var(--space-sm); color: var(--color-link); cursor: pointer; font: inherit; font-size: var(--text-body-sm); display: inline-flex; align-items: center; gap: var(--space-xs); border-radius: var(--radius-sm); transition: background-color 0.15s ease, color 0.15s ease; }
+  .converter-action-link:hover { background-color: var(--color-canvas-soft); color: var(--color-link-deep); }
+  .converter-action-link-danger { color: var(--color-error-deep); }
+  .converter-action-link-danger:hover { background-color: var(--color-error-soft); color: var(--color-error-deep); }
+  .converter-clear-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-md); cursor: pointer; font: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .converter-clear-btn:hover { border-color: var(--color-hairline-strong); color: var(--color-error-deep); background-color: var(--color-error-soft); }
+  .converter-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .converter-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
+  .converter-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .converter-download-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .converter-download .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .converter-download .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .converter-download .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .converter-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .converter-download .results-btn-ghost { background: transparent; color: var(--color-body); border-color: var(--color-hairline); }
+  .converter-download .results-btn-ghost:hover { background: var(--color-canvas-soft); color: var(--color-error-deep); border-color: var(--color-hairline-strong); }
+  @media (max-width: 600px) {
+    .converter-format-grid { grid-template-columns: repeat(2, 1fr); }
+    .converter-preview-cols { flex-direction: column; }
+    .converter-preview-arrow { transform: rotate(90deg); }
+  }
+</style>

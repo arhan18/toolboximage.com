@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 
 const LANG_CHECKS: { url: string; present: string[] }[] = [
   { url: '/es/compressor/', present: ['Compresor', 'Suelta tus imágenes'] },
+  { url: '/es/tools/converter/', present: ['Formato Destino', 'Descargar'] },
+  { url: '/fr/tools/converter/', present: ['Format de Sortie', 'Télécharger'] },
+  { url: '/de/tools/converter/', present: ['Zielformat', 'Herunterladen'] },
   { url: '/fr/compressor/', present: ['Compresseur', 'Déposez vos images'] },
   { url: '/de/compressor/', present: ['Kompressor', 'Ziehen Sie Ihre Bilder'] },
   { url: '/ja/compressor/', present: ['圧縮ツール', '画像をドロップ'] },
