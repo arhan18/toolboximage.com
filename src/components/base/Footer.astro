@@ -1,5 +1,6 @@
 ---
 import Logo from '../brand/Logo.astro';
+import LanguageSwitcher from '../ui/LanguageSwitcher.astro';
 
 interface Props {
   class?: string;
@@ -65,10 +66,13 @@ const year = new Date().getFullYear();
     <p class="text-caption footer-copy">
       &copy; {year} ToolBox Image. All rights reserved.
     </p>
-    <p class="text-caption footer-status">
-      <span class="footer-status-dot" aria-hidden="true"></span>
-      All systems operational
-    </p>
+    <div class="footer-bottom-right">
+      <LanguageSwitcher variant="footer" />
+      <p class="text-caption footer-status">
+        <span class="footer-status-dot" aria-hidden="true"></span>
+        All systems operational
+      </p>
+    </div>
   </div>
 </footer>
 
@@ -160,6 +164,12 @@ const year = new Date().getFullYear();
     color: var(--color-mute);
   }
 
+  .footer-bottom-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
   .footer-copy { margin: 0; }
   .footer-status {
     margin: 0;
@@ -212,6 +222,12 @@ const year = new Date().getFullYear();
       max-width: 100%;
     }
     .footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-sm);
+    }
+
+    .footer-bottom-right {
       flex-direction: column;
       align-items: flex-start;
       gap: var(--space-xs);

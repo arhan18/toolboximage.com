@@ -1,6 +1,7 @@
 ---
 import Logo from '../brand/Logo.astro';
 import ThemeToggle from '../theme/ThemeToggle.astro';
+import LanguageSwitcher from '../ui/LanguageSwitcher.astro';
 import { tools } from '../../lib/tools';
 
 interface Props {
@@ -206,6 +207,7 @@ const plannedLinks = tools
     </div>
 
     <div class="nav-actions">
+      <LanguageSwitcher variant="nav" />
       <a href="/contact/" class="nav-link nav-link-cta text-body-sm-strong" data-astro-prefetch="hover">
         Contact
       </a>

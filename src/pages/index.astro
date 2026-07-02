@@ -756,9 +756,54 @@ const faq = [
       </div>
     </section>
 
-    <!-- ============================================================
-         FINAL CTA — polarity-flipped dark band
-         ============================================================ -->
+     <!-- ============================================================
+          LANGUAGE — global audience
+          ============================================================ -->
+     <section class="band band-soft lang-band">
+       <div class="container" style="text-align:center;">
+         <Reveal>
+           <p class="text-caption-mono lang-eyebrow">Available in</p>
+         </Reveal>
+         <Reveal delay={60}>
+           <div class="lang-grid">
+             <span class="lang-chip lang-chip-active">
+               <span class="lang-chip-code">EN</span>
+               English
+               <span class="lang-chip-badge">Now</span>
+             </span>
+             <span class="lang-chip">
+               <span class="lang-chip-code">ES</span>
+               Español
+               <span class="lang-chip-badge">Soon</span>
+             </span>
+             <span class="lang-chip">
+               <span class="lang-chip-code">FR</span>
+               Français
+               <span class="lang-chip-badge">Soon</span>
+             </span>
+             <span class="lang-chip">
+               <span class="lang-chip-code">DE</span>
+               Deutsch
+               <span class="lang-chip-badge">Soon</span>
+             </span>
+             <span class="lang-chip">
+               <span class="lang-chip-code">PT</span>
+               Português
+               <span class="lang-chip-badge">Soon</span>
+             </span>
+             <span class="lang-chip">
+               <span class="lang-chip-code">HI</span>
+               हिन्दी
+               <span class="lang-chip-badge">Soon</span>
+             </span>
+           </div>
+         </Reveal>
+       </div>
+     </section>
+
+     <!-- ============================================================
+          FINAL CTA — polarity-flipped dark band
+          ============================================================ -->
     <section class="band cta-band">
       <MeshGradient intensity="ambient" />
 
@@ -1548,6 +1593,84 @@ const faq = [
   .faq-container {
     max-width: 760px;
     margin: 0 auto;
+  }
+
+  /* ----------------------------------------------------------
+     LANGUAGE
+     ---------------------------------------------------------- */
+  .lang-band {
+    padding: var(--space-4xl) 0;
+  }
+
+  .lang-eyebrow {
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-lg);
+  }
+
+  .lang-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+
+  .lang-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas);
+    font-size: var(--font-size-sm);
+    color: var(--color-mute);
+  }
+
+  .lang-chip-active {
+    border-color: var(--color-link);
+    color: var(--color-ink);
+    font-weight: var(--weight-medium);
+  }
+
+  .lang-chip-code {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 18px;
+    border-radius: var(--radius-xs);
+    background-color: var(--color-canvas-soft);
+    font-size: 10px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.04em;
+    color: var(--color-body);
+  }
+
+  .lang-chip-active .lang-chip-code {
+    background-color: var(--color-link-bg-soft);
+    color: var(--color-link-deep);
+  }
+
+  [data-theme="dark"] .lang-chip-active .lang-chip-code {
+    color: var(--color-link);
+  }
+
+  .lang-chip-badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-mute);
+  }
+
+  .lang-chip-active .lang-chip-badge {
+    color: var(--color-link-deep);
+    font-weight: var(--weight-semibold);
+  }
+
+  [data-theme="dark"] .lang-chip-active .lang-chip-badge {
+    color: var(--color-link);
   }
 
   /* ----------------------------------------------------------
