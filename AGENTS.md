@@ -80,14 +80,37 @@ Consult these guides before working on related tasks:
 Every new tool must reuse shared layouts, components, UI, upload/download systems, and localization. Never duplicate existing code.
 
 ### 4. SEO Requirements (Mandatory)
-Research keywords with Ahrefs Free Keyword Generator. Identify primary, secondary, long-tail, low-competition, high-traffic, question keywords.
 
-Every tool needs:
+Every new tool must include complete SEO before it is considered finished.
+
+Before building the SEO:
+- Research keywords using Ahrefs Free Keyword Generator (or equivalent free tool).
+- Identify: primary keyword, secondary keywords, long-tail keywords, question keywords, related searches, low-competition keywords, high-traffic keywords.
+
+Use this research to build a complete SEO ecosystem.
+
+**Tool page:**
 - SEO-friendly URL, title tag, meta description, H1, H2/H3 headings
-- 600-1000+ words unique SEO content
-- FAQ section, JSON-LD FAQ Schema, Breadcrumb Schema, SoftwareApplication Schema
-- Open Graph tags, Twitter Card tags, internal links, related tools section
-- Supporting landing pages where appropriate
+- 600–1000+ words of unique content
+- Internal links, related tools
+- FAQ + JSON-LD FAQ Schema
+- Breadcrumb Schema + SoftwareApplication Schema (when applicable)
+- Open Graph tags + Twitter Cards
+
+**Supporting pages:**
+Whenever keyword research shows meaningful search demand, create supporting landing pages (format-specific, size-specific, use-case, industry, comparison pages). Each must have unique content and link to the main tool page.
+
+**Blog:**
+Whenever keyword research identifies informational search intent, create SEO blog posts targeting one primary keyword each. Link to the relevant tool. Include FAQ and structured data.
+
+**FAQ:**
+Automatically expand the website FAQ whenever new high-volume questions are discovered. Answer clearly, target search intent, add to relevant tool pages, include in JSON-LD FAQ Schema.
+
+**Internal linking:**
+Whenever new pages are created: link related tools together, link blog posts to tools, link tools to blogs, link FAQs where appropriate.
+
+**Definition of done:**
+A new tool is not complete until: the tool works correctly, supporting landing pages are created (when justified), SEO content is complete, relevant blog posts are created, FAQs are updated, structured data is added, internal linking is complete.
 
 ### 5. Content
 Every tool page needs: overview, features, benefits, step-by-step guide, supported formats, best practices, common use cases, SEO FAQ, CTA, related tools links.
