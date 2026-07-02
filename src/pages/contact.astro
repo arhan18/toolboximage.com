@@ -118,8 +118,8 @@ import Reveal from '../components/shared/Reveal.astro';
               <p class="text-body-sm" style="color:var(--color-body);">
                 The fastest way to reach us. We reply within 1-2 business days.
               </p>
-              <a href="mailto:hello@toolboximage.com" class="contact-link text-body-md-strong">
-                hello@toolboximage.com
+              <a href="mailto:toolboximageofficial@gmail.com" class="contact-link text-body-md-strong">
+                toolboximageofficial@gmail.com
               </a>
             </Card>
           </Reveal>
@@ -331,7 +331,7 @@ import Reveal from '../components/shared/Reveal.astro';
     const message = String(data.get('message') || '').trim();
     const subject = `[${topic || 'contact'}] ToolBox Image — ${name || 'visitor'}`;
     const body = `From: ${name} <${email}>\nTopic: ${topic}\n\n${message}`;
-    window.location.href = `mailto:hello@toolboximage.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:toolboximageofficial@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     if (note) note.hidden = false;
     const toast = (window as any).toast;
     if (typeof toast === 'function') {
