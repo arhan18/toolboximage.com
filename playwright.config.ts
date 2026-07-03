@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:4321';
+const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:4321';
 
 export default defineConfig({
   testDir: './e2e',
@@ -10,7 +10,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [
     ['list'],
-    ['html', { outputFolder: 'test-results/html-report' }],
+    ['html', { outputFolder: 'test-results/report' }],
   ],
   use: {
     baseURL: BASE_URL,
@@ -21,6 +21,31 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+      testIgnore: ['**/pages.spec.ts'],
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+      testIgnore: ['**/pages.spec.ts'],
+    },
+    {
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 5'] },
+      testIgnore: ['**/pages.spec.ts'],
+    },
+    {
+      name: 'mobile-safari',
+      use: { ...devices['iPhone 13'] },
+      testIgnore: ['**/pages.spec.ts'],
+    },
+    {
+      name: 'tablet',
+      use: { ...devices['iPad Pro 11'] },
+      testIgnore: ['**/pages.spec.ts'],
     },
   ],
 });

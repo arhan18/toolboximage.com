@@ -13,6 +13,7 @@
     "deploy": "npm run gen-og-images && astro build && npx wrangler pages deploy dist --project-name toolboximage-com --commit-dirty=true",
     "astro": "astro",
     "test": "npx playwright test",
+    "test:unit": "vitest run",
     "test:ui": "npx playwright test --ui",
     "test:headed": "npx playwright test --headed",
     "test:full": "npm run build && sleep 1 && npx astro preview --port 4321 & sleep 3 && npx playwright test; npx astro preview --port 4321 --stop 2>/dev/null; true"
@@ -24,6 +25,7 @@
     "tailwindcss": "^4.3.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1"
+    "@playwright/test": "^1.61.1",
+    "vitest": "^4.1.9"
   }
 }

@@ -232,6 +232,28 @@ export const posts: BlogPost[] = [
     readMinutes: 5,
     featured: true,
   },
+  {
+    slug: 'how-to-convert-images-online',
+    title: 'How to Convert Images Online Free — Convert JPG, PNG, WebP & AVIF',
+    description:
+      'Learn how to convert images between JPG, PNG, WebP, and AVIF formats for free online. No uploads needed — everything runs in your browser.',
+    date: '2026-07-12',
+    author: 'ToolBox Image team',
+    category: 'tutorials',
+    tags: ['image-converter', 'image-formats', 'webp', 'jpg', 'png', 'avif', 'conversion'],
+    readMinutes: 5,
+  },
+  {
+    slug: 'how-to-resize-images-for-social-media',
+    title: 'How to Resize Images for Social Media in 2026 — Complete Size Guide',
+    description:
+      'A complete guide to social media image sizes for Instagram, Facebook, X/Twitter, LinkedIn, and YouTube in 2026. Free online resizer included.',
+    date: '2026-07-13',
+    author: 'ToolBox Image team',
+    category: 'guides',
+    tags: ['social-media', 'resizer', 'instagram', 'facebook', 'image-dimensions', 'linkedin', 'youtube'],
+    readMinutes: 6,
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {
@@ -257,9 +279,16 @@ export function getFeaturedPosts(): BlogPost[] {
   return posts.filter((p) => p.featured);
 }
 
-export function formatDate(iso: string): string {
+const LOCALE_MAP: Record<string, string> = {
+  en: 'en-US', es: 'es-ES', fr: 'fr-FR', de: 'de-DE',
+  it: 'it-IT', pt: 'pt-PT', ru: 'ru-RU', zh: 'zh-CN',
+  ja: 'ja-JP', ko: 'ko-KR', ar: 'ar-SA', hi: 'hi-IN', tr: 'tr-TR',
+};
+
+export function formatDate(iso: string, lang?: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString('en-US', {
+  const locale = (lang && LOCALE_MAP[lang]) || 'en-US';
+  return d.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

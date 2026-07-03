@@ -1636,4 +1636,169 @@ export const blogTranslations: Record<string, BlogTranslation> = {
 <p>Instead of guessing at quality sliders, tell the compressor the exact file size you need. Our target-size mode works backwards from the limit.</p>`,
     },
   ),
+  'how-to-convert-images-online': t(
+    {
+      en: 'How to Convert Images Online Free — Convert JPG, PNG, WebP & AVIF',
+      es: 'Cómo convertir imágenes en línea gratis — Convierte JPG, PNG, WebP y AVIF',
+      fr: 'Comment convertir des images en ligne gratuitement — Convertissez JPG, PNG, WebP et AVIF',
+      de: 'So konvertieren Sie Bilder kostenlos online — Konvertieren Sie JPG, PNG, WebP und AVIF',
+      it: 'Come convertire immagini online gratuitamente — Converti JPG, PNG, WebP e AVIF',
+      pt: 'Como converter imagens online grátis — Converta JPG, PNG, WebP e AVIF',
+      ru: 'Как бесплатно конвертировать изображения онлайн — Конвертируйте JPG, PNG, WebP и AVIF',
+      zh: '如何免费在线转换图像 — 转换 JPG、PNG、WebP 和 AVIF',
+      ja: '無料でオンライン画像変換 — JPG、PNG、WebP、AVIFを変換',
+      ko: '온라인에서 무료로 이미지 변환하는 방법 — JPG, PNG, WebP, AVIF 변환',
+      ar: 'كيفية تحويل الصور عبر الإنترنت مجاناً — تحويل JPG و PNG و WebP و AVIF',
+      hi: 'मुफ्त में ऑनलाइन इमेज कनवर्ट करें — JPG, PNG, WebP और AVIF बदलें',
+      tr: 'Çevrimiçi ücretsiz görüntü dönüştürme — JPG, PNG, WebP ve AVIF dönüştürme',
+    },
+    {
+      en: 'Learn how to convert images between JPG, PNG, WebP, and AVIF formats for free online. No uploads needed — everything runs in your browser.',
+      es: 'Aprende a convertir imágenes entre formatos JPG, PNG, WebP y AVIF gratis en línea. Sin necesidad de subir archivos — todo se procesa en tu navegador.',
+      fr: 'Apprenez à convertir des images entre les formats JPG, PNG, WebP et AVIF gratuitement en ligne. Pas besoin de téléchargement — tout se fait dans votre navigateur.',
+      de: 'Erfahren Sie, wie Sie Bilder kostenlos online zwischen JPG, PNG, WebP und AVIF konvertieren. Kein Hochladen nötig — alles läuft in Ihrem Browser.',
+      it: 'Impara a convertire immagini tra i formati JPG, PNG, WebP e AVIF gratuitamente online. Nessun caricamento necessario — tutto avviene nel tuo browser.',
+      pt: 'Aprenda a converter imagens entre os formatos JPG, PNG, WebP e AVIF grátis online. Sem necessidade de upload — tudo funciona no seu navegador.',
+      ru: 'Узнайте, как бесплатно конвертировать изображения между форматами JPG, PNG, WebP и AVIF онлайн. Без загрузки — всё работает в вашем браузере.',
+      zh: '了解如何免费在线转换 JPG、PNG、WebP 和 AVIF 格式的图像。无需上传 — 一切都在您的浏览器中运行。',
+      ja: 'JPG、PNG、WebP、AVIF形式間で無料でオンライン画像変換する方法を学びましょう。アップロード不要 — すべてブラウザ内で処理されます。',
+      ko: 'JPG, PNG, WebP, AVIF 형식 간에 무료로 온라인에서 이미지를 변환하는 방법을 알아보세요. 업로드 불필요 — 모든 것이 브라우저에서 실행됩니다.',
+      ar: 'تعلم كيفية تحويل الصور بين صيغ JPG و PNG و WebP و AVIF مجاناً عبر الإنترنت. بدون حاجة للرفع — كل شيء يعمل في متصفحك.',
+      hi: 'JPG, PNG, WebP और AVIF फ़ॉर्मेट के बीच मुफ्त में ऑनलाइन इमेज बदलना सीखें। कोई अपलोड नहीं — सब कुछ आपके ब्राउज़र में चलता है।',
+      tr: 'JPG, PNG, WebP ve AVIF formatları arasında ücretsiz olarak çevrimiçi görüntü dönüştürmeyi öğrenin. Yükleme gerektirmez — her şey tarayıcınızda çalışır.',
+    },
+    {
+      en: ['image-converter', 'image-formats', 'webp', 'jpg', 'png', 'avif', 'conversion'],
+      es: ['convertidor-de-imágenes', 'formatos-de-imagen', 'webp', 'jpg', 'png', 'avif', 'conversión'],
+      fr: ['convertisseur-d-images', 'formats-d-image', 'webp', 'jpg', 'png', 'avif', 'conversion'],
+      de: ['bildkonverter', 'bildformate', 'webp', 'jpg', 'png', 'avif', 'konvertierung'],
+      it: ['convertitore-immagini', 'formati-immagine', 'webp', 'jpg', 'png', 'avif', 'conversione'],
+      pt: ['conversor-de-imagens', 'formatos-de-imagem', 'webp', 'jpg', 'png', 'avif', 'conversão'],
+      ru: ['конвертер-изображений', 'форматы-изображений', 'webp', 'jpg', 'png', 'avif', 'конвертация'],
+      zh: ['图像转换器', '图像格式', 'webp', 'jpg', 'png', 'avif', '转换'],
+      ja: ['画像変換', '画像フォーマット', 'webp', 'jpg', 'png', 'avif', '変換'],
+      ko: ['이미지-변환기', '이미지-형식', 'webp', 'jpg', 'png', 'avif', '변환'],
+      ar: ['محول-الصور', 'صيغ-الصور', 'webp', 'jpg', 'png', 'avif', 'تحويل'],
+      hi: ['इमेज-कनवर्टर', 'इमेज-फ़ॉर्मेट', 'webp', 'jpg', 'png', 'avif', 'रूपांतरण'],
+      tr: ['görüntü-dönüştürücü', 'görüntü-formatları', 'webp', 'jpg', 'png', 'avif', 'dönüştürme'],
+    },
+    {
+      en: `<p>Converting images between formats is something almost everyone needs to do — whether you are a web developer optimizing images for faster page loads, a designer preparing assets for a client, or just someone trying to open a HEIC photo on a Windows PC. The good news is that you do not need expensive software or technical skills. Our free online image converter handles the four most popular web formats — JPEG, PNG, WebP, and AVIF — entirely in your browser, with no uploads required.</p>
+<h2>Why Convert Images?</h2>
+<p>Different formats serve different purposes. JPEG has been the web standard for photographs for decades, but it uses lossy compression that introduces artefacts at low quality settings. PNG preserves every pixel perfectly and supports transparency, but files can be large. WebP offers 25-35% smaller files than JPEG at the same quality, with support for both lossy and lossless modes plus transparency. AVIF pushes compression even further, achieving 50% smaller files than JPEG, but with more limited browser support.</p>
+<p>Knowing when to use each format — and how to convert between them — is essential for website performance, email delivery, social media sharing, and just about any task involving digital images. Our converter makes switching between formats as simple as selecting a new option and clicking download.</p>
+<h2>How to Convert an Image Online</h2>
+<p>Using ToolBox Image Converter takes just five steps:</p>
+<ol>
+<li><strong>Upload your image</strong> — Click the upload area or drag and drop a file. Supports JPEG, PNG, WebP, WebP, and AVIF input.</li>
+<li><strong>Select target format</strong> — Choose your desired output format from JPEG, PNG, WebP, or AVIF.</li>
+<li><strong>Adjust quality</strong> — Use the quality slider (1-100%) to control the balance between file size and image fidelity.</li>
+<li><strong>Preview the result</strong> — See your original and converted image side by side with exact file sizes.</li>
+<li><strong>Download</strong> — Save the converted image. Your original file stays untouched on your device.</li>
+</ol>
+<h2>Popular Conversions</h2>
+<p><strong>PNG to JPG:</strong> Converting PNG images to JPEG can dramatically reduce file size — often by 80% or more. This is ideal for photographs where the transparency PNG offers is not needed. However, JPEG does not support transparency, so any transparent areas will be filled with white.</p>
+<p><strong>JPG to WebP:</strong> This is the single most impactful optimization for website performance. WebP at quality 80 looks identical to JPEG at quality 80 but uses 25-35% less bandwidth. Google has been recommending WebP since 2010, and modern browsers have supported it for years.</p>
+<p><strong>WebP to PNG:</strong> Some design tools and legacy applications do not support WebP. Converting to PNG ensures full compatibility while preserving image quality.</p>
+<p><strong>JPG to PNG:</strong> Converting a JPEG to PNG is useful when you need lossless quality for editing or when you are adding text or graphics on top of the image.</p>
+<h2>Privacy and Security</h2>
+<p>Every image you convert stays on your device. ToolBox Image Converter uses the HTML5 Canvas API to process images directly in your browser. Your files are never uploaded to a server, never stored, never logged, and never accessible to anyone but you. This makes it one of the most private image conversion tools available online.</p>`,
+    },
+  ),
+  'how-to-resize-images-for-social-media': t(
+    {
+      en: 'How to Resize Images for Social Media in 2026 — Complete Size Guide',
+      es: 'Cómo redimensionar imágenes para redes sociales en 2026 — Guía completa de tamaños',
+      fr: 'Comment redimensionner les images pour les réseaux sociaux en 2026 — Guide complet des tailles',
+      de: 'So passen Sie Bilder für soziale Medien im Jahr 2026 an — Vollständige Größentabelle',
+      it: 'Come ridimensionare le immagini per i social media nel 2026 — Guida completa alle dimensioni',
+      pt: 'Como redimensionar imagens para redes sociais em 2026 — Guia completo de tamanhos',
+      ru: 'Как изменить размер изображений для соцсетей в 2026 году — Полное руководство по размерам',
+      zh: '2026年社交媒体图像调整大小指南 — 完整尺寸指南',
+      ja: '2026年ソーシャルメディア向け画像リサイズ方法 — 完全サイズガイド',
+      ko: '2026년 소셜 미디어용 이미지 크기 조정 방법 — 완전 크기 가이드',
+      ar: 'كيفية تغيير حجم الصور لوسائل التواصل الاجتماعي في 2026 — دليل الأحجام الكامل',
+      hi: '2026 में सोशल मीडिया के लिए इमेज का आकार कैसे बदलें — पूर्ण आकार गाइड',
+      tr: '2026\'da Sosyal Medya için Görüntü Boyutlandırma — Tam Boyut Kılavuzu',
+    },
+    {
+      en: 'A complete guide to social media image sizes for Instagram, Facebook, X/Twitter, LinkedIn, and YouTube in 2026. Free online resizer included.',
+      es: 'Una guía completa de tamaños de imágenes para redes sociales: Instagram, Facebook, X/Twitter, LinkedIn y YouTube en 2026. Incluye redimensionador gratuito.',
+      fr: 'Un guide complet des tailles d\'images pour les réseaux sociaux : Instagram, Facebook, X/Twitter, LinkedIn et YouTube en 2026. Redimensionneur gratuit inclus.',
+      de: 'Eine vollständige Anleitung zu den Bildgrößen für soziale Medien: Instagram, Facebook, X/Twitter, LinkedIn und YouTube im Jahr 2026. Kostenloser Resizer inklusive.',
+      it: 'Una guida completa alle dimensioni delle immagini per i social media: Instagram, Facebook, X/Twitter, LinkedIn e YouTube nel 2026. Ridimensionatore gratuito incluso.',
+      pt: 'Um guia completo de tamanhos de imagens para redes sociais: Instagram, Facebook, X/Twitter, LinkedIn e YouTube em 2026. Redimensionador gratuito incluído.',
+      ru: 'Полное руководство по размерам изображений для социальных сетей: Instagram, Facebook, X/Twitter, LinkedIn и YouTube в 2026 году. Бесплатный инструмент для изменения размера.',
+      zh: '适用于 Instagram、Facebook、X/Twitter、LinkedIn 和 YouTube 的 2026 年社交媒体图像尺寸完整指南。包含免费调整大小工具。',
+      ja: 'Instagram、Facebook、X/Twitter、LinkedIn、YouTube向け2026年ソーシャルメディア画像サイズ完全ガイド。無料リサイザー付き。',
+      ko: 'Instagram, Facebook, X/Twitter, LinkedIn, YouTube를 위한 2026년 소셜 미디어 이미지 크기 완전 가이드. 무료 크기 조정기 포함.',
+      ar: 'دليل كامل لأحجام صور وسائل التواصل الاجتماعي: Instagram و Facebook و X/Twitter و LinkedIn و YouTube في 2026. يتضمن أداة تغيير حجم مجانية.',
+      hi: 'Instagram, Facebook, X/Twitter, LinkedIn और YouTube के लिए 2026 में सोशल मीडिया इमेज साइज़ की पूरी गाइड। मुफ़्त रिसाइज़र शामिल।',
+      tr: 'Instagram, Facebook, X/Twitter, LinkedIn ve YouTube için 2026 sosyal medya görüntü boyutlarına dair eksiksiz kılavuz. Ücretsiz boyutlandırıcı dahildir.',
+    },
+    {
+      en: ['social-media', 'resizer', 'instagram', 'facebook', 'image-dimensions', 'photo-size', 'linkedin', 'youtube'],
+      es: ['redes-sociales', 'redimensionador', 'instagram', 'facebook', 'dimensiones-de-imagen', 'tamaño-de-foto', 'linkedin', 'youtube'],
+      fr: ['réseaux-sociaux', 'redimensionneur', 'instagram', 'facebook', 'dimensions-d-image', 'taille-de-photo', 'linkedin', 'youtube'],
+      de: ['soziale-medien', 'resizer', 'instagram', 'facebook', 'bildabmessungen', 'fotogröße', 'linkedin', 'youtube'],
+      it: ['social-media', 'ridimensionatore', 'instagram', 'facebook', 'dimensioni-immagine', 'dimensione-foto', 'linkedin', 'youtube'],
+      pt: ['redes-sociais', 'redimensionador', 'instagram', 'facebook', 'dimensões-da-imagem', 'tamanho-da-foto', 'linkedin', 'youtube'],
+      ru: ['социальные-сети', 'изменение-размера', 'instagram', 'facebook', 'размеры-изображений', 'размер-фото', 'linkedin', 'youtube'],
+      zh: ['社交媒体', '调整大小', 'instagram', 'facebook', '图像尺寸', '照片尺寸', 'linkedin', 'youtube'],
+      ja: ['ソーシャルメディア', 'リサイズ', 'instagram', 'facebook', '画像サイズ', '写真サイズ', 'linkedin', 'youtube'],
+      ko: ['소셜-미디어', '크기-조정', 'instagram', 'facebook', '이미지-크기', '사진-크기', 'linkedin', 'youtube'],
+      ar: ['وسائل-التواصل-الاجتماعي', 'تغيير-الحجم', 'instagram', 'facebook', 'أبعاد-الصورة', 'حجم-الصورة', 'linkedin', 'youtube'],
+      hi: ['सोशल-मीडिया', 'रिसाइज़र', 'instagram', 'facebook', 'इमेज-डाइमेंशन', 'फ़ोटो-साइज़', 'linkedin', 'youtube'],
+      tr: ['sosyal-medya', 'boyutlandırıcı', 'instagram', 'facebook', 'görüntü-boyutları', 'fotoğraf-boyutu', 'linkedin', 'youtube'],
+    },
+    {
+      en: `<p>Every social media platform has specific image dimension requirements. If you upload an image that is too large, the platform will compress it — often making it look worse. If it is too small, it will appear pixelated or stretched. Getting the dimensions right the first time ensures your content looks professional on every platform. Our free Image Resizer includes all the presets you need to resize images perfectly for any social network, directly in your browser with no uploads required.</p>
+<h2>Instagram Image Sizes 2026</h2>
+<p>Instagram has updated its feed layout in recent years, moving from square-only to a mixed format. Here are the current recommended sizes:</p>
+<ul>
+<li><strong>Square feed post:</strong> 1080 × 1080 pixels (1:1 ratio)</li>
+<li><strong>Portrait feed post:</strong> 1080 × 1350 pixels (4:5 ratio) — this is now the most common format for Instagram feeds</li>
+<li><strong>Story & Reels:</strong> 1080 × 1920 pixels (9:16 ratio)</li>
+<li><strong>Profile picture:</strong> 320 × 320 pixels (displays as a circle)</li>
+</ul>
+<p>For optimal quality, always upload at the highest resolution the platform allows (1080px on the longest side for feeds). Instagram compresses images larger than this, so starting at the right size gives you the most control over the final look.</p>
+<h2>Facebook Image Sizes 2026</h2>
+<ul>
+<li><strong>Feed post / shared image:</strong> 1200 × 630 pixels (1.91:1 ratio)</li>
+<li><strong>Cover photo:</strong> 820 × 312 pixels (desktop), 640 × 360 pixels (mobile)</li>
+<li><strong>Profile picture:</strong> 180 × 180 pixels</li>
+<li><strong>Event cover:</strong> 1920 × 1080 pixels (16:9 ratio)</li>
+<li><strong>Facebook Stories:</strong> 1080 × 1920 pixels</li>
+</ul>
+<h2>X (Twitter) Image Sizes 2026</h2>
+<ul>
+<li><strong>Post image (in-feed):</strong> 1600 × 900 pixels (16:9 ratio) — minimum 600 × 335 pixels</li>
+<li><strong>Header banner:</strong> 1500 × 500 pixels (3:1 ratio)</li>
+<li><strong>Profile picture:</strong> 400 × 400 pixels</li>
+</ul>
+<h2>LinkedIn Image Sizes 2026</h2>
+<ul>
+<li><strong>Shared image / link preview:</strong> 1200 × 627 pixels (1.91:1 ratio)</li>
+<li><strong>Banner / cover photo:</strong> 1584 × 396 pixels (4:1 ratio)</li>
+<li><strong>Profile picture:</strong> 400 × 400 pixels</li>
+<li><strong>Company logo:</strong> 300 × 300 pixels</li>
+</ul>
+<h2>YouTube Image Sizes 2026</h2>
+<ul>
+<li><strong>Thumbnail:</strong> 1280 × 720 pixels (16:9 ratio) — minimum width 640 pixels</li>
+<li><strong>Channel banner:</strong> 2560 × 1440 pixels (16:9 ratio) — safe area for text/logos is 1546 × 423 pixels centered</li>
+<li><strong>Profile picture:</strong> 800 × 800 pixels</li>
+</ul>
+<h2>How to Resize Using Our Tool</h2>
+<p>Our Image Resizer makes it simple:</p>
+<ol>
+<li>Upload your image by dragging and dropping or clicking the upload area.</li>
+<li>Select a social media preset from the dropdown — Instagram Square, Instagram Portrait, Facebook Post, X/Twitter Post, LinkedIn Banner, or YouTube Thumbnail.</li>
+<li>Choose the resize mode: Fit (adds padding to maintain aspect ratio), Fill (crops to fill dimensions), or Stretch (distorts to fit).</li>
+<li>Select output format (JPEG, PNG, or WebP) and adjust quality if needed.</li>
+<li>Preview the result and download your perfectly sized image.</li>
+</ol>
+<p>All processing happens in your browser. Your images never leave your device, making this the most private way to resize images for social media.</p>`,
+    },
+  ),
 };

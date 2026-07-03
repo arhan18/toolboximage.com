@@ -1,0 +1,183 @@
+---
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
+import Badge from '../components/ui/Badge.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema, howToSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'Why is image compression important for ecommerce?',
+    a: 'Product images are the largest files on any ecommerce page. A category page with 30 product photos at 2 MB each = 60 MB of images — this guarantees slow load times, poor Core Web Vitals, and lost conversions. Compressing product images to 200-500 KB each reduces page weight by 75-90% while maintaining visual quality.',
+  },
+  {
+    q: 'What is the best image format for product photos?',
+    a: 'WebP offers the best balance of quality and file size for product photography — 25-35% smaller than JPEG at equivalent quality with full colour support. For product images with transparency (cut-out photos), PNG or WebP preserve the alpha channel. AVIF gives even smaller files but check your platform\'s browser support.',
+  },
+  {
+    q: 'What resolution should product images be?',
+    a: 'Most ecommerce platforms recommend 1000-2000px on the longest side for product images. This is large enough for zoom functionality without being excessive. For thumbnail grid images, 300-500px is sufficient. Always resize to the exact dimensions your theme uses — serving 2000px images in 300px thumbnails wastes bandwidth.',
+  },
+  {
+    q: 'Can I batch compress all my product images?',
+    a: 'Yes. Drop your entire product images folder into our batch compressor — up to 200 files at once, each up to 100 MB. Process all images with consistent quality and output format settings. The ZIP download preserves your folder structure. Perfect for migrating a catalogue or running a site-wide performance audit.',
+  },
+  {
+    q: 'Do compressed product images hurt sales?',
+    a: 'No — when done correctly. Quality 80-85 for WebP or JPEG is visually indistinguishable from the original on standard displays. Customers see crisp, detailed product photos that load instantly. Studies show that a 1-second delay in page load time can reduce ecommerce conversions by 7%. Compressing images improves both speed and sales.',
+  },
+  {
+    q: 'How much can I compress ecommerce images?',
+    a: 'A typical product photo from a DSLR or smartphone is 4-10 MB. Compressing to WebP at quality 80 typically yields 200-600 KB — a 90-95% reduction. A catalogue of 1,000 products with 3 images each goes from 15-30 GB to 600 MB - 1.8 GB. This reduces storage costs, CDN bandwidth, and page load times dramatically.',
+  },
+];
+
+const howToSteps = [
+  { name: 'Drop your product images', text: 'Drag product photos onto the upload area. Supports JPEG, PNG, WebP, AVIF, and HEIC — all common camera and export formats.' },
+  { name: 'Set consistent quality', text: 'Choose quality 80-85 for all product images. This ensures a uniform look across your catalogue while reducing file sizes by 80-90%.' },
+  { name: 'Resize to platform specs', text: 'Set the longest side to 1000-2000px depending on your platform\'s requirements. Shopify, WooCommerce, Magento, and BigCommerce all support these dimensions.' },
+  { name: 'Select WebP output', text: 'Convert to WebP format for the best compression with full colour support. Most ecommerce platforms now support WebP natively.' },
+  { name: 'Download and upload', text: 'Save all compressed images as a ZIP with the original folder structure. Upload to your ecommerce platform and measure the improvement in PageSpeed Insights.' },
+];
+
+const genSchemas = () => [faqSchema(faqs), howToSchema(howToSteps)];
+---
+
+<CompressorPageLayout
+  title="Compress Product Images for Ecommerce — Free | ToolBox Image"
+  description="Compress product images for ecommerce — reduce file size by 90% for faster product pages, better SEO, and higher conversions. Free ecommerce image compressor. No uploads."
+  canonical="https://toolboximage.com/compress-for-ecommerce/"
+  ogImage="/og-image.png"
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
+    { name: 'Ecommerce Compressor', href: '/compress-for-ecommerce' },
+  ]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
+>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="Ecommerce Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress product images for ecommerce.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Uncompressed product images are silently destroying your store's
+        performance. A category page with 30 unoptimized photos can weigh
+        60+ MB — guaranteeing slow load times, poor Core Web Vitals,
+        and lost sales. Compress to 200-500 KB each and watch your
+        PageSpeed score soar.
+      </p>
+    </Reveal>
+  </section>
+
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">Every kilobyte of product imagery costs you conversions.</h2>
+        <p class="text-body-md cp-body-text">
+          Ecommerce lives and dies on page speed. Amazon found that every 100 ms of
+          latency cost them 1% in sales. Google reports that a 1-second delay in
+          mobile page load time reduces conversions by up to 20%. And the single
+          biggest contributor to slow ecommerce pages? Unoptimized product images.
+        </p>
+        <p class="text-body-md cp-body-text">
+          A typical product page has a main image, 3-5 alternate views, and a thumbnail —
+          totalling 10-30 MB of unoptimized images. On a category page with 30 products,
+          that is 300-900 MB of images. No amount of CDN caching or code optimization
+          can fix that. The only solution is to compress every product image before it
+          goes live. Our compressor handles this in batch, locally in your browser,
+          with no uploads and no limits.
+        </p>
+
+        <h3 class="text-display-sm">Platform-specific recommendations</h3>
+        <p class="text-body-md cp-body-text">
+          <strong>Shopify:</strong> Images are automatically converted to WebP and
+          served via Shopify CDN. Pre-compress to quality 80 and resize to 2048px
+          max — Shopify's own compression won't degrade quality further. Images
+          should be under 1 MB each for optimal serving.
+        </p>
+        <p class="text-body-md cp-body-text">
+          <strong>WooCommerce:</strong> WordPress serves images as uploaded unless
+          you use a plugin like WebP Express or ShortPixel. Pre-compress to WebP
+          quality 80 and the image will be served as-is. For thumbnail and medium
+          sizes, let WordPress generate them from your optimized original.
+        </p>
+        <p class="text-body-md cp-body-text">
+          <strong>Magento / BigCommerce:</strong> Both support WebP natively.
+          Upload compressed WebP images directly. Magento can also generate
+          additional sizes from your optimized original. Set compression quality
+          to 80 for the best balance across device types.
+        </p>
+
+        <h3 class="text-display-sm">The batch workflow for large catalogues</h3>
+        <p class="text-body-md cp-body-text">
+          For stores with 500+ products, compressing images one at a time is
+          impractical. Use our <a href="/bulk-image-compressor/" class="cp-inline-link">bulk compressor</a>
+          to process your entire image library in parallel. The ZIP download
+          preserves your product folder structure so you can upload compressed
+          versions without re-organizing anything. For format-specific help,
+          see our <a href="/compress-jpeg/" class="cp-inline-link">JPEG</a> and
+          <a href="/compress-webp/" class="cp-inline-link">WebP</a> compressors.
+          Need different image sizes for different parts of your site? Use the
+          <a href="/tools/resizer/" class="cp-inline-link">Image Resizer</a>.
+        </p>
+        <p class="text-body-md cp-body-text">
+          The financial case is clear. If your ecommerce store does $100,000/month
+          in revenue and the average page load time is 4 seconds (common for
+          image-heavy stores), compressing product images can cut load time to
+          1.5-2 seconds. At a 7% conversion loss per second of delay, that is
+          $14,000-17,500/month in recovered revenue — from a free, browser-based
+          tool that takes an afternoon to run on your entire catalogue.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
+
+<style>
+  .cp-title { margin: 0; max-width: 22ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 64ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

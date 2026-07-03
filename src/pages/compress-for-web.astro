@@ -1,0 +1,176 @@
+---
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
+import Badge from '../components/ui/Badge.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema, howToSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'Why is image compression important for websites?',
+    a: 'Images account for 50-80% of a typical webpage\'s total weight. Unoptimized images directly increase Largest Contentful Paint (LCP), a Core Web Vitals metric that Google uses as a ranking signal. Compressing images can reduce load times by 4-10x, improving both user experience and search rankings.',
+  },
+  {
+    q: 'What is the best image format for the web?',
+    a: 'WebP is the best all-around format for web images in 2026 — 25-35% smaller than JPEG at the same quality, with transparency and animation support. AVIF offers even better compression (30-50% smaller than WebP) but has slightly lower browser coverage (92%+). JPEG remains a safe universal fallback.',
+  },
+  {
+    q: 'What is the optimal image quality for web?',
+    a: 'Quality 75-85 is the sweet spot for web images. At this range, photos are visually indistinguishable from the original on standard displays while being 60-80% smaller. For hero images and product photos, use 80-85. For thumbnails and backgrounds, 65-70 is sufficient.',
+  },
+  {
+    q: 'Should I resize images before compressing for web?',
+    a: 'Yes. Serving images larger than their display size wastes bandwidth. Resize to the maximum dimensions your layout needs before compressing. For example, a blog post image displayed at 800px wide should be resized to 800px width before compression — a 4000px camera photo compressed is still 4000px of unnecessary data.',
+  },
+  {
+    q: 'How does image compression affect Core Web Vitals?',
+    a: 'Image compression directly improves Largest Contentful Paint (LCP), the Core Web Vitals metric that measures how quickly the main content loads. Google recommends an LCP under 2.5 seconds. Compressing your hero image from 3 MB to 300 KB can cut LCP by several seconds, especially on mobile connections.',
+  },
+  {
+    q: 'Can I batch compress all images for my website?',
+    a: 'Yes. Drop your entire website images folder into the batch compressor. Up to 200 files at once, each up to 100 MB. Process everything with consistent settings and download as a ZIP with the original folder structure preserved.',
+  },
+];
+
+const howToSteps = [
+  { name: 'Drop your website images', text: 'Drag and drop one or more images onto the upload area. Supports JPEG, PNG, WebP, AVIF, and GIF.' },
+  { name: 'Set web-optimized quality', text: 'Choose quality 75-85 for the best balance. Enable target-size mode if you need to stay under specific file size limits for your CMS.' },
+  { name: 'Resize if needed', text: 'Use the resize option to cap dimensions at the maximum display size your layout requires — typically 1920px or less for full-width images.' },
+  { name: 'Convert to WebP or AVIF', text: 'Set the output format to WebP (97%+ browser support) or AVIF (92%+ support). This alone reduces file size by 25-50% compared to JPEG.' },
+  { name: 'Download and deploy', text: 'Save individual files or download all as a ZIP. Replace your website\'s images with the optimized versions and measure the improvement in PageSpeed Insights.' },
+];
+
+const genSchemas = () => [faqSchema(faqs), howToSchema(howToSteps)];
+---
+
+<CompressorPageLayout
+  title="Compress Images for Web — Free Web Image Optimizer | ToolBox Image"
+  description="Compress and optimize images for the web — reduce file size, improve Core Web Vitals, and boost SEO. Free online web image optimizer. No uploads, no limits."
+  canonical="https://toolboximage.com/compress-for-web/"
+  ogImage="/og-image.png"
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
+    { name: 'Web Optimizer', href: '/compress-for-web' },
+  ]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
+>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="Web Image Optimizer" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress and optimize images for the web.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Images are the single biggest performance bottleneck on most websites —
+        accounting for 50-80% of total page weight. Optimizing them is the most
+        impactful thing you can do for page speed, Core Web Vitals, and SEO.
+        All processing happens locally in your browser — nothing is uploaded.
+      </p>
+    </Reveal>
+  </section>
+
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">Web image optimization is a ranking factor.</h2>
+        <p class="text-body-md cp-body-text">
+          Google's Core Web Vitals — specifically Largest Contentful Paint (LCP) —
+          directly measures how quickly your page loads its main content. Images are
+          almost always the largest element on the page, and uncompressed images are
+          the most common reason for failing LCP. A single unoptimized hero photo from
+          a modern smartphone (4-6 MB) can push LCP past 5 seconds on a mobile
+          connection — well beyond Google's 2.5-second threshold.
+        </p>
+        <p class="text-body-md cp-body-text">
+          The fix is straightforward: resize images to their display dimensions,
+          compress them with quality 75-85, and serve them in a modern format like
+          WebP or AVIF. A 5 MB hero image becomes 200-500 KB with no visible quality
+          difference. Page speed improves by seconds. Google rewards the improvement
+          with better rankings. Our compressor handles all three steps — resize,
+          compress, and format conversion — in one pass, entirely in your browser.
+        </p>
+
+        <h3 class="text-display-sm">The web optimization workflow</h3>
+        <p class="text-body-md cp-body-text">
+          Start by auditing your site with PageSpeed Insights or Lighthouse to identify
+          pages with poor LCP scores. Download the unoptimized images, process them
+          through our compressor with these recommended settings, and re-upload:
+        </p>
+        <ul class="text-body-md cp-body-text">
+          <li><strong>Format:</strong> Convert to WebP (primary) with JPEG fallback</li>
+          <li><strong>Quality:</strong> 80 for photos, 75 for graphics, 90 for product detail shots</li>
+          <li><strong>Resize:</strong> Cap width to the maximum display size in your layout</li>
+          <li><strong>Metadata:</strong> Strip EXIF data — GPS coordinates and camera settings add kilobytes with no benefit to visitors</li>
+        </ul>
+        <p class="text-body-md cp-body-text">
+          For e-commerce sites with hundreds of product images, use our
+          <a href="/bulk-image-compressor/" class="cp-inline-link">bulk compressor</a>
+          to process entire catalogues in parallel. For format-specific compression, see
+          <a href="/compress-jpeg/" class="cp-inline-link">JPEG Compressor</a>,
+          <a href="/compress-webp/" class="cp-inline-link">WebP Compressor</a>, and
+          <a href="/compress-avif/" class="cp-inline-link">AVIF Compressor</a>.
+          Need to resize? Use the <a href="/tools/resizer/" class="cp-inline-link">Image Resizer</a>.
+        </p>
+
+        <h3 class="text-display-sm">Real-world performance gains</h3>
+        <p class="text-body-md cp-body-text">
+          A typical website audit reveals the same pattern: unoptimized images account
+          for 60-80% of total page bytes. Compressing images at quality 80 and
+          converting to WebP reduces image weight by 70-85%. For a page with 2 MB of
+          images, that means serving 300-600 KB instead. On a 4G mobile connection,
+          this translates to 1.5-3 seconds faster loading — the difference between a
+          passing and failing LCP score. For image-heavy pages like e-commerce category
+          pages or photography portfolios, the gains are even larger.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
+
+<style>
+  .cp-title { margin: 0; max-width: 22ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 64ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

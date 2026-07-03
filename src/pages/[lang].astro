@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import AppShell from '../components/layout/AppShell.astro';
 import HomeContent from '../components/home/HomeContent.astro';
 import { softwareAppSchema, breadcrumbSchema } from '../lib/seo';
-import { useTranslations, LANG_CODES, type LangCode } from '../i18n';
+import { useTranslations, LANG_CODES, type LangCode, dirFromLang } from '../i18n';
 
 export function getStaticPaths() {
   return LANG_CODES.filter((l) => l !== 'en').map((lang) => ({ params: { lang } }));
@@ -17,6 +17,7 @@ const _ = useTranslations(langCode);
   title={_('meta.title')}
   description={_('meta.desc')}
   lang={langCode}
+  dir={dirFromLang(langCode)}
   ogImage="/og-image.png"
   ogType="website"
   schemas={[

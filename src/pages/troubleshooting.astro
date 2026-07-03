@@ -1,0 +1,345 @@
+---
+import Layout from '../layouts/Layout.astro';
+import AppShell from '../components/layout/AppShell.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import IconBox from '../components/ui/IconBox.astro';
+import Badge from '../components/ui/Badge.astro';
+import PageHeader from '../components/shared/PageHeader.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import MeshGradient from '../components/shared/MeshGradient.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import { breadcrumbSchema, faqSchema, renderJsonLd } from '../lib/seo';
+import Prose from '../components/shared/Prose.astro';
+---
+
+<Layout
+  title="Troubleshooting — ToolBox Image"
+  description="Common issues and solutions when using ToolBox Image. Fix upload problems, unsupported formats, large files, and download errors."
+  schemas={[
+    breadcrumbSchema([
+      { name: 'Home', href: '/' },
+      { name: 'Troubleshooting', href: '/troubleshooting' },
+    ]),
+  ]}
+>
+  <AppShell>
+    <!-- HERO -->
+    <section class="hero">
+      <MeshGradient intensity="subtle" />
+      <div class="container hero-inner">
+        <Reveal>
+          <Badge eyebrow="Help" tone="info">Troubleshooting</Badge>
+        </Reveal>
+        <Reveal delay={80}>
+          <h1 class="text-display-xl hero-title">Something not working?</h1>
+        </Reveal>
+        <Reveal delay={160}>
+          <p class="text-body-lg hero-lead">
+            Most issues are easy to fix. Here are solutions to the most common problems people run into.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+
+    <!-- COMMON ISSUES -->
+    <section class="band band-soft">
+      <div class="container stack stack-3xl">
+        <Reveal>
+          <PageHeader
+            as="h2"
+            eyebrow="Issues"
+            title="Common problems and how to fix them."
+            align="center"
+          />
+        </Reveal>
+
+        <div class="issues-grid">
+          <Reveal delay={80}>
+            <Card>
+              <IconBox tone="warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Unsupported file format</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                If your file won't upload, it may be in a format the tool doesn't support. Our tools accept <strong>JPEG, PNG, WebP, and AVIF</strong> images. Some tools also support GIF, SVG, and HEIC.
+              </p>
+              <p class="text-body-sm" style="color:var(--color-body); margin-top: var(--space-sm);">
+                <strong>Fix:</strong> Convert your image to a supported format first using our <a href="/tools/converter/" style="color:var(--color-link);">Format Converter</a>, then use the desired tool.
+              </p>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={140}>
+            <Card>
+              <IconBox tone="warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Corrupted or invalid file</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                A file that appears corrupted or shows "invalid image" may be incomplete, renamed incorrectly, or damaged during download.
+              </p>
+              <p class="text-body-sm" style="color:var(--color-body); margin-top: var(--space-sm);">
+                <strong>Fix:</strong> Try re-downloading the original file. Ensure the file extension matches the actual format (e.g., a .jpg file should be a JPEG image). If the file opens fine in other apps, try a different browser.
+              </p>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={200}>
+            <Card>
+              <IconBox tone="warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Large files or slow processing</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Very large images (4000+ pixels or 20MB+) may take longer to process. Memory-intensive operations on large images can cause the page to slow down or freeze.
+              </p>
+              <p class="text-body-sm" style="color:var(--color-body); margin-top: var(--space-sm);">
+                <strong>Fix:</strong> Resize the image to smaller dimensions before processing. Use our <a href="/tools/resizer/" style="color:var(--color-link);">Image Resizer</a> to reduce dimensions first, then apply compression or conversion. Close other tabs to free up browser memory.
+              </p>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={260}>
+            <Card>
+              <IconBox tone="warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                  <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Download doesn't start</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                If clicking the download button doesn't do anything, your browser may be blocking pop-ups or downloads from the page.
+              </p>
+              <p class="text-body-sm" style="color:var(--color-body); margin-top: var(--space-sm);">
+                <strong>Fix:</strong> Check your browser's download settings and ensure downloads from toolboximage.com are allowed. Try right-clicking the result image and selecting "Save Image As…". If the issue persists, try a different browser.
+              </p>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={320}>
+            <Card>
+              <IconBox tone="warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
+                  <path d="M12 18V6"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Browser compatibility</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                ToolBox Image uses modern browser features (Canvas API, WebAssembly). Older browsers like Internet Explorer, legacy Safari, or very old Firefox versions may not work properly.
+              </p>
+              <p class="text-body-sm" style="color:var(--color-body); margin-top: var(--space-sm);">
+                <strong>Fix:</strong> Use the latest version of Chrome, Firefox, Safari, or Edge. We recommend keeping your browser updated to ensure all features work correctly. Mobile Safari and Chrome on Android are fully supported.
+              </p>
+            </Card>
+          </Reveal>
+
+          <Reveal delay={380}>
+            <Card>
+              <IconBox tone="warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+              </IconBox>
+              <h3 class="text-display-sm">Quality is lower than expected</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                If the output image quality is lower than expected, the quality slider may be set too low, or the image may have been compressed multiple times.
+              </p>
+              <p class="text-body-sm" style="color:var(--color-body); margin-top: var(--space-sm);">
+                <strong>Fix:</strong> Increase the quality slider (80-95% is a good range for most uses). Always work from the original image, not from a previously compressed version. For lossless compression, choose PNG or WebP lossless if available.
+              </p>
+            </Card>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+
+    <!-- BROWSER TIPS -->
+    <section class="band band-canvas">
+      <div class="container-narrow stack stack-2xl">
+        <Reveal>
+          <PageHeader
+            as="h2"
+            eyebrow="Tips"
+            title="Browser-specific notes."
+            lead="Different browsers have different capabilities. Here's what works best."
+          />
+        </Reveal>
+        <Reveal delay={80}>
+          <div class="browser-grid">
+            <div class="browser-card">
+              <h3 class="text-display-sm">Chrome / Edge</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Full support for all tools. Best performance for large images. Supports AVIF output on most versions.
+              </p>
+            </div>
+            <div class="browser-card">
+              <h3 class="text-display-sm">Firefox</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Full support. May have slightly slower canvas rendering for very large images. AVIF output supported in recent versions.
+              </p>
+            </div>
+            <div class="browser-card">
+              <h3 class="text-display-sm">Safari</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Full support on macOS and iOS. AVIF output requires macOS Ventura+ or iOS 16+. WebP output supported.
+              </p>
+            </div>
+            <div class="browser-card">
+              <h3 class="text-display-sm">Mobile (iOS/Android)</h3>
+              <p class="text-body-sm" style="color:var(--color-body);">
+                Supported. On iOS, files persist across language switches via IndexedDB. Large images may be slower on older devices.
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="band cta-band">
+      <MeshGradient intensity="ambient" />
+      <div class="container cta-inner">
+        <Reveal>
+          <p class="text-caption-mono cta-eyebrow">Still stuck?</p>
+          <h2 class="text-display-xl cta-title">Reach out and we'll help.</h2>
+          <p class="text-body-lg cta-sub">
+            Bug reports, feature requests, or questions — we reply within 1-2 business days.
+          </p>
+          <div class="cta-actions">
+            <Button label="Contact us" href="/contact/" variant="secondary" size="lg" class="btn-on-dark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </Button>
+            <Button label="Read the blog" href="/blog/" variant="ghost" size="lg" class="cta-ghost" />
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  </AppShell>
+</Layout>
+
+<style>
+  .hero {
+    position: relative;
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-6xl);
+    background-color: var(--color-canvas);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .hero-title { margin: 0; max-width: 18ch; }
+  .hero-lead { margin: 0; color: var(--color-body); max-width: 56ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-soft { background-color: var(--color-canvas-soft); }
+  .band-canvas { background-color: var(--color-canvas); }
+
+  .issues-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .container-narrow {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+  }
+
+  .browser-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  .browser-card {
+    padding: var(--space-lg);
+    background-color: var(--color-canvas-soft);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+  }
+  .browser-card h3 { margin: 0 0 var(--space-xs); }
+  .browser-card p { margin: 0; }
+
+  .cta-band {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .cta-eyebrow {
+    color: color-mix(in srgb, var(--color-on-primary) 60%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+  .cta-title { margin: 0; color: var(--color-on-primary); max-width: 18ch; }
+  .cta-sub {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
+    max-width: 48ch;
+  }
+  .cta-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .cta-ghost {
+    color: var(--color-on-primary) !important;
+  }
+  .cta-ghost:hover {
+    background-color: color-mix(in srgb, var(--color-on-primary) 10%, transparent) !important;
+  }
+
+  @media (max-width: 1023px) {
+    .issues-grid,
+    .browser-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+    .hero { padding: var(--space-4xl) 0 var(--space-3xl); }
+  }
+</style>

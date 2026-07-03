@@ -1,0 +1,414 @@
+---
+/**
+ * ToolSeoContent — SEO content section with overview, features,
+ * step-by-step guide, use cases, FAQ, and JSON-LD structured data
+ * (FAQ, Breadcrumb, SoftwareApplication, HowTo).
+ * Renders below the interactive tool on tool pages.
+ */
+import Prose from '../shared/Prose.astro';
+import SectionHeader from '../shared/SectionHeader.astro';
+import FAQ from '../shared/FAQ.astro';
+import {
+  SITE_URL, faqSchema, breadcrumbSchema,
+  softwareAppSchema, howToSchema, renderJsonLd,
+} from '../../lib/seo';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  toolId: 'converter' | 'resizer' | 'rotator';
+  lang?: string;
+}
+
+const { toolId, lang = 'en' } = Astro.props;
+const _ = useTranslations(lang as LangCode);
+
+const isConverter = toolId === 'converter';
+const isResizer = toolId === 'resizer';
+const isRotator = toolId === 'rotator';
+
+const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : 'Rotate Image';
+const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : 'tools/rotator';
+const toolPath = `/${lang === 'en' ? '' : lang + '/'}${toolSlug}/`;
+
+const breadcrumbItems = [
+  { name: 'Home', href: `/${lang === 'en' ? '' : lang + '/'}` },
+  { name: 'Image Tools', href: `/${lang === 'en' ? '' : lang + '/'}image-tools/` },
+  { name: toolName, href: toolPath },
+];
+
+const appSchema = softwareAppSchema({
+  name: `ToolBox Image ${toolName}`,
+  description: isConverter
+    ? 'Free online image converter — convert PNG, JPG, WebP, and AVIF images instantly in your browser. No uploads, no sign-up, unlimited.'
+    : isResizer
+    ? 'Free online image resizer — resize images for social media, web, and print. Social media presets, multiple resize modes, no uploads.'
+    : 'Free online image rotator — rotate and flip images in your browser. 90° CW/CCW, 180°, custom angles, horizontal and vertical flip. No uploads.',
+  url: `${SITE_URL}${toolSlug}`,
+});
+
+const howTo = isConverter
+  ? {
+      name: 'How to Convert an Image Online',
+      description: 'A step-by-step guide to converting images using ToolBox Image Converter.',
+      steps: [
+        { name: 'Upload your image', text: 'Click the upload area or drag and drop an image file. Supports JPG, PNG, WebP, and AVIF.' },
+        { name: 'Choose target format', text: 'Select your desired output format — JPEG, PNG, WebP, or AVIF — from the format buttons.' },
+        { name: 'Adjust quality', text: 'Use the quality slider to control file size vs. image quality. Higher values produce better-looking images.' },
+        { name: 'Preview the result', text: 'See a side-by-side comparison of your original and converted image with file size details.' },
+        { name: 'Download', text: 'Click the download button to save your converted image. All processing stays on your device.' },
+      ],
+    }
+  : isResizer
+  ? {
+      name: 'How to Resize an Image Online',
+      description: 'A step-by-step guide to resizing images using ToolBox Image Resizer.',
+      steps: [
+        { name: 'Upload your image', text: 'Click the upload area or drag and drop any image file.' },
+        { name: 'Set dimensions', text: 'Enter custom width and height, or pick a social media preset like Instagram or Facebook.' },
+        { name: 'Choose resize mode', text: 'Select Fit (maintains aspect ratio with padding), Fill (crops to fill), or Stretch (distorts to fit).' },
+        { name: 'Select output format', text: 'Choose JPEG, PNG, or WebP as your output format for the resized image.' },
+        { name: 'Download', text: 'Preview the result and download your resized image. All processing is done locally.' },
+      ],
+    }
+  : {
+      name: 'How to Rotate an Image Online',
+      description: 'A step-by-step guide to rotating and flipping images using ToolBox Image Rotator.',
+      steps: [
+        { name: 'Upload your image', text: 'Click the upload area or drag and drop any image file. Supports JPG, PNG, WebP, and AVIF.' },
+        { name: 'Choose rotation', text: 'Select a preset angle — 90° CW, 90° CCW, or 180° — or enter a custom angle in degrees.' },
+        { name: 'Flip if needed', text: 'Use the Flip H (horizontal) or Flip V (vertical) buttons to mirror the image.' },
+        { name: 'Preview the result', text: 'See a live preview of the rotated image with updated dimensions and file size.' },
+        { name: 'Download', text: 'Click the download button to save your rotated image. All processing stays on your device.' },
+      ],
+    };
+
+const faqItems = isConverter
+  ? [
+      { q: _('converter.faq.q1'), a: _('converter.faq.a1') },
+      { q: _('converter.faq.q2'), a: _('converter.faq.a2') },
+      { q: _('converter.faq.q3'), a: _('converter.faq.a3') },
+      { q: _('converter.faq.q4'), a: _('converter.faq.a4') },
+      { q: _('converter.faq.q5'), a: _('converter.faq.a5') },
+    ]
+  : isResizer
+  ? [
+      { q: _('resizer.faq.q1'), a: _('resizer.faq.a1') },
+      { q: _('resizer.faq.q2'), a: _('resizer.faq.a2') },
+      { q: _('resizer.faq.q3'), a: _('resizer.faq.a3') },
+      { q: _('resizer.faq.q4'), a: _('resizer.faq.a4') },
+      { q: _('resizer.faq.q5'), a: _('resizer.faq.a5') },
+    ]
+  : [
+      { q: _('rotator.faq.q1'), a: _('rotator.faq.a1') },
+      { q: _('rotator.faq.q2'), a: _('rotator.faq.a2') },
+      { q: _('rotator.faq.q3'), a: _('rotator.faq.a3') },
+      { q: _('rotator.faq.q4'), a: _('rotator.faq.a4') },
+      { q: _('rotator.faq.q5'), a: _('rotator.faq.a5') },
+    ];
+
+const breadcrumb = breadcrumbSchema(breadcrumbItems);
+const faq = faqSchema(faqItems);
+const howToLd = howToSchema(howTo.steps);
+---
+
+<section class="band band-canvas" id="seo-content">
+  <div class="container stack stack-3xl">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="seo-breadcrumb">
+      <ol class="seo-breadcrumb-list">
+        {breadcrumbItems.map((item) => (
+          <li class="seo-breadcrumb-item">
+            {item.href === toolPath ? (
+              <span aria-current="page">{item.name}</span>
+            ) : (
+              <a href={item.href}>{item.name}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <!-- Main SEO Content -->
+    <Prose>
+      {isConverter && <>
+        <h2>Free Online Image Converter — Convert PNG, JPG, WebP & AVIF</h2>
+        <p>
+          ToolBox Image Converter is a fast, private, browser-based tool for converting images
+          between the most popular web formats. Whether you need to convert PNG to JPG,
+          JPG to WebP, WebP to PNG, or any other combination of JPEG, PNG, WebP, and AVIF,
+          this free online image converter handles it instantly — with no uploads, no sign-up,
+          and no file size limits.
+        </p>
+        <p>
+          Unlike online image converters that send your files to a remote server, ToolBox Image
+          Converter processes everything locally using the HTML5 Canvas API. Your images stay on
+          your device, making this one of the most private image conversion tools available.
+          The converter supports lossy and lossless formats, a quality slider for fine-grained
+          control, and instant side-by-side previews so you can compare before and after.
+        </p>
+
+        <h3>Supported Image Format Conversions</h3>
+        <p>
+          ToolBox Image Converter supports all combinations of the four most common image formats:
+        </p>
+        <ul>
+          <li><strong>JPEG (JPG):</strong> Best for photographs and complex images. Converts to WebP, PNG, and AVIF.</li>
+          <li><strong>PNG:</strong> Best for graphics, screenshots, and images requiring transparency. Converts to JPEG, WebP, and AVIF.</li>
+          <li><strong>WebP:</strong> Google's modern format with superior compression. Converts to JPEG, PNG, and AVIF.</li>
+          <li><strong>AVIF:</strong> The next-generation format with the best compression ratios. Converts to JPEG, PNG, and WebP.</li>
+        </ul>
+
+        <h3>Why Use ToolBox Image Converter?</h3>
+        <p>
+          Most image conversion tools either upload your files to a server (compromising privacy)
+          or require software installation. ToolBox Image Converter is different:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All conversion happens in your browser.</li>
+          <li><strong>No File Size Limits:</strong> Convert images of any size — the limitation is your device's memory, not our tool.</li>
+          <li><strong>Quality Control:</strong> Fine-tune output quality with a precise slider (1-100%) for the perfect balance of size and clarity.</li>
+          <li><strong>Instant Preview:</strong> See your original and converted image side by side with exact file size information.</li>
+          <li><strong>Free Forever:</strong> No sign-up, no paywall, no credit card. Unlimited conversions.</li>
+        </ul>
+
+        <h3>How to Convert Images Online</h3>
+        <p>Converting images with ToolBox Image is simple and takes just a few seconds:</p>
+        <ol>
+          <li><strong>Upload</strong> — Click the upload area or drag and drop an image file onto this page.</li>
+          <li><strong>Select Format</strong> — Choose your target output format (JPEG, PNG, WebP, or AVIF).</li>
+          <li><strong>Adjust Quality</strong> — Move the quality slider to control file size. Higher = better quality, lower = smaller file.</li>
+          <li><strong>Preview</strong> — See the original and converted image side by side with file size details.</li>
+          <li><strong>Download</strong> — Click download to save your converted image. Your original file is never modified.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Convert HEIC to JPEG:</strong> iPhone and iOS devices capture photos in HEIC format. Convert them to JPEG for wider compatibility on Windows, Android, and web platforms.</li>
+          <li><strong>Convert PNG to JPG for websites:</strong> PNG images can be large. Converting to JPEG significantly reduces file size for faster page loads, especially for photographs.</li>
+          <li><strong>Convert JPG to WebP for better performance:</strong> WebP offers 25-35% smaller file sizes than JPEG at equivalent quality, making your website faster.</li>
+          <li><strong>Convert WebP to PNG for editing:</strong> Some image editors and design tools don't support WebP. Convert to PNG for full compatibility.</li>
+        </ul>
+      </>}
+
+      {isRotator && <>
+        <h2>Free Online Image Rotator — Rotate & Flip Images Online</h2>
+        <p>
+          ToolBox Image Rotator is a fast, private browser-based tool for rotating and flipping
+          images. Whether you need to rotate a photo 90 degrees, flip an image horizontally,
+          or apply a precise custom angle, this free online image rotator handles it instantly
+          — with no uploads, no sign-up, and no file size limits.
+        </p>
+        <p>
+          All image processing happens locally on your device using the HTML5 Canvas API. Your
+          images never leave your computer, making this one of the most private image rotation
+          tools available. The rotator supports quick preset angles (90° CW, 90° CCW, 180°),
+          custom degree input, and horizontal/vertical flipping with live preview.
+        </p>
+
+        <h3>Rotation and Flip Options</h3>
+        <ul>
+          <li><strong>90° Clockwise:</strong> Rotate the image 90 degrees to the right.</li>
+          <li><strong>90° Counter-Clockwise:</strong> Rotate the image 90 degrees to the left.</li>
+          <li><strong>180°:</strong> Turn the image upside down.</li>
+          <li><strong>Custom Angle:</strong> Enter any degree value for precise rotation control.</li>
+          <li><strong>Flip Horizontal:</strong> Mirror the image left-to-right.</li>
+          <li><strong>Flip Vertical:</strong> Mirror the image top-to-bottom.</li>
+        </ul>
+
+        <h3>Why Use ToolBox Image Rotator?</h3>
+        <p>
+          Most online image rotators either upload your files to a server or require software
+          installation. ToolBox Image Rotator is different:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All rotation happens in your browser.</li>
+          <li><strong>Lossless Rotation:</strong> 90° and 180° rotations are lossless — no quality degradation.</li>
+          <li><strong>Custom Angles:</strong> Enter any degree value for precise control over rotation.</li>
+          <li><strong>Built-in Flip:</strong> Mirror images horizontally or vertically without separate tools.</li>
+          <li><strong>Free Forever:</strong> No sign-up, no paywall, unlimited use.</li>
+        </ul>
+
+        <h3>How to Rotate Images Online</h3>
+        <p>Rotating images with ToolBox Image is quick and easy:</p>
+        <ol>
+          <li><strong>Upload</strong> — Click the upload area or drag and drop an image onto the page.</li>
+          <li><strong>Choose Rotation</strong> — Select a preset angle (90° CW, 90° CCW, 180°) or enter a custom angle.</li>
+          <li><strong>Flip (Optional)</strong> — Click Flip H or Flip V to mirror the image if needed.</li>
+          <li><strong>Preview</strong> — See the rotated image in real time with updated dimensions.</li>
+          <li><strong>Download</strong> — Click download to save your rotated image. The original file is never modified.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Fix photo orientation:</strong> Rotate photos taken in the wrong orientation — from portrait to landscape or vice versa.</li>
+          <li><strong>Create mirrored images:</strong> Use the flip tools to create mirror effects for design projects, social media, and marketing materials.</li>
+          <li><strong>Prepare images for printing:</strong> Rotate images to the correct orientation before sending them to a print service.</li>
+          <li><strong>Batch preparation:</strong> For batch rotation of multiple images, combine with our Bulk Compressor tool.</li>
+        </ul>
+      </>}
+
+      {isResizer && <>
+        <h2>Free Online Image Resizer — Resize for Social Media & More</h2>
+        <p>
+          ToolBox Image Resizer is a powerful, private browser-based tool for resizing images
+          to any dimensions. Whether you need to resize images for Instagram, Facebook, X/Twitter,
+          LinkedIn, YouTube, or custom dimensions, this free online image resizer handles it all
+          with no uploads, no sign-up, and no file size limits.
+        </p>
+        <p>
+          All image processing happens locally on your device using the HTML5 Canvas API with a
+          step-down resizing algorithm for cleaner results. Your images never leave your computer,
+          making ToolBox Image Resizer one of the most private image resizing tools available.
+          Choose from social media presets, set custom dimensions, and pick your output format
+          — all in one place.
+        </p>
+
+        <h3>Social Media Presets</h3>
+        <p>
+          Save time with built-in presets for every major social platform. No need to remember
+          dimension specs — just pick your platform and resize instantly:
+        </p>
+        <ul>
+          <li><strong>Instagram:</strong> Square (1080×1080), Portrait (1080×1350), Story (1080×1920)</li>
+          <li><strong>Facebook:</strong> Post (1200×630)</li>
+          <li><strong>X / Twitter:</strong> Post (1200×675), Header (1500×500)</li>
+          <li><strong>LinkedIn:</strong> Banner (1584×396)</li>
+          <li><strong>YouTube:</strong> Thumbnail (1280×720)</li>
+          <li><strong>HD & Full HD:</strong> 1280×720 and 1920×1080 for presentations, wallpapers, and video stills</li>
+        </ul>
+
+        <h3>Resize Modes Explained</h3>
+        <ul>
+          <li><strong>Fit</strong> — Maintains the original aspect ratio by adding white padding around the image. Best for social media posts where you want to preserve the entire image.</li>
+          <li><strong>Fill</strong> — Scales the image to cover the entire target dimensions, cropping any overflow. Perfect for thumbnails and banners where full coverage matters.</li>
+          <li><strong>Stretch</strong> — Distorts the image to exactly match the target width and height. Use sparingly, as it can change the image's proportions.</li>
+        </ul>
+
+        <h3>How to Resize Images Online</h3>
+        <ol>
+          <li><strong>Upload</strong> — Click the upload area or drag and drop an image onto the page.</li>
+          <li><strong>Set Dimensions</strong> — Enter custom width and height, or pick a social media preset from the dropdown.</li>
+          <li><strong>Lock Aspect Ratio</strong> — Keep the aspect ratio locked to maintain proportions when changing dimensions.</li>
+          <li><strong>Choose Mode</strong> — Select Fit, Fill, or Stretch depending on how you want the image to fit the target dimensions.</li>
+          <li><strong>Select Format</strong> — Choose JPEG, PNG, or WebP as your output format and adjust quality.</li>
+          <li><strong>Download</strong> — Preview the resized image and download. All processing stays in your browser.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Resize images for Instagram:</strong> Use the Instagram presets to get perfect square posts, portrait photos, or Stories without manual cropping.</li>
+          <li><strong>Resize for social media marketing:</strong> Create consistent-sized images for Facebook posts, Twitter cards, LinkedIn banners, and YouTube thumbnails.</li>
+          <li><strong>Resize images for e-commerce:</strong> Standardize product photos to uniform dimensions for your online store or marketplace listings.</li>
+          <li><strong>Resize for email signatures:</strong> Scale down large images to fit email signature requirements (typically 300-600 pixels wide).</li>
+        </ul>
+      </>}
+    </Prose>
+
+    <!-- FAQ -->
+    <section class="seo-faq">
+      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : 'Rotate Image'}>
+        <h2 class="text-display-lg">Frequently Asked Questions</h2>
+      </SectionHeader>
+      <FAQ items={faqItems} />
+    </section>
+
+    <!-- Related Tools -->
+    <aside class="seo-related">
+      <SectionHeader eyebrow="Related Tools">
+        <h2 class="text-display-lg">More Image Tools</h2>
+      </SectionHeader>
+      <div class="seo-related-grid">
+        {isConverter ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/rotator/`} class="seo-related-card">
+            <strong>Rotate Image</strong>
+            <span>Rotate and flip images</span>
+          </a>
+        </> : isResizer ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/rotator/`} class="seo-related-card">
+            <strong>Rotate Image</strong>
+            <span>Rotate and flip images</span>
+          </a>
+        </> : <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
+          </a>
+        </>}
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- JSON-LD Structured Data -->
+<Fragment set:html={renderJsonLd(faq, breadcrumb, appSchema, howToLd as Record<string, unknown>)} />
+
+<style>
+  .band { position: relative; padding: var(--space-5xl) 0; }
+  .band-canvas { background-color: var(--color-canvas); }
+  .container { max-width: 720px; margin: 0 auto; padding: 0 var(--space-lg); }
+
+  .seo-breadcrumb { margin-bottom: 0; }
+  .seo-breadcrumb-list {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs);
+    list-style: none; margin: 0; padding: 0;
+    font-size: var(--text-body-sm); color: var(--color-mute);
+  }
+  .seo-breadcrumb-item + .seo-breadcrumb-item::before {
+    content: '/'; margin-right: var(--space-xs); color: var(--color-hairline-strong);
+  }
+  .seo-breadcrumb-item a { color: var(--color-link); text-decoration: none; }
+  .seo-breadcrumb-item a:hover { text-decoration: underline; }
+  .seo-breadcrumb-item [aria-current="page"] { color: var(--color-body); }
+
+  .seo-faq { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+  .seo-related { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .seo-related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+  .seo-related-card {
+    display: flex; flex-direction: column; gap: var(--space-xs);
+    padding: var(--space-lg);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: transform var(--dur-base) var(--ease-out-quart), box-shadow var(--dur-base) var(--ease-out-quart);
+  }
+  .seo-related-card:hover {
+    transform: translateY(-2px); box-shadow: var(--shadow-2);
+  }
+  .seo-related-card strong { color: var(--color-ink); font-size: var(--text-body-md); }
+  .seo-related-card span { color: var(--color-body); font-size: var(--text-body-sm); }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+    .seo-related-grid { grid-template-columns: 1fr; }
+  }
+</style>

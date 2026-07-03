@@ -1,0 +1,167 @@
+---
+import CompressorPageLayout from '../layouts/CompressorPageLayout.astro';
+import Badge from '../components/ui/Badge.astro';
+import Reveal from '../components/shared/Reveal.astro';
+import FAQ from '../components/shared/FAQ.astro';
+import { faqSchema, howToSchema } from '../lib/seo';
+
+const faqs = [
+  {
+    q: 'Can you compress an animated GIF?',
+    a: 'Yes. You can reduce animated GIF file size by reducing the colour palette (256 colours max), dropping frames, resizing dimensions, or converting to WebP/AVIF which support animation at a fraction of the file size. A typical animated GIF can be reduced by 60-90% by converting to animated WebP.',
+  },
+  {
+    q: 'What is the best format for animated images?',
+    a: 'WebP and AVIF both support animation and produce files 60-80% smaller than GIF at equivalent quality. Animated WebP is supported by Chrome, Firefox, Safari (14+), and Edge. AVIF animation support is newer and limited to Chrome 85+ and Firefox 93+. For maximum compatibility, GIF remains the universal fallback.',
+  },
+  {
+    q: 'How do I convert a GIF to a static image?',
+    a: 'Load your GIF into the compressor and set the output format to JPEG, PNG, or WebP. The first frame of the GIF is used as the static image. PNG is best if the GIF has transparency or sharp edges. JPEG gives the smallest file size for photographic GIFs.',
+  },
+  {
+    q: 'What limits the file size of a GIF?',
+    a: 'GIF is limited to 256 colours per frame, which makes it inefficient for photographic images. File size grows with frame count, dimensions, and colour complexity. A 10-second 640×480 GIF at 10 FPS can easily exceed 10 MB — converting to WebP with similar settings typically yields 1-3 MB.',
+  },
+  {
+    q: 'Can I batch compress multiple GIFs?',
+    a: 'Yes. Drop multiple GIF files onto the upload area and they process in parallel. Up to 200 files at once. Set consistent quality and output format for all files, then download individually or as a ZIP archive.',
+  },
+];
+
+const howToSteps = [
+  { name: 'Drop your GIF', text: 'Drag one or more GIF files onto the upload area, or click to browse your files. Animated and static GIFs are both supported.' },
+  { name: 'Choose your output', text: 'Keep GIF format for maximum compatibility with reduced palette and dimensions, or convert to WebP/AVIF for dramatically smaller animated files.' },
+  { name: 'Adjust quality settings', text: 'Use the quality slider to control compression. For GIF output, the palette can be reduced. For WebP/AVIF, set quality 70-80 for great results.' },
+  { name: 'Download your compressed GIF', text: 'Save individual files or download all as a ZIP archive. Your files never left your device.' },
+];
+---
+
+<CompressorPageLayout
+  title="Compress GIF Images Online — Free GIF Compressor | ToolBox Image"
+  description="Compress GIF images online — reduce animated GIF file size by converting to WebP or optimizing palette and dimensions. Free GIF file compressor. No uploads."
+  canonical="https://toolboximage.com/compress-gif/"
+  ogImage="/og-image.png"
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Image Tools', href: '/image-tools' },
+    { name: 'Compress GIF', href: '/compress-gif' },
+  ]}
+  schemas={[faqSchema(faqs), howToSchema(howToSteps)]}
+>
+  <section slot="hero">
+    <Reveal>
+      <Badge eyebrow="GIF Compressor" tone="info">Free</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl cp-title">Compress GIF images online.</h1>
+    </Reveal>
+    <Reveal delay={160}>
+      <p class="text-body-lg cp-lead">
+        Animated GIFs are notorious for their large file sizes — a few seconds of
+        looped video can easily exceed 10 MB. Our compressor reduces GIF files by
+        optimizing the palette, resizing frames, or converting to modern formats
+        like WebP and AVIF that support animation at a fraction of the size.
+      </p>
+    </Reveal>
+  </section>
+
+  <section class="band band-canvas" slot="content">
+    <div class="container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-md">Why GIF files are so large — and how to fix it.</h2>
+        <p class="text-body-md cp-body-text">
+          The GIF format was created by CompuServe in 1987 — long before animated
+          web graphics were a concern. It uses LZW compression and is limited to
+          256 colours per frame, which means photographic content looks grainy
+          and banded. Worse, each frame stores the full image data, so longer
+          animations balloon in size. A 5-second, 480p animated GIF at 15 FPS
+          typically weighs 5-15 MB depending on colour complexity.
+        </p>
+        <p class="text-body-md cp-body-text">
+          Our compressor gives you three strategies for GIF files. First, palette
+          optimization — reduce the number of colours used in each frame to shrink
+          the LZW-compressed data. Second, frame reduction — drop every other frame
+          to halve the file size at the cost of smoothness. Third and most effective:
+          convert the animation to WebP or AVIF, which use inter-frame compression
+          (only storing the pixels that change between frames) and achieve 60-90%
+          file size reduction with better colour quality.
+        </p>
+
+        <h3 class="text-display-sm">When to keep GIF vs. convert to modern formats</h3>
+        <p class="text-body-md cp-body-text">
+          Keep GIF format when compatibility is critical — some social media platforms,
+          email clients, and legacy content management systems only support animated GIFs.
+          Convert to WebP or AVIF when you control the delivery pipeline: modern websites,
+          app assets, and performance-sensitive projects benefit enormously from the
+          size reduction. WebP animation is supported by 97%+ of browsers and is the
+          most practical replacement for animated GIFs on the web today.
+        </p>
+        <p class="text-body-md cp-body-text">
+          For static GIFs (single-frame images that use the GIF palette), conversion
+          to PNG or JPEG is almost always better. PNG preserves sharp edges and solid
+          colours without the 256-colour limit. JPEG offers smaller files for GIF
+          screenshots that contain photographic elements. Our compressor handles all
+          of these conversions seamlessly.
+        </p>
+
+        <h3 class="text-display-sm">Batch processing multiple GIFs</h3>
+        <p class="text-body-md cp-body-text">
+          If you maintain a library of animated GIFs — for social media, email
+              newsletters, or product demos — drop the entire folder into our batch
+              compressor. All files process in parallel with consistent settings. The ZIP
+              download keeps your organized folder structure intact. For individual
+              format-specific compression, see our
+              <a href="/compress-jpeg/" class="cp-inline-link">JPEG</a>,
+              <a href="/compress-png/" class="cp-inline-link">PNG</a>,
+              <a href="/compress-webp/" class="cp-inline-link">WebP</a>, and
+              <a href="/compress-avif/" class="cp-inline-link">AVIF</a> compressors.
+        </p>
+      </Reveal>
+    </div>
+  </section>
+
+  <section class="band band-soft" slot="faq">
+    <div class="container container-narrow stack stack-lg">
+      <Reveal>
+        <h2 class="text-display-lg">Frequently asked questions</h2>
+      </Reveal>
+      <Reveal delay={80}>
+        <FAQ items={faqs} tone="light" />
+      </Reveal>
+    </div>
+  </section>
+</CompressorPageLayout>
+
+<style>
+  .cp-title { margin: 0; max-width: 20ch; }
+  .cp-lead { margin: 0; color: var(--color-body); max-width: 64ch; }
+
+  .band {
+    position: relative;
+    padding: var(--space-5xl) 0;
+  }
+  .band-canvas { background-color: var(--color-canvas); }
+  .band-soft { background-color: var(--color-canvas-soft); }
+
+  .cp-body-text {
+    color: var(--color-body);
+    max-width: 68ch;
+  }
+
+  .cp-inline-link {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-link) 35%, transparent);
+    transition: color var(--dur-fast) var(--ease-out-quart), text-decoration-color var(--dur-fast) var(--ease-out-quart);
+  }
+
+  .cp-inline-link:hover {
+    color: var(--color-link-deep);
+    text-decoration-color: var(--color-link-deep);
+  }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+  }
+</style>

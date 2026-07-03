@@ -9,6 +9,7 @@ import { SITE_URL, SITE_BASE_IMAGE } from '../lib/seo';
 
 interface Props extends SeoMeta {
   lang?: string;
+  dir?: 'ltr' | 'rtl';
   noThemeColor?: boolean;
   /** When true, skip default Organization+WebSite JSON-LD schemas. */
   noDefaultSchema?: boolean;
@@ -27,6 +28,7 @@ const {
   tags,
   noIndex = false,
   lang = 'en',
+  dir = 'ltr',
   noThemeColor = false,
   noDefaultSchema = false,
   schemas,
@@ -34,7 +36,7 @@ const {
 ---
 
 <!doctype html>
-<html lang={lang} data-theme="light">
+<html lang={lang} dir={dir} data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -1,0 +1,195 @@
+---
+/**
+ * BlogPostPage — shared blog post page used by both English and non-English routes.
+ * Renders hero, content with tags, CTAs, and sidebar.
+ * Place inside <AppShell> (do NOT wrap with Layout/AppShell).
+ */
+import Badge from '../ui/Badge.astro';
+import Button from '../ui/Button.astro';
+import Reveal from '../shared/Reveal.astro';
+import Prose from '../shared/Prose.astro';
+import BlogPostContent from './BlogPostContent.astro';
+import { posts, getAllTags, formatDate, getTranslatedTitle, getTranslatedDescription, getTranslatedTags } from '../../lib/blog';
+import type { LangCode } from '../../i18n';
+import type { BlogPost } from '../../lib/blog';
+
+interface Props {
+  post: BlogPost;
+  lang?: LangCode;
+}
+
+const { post, lang = 'en' as LangCode } = Astro.props;
+
+const categoryTone: Record<string, 'info' | 'success' | 'warning' | 'neutral'> = {
+  guides: 'info',
+  tutorials: 'warning',
+  technology: 'neutral',
+  privacy: 'success',
+  general: 'neutral',
+};
+
+const related = posts
+  .filter((p) => p.slug !== post.slug && (p.category === post.category || p.tags.some((t) => post.tags.includes(t))))
+  .slice(0, 3);
+
+const allTags = getAllTags();
+const prefix = lang === 'en' ? '' : `/${lang}`;
+const compressorPath = `${prefix}/compressor`;
+
+const translatedTitle = getTranslatedTitle(post.slug, lang);
+const translatedDesc = getTranslatedDescription(post.slug, lang);
+const translatedTags = getTranslatedTags(post.slug, lang);
+---
+
+<section class="post-hero">
+  <div class="container container-narrow">
+    <Reveal>
+      <a href={`${prefix}/blog/`} class="post-back text-body-sm">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        {lang === 'en' ? 'All posts' : lang === 'es' ? 'Todos los artículos' : lang === 'fr' ? 'Tous les articles' : lang === 'de' ? 'Alle Beiträge' : lang === 'it' ? 'Tutti gli articoli' : lang === 'pt' ? 'Todos os artigos' : lang === 'ru' ? 'Все статьи' : lang === 'zh' ? '所有文章' : lang === 'ja' ? 'すべての投稿' : lang === 'ko' ? '모든 게시물' : lang === 'ar' ? 'جميع المقالات' : lang === 'hi' ? 'सभी पोस्ट' : lang === 'tr' ? 'Tüm Yazılar' : 'All posts'}
+      </a>
+    </Reveal>
+    <Reveal delay={80}>
+      <div class="post-meta">
+        <Badge tone={categoryTone[post.category] || 'neutral'} eyebrow={post.category}>
+          {formatDate(post.date, lang)}
+        </Badge>
+        <span class="text-caption post-time">{post.readMinutes} {lang === 'en' ? 'min read' : lang === 'es' ? 'min de lectura' : lang === 'fr' ? 'min de lecture' : lang === 'de' ? 'Min. Lesezeit' : lang === 'it' ? 'min di lettura' : lang === 'pt' ? 'min de leitura' : lang === 'ru' ? 'мин чтения' : lang === 'zh' ? '分钟阅读' : lang === 'ja' ? '分で読める' : lang === 'ko' ? '분 소요' : lang === 'ar' ? 'دقيقة قراءة' : lang === 'hi' ? 'मिनट पढ़ने का समय' : lang === 'tr' ? 'dk okuma' : 'min read'}</span>
+      </div>
+    </Reveal>
+    <Reveal delay={140}>
+      <h1 class="text-display-xl post-title">{translatedTitle}</h1>
+    </Reveal>
+    <Reveal delay={200}>
+      <p class="text-body-lg post-lead">{translatedDesc}</p>
+    </Reveal>
+    <Reveal delay={240}>
+      <p class="text-caption post-author">
+        {lang === 'en' ? 'By' : lang === 'es' ? 'Por' : lang === 'fr' ? 'Par' : lang === 'de' ? 'Von' : lang === 'it' ? 'Di' : lang === 'pt' ? 'Por' : lang === 'ru' ? 'Автор' : lang === 'zh' ? '作者' : lang === 'ja' ? '著者' : lang === 'ko' ? '작성자' : lang === 'ar' ? 'بواسطة' : lang === 'hi' ? 'द्वारा' : lang === 'tr' ? 'Yazar' : 'By'} {post.author}
+      </p>
+    </Reveal>
+  </div>
+</section>
+
+<section class="band band-canvas">
+  <div class="container post-layout">
+    <div class="post-main">
+      <Reveal>
+        <Prose>
+          <BlogPostContent slug={post.slug} lang={lang} />
+        </Prose>
+      </Reveal>
+
+      {translatedTags.length > 0 && (
+        <Reveal delay={80}>
+          <div class="post-tags">
+            <span class="text-caption-mono post-tags-heading">{lang === 'en' ? 'Tags' : lang === 'es' ? 'Etiquetas' : lang === 'fr' ? 'Tags' : lang === 'de' ? 'Tags' : lang === 'it' ? 'Tag' : lang === 'pt' ? 'Tags' : lang === 'ru' ? 'Теги' : lang === 'zh' ? '标签' : lang === 'ja' ? 'タグ' : lang === 'ko' ? '태그' : lang === 'ar' ? 'وسوم' : lang === 'hi' ? 'टैग' : lang === 'tr' ? 'Etiketler' : 'Tags'}</span>
+            <div class="post-tags-list">
+              {translatedTags.map((tag) => (
+                <a href={`${prefix}/blog/?tag=${tag}`} class="post-tag">#{tag}</a>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      )}
+
+      <Reveal delay={120}>
+        <div class="post-cta">
+          <Button label={lang === 'en' ? 'Try the Compressor' : lang === 'es' ? 'Prueba el Compresor' : lang === 'fr' ? 'Essayez le Compresseur' : lang === 'de' ? 'Testen Sie den Compressor' : lang === 'it' ? 'Prova il Compressore' : lang === 'pt' ? 'Experimente o Compressor' : lang === 'ru' ? 'Попробуйте Компрессор' : lang === 'zh' ? '试用压缩工具' : lang === 'ja' ? 'コンプレッサーを試す' : lang === 'ko' ? '압축기 사용해보기' : lang === 'ar' ? 'جرب الضاغط' : lang === 'hi' ? 'कंप्रेसर आज़माएँ' : lang === 'tr' ? 'Sıkıştırıcıyı Deneyin' : 'Try the Compressor'} href={compressorPath} variant="primary" size="lg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </Button>
+          <Button label={lang === 'en' ? 'More posts' : lang === 'es' ? 'Más artículos' : lang === 'fr' ? 'Plus d\'articles' : lang === 'de' ? 'Weitere Beiträge' : lang === 'it' ? 'Altri articoli' : lang === 'pt' ? 'Mais artigos' : lang === 'ru' ? 'Больше статей' : lang === 'zh' ? '更多文章' : lang === 'ja' ? 'もっと見る' : lang === 'ko' ? '더 많은 게시물' : lang === 'ar' ? 'المزيد من المقالات' : lang === 'hi' ? 'और पोस्ट' : lang === 'tr' ? 'Daha fazla yazı' : 'More posts'} href={`${prefix}/blog/`} variant="secondary" size="lg" />
+        </div>
+      </Reveal>
+    </div>
+
+    <aside class="post-sidebar">
+      <Reveal delay={100}>
+        <div class="sidebar-card">
+          <h3 class="text-caption-mono sidebar-heading">{lang === 'en' ? 'Related posts' : lang === 'es' ? 'Artículos relacionados' : lang === 'fr' ? 'Articles connexes' : lang === 'de' ? 'Verwandte Beiträge' : lang === 'it' ? 'Articoli correlati' : lang === 'pt' ? 'Artigos relacionados' : lang === 'ru' ? 'Похожие статьи' : lang === 'zh' ? '相关文章' : lang === 'ja' ? '関連記事' : lang === 'ko' ? '관련 게시물' : lang === 'ar' ? 'مقالات ذات صلة' : lang === 'hi' ? 'संबंधित पोस्ट' : lang === 'tr' ? 'İlgili yazılar' : 'Related posts'}</h3>
+          {related.length > 0 ? (
+            <ul class="recent-list">
+              {related.map((rp) => (
+                <li>
+                  <a href={`${prefix}/blog/${rp.slug}/`} class="recent-link">
+                    <span class="recent-title">{getTranslatedTitle(rp.slug, lang)}</span>
+                    <span class="text-caption recent-date">{formatDate(rp.date, lang)}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-body-sm" style="color: var(--color-mute); margin: 0;">
+              {lang === 'en' ? 'No related posts yet.' : lang === 'es' ? 'Sin artículos relacionados todavía.' : lang === 'fr' ? 'Aucun article connexe pour l\'instant.' : lang === 'de' ? 'Noch keine verwandten Beiträge.' : lang === 'it' ? 'Nessun articolo correlato ancora.' : lang === 'pt' ? 'Nenhum artigo relacionado ainda.' : lang === 'ru' ? 'Пока нет похожих статей.' : lang === 'zh' ? '暂无相关文章。' : lang === 'ja' ? '関連記事はまだありません。' : lang === 'ko' ? '아직 관련 게시물이 없습니다.' : lang === 'ar' ? 'لا توجد مقالات ذات صلة بعد.' : lang === 'hi' ? 'अभी तक कोई संबंधित पोस्ट नहीं।' : lang === 'tr' ? 'Henüz ilgili yazı yok.' : 'No related posts yet.'}
+            </p>
+          )}
+        </div>
+      </Reveal>
+
+      <Reveal delay={160}>
+        <div class="sidebar-card">
+          <h3 class="text-caption-mono sidebar-heading">{lang === 'en' ? 'Browse by tag' : lang === 'es' ? 'Explorar por etiqueta' : lang === 'fr' ? 'Parcourir par tag' : lang === 'de' ? 'Nach Tag durchsuchen' : lang === 'it' ? 'Sfoglia per tag' : lang === 'pt' ? 'Navegar por tag' : lang === 'ru' ? 'Просмотр по тегам' : lang === 'zh' ? '按标签浏览' : lang === 'ja' ? 'タグで閲覧' : lang === 'ko' ? '태그로 찾기' : lang === 'ar' ? 'تصفح حسب الوسم' : lang === 'hi' ? 'टैग द्वारा ब्राउज़ करें' : lang === 'tr' ? 'Etikete göre göz at' : 'Browse by tag'}</h3>
+          <div class="tag-cloud">
+            {allTags.slice(0, 20).map((tag) => (
+              <a href={`${prefix}/blog/?tag=${tag}`} class="tag-link">#{tag}</a>
+            ))}
+          </div>
+        </div>
+      </Reveal>
+
+      <Reveal delay={220}>
+        <div class="sidebar-card sidebar-cta">
+          <h3 class="text-caption-mono sidebar-heading">{lang === 'en' ? 'Try the Compressor' : lang === 'es' ? 'Prueba el Compresor' : lang === 'fr' ? 'Essayez le Compresseur' : lang === 'de' ? 'Testen Sie den Compressor' : lang === 'it' ? 'Prova il Compressore' : lang === 'pt' ? 'Experimente o Compressor' : lang === 'ru' ? 'Попробуйте Компрессор' : lang === 'zh' ? '试用压缩工具' : lang === 'ja' ? 'コンプレッサーを試す' : lang === 'ko' ? '압축기 사용해보기' : lang === 'ar' ? 'جرب الضاغط' : lang === 'hi' ? 'कंप्रेसर आज़माएँ' : lang === 'tr' ? 'Sıkıştırıcıyı Deneyin' : 'Try the Compressor'}</h3>
+          <p class="text-body-sm">
+            {lang === 'en' ? 'Compress images right in your browser — no uploads, no tracking, no limits.' : lang === 'es' ? 'Comprime imágenes directamente en tu navegador — sin subidas, sin seguimiento, sin límites.' : lang === 'fr' ? 'Compressez les images directement dans votre navigateur — sans téléchargement, sans suivi, sans limites.' : lang === 'de' ? 'Komprimieren Sie Bilder direkt in Ihrem Browser — ohne Uploads, ohne Tracking, ohne Grenzen.' : lang === 'it' ? 'Comprimi le immagini direttamente nel tuo browser — senza caricamenti, senza tracciamento, senza limiti.' : lang === 'pt' ? 'Comprima imagens diretamente no seu navegador — sem uploads, sem rastreamento, sem limites.' : lang === 'ru' ? 'Сжимайте изображения прямо в браузере — без загрузок, без отслеживания, без ограничений.' : lang === 'zh' ? '直接在浏览器中压缩图像 — 无需上传，无追踪，无限制。' : lang === 'ja' ? 'ブラウザで画像を圧縮 — アップロード不要、トラッキングなし、制限なし。' : lang === 'ko' ? '브라우저에서 직접 이미지 압축 — 업로드 불필요, 추적 없음, 제한 없음.' : lang === 'ar' ? 'اضغط الصور مباشرة في متصفحك — بدون رفع، بدون تتبع، بدون حدود.' : lang === 'hi' ? 'अपने ब्राउज़र में सीधे इमेज कंप्रेस करें — कोई अपलोड नहीं, कोई ट्रैकिंग नहीं, कोई सीमा नहीं।' : lang === 'tr' ? 'Görüntüleri doğrudan tarayıcınızda sıkıştırın — yükleme yok, izleme yok, sınır yok.' : 'Compress images right in your browser — no uploads, no tracking, no limits.'}
+          </p>
+          <a href={compressorPath} class="sidebar-button">{lang === 'en' ? 'Start compressing' : lang === 'es' ? 'Empezar a comprimir' : lang === 'fr' ? 'Commencer la compression' : lang === 'de' ? 'Jetzt komprimieren' : lang === 'it' ? 'Inizia a comprimere' : lang === 'pt' ? 'Começar a comprimir' : lang === 'ru' ? 'Начать сжатие' : lang === 'zh' ? '开始压缩' : lang === 'ja' ? '圧縮を開始' : lang === 'ko' ? '압축 시작' : lang === 'ar' ? 'ابدأ الضغط' : lang === 'hi' ? 'कंप्रेस करना शुरू करें' : lang === 'tr' ? 'Sıkıştırmaya başla' : 'Start compressing'}</a>
+        </div>
+      </Reveal>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .post-hero { padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-4xl); background-color: var(--color-canvas); border-bottom: 1px solid var(--color-hairline); }
+  .post-back { display: inline-flex; align-items: center; gap: var(--space-xs); color: var(--color-mute); text-decoration: none; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--space-lg); transition: color 0.15s ease, gap 0.2s ease; }
+  .post-back:hover { color: var(--color-ink); gap: var(--space-sm); }
+  .post-back:focus-visible { outline: none; color: var(--color-ink); box-shadow: var(--focus-ring-tight); border-radius: var(--radius-xs); }
+  .post-meta { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md); }
+  .post-time { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
+  .post-title { margin: 0; max-width: 24ch; text-wrap: balance; }
+  .post-lead { margin: var(--space-md) 0 0; color: var(--color-body); max-width: 60ch; }
+  .post-author { margin: var(--space-lg) 0 0; color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .band { position: relative; padding: var(--space-5xl) 0; }
+  .band-canvas { background-color: var(--color-canvas); }
+  .post-layout { display: grid; grid-template-columns: 1fr 280px; gap: var(--space-3xl); align-items: start; }
+  .post-main { min-width: 0; display: flex; flex-direction: column; gap: var(--space-lg); }
+  .post-tags { display: flex; flex-direction: column; gap: var(--space-sm); padding: var(--space-lg) 0; border-top: 1px solid var(--color-hairline); border-bottom: 1px solid var(--color-hairline); }
+  .post-tags-heading { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.1em; }
+  .post-tags-list { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+  .post-tag { display: inline-flex; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-full); font-size: var(--font-size-xs); color: var(--color-body); text-decoration: none; border: 1px solid var(--color-hairline); transition: background-color var(--dur-fast) var(--ease-out-quart), border-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); }
+  .post-tag:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); background-color: var(--color-canvas-soft); }
+  .post-cta { padding-top: var(--space-xl); display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+  .post-sidebar { display: flex; flex-direction: column; gap: var(--space-lg); position: sticky; top: var(--space-4xl); }
+  .sidebar-card { display: flex; flex-direction: column; gap: var(--space-md); padding: var(--space-lg); background-color: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); }
+  .sidebar-heading { margin: 0; color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.1em; }
+  .recent-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
+  .recent-link { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: var(--color-ink); padding: var(--space-xs) 0; transition: color var(--dur-fast) var(--ease-out-quart); }
+  .recent-link:hover { color: var(--color-link); }
+  .recent-title { font-size: var(--font-size-sm); font-weight: var(--weight-medium); line-height: 1.3; }
+  .recent-date { color: var(--color-mute); }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+  .tag-link { display: inline-flex; padding: 2px var(--space-xs); border-radius: var(--radius-full); font-size: var(--font-size-xs); color: var(--color-body); text-decoration: none; border: 1px solid var(--color-hairline); transition: background-color var(--dur-fast) var(--ease-out-quart), border-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); }
+  .tag-link:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+  .sidebar-cta p { color: var(--color-body); margin: 0; }
+  .sidebar-button { display: inline-flex; align-items: center; justify-content: center; padding: var(--space-sm) var(--space-lg); background-color: var(--color-link); color: white; border-radius: var(--radius-full); text-decoration: none; font-size: var(--font-size-sm); font-weight: var(--weight-semibold); transition: opacity var(--dur-fast) var(--ease-out-quart); }
+  .sidebar-button:hover { opacity: 0.85; }
+  @media (prefers-reduced-motion: reduce) { .post-back { transition: none; } }
+  @media (max-width: 800px) { .post-layout { grid-template-columns: 1fr; } .post-sidebar { position: static; order: 2; } .post-main { order: 1; } }
+  @media (max-width: 600px) { .band { padding: var(--space-4xl) 0; } .post-hero { padding: var(--space-4xl) 0 var(--space-3xl); } }
+</style>

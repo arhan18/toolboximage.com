@@ -1,0 +1,680 @@
+---
+/**
+ * CompressorSeoContent — SEO content for compressor variant pages.
+ * Renders below the interactive tool on compressor variant pages
+ * with breadcrumb, overview content, FAQ, related tools, and JSON-LD.
+ */
+import Prose from '../shared/Prose.astro';
+import SectionHeader from '../shared/SectionHeader.astro';
+import FAQ from '../shared/FAQ.astro';
+import {
+  SITE_URL, faqSchema, breadcrumbSchema,
+  softwareAppSchema, howToSchema, renderJsonLd,
+} from '../../lib/seo';
+import { type LangCode } from '../../i18n';
+
+interface Props {
+  variant: string;
+  lang?: string;
+}
+
+const { variant, lang = 'en' } = Astro.props;
+const langPrefix = lang === 'en' ? '' : `/${lang}`;
+const base = `${langPrefix}/`;
+
+interface VariantData {
+  slug: string;
+  label: string;
+  h1: string;
+  description: string;
+  faqs: { q: string; a: string }[];
+  howToSteps: { name: string; text: string }[];
+  breadcrumbs: { name: string; href: string }[];
+  overview: string[];
+  features: string[];
+}
+
+const dataMap: Record<string, VariantData> = {
+  'compressor': {
+    slug: 'compressor',
+    label: 'Image Compressor',
+    h1: 'Compress images online — free and private.',
+    description: 'Free online image compressor — compress JPG, PNG, WebP, AVIF, and GIF images entirely in your browser. No uploads, no limits, no sign-up.',
+    faqs: [
+      { q: 'What is the best image compressor?', a: 'The best image compressor is one that works locally in your browser, supports all major formats, and gives you full control over quality. ToolBox Image Compressor does all of this — no uploads, no limits, no sign-up.' },
+      { q: 'Can I compress images without losing quality?', a: 'Yes. Use lossless mode for PNG and WebP to preserve every pixel. For JPEG, quality 80+ is visually lossless on normal displays. Our side-by-side comparison slider lets you verify quality before downloading.' },
+      { q: 'What image formats are supported?', a: 'Our compressor accepts JPEG, PNG, WebP, AVIF, GIF, SVG, HEIC, and TIFF as input. Output formats include optimized JPEG, PNG, WebP, and AVIF.' },
+      { q: 'Is this image compressor really free?', a: 'Yes, completely free. No sign-up, no credit card, no usage limits, no hidden charges. All processing runs locally on your device — we never see your files.' },
+      { q: 'How many images can I compress at once?', a: 'Up to 200 images in a single batch, each up to 100 MB. The queue processes all files in parallel using all available CPU cores.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your images', text: 'Drag and drop one or more images onto the upload area, or click to browse your files. Supports JPEG, PNG, WebP, AVIF, and more.' },
+      { name: 'Adjust settings', text: 'Use the quality slider, enable target-size mode for exact file sizes, or switch to lossless mode. Choose your output format.' },
+      { name: 'Preview the result', text: 'Drag the side-by-side comparison slider to verify quality. See original and compressed file sizes side by side.' },
+      { name: 'Download', text: 'Save individual files or download all compressed images as a ZIP archive. Your files never left your device.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Image Compressor', href: `${base}compressor/` },
+    ],
+    overview: [
+      'ToolBox Image Compressor is a fast, private, browser-based tool that compresses JPEG, PNG, WebP, AVIF, and more — all without uploading your files to any server. Processing happens locally on your device using WebAssembly-optimized encoders.',
+      'Whether you need to shrink a single photo for email, compress a batch of product images for your e-commerce store, or hit an exact file size for a platform limit, our compressor gives you the tools you need with full control over quality and output format.',
+    ],
+    features: [
+      'All formats: JPEG, PNG, WebP, AVIF, GIF, HEIC, TIFF',
+      'Lossy and lossless compression modes',
+      'Target-size mode for exact file size requirements',
+      'Parallel batch processing — up to 200 files',
+      'Side-by-side comparison preview',
+    ],
+  },
+  'compress-jpeg': {
+    slug: 'compress-jpeg',
+    label: 'Compress JPEG',
+    h1: 'Compress JPEG images online.',
+    description: 'Compress JPEG images online with mozJPEG. Free JPEG compressor — reduce file size without losing quality. No uploads, no limits, no sign-up.',
+    faqs: [
+      { q: 'How much can you compress a JPEG?', a: 'A typical JPEG can be reduced by 40-80% without visible quality loss. Our compressor uses Mozilla\'s mozJPEG encoder, which produces smaller files than standard JPEG at the same quality setting.' },
+      { q: 'Does JPEG compression lose quality?', a: 'JPEG is a lossy format by design — every re-encode discards some data. At quality settings above 80 the visual difference from the original is imperceptible at normal viewing sizes.' },
+      { q: 'Can I compress a JPEG without losing quality?', a: 'Yes, use Lossless mode which re-encodes without recompressing the image data. This reduces file size by stripping metadata and optimizing Huffman tables, saving 5-15%.' },
+      { q: 'What is the best JPEG quality setting?', a: 'Quality 75-85 is the sweet spot for web use: excellent compression with no visible loss. Quality 50-60 is usable for thumbnails and backgrounds.' },
+      { q: 'Can I batch compress JPEG files?', a: 'Yes. Drop an entire folder of JPEGs and the queue processes them in parallel using all available CPU cores. Up to 200 files at once, each up to 100 MB.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your JPEG', text: 'Drag and drop one or more JPEG images onto the upload area, or click to browse your files.' },
+      { name: 'Adjust compression settings', text: 'Use the quality slider (1-100), enable target-size mode, or switch to lossless mode to preserve every pixel.' },
+      { name: 'Preview the result', text: 'Drag the side-by-side comparison slider to verify quality. The compressor shows original and compressed file sizes.' },
+      { name: 'Download your compressed JPEG', text: 'Save individual files or download all compressed images as a ZIP archive. Your files never left your device.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Compress JPEG', href: `${base}compress-jpeg/` },
+    ],
+    overview: [
+      'This tool compresses JPEG images using Mozilla\'s mozJPEG encoder — the same technology that powers Firefox\'s image rendering. JPEG is ideal for photographs and complex images with smooth gradients, like portraits, landscapes, and product shots.',
+      'A typical 8-megapixel JPEG photo from a modern smartphone is 4-6 MB. Compressed at quality 80, the same image becomes 200-600 KB — a 90% reduction — with no visible difference at normal viewing distances.',
+    ],
+    features: [
+      'mozJPEG encoder for smaller files at equivalent quality',
+      'Lossless mode strips metadata and optimizes without pixel changes',
+      'Target-size mode hits exact file sizes automatically',
+      'Parallel batch processing — up to 200 files at once',
+      'Progressive JPEG support for gradual image loading',
+    ],
+  },
+  'compress-png': {
+    slug: 'compress-png',
+    label: 'Compress PNG',
+    h1: 'Compress PNG images online.',
+    description: 'Compress PNG images online — lossless and lossy modes. Reduce PNG file size while preserving transparency. No uploads, no limits, no sign-up.',
+    faqs: [
+      { q: 'Can you compress a PNG without losing quality?', a: 'Yes. PNG supports lossless compression, which reduces file size without changing a single pixel. Our compressor uses optimized filter strategies and deflate compression to shrink lossless PNGs by 10-40% with identical output.' },
+      { q: 'Does PNG compression preserve transparency?', a: 'Absolutely. The alpha channel, gamma correction, and color profiles are all preserved during compression. Your transparent PNGs stay transparent with the exact same pixel values.' },
+      { q: 'What is the difference between lossy and lossless PNG compression?', a: 'Lossless PNG compression re-encodes the image data more efficiently without changing any pixels. Lossy PNG compression (quantization) reduces the number of distinct colours, which can dramatically shrink file size at the cost of some precision.' },
+      { q: 'When should I use PNG instead of JPEG?', a: 'PNG is best for images with sharp edges, text, logos, screenshots, and graphics with transparency. JPEG excels at photographs and gradients.' },
+      { q: 'Can I batch compress PNG files?', a: 'Yes. Drop a folder of PNGs and the queue processes them in parallel. Up to 200 files at once with no individual size limit beyond your device memory.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your PNG', text: 'Drag and drop one or more PNG images onto the upload area, or click to browse your files.' },
+      { name: 'Choose compression mode', text: 'Select lossless mode to preserve every pixel, or lossy mode with colour quantization for dramatic size reductions.' },
+      { name: 'Preview and compare', text: 'Use the side-by-side comparison slider to verify that transparency and details are intact.' },
+      { name: 'Download your compressed PNG', text: 'Save individual files or download all images as a ZIP archive. Your originals are never uploaded.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Compress PNG', href: `${base}compress-png/` },
+    ],
+    overview: [
+      'PNG is the go-to format for images that need sharp edges, transparency, and lossless quality — screenshots, logos, icons, text overlays, and graphics with flat colour areas. Our compressor gives you both lossless and lossy (quantization) modes.',
+      'Lossless PNG compression typically saves 10-40% by optimizing filter strategies and deflate parameters. For PNG photographs and complex images, lossy quantization can reduce file size by 60-80% with minimal visible difference.',
+    ],
+    features: [
+      'Lossless mode preserves every pixel identically',
+      'Lossy quantization mode for dramatic size reductions',
+      'Full alpha channel and transparency preservation',
+      'Parallel batch processing — up to 200 files',
+      'Metadata stripping for privacy and smaller files',
+    ],
+  },
+  'compress-webp': {
+    slug: 'compress-webp',
+    label: 'Compress WebP',
+    h1: 'Compress WebP images online.',
+    description: 'Compress WebP images online — lossy and lossless modes. Reduce WebP file size with advanced encoding. No uploads, no limits, no sign-up.',
+    faqs: [
+      { q: 'Is WebP better than JPEG?', a: 'WebP typically produces files 25-35% smaller than JPEG at the same quality level, with fewer artefacts in gradient areas. It also supports transparency and animation — features JPEG cannot offer.' },
+      { q: 'Does WebP support transparency?', a: 'Yes. WebP has full alpha channel support, similar to PNG. Our compressor preserves transparency while independently optimizing the colour and alpha planes for maximum compression.' },
+      { q: 'What is the difference between lossy and lossless WebP?', a: 'Lossy WebP uses block-based predictive coding similar to VP8 video compression. Lossless WebP uses spatial prediction and colour cache for excellent compression without any quality loss.' },
+      { q: 'Can I convert JPEG to WebP?', a: 'Yes. Drop a JPEG and set the output format to WebP. The compressor re-encodes from the source into WebP, typically saving an additional 25-35% compared to the original JPEG.' },
+      { q: 'Is WebP supported by all browsers?', a: 'WebP is supported by Chrome, Firefox, Safari (14+), Edge, and Opera — over 97% of global browser usage. For the remaining 3%, serve a JPEG fallback.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your image', text: 'Drag and drop any image format onto the upload area — JPEG, PNG, WebP, or AVIF are all accepted.' },
+      { name: 'Configure WebP settings', text: 'Adjust quality (1-100), choose lossy or lossless mode, and set the compression method (0-6) for optimal density.' },
+      { name: 'Preview the result', text: 'Use the side-by-side comparison slider to verify quality, especially around edges and gradients.' },
+      { name: 'Download your WebP', text: 'Save individual WebP files or download all as a ZIP. Your originals never leave your device.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Compress WebP', href: `${base}compress-webp/` },
+    ],
+    overview: [
+      'WebP is Google\'s modern image format that delivers 25-35% smaller files than JPEG at equivalent quality. It supports lossy and lossless compression, transparency (alpha channel), and animation — making it a versatile replacement for both JPEG and PNG.',
+      'Browser support for WebP has reached over 97% globally, making it a safe choice for production websites. Our compressor uses the libwebp encoder with full control over quality, method, and compression mode.',
+    ],
+    features: [
+      '25-35% smaller files than JPEG at same quality',
+      'Lossy and lossless compression modes',
+      'Full alpha channel transparency support',
+      'Animation support for animated WebP',
+      'Adjustable compression method (0-6) for density',
+    ],
+  },
+  'compress-avif': {
+    slug: 'compress-avif',
+    label: 'Compress AVIF',
+    h1: 'Compress AVIF images online.',
+    description: 'Compress AVIF images online — the next-generation format. Reduce file size by 50%+ compared to JPEG. No uploads, no limits, no sign-up.',
+    faqs: [
+      { q: 'Is AVIF better than WebP?', a: 'AVIF typically achieves 30-50% better compression than WebP at the same quality level, especially for photographic content. It uses the AV1 codec from the Alliance for Open Media.' },
+      { q: 'What browsers support AVIF?', a: 'AVIF is supported by Chrome (85+), Firefox (93+), Safari (16.1+), and Edge (121+). Coverage is over 92% of global browser usage.' },
+      { q: 'Does AVIF support transparency?', a: 'Yes. AVIF supports full alpha channel transparency, HDR (PQ and HLG), wide colour gamut (P3, Rec.2020), 10-bit and 12-bit depth, and lossless compression.' },
+      { q: 'Is AVIF good for photography?', a: 'AVIF excels at photography. The AV1 codec handles gradients, textures, and fine detail much more efficiently than JPEG or WebP. A 10 MB JPEG can often be reduced to 1-2 MB as AVIF.' },
+      { q: 'Can I batch compress images to AVIF?', a: 'Yes. Drop any supported image format and set the output to AVIF. The queue processes files in parallel. AVIF encoding is slower than JPEG or WebP, so parallel processing helps maintain throughput.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your image', text: 'Drag and drop any image format — JPEG, PNG, WebP — onto the upload area.' },
+      { name: 'Adjust AVIF settings', text: 'Set quality (1-100) and speed preset. Slower speeds produce smaller files with better quality.' },
+      { name: 'Preview the result', text: 'Use the comparison slider to check detail retention, especially in shadows and highlights.' },
+      { name: 'Download your AVIF', text: 'Save individual AVIF files or download all as a ZIP. Nothing was ever uploaded.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Compress AVIF', href: `${base}compress-avif/` },
+    ],
+    overview: [
+      'AVIF is the next-generation image format based on the AV1 codec from the Alliance for Open Media — the same technology used by Netflix and YouTube. It delivers 30-50% better compression than WebP at equivalent quality.',
+      'With support for HDR, wide colour gamut, 10/12-bit depth, alpha transparency, and lossless compression, AVIF is the most feature-rich image format available. A 10 MB JPEG can often be reduced to 1-2 MB as AVIF with no visible quality difference.',
+    ],
+    features: [
+      '30-50% better compression than WebP',
+      'AV1 codec — same technology used by Netflix',
+      'HDR, wide colour gamut, 10/12-bit depth support',
+      'Full alpha channel transparency',
+      'Parallel encoding to offset slower AVIF compression',
+    ],
+  },
+  'bulk-image-compressor': {
+    slug: 'bulk-image-compressor',
+    label: 'Bulk Image Compressor',
+    h1: 'Compress hundreds of images at once.',
+    description: 'Batch compress hundreds of images online. Compress JPEG, PNG, WebP, and AVIF files in parallel. No uploads, no limits, no sign-up.',
+    faqs: [
+      { q: 'How many images can I compress at once?', a: 'You can compress up to 200 images in a single batch, each up to 100 MB. The queue processes every file in parallel using all available CPU cores.' },
+      { q: 'Does bulk compression keep folder structure?', a: 'Yes. When you use the "Pick a folder" option, the compressor preserves the relative folder paths. The ZIP download includes subdirectories.' },
+      { q: 'Can I apply different settings to different files in a batch?', a: 'Currently all files in a batch share the same compression settings for consistent output across your image set. Run separate batches for different settings.' },
+      { q: 'Is batch compression faster than individual compression?', a: 'Significantly. The compressor runs parallel workers that saturate all CPU cores. Compressing 100 images as a batch takes barely longer than compressing one.' },
+      { q: 'Can I compress images from different folders at once?', a: 'Yes. You can drag in files from multiple locations, or use "Add more" to append files to the existing queue.' },
+    ],
+    howToSteps: [
+      { name: 'Drop a folder', text: 'Drag an entire folder onto the upload area, or click "Pick a folder" to browse. The compressor recursively scans for all supported image formats.' },
+      { name: 'Choose your settings', text: 'Set quality, output format, and resize options. All files in the batch share the same settings for consistent output.' },
+      { name: 'Compress in parallel', text: 'The queue distributes files across Web Workers, saturating all CPU cores. A progress bar shows real-time status and bytes saved.' },
+      { name: 'Download as ZIP', text: 'Save everything as a single ZIP archive with the original folder structure preserved. Individual downloads are also available.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Bulk Compressor', href: `${base}bulk-image-compressor/` },
+    ],
+    overview: [
+      'The Bulk Image Compressor processes hundreds of images in parallel using all available CPU cores. Drop a folder of images and watch as every file is compressed simultaneously — 100 images take barely longer than 1.',
+      'Perfect for photographers, e-commerce managers, and web developers who need to optimize large image libraries. The ZIP download preserves your original folder structure, so organized directories stay organized.',
+    ],
+    features: [
+      'Up to 200 images per batch, each up to 100 MB',
+      'Parallel processing across all CPU cores',
+      'Folder structure preserved in ZIP download',
+      'Drag from multiple locations or use "Pick a folder"',
+      'Real-time progress bar with bytes saved',
+    ],
+  },
+  'image-compressor-100kb': {
+    slug: 'image-compressor-100kb',
+    label: 'Compress to 100KB',
+    h1: 'Compress images to exactly 100 KB.',
+    description: 'Compress images to exactly 100 KB online. Target-size compression for email, forms, and platforms with strict limits. No uploads, no sign-up.',
+    faqs: [
+      { q: 'How do I compress an image to exactly 100 KB?', a: 'Enable "Target size" in the Custom settings panel and enter 100. The compressor iteratively adjusts quality and resolution to hit your target within 5%.' },
+      { q: 'Does target-size compression affect image quality?', a: 'The encoder finds the highest quality setting that still meets the target. A detailed photo at 100 KB will show more compression than a simple logo at the same size.' },
+      { q: 'What formats support target-size compression?', a: 'Target-size mode works with JPEG, PNG, WebP, and AVIF output. Each format uses format-specific strategies to hit the target.' },
+      { q: 'Why would I need to compress images to 100 KB?', a: 'Many platforms have strict file size limits: job applications, government forms, email attachments, CMS image fields, and some social media platforms cap images at 100 KB.' },
+      { q: 'Can I target other sizes besides 100 KB?', a: 'Yes. The target size slider goes from 0 (off) to 2000 KB. Set any value that fits your platform requirement.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your image', text: 'Drag any image format onto the upload area.' },
+      { name: 'Set the target size', text: 'Enable "Target size" in the Custom panel and enter 100 KB. The compressor automatically adjusts settings to hit it.' },
+      { name: 'Preview the result', text: 'Use the comparison slider to verify that the compressed image meets your quality standards at the target size.' },
+      { name: 'Download', text: 'Save your compressed image. It is guaranteed to be under your target file size.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: '100KB Compressor', href: `${base}image-compressor-100kb/` },
+    ],
+    overview: [
+      'Hit exact file size targets with our precision compressor. Whether you need to squeeze an image under 100 KB for a job application, 500 KB for email, or any other limit, the target-size mode handles it automatically.',
+      'The encoder iteratively adjusts quality, resolution, and format-specific parameters to land within 5% of your target. No more manual trial-and-error — just set the size and download.',
+    ],
+    features: [
+      'Precision target-size compression within 5%',
+      'Works with JPEG, PNG, WebP, and AVIF',
+      'Adjustable target from 0 to 2000 KB',
+      'Automatic quality and resolution optimization',
+      'Side-by-side preview to verify quality',
+    ],
+  },
+  'image-compressor-for-discord': {
+    slug: 'image-compressor-for-discord',
+    label: 'Discord Image Compressor',
+    h1: 'Compress images for Discord.',
+    description: 'Compress images for Discord — free and Nitro limits. Stay under 8 MB (free) or 25 MB (Nitro). No uploads, no sign-up, unlimited.',
+    faqs: [
+      { q: 'What is the Discord image upload limit?', a: 'Discord allows file uploads up to 8 MB for free users and 25 MB for Discord Nitro subscribers. Images larger than these limits are rejected.' },
+      { q: 'What image format works best for Discord?', a: 'For screenshots with text, PNG is best because it preserves sharp edges. For photos and memes, JPEG or WebP give smaller files.' },
+      { q: 'Can I compress multiple images for Discord at once?', a: 'Yes. Drop a folder of screenshots or images and the batch queue processes them all in parallel, each compressed to stay under Discord\'s limits.' },
+      { q: 'Does Discord compress images I upload?', a: 'Yes, Discord re-encodes images to reduce file size. Pre-compressing with optimal settings gives you more control over the final quality.' },
+      { q: 'How do I set the right file size for Discord?', a: 'Use the target-size setting — enter 8000 KB (8 MB) for free accounts or 25000 KB (25 MB) for Nitro.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your screenshot or image', text: 'Drag any image file onto the upload area. PNG screenshots, JPEG photos, and WebP images are all supported.' },
+      { name: 'Set the Discord target size', text: 'The compressor is preconfigured for 8 MB (free Discord). Adjust to 25 MB in Custom mode if you have Nitro.' },
+      { name: 'Compress and preview', text: 'Each image is compressed to stay under the Discord limit. Use the comparison slider to verify text and detail clarity.' },
+      { name: 'Drag to Discord', text: 'Download the compressed files and drag them straight into your Discord channel. No more "file too large" errors.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Discord Compressor', href: `${base}image-compressor-for-discord/` },
+    ],
+    overview: [
+      'Discord limits image uploads to 8 MB for free users and 25 MB for Nitro subscribers. Our compressor helps you stay under both limits with target-size mode preconfigured for Discord.',
+      'Pre-compressing your images before uploading gives you control over quality — Discord\'s own compression is aggressive and can introduce artefacts, especially in text-heavy screenshots. Compress first, then share.',
+    ],
+    features: [
+      'Preconfigured for Discord 8 MB (free) and 25 MB (Nitro) limits',
+      'Parallel batch processing for multiple screenshots',
+      'PNG lossless mode for crisp text in screenshots',
+      'JPEG/WebP for memes and photos',
+      'Bypass Discord\'s aggressive re-compression',
+    ],
+  },
+  'compress-for-email': {
+    slug: 'compress-for-email',
+    label: 'Email Image Compressor',
+    h1: 'Compress images for email.',
+    description: 'Compress images for email — stay under attachment limits. Reduce image size for Gmail, Outlook, and more. No uploads, no sign-up.',
+    faqs: [
+      { q: 'What is the best image size for email?', a: 'Aim for images under 500 KB — most email clients display images up to 600-800px wide without scaling. Target-size mode set to 500 KB gives you email-ready images.' },
+      { q: 'Does Gmail compress images?', a: 'Yes. Gmail resizes images larger than 2048px wide and strips metadata. Pre-compressing to under 500 KB gives you control before Gmail applies its own processing.' },
+      { q: 'What format is best for email attachments?', a: 'JPEG for photographs — smallest file sizes. PNG for screenshots, logos, and images with sharp edges or transparency. WebP is not supported by all email clients.' },
+      { q: 'How do I compress an image for email without losing quality?', a: 'Use quality 80-85 for JPEG photos — visually lossless with 80-90% size reduction. For PNG screenshots, use lossless mode to preserve text clarity.' },
+      { q: 'Can I batch compress images for email?', a: 'Yes. Drop multiple images at once and the compressor processes them in parallel. Download individual files or everything as a ZIP.' },
+      { q: 'What are common email image size limits?', a: 'Gmail/Outlook: 25 MB total per email. Yahoo: 25 MB. Proton Mail: 25 MB (free). Compressing each image to 200-500 KB means you can attach 50+ images per email.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your image', text: 'Drag any image format onto the upload area — JPEG, PNG, WebP, or HEIC are all supported.' },
+      { name: 'Set email-friendly size', text: 'Enable "Target size" mode and enter 500 KB. The compressor automatically finds the best quality to stay under the limit.' },
+      { name: 'Preview the result', text: 'Use the side-by-side comparison slider to verify the image looks good at the compressed size.' },
+      { name: 'Download and attach', text: 'Save your compressed image and attach it to your email. No more "file too large" bounce-backs.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Email Compressor', href: `${base}compress-for-email/` },
+    ],
+    overview: [
+      'Email services have strict attachment limits — typically 25 MB total per message. Compressing individual images to 200-500 KB lets you attach dozens of photos without hitting limits.',
+      'Our compressor includes a preconfigured target-size mode for email (500 KB default). Simply drop your images, set the target, and download files ready to attach to any email client.',
+    ],
+    features: [
+      'Preconfigured 500 KB target for email attachments',
+      'JPEG quality 80-85 for visually lossless compression',
+      'PNG lossless mode for screenshots and logos',
+      'Batch processing for multiple images',
+      'Strips EXIF metadata for privacy',
+    ],
+  },
+  'compress-for-instagram': {
+    slug: 'compress-for-instagram',
+    label: 'Instagram Image Compressor',
+    h1: 'Compress images for Instagram.',
+    description: 'Compress and resize images for Instagram. Optimize for square, portrait, and landscape posts. No uploads, no sign-up, unlimited.',
+    faqs: [
+      { q: 'What is the best image size for Instagram?', a: 'Instagram recommends square posts at 1080×1080px, portrait at 1080×1350px, and landscape at 1080×566px. Uploading at exact dimensions prevents unnecessary re-scaling.' },
+      { q: 'Does Instagram compress images?', a: 'Yes. Instagram re-encodes all uploaded images to JPEG with a maximum width of 1080px at quality 70-80. Pre-compressing gives you more control over the final look.' },
+      { q: 'What format does Instagram use?', a: 'Instagram converts all uploads to JPEG. Uploading JPEG directly avoids an extra format conversion pass that can introduce artefacts.' },
+      { q: 'What is the Instagram file size limit?', a: 'Instagram allows uploads up to 20 MB on web and 30 MB on mobile. For optimal speed, aim for 500 KB to 1 MB per image.' },
+      { q: 'Can I batch compress images for Instagram?', a: 'Yes. Drop multiple images and they process in parallel. Set consistent target size and aspect ratio for a cohesive feed.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your photo', text: 'Drag any image onto the upload area — JPEG, PNG, HEIC, or WebP are all accepted.' },
+      { name: 'Resize to Instagram dimensions', text: 'Use the resize option to set width to 1080px. Choose square (1:1), portrait (4:5), or landscape (1.91:1).' },
+      { name: 'Set quality', text: 'Quality 80-85 gives excellent results on phone screens while keeping files under 1 MB for fast uploads.' },
+      { name: 'Upload to Instagram', text: 'Download your optimized image and upload to Instagram. Your photo was processed entirely on your device.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Instagram Compressor', href: `${base}compress-for-instagram/` },
+    ],
+    overview: [
+      'Instagram compresses all uploaded images server-side. By pre-compressing to the platform\'s preferred dimensions and quality, you get more control over how your photos appear in the feed.',
+      'Upload at Instagram\'s recommended 1080px width in square, portrait, or landscape aspect ratios. Keep files under 1 MB for fast uploads without triggering additional compression.',
+    ],
+    features: [
+      'Preconfigured for Instagram 1080px width',
+      'Square (1:1), portrait (4:5), and landscape (1.91:1) ratios',
+      'Quality 80-85 optimized for mobile screens',
+      'Batch processing for cohesive feed uploads',
+      'Direct JPEG upload avoids double compression',
+    ],
+  },
+  'compress-for-whatsapp': {
+    slug: 'compress-for-whatsapp',
+    label: 'WhatsApp Image Compressor',
+    h1: 'Compress images for WhatsApp.',
+    description: 'Compress images for WhatsApp — avoid aggressive re-compression. Optimize photos and screenshots before sharing. No uploads, no sign-up.',
+    faqs: [
+      { q: 'What is the WhatsApp image size limit?', a: 'WhatsApp allows images up to 16 MB. However, WhatsApp re-encodes all images server-side, compressing a 16 MB photo to approximately 100-200 KB.' },
+      { q: 'Does WhatsApp compress images I send?', a: 'Yes. WhatsApp aggressively compresses images to save bandwidth. Pre-compressing at quality 70-80 preserves more detail than WhatsApp\'s own compression.' },
+      { q: 'How do I send high-quality photos on WhatsApp?', a: 'WhatsApp offers an "HD quality" toggle for higher resolution. For maximum quality, send as a document — this bypasses WhatsApp\'s image compression entirely.' },
+      { q: 'What is the best format for WhatsApp images?', a: 'JPEG gives the smallest file sizes. PNG preserves sharp edges for screenshots. WhatsApp converts all images to JPEG anyway, so sending JPEG avoids double compression.' },
+      { q: 'Can I batch compress images for WhatsApp?', a: 'Yes. Drop multiple images and the queue processes them in parallel. Each is compressed to your target size.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your photo or screenshot', text: 'Drag any image onto the upload area — JPEG photos, PNG screenshots, and WebP images all work.' },
+      { name: 'Choose WhatsApp-friendly settings', text: 'Set quality to 75-85 for photos or use lossless mode for screenshots with text. Target-size mode helps stay under limits.' },
+      { name: 'Preview the result', text: 'WhatsApp\'s own compression will re-encode your image — pre-compressing at a reasonable quality ensures the final result looks good.' },
+      { name: 'Send to WhatsApp', text: 'Download your compressed image, tap the attachment icon in WhatsApp, and share. Your images were processed entirely on your device.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'WhatsApp Compressor', href: `${base}compress-for-whatsapp/` },
+    ],
+    overview: [
+      'WhatsApp aggressively re-encodes all images to 100-200 KB regardless of original size. Pre-compressing your images before sending gives you control over quality — WhatsApp won\'t degrade them further.',
+      'For maximum quality, send images as documents (bypasses WhatsApp\'s compression) or use the "HD quality" toggle. Pre-compress to stay within the 2 GB document size limit.',
+    ],
+    features: [
+      'Pre-compression to survive WhatsApp\'s re-encoding',
+      'Quality 75-85 optimized for mobile sharing',
+      'Lossless mode for text-heavy screenshots',
+      'Batch processing for multiple images',
+      'Document-size compatible for HD quality sending',
+    ],
+  },
+  'compress-gif': {
+    slug: 'compress-gif',
+    label: 'Compress GIF',
+    h1: 'Compress GIF images online.',
+    description: 'Compress GIF images online — reduce animated GIF file size by converting to WebP or optimizing palette and dimensions. Free GIF file compressor. No uploads.',
+    faqs: [
+      { q: 'Can you compress an animated GIF?', a: 'Yes. Reduce animated GIF file size by reducing the colour palette, dropping frames, resizing dimensions, or converting to WebP/AVIF which support animation at a fraction of the file size.' },
+      { q: 'What is the best format for animated images?', a: 'WebP and AVIF both support animation and produce files 60-80% smaller than GIF. Animated WebP is supported by 97%+ of browsers. GIF remains the universal fallback.' },
+      { q: 'How do I convert a GIF to a static image?', a: 'Load your GIF and set the output format to JPEG, PNG, or WebP. The first frame is used as the static image. PNG is best for transparency, JPEG for smallest files.' },
+      { q: 'What limits the file size of a GIF?', a: 'GIF is limited to 256 colours per frame and stores full frame data. File size grows with frame count, dimensions, and colour complexity.' },
+      { q: 'Can I batch compress multiple GIFs?', a: 'Yes. Drop multiple GIF files onto the upload area and they process in parallel. Up to 200 files at once with consistent settings.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your GIF', text: 'Drag one or more GIF files onto the upload area. Animated and static GIFs are both supported.' },
+      { name: 'Choose your output', text: 'Keep GIF format for compatibility, or convert to WebP/AVIF for dramatically smaller animated files.' },
+      { name: 'Adjust quality settings', text: 'For GIF output, reduce palette colours. For WebP/AVIF, set quality 70-80 for great results.' },
+      { name: 'Download your compressed GIF', text: 'Save individual files or download all as a ZIP. Your files never left your device.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Compress GIF', href: `${base}compress-gif/` },
+    ],
+    overview: [
+      'Animated GIFs are notorious for large file sizes — a few seconds of looped video can exceed 10 MB. Our compressor reduces GIF files by optimizing the palette, resizing frames, or converting to modern formats like WebP and AVIF.',
+      'WebP animation produces files 60-80% smaller than GIF with better colour quality, while AVIF offers even more compression. For static GIFs, conversion to PNG or JPEG is almost always better.',
+    ],
+    features: [
+      'Animated and static GIF compression',
+      'Convert to WebP/AVIF for 60-80% smaller animated files',
+      'Palette optimization and frame reduction',
+      'Batch processing — up to 200 files',
+      'Static GIF conversion to PNG, JPEG, WebP',
+    ],
+  },
+  'compress-for-web': {
+    slug: 'compress-for-web',
+    label: 'Web Image Optimizer',
+    h1: 'Compress and optimize images for the web.',
+    description: 'Compress and optimize images for the web — reduce file size, improve Core Web Vitals, and boost SEO. Free online web image optimizer. No uploads.',
+    faqs: [
+      { q: 'Why is image compression important for websites?', a: 'Images account for 50-80% of a typical webpage\'s total weight. Unoptimized images directly increase Largest Contentful Paint (LCP), a Core Web Vitals ranking signal.' },
+      { q: 'What is the best image format for the web?', a: 'WebP is the best all-around format — 25-35% smaller than JPEG at the same quality with transparency support. AVIF offers even better compression with 92%+ browser support.' },
+      { q: 'What is the optimal image quality for web?', a: 'Quality 75-85 is the sweet spot. Photos are visually indistinguishable from the original while being 60-80% smaller.' },
+      { q: 'Should I resize images before compressing for web?', a: 'Yes. Resize to the maximum display dimensions your layout needs before compressing. Serving oversized images wastes bandwidth.' },
+      { q: 'How does image compression affect Core Web Vitals?', a: 'Image compression directly improves Largest Contentful Paint (LCP). Compressing a hero image from 3 MB to 300 KB can cut LCP by several seconds.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your images', text: 'Drag website images onto the upload area. Supports JPEG, PNG, WebP, AVIF, and GIF.' },
+      { name: 'Set web-optimized quality', text: 'Choose quality 75-85 for the best balance. Enable target-size mode for CMS-specific limits.' },
+      { name: 'Convert to WebP or AVIF', text: 'Set output to WebP (97%+ browser support) or AVIF. This alone reduces file size by 25-50% compared to JPEG.' },
+      { name: 'Download and deploy', text: 'Save individual files or all as a ZIP. Replace your site\'s images and measure the PageSpeed improvement.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Web Optimizer', href: `${base}compress-for-web/` },
+    ],
+    overview: [
+      'Images are the single biggest performance bottleneck on most websites — accounting for 50-80% of total page weight. Optimizing them is the most impactful thing you can do for page speed, Core Web Vitals, and SEO.',
+      'A 5 MB hero image becomes 200-500 KB with no visible quality difference after compression to WebP at quality 80. Page speed improves by seconds, and Google rewards the improvement with better rankings.',
+    ],
+    features: [
+      'WebP and AVIF conversion for 25-50% smaller files',
+      'Quality 75-85 optimized for web delivery',
+      'Resize to display dimensions before compression',
+      'EXIF metadata stripping for smaller files',
+      'Batch processing for entire site image libraries',
+    ],
+  },
+  'compress-for-ecommerce': {
+    slug: 'compress-for-ecommerce',
+    label: 'Ecommerce Compressor',
+    h1: 'Compress product images for ecommerce.',
+    description: 'Compress product images for ecommerce — reduce file size by 90% for faster product pages, better SEO, and higher conversions. Free. No uploads.',
+    faqs: [
+      { q: 'Why is image compression important for ecommerce?', a: 'Product images are the largest files on any ecommerce page. A category page with 30 photos at 2 MB each = 60 MB — guaranteeing slow load times and lost conversions.' },
+      { q: 'What is the best image format for product photos?', a: 'WebP offers the best balance — 25-35% smaller than JPEG with full colour support. PNG preserves transparency for cut-out product images.' },
+      { q: 'What resolution should product images be?', a: 'Most platforms recommend 1000-2000px on the longest side for zoom functionality. For thumbnails, 300-500px is sufficient.' },
+      { q: 'Can I batch compress all my product images?', a: 'Yes. Drop your entire product images folder — up to 200 files at once. Process with consistent settings. ZIP preserves your folder structure.' },
+      { q: 'Do compressed product images hurt sales?', a: 'No — quality 80-85 is visually indistinguishable from the original. A 1-second delay in page load time can reduce conversions by 7%.' },
+    ],
+    howToSteps: [
+      { name: 'Drop your product images', text: 'Drag product photos onto the upload area. Supports JPEG, PNG, WebP, and HEIC.' },
+      { name: 'Set consistent quality', text: 'Choose quality 80-85 for all product images. This ensures uniform quality while reducing file sizes by 80-90%.' },
+      { name: 'Resize to platform specs', text: 'Set the longest side to 1000-2000px depending on your platform\'s requirements.' },
+      { name: 'Select WebP output', text: 'Convert to WebP for the best compression. Most ecommerce platforms now support WebP natively.' },
+      { name: 'Download and upload', text: 'Save all compressed images as a ZIP. Upload to your platform and measure the PageSpeed improvement.' },
+    ],
+    breadcrumbs: [
+      { name: 'Home', href: `${base}` },
+      { name: 'Image Tools', href: `${base}image-tools/` },
+      { name: 'Ecommerce Compressor', href: `${base}compress-for-ecommerce/` },
+    ],
+    overview: [
+      'Uncompressed product images are silently destroying your store\'s performance. A category page with 30 unoptimized photos can weigh 60+ MB — guaranteeing slow load times, poor Core Web Vitals, and lost sales.',
+      'Compressing product images to WebP at quality 80 reduces file sizes by 80-90% with no visible quality loss. A catalogue of 1,000 products with 3 images each goes from 15-30 GB to 600 MB - 1.8 GB.',
+    ],
+    features: [
+      'Batch compression for entire product catalogues',
+      'WebP output for 25-35% smaller product images',
+      'Resize to ecommerce platform specifications',
+      'Folder structure preservation in ZIP download',
+      'Quality 80-85 optimized for product photography',
+    ],
+  },
+};
+
+const d = dataMap[variant];
+const appSchema = softwareAppSchema({
+  name: `ToolBox Image — ${d.label}`,
+  description: d.description,
+  url: `${SITE_URL}${d.slug}`,
+});
+const breadcrumb = breadcrumbSchema(d.breadcrumbs);
+const faq = faqSchema(d.faqs);
+const howTo = howToSchema(d.howToSteps);
+const path = `/${lang === 'en' ? '' : lang + '/'}${d.slug}/`;
+---
+
+<section class="band band-canvas" id="seo-content">
+  <div class="container stack stack-3xl">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="seo-breadcrumb">
+      <ol class="seo-breadcrumb-list">
+        {d.breadcrumbs.map((item) => (
+          <li class="seo-breadcrumb-item">
+            {item.href === path ? (
+              <span aria-current="page">{item.name}</span>
+            ) : (
+              <a href={item.href}>{item.name}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <!-- Main SEO Content -->
+    <Prose>
+      <h2>{d.h1}</h2>
+      {d.overview.map((p) => <p>{p}</p>)}
+
+      <h3>Key features</h3>
+      <ul>
+        {d.features.map((f) => <li><strong>{f}</strong></li>)}
+      </ul>
+
+      <h3>How to {d.label.toLowerCase()} — step by step</h3>
+      <ol>
+        {d.howToSteps.map((s, i) => (
+          <li><strong>{s.name}:</strong> {s.text}</li>
+        ))}
+      </ol>
+
+      <h3>Common use cases</h3>
+      <p>
+        Whether you are a photographer, web developer, e-commerce manager, or social media
+        creator, optimizing images before publishing saves bandwidth, improves page load times,
+        and ensures compatibility with platform-specific requirements. Our browser-based
+        compressor works with all major image formats and processes everything locally for
+        maximum privacy.
+      </p>
+      <p>
+        Need to convert images between formats? Try our <a href={`${base}tools/converter/`}>Image Converter</a>.
+        To resize images for any platform, use the <a href={`${base}tools/resizer/`}>Image Resizer</a>.
+        For rotation and flipping, check the <a href={`${base}tools/rotator/`}>Image Rotator</a>.
+      </p>
+    </Prose>
+
+    <!-- FAQ -->
+    <section class="seo-faq">
+      <SectionHeader eyebrow={d.label}>
+        <h2 class="text-display-lg">Frequently Asked Questions</h2>
+      </SectionHeader>
+      <FAQ items={d.faqs} />
+    </section>
+
+    <!-- Related Tools -->
+    <aside class="seo-related">
+      <SectionHeader eyebrow="Related Tools">
+        <h2 class="text-display-lg">More Image Tools</h2>
+      </SectionHeader>
+      <div class="seo-related-grid">
+        <a href={`${base}compressor/`} class="seo-related-card">
+          <strong>Image Compressor</strong>
+          <span>Compress all image formats</span>
+        </a>
+        <a href={`${base}tools/converter/`} class="seo-related-card">
+          <strong>Image Converter</strong>
+          <span>Convert between image formats</span>
+        </a>
+        <a href={`${base}tools/resizer/`} class="seo-related-card">
+          <strong>Image Resizer</strong>
+          <span>Resize images for any platform</span>
+        </a>
+        <a href={`${base}tools/rotator/`} class="seo-related-card">
+          <strong>Rotate Image</strong>
+          <span>Rotate and flip images</span>
+        </a>
+        <a href={`${base}bulk-image-compressor/`} class="seo-related-card">
+          <strong>Bulk Compressor</strong>
+          <span>Compress hundreds at once</span>
+        </a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- JSON-LD Structured Data -->
+<Fragment set:html={renderJsonLd(faq, breadcrumb, appSchema, howTo as Record<string, unknown>)} />
+
+<style>
+  .band { position: relative; padding: var(--space-5xl) 0; }
+  .band-canvas { background-color: var(--color-canvas); }
+  .container { max-width: 720px; margin: 0 auto; padding: 0 var(--space-lg); }
+
+  .seo-breadcrumb { margin-bottom: 0; }
+  .seo-breadcrumb-list {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs);
+    list-style: none; margin: 0; padding: 0;
+    font-size: var(--text-body-sm); color: var(--color-mute);
+  }
+  .seo-breadcrumb-item + .seo-breadcrumb-item::before {
+    content: '/'; margin-right: var(--space-xs); color: var(--color-hairline-strong);
+  }
+  .seo-breadcrumb-item a { color: var(--color-link); text-decoration: none; }
+  .seo-breadcrumb-item a:hover { text-decoration: underline; }
+  .seo-breadcrumb-item [aria-current="page"] { color: var(--color-body); }
+
+  .seo-faq { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+  .seo-related { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .seo-related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+  .seo-related-card {
+    display: flex; flex-direction: column; gap: var(--space-xs);
+    padding: var(--space-lg);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: transform var(--dur-base) var(--ease-out-quart), box-shadow var(--dur-base) var(--ease-out-quart);
+  }
+  .seo-related-card:hover {
+    transform: translateY(-2px); box-shadow: var(--shadow-2);
+  }
+  .seo-related-card strong { color: var(--color-ink); font-size: var(--text-body-md); }
+  .seo-related-card span { color: var(--color-body); font-size: var(--text-body-sm); }
+
+  @media (max-width: 600px) {
+    .band { padding: var(--space-4xl) 0; }
+    .seo-related-grid { grid-template-columns: 1fr; }
+  }
+</style>

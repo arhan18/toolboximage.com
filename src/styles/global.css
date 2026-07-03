@@ -701,5 +701,92 @@ button, a, input, select, textarea, label, [role="button"], [tabindex]:not([tabi
 .hairline-bottom {
   border-bottom: 1px solid var(--color-hairline);
 }
-</content>
-</invoke>
+
+/* ========================================================================
+   RTL overrides — applied when <html dir="rtl">
+   ======================================================================== */
+[dir="rtl"] .lang-dropdown {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .footer-link:hover {
+  transform: translateX(-2px);
+}
+
+[dir="rtl"] .toast-container {
+  right: auto;
+  left: var(--space-lg);
+}
+
+[dir="rtl"] .toast-actions {
+  margin-left: 0;
+  margin-right: var(--space-xs);
+}
+
+[dir="rtl"] .preview-badge {
+  right: auto;
+  left: 4px;
+}
+
+[dir="rtl"] .toggle-thumb {
+  left: auto;
+  right: 3px;
+}
+
+[dir="rtl"] .toggle-active .toggle-thumb {
+  transform: translateX(-16px);
+}
+
+[dir="rtl"] .blog-clear-filter,
+[dir="rtl"] .queue-progress-spacer {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-left: 0;
+  padding-right: var(--space-lg);
+}
+
+[dir="rtl"] blockquote {
+  border-left: none;
+  border-right: 2px solid var(--color-hairline-strong);
+  padding-left: 0;
+  padding-right: var(--space-lg);
+}
+
+[dir="rtl"] th {
+  text-align: right;
+}
+
+[dir="rtl"] .lang-footer .lang-dropdown {
+  right: 0;
+  left: auto;
+}
+
+[dir="rtl"] .before-after-label-tl {
+  left: auto;
+  right: var(--space-md);
+}
+
+[dir="rtl"] .before-after-label-br {
+  right: auto;
+  left: var(--space-md);
+}
+
+[dir="rtl"] .before-after-badge {
+  right: auto;
+  left: var(--space-md);
+}
+
+[dir="rtl"] .before-after-divider {
+  left: auto;
+  right: calc(var(--ba-position) - 1px);
+}
+
+[dir="rtl"] .before-after-handle {
+  left: auto;
+  right: var(--ba-position);
+}

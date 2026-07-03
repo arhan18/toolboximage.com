@@ -79,6 +79,11 @@ export function localeFromLang(lang: LangCode): string {
   return map[lang] || 'en-US';
 }
 
+/** Determine text direction for a given language. */
+export function dirFromLang(lang: LangCode): 'ltr' | 'rtl' {
+  return lang === 'ar' ? 'rtl' : 'ltr';
+}
+
 /** Map LangCode to `xx_XX` locale for Open Graph (og:locale). */
 export function ogLocaleFromLang(lang: LangCode): string {
   const map: Partial<Record<LangCode, string>> = {

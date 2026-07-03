@@ -1,0 +1,336 @@
+---
+/**
+ * BlogIndexPage — shared blog index used by both English and non-English routes.
+ * Renders hero, category tabs, featured posts, post list with sidebar.
+ * Place inside <AppShell> (do NOT wrap with Layout/AppShell).
+ */
+import Badge from '../ui/Badge.astro';
+import Reveal from '../shared/Reveal.astro';
+import EmptyState from '../shared/EmptyState.astro';
+import { posts, getAllCategories, getAllTags, getFeaturedPosts, formatDate, getTranslatedTitle, getTranslatedDescription } from '../../lib/blog';
+import type { LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+  category?: string;
+  activeTag?: string;
+}
+
+const { lang = 'en' as LangCode, category = 'all', activeTag = '' } = Astro.props;
+
+const allCategories = getAllCategories();
+const allTags = getAllTags();
+const featured = getFeaturedPosts();
+
+let filtered = category === 'all' ? posts : posts.filter((p) => p.category === category);
+if (activeTag) {
+  filtered = filtered.filter((p) => p.tags.includes(activeTag));
+}
+
+const categoryLabels: Record<string, string> = {
+  all: lang === 'en' ? 'All Posts' : lang === 'es' ? 'Todos los artículos' : lang === 'fr' ? 'Tous les articles' : lang === 'de' ? 'Alle Beiträge' : lang === 'it' ? 'Tutti gli articoli' : lang === 'pt' ? 'Todos os artigos' : lang === 'ru' ? 'Все статьи' : lang === 'zh' ? '所有文章' : lang === 'ja' ? 'すべての投稿' : lang === 'ko' ? '모든 게시물' : lang === 'ar' ? 'جميع المقالات' : lang === 'hi' ? 'सभी पोस्ट' : lang === 'tr' ? 'Tüm Yazılar' : 'All Posts',
+  guides: lang === 'en' ? 'Guides' : lang === 'es' ? 'Guías' : lang === 'fr' ? 'Guides' : lang === 'de' ? 'Anleitungen' : lang === 'it' ? 'Guide' : lang === 'pt' ? 'Guias' : lang === 'ru' ? 'Руководства' : lang === 'zh' ? '指南' : lang === 'ja' ? 'ガイド' : lang === 'ko' ? '가이드' : lang === 'ar' ? 'أدلة' : lang === 'hi' ? 'गाइड' : lang === 'tr' ? 'Rehberler' : 'Guides',
+  tutorials: lang === 'en' ? 'Tutorials' : lang === 'es' ? 'Tutoriales' : lang === 'fr' ? 'Tutoriels' : lang === 'de' ? 'Tutorials' : lang === 'it' ? 'Tutorial' : lang === 'pt' ? 'Tutoriais' : lang === 'ru' ? 'Уроки' : lang === 'zh' ? '教程' : lang === 'ja' ? 'チュートリアル' : lang === 'ko' ? '튜토리얼' : lang === 'ar' ? 'دروس' : lang === 'hi' ? 'ट्यूटोरियल' : lang === 'tr' ? 'Eğitimler' : 'Tutorials',
+  technology: lang === 'en' ? 'Technology' : lang === 'es' ? 'Tecnología' : lang === 'fr' ? 'Technologie' : lang === 'de' ? 'Technologie' : lang === 'it' ? 'Tecnologia' : lang === 'pt' ? 'Tecnologia' : lang === 'ru' ? 'Технологии' : lang === 'zh' ? '技术' : lang === 'ja' ? 'テクノロジー' : lang === 'ko' ? '기술' : lang === 'ar' ? 'تقنية' : lang === 'hi' ? 'टेक्नोलॉजी' : lang === 'tr' ? 'Teknoloji' : 'Technology',
+  privacy: lang === 'en' ? 'Privacy' : lang === 'es' ? 'Privacidad' : lang === 'fr' ? 'Confidentialité' : lang === 'de' ? 'Datenschutz' : lang === 'it' ? 'Privacy' : lang === 'pt' ? 'Privacidade' : lang === 'ru' ? 'Конфиденциальность' : lang === 'zh' ? '隐私' : lang === 'ja' ? 'プライバシー' : lang === 'ko' ? '개인정보' : lang === 'ar' ? 'خصوصية' : lang === 'hi' ? 'गोपनीयता' : lang === 'tr' ? 'Gizlilik' : 'Privacy',
+  general: lang === 'en' ? 'General' : lang === 'es' ? 'General' : lang === 'fr' ? 'Général' : lang === 'de' ? 'Allgemein' : lang === 'it' ? 'Generale' : lang === 'pt' ? 'Geral' : lang === 'ru' ? 'Общее' : lang === 'zh' ? '通用' : lang === 'ja' ? '一般' : lang === 'ko' ? '일반' : lang === 'ar' ? 'عام' : lang === 'hi' ? 'सामान्य' : lang === 'tr' ? 'Genel' : 'General',
+};
+
+const categoryTone: Record<string, string> = {
+  guides: 'info',
+  tutorials: 'warning',
+  technology: 'neutral',
+  privacy: 'success',
+  general: 'neutral',
+};
+
+const prefix = lang === 'en' ? '' : `/${lang}`;
+const blogPath = `${prefix}/blog`;
+const compressorPath = `${prefix}/compressor`;
+---
+
+<section class="blog-hero">
+  <div class="container container-narrow">
+    <Reveal>
+      <Badge eyebrow="Blog" tone="info">{lang === 'en' ? 'Resources' : lang === 'es' ? 'Recursos' : lang === 'fr' ? 'Ressources' : lang === 'de' ? 'Ressourcen' : lang === 'it' ? 'Risorse' : lang === 'pt' ? 'Recursos' : lang === 'ru' ? 'Ресурсы' : lang === 'zh' ? '资源' : lang === 'ja' ? 'リソース' : lang === 'ko' ? '리소스' : lang === 'ar' ? 'موارد' : lang === 'hi' ? 'संसाधन' : lang === 'tr' ? 'Kaynaklar' : 'Resources'}</Badge>
+    </Reveal>
+    <Reveal delay={80}>
+      <h1 class="text-display-xl blog-title">{lang === 'en' ? 'Guides, tutorials & ideas.' : lang === 'es' ? 'Guías, tutoriales e ideas.' : lang === 'fr' ? 'Guides, tutoriels et idées.' : lang === 'de' ? 'Anleitungen, Tutorials und Ideen.' : lang === 'it' ? 'Guide, tutorial e idee.' : lang === 'pt' ? 'Guias, tutoriais e ideias.' : lang === 'ru' ? 'Руководства, уроки и идеи.' : lang === 'zh' ? '指南、教程和想法。' : lang === 'ja' ? 'ガイド、チュートリアル、アイデア。' : lang === 'ko' ? '가이드, 튜토리얼 및 아이디어.' : lang === 'ar' ? 'أدلة، دروس وأفكار.' : lang === 'hi' ? 'गाइड, ट्यूटोरियल और विचार।' : lang === 'tr' ? 'Rehberler, eğitimler ve fikirler.' : 'Guides, tutorials & ideas.'}</h1>
+    </Reveal>
+    <Reveal delay={140}>
+      <p class="text-body-lg blog-lead">{lang === 'en' ? 'Image compression deep-dives, privacy-first engineering, and practical guides to getting the most out of your images.' : lang === 'es' ? 'Análisis profundos de compresión de imágenes, ingeniería centrada en la privacidad y guías prácticas para aprovechar al máximo tus imágenes.' : lang === 'fr' ? 'Analyses approfondies de la compression d\'images, ingénierie respectueuse de la vie privée et guides pratiques pour tirer le meilleur parti de vos images.' : lang === 'de' ? 'Tiefgehende Analysen zur Bildkomprimierung, datenschutzorientierte Technik und praktische Anleitungen, um das Beste aus Ihren Bildern herauszuholen.' : lang === 'it' ? 'Analisi approfondite sulla compressione delle immagini, ingegneria orientata alla privacy e guide pratiche per ottenere il massimo dalle tue immagini.' : lang === 'pt' ? 'Análises aprofundadas de compressão de imagens, engenharia focada em privacidade e guias práticos para aproveitar ao máximo suas imagens.' : 'Image compression deep-dives, privacy-first engineering, and practical guides to getting the most out of your images.'}</p>
+    </Reveal>
+  </div>
+</section>
+
+<section class="band band-canvas">
+  <div class="container blog-layout">
+    <div class="blog-main">
+      <Reveal>
+        <nav class="category-tabs" aria-label="Filter by category">
+          {allCategories.map((cat) => {
+            const isActive = category === cat;
+            const count = cat === 'all' ? posts.length : posts.filter((p) => p.category === cat).length;
+            return (
+              <a
+                href={activeTag ? `${blogPath}/?category=${cat}&tag=${activeTag}` : `${blogPath}/?category=${cat}`}
+                class:list={['category-tab', isActive && 'category-tab-active']}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {categoryLabels[cat] || cat}
+                <span class="category-count">{count}</span>
+              </a>
+            );
+          })}
+        </nav>
+      </Reveal>
+
+      {activeTag && (
+        <Reveal delay={40}>
+          <div class="active-filter">
+            <span class="text-caption">{lang === 'en' ? 'Filtered by tag:' : lang === 'es' ? 'Filtrado por etiqueta:' : lang === 'fr' ? 'Filtré par tag :' : lang === 'de' ? 'Gefiltert nach Tag:' : lang === 'it' ? 'Filtrato per tag:' : lang === 'pt' ? 'Filtrado por tag:' : lang === 'ru' ? 'Отфильтровано по тегу:' : lang === 'zh' ? '按标签筛选：' : lang === 'ja' ? 'タグでフィルター：' : lang === 'ko' ? '태그로 필터링:' : lang === 'ar' ? 'مصفى حسب الوسم:' : lang === 'hi' ? 'टैग द्वारा फ़िल्टर:' : lang === 'tr' ? 'Etikete göre filtrelenmiş:' : 'Filtered by tag:'}</span>
+            <Badge tone="info">#{activeTag}</Badge>
+            <a href={category === 'all' ? `${blogPath}/` : `${blogPath}/?category=${category}`} class="clear-filter text-body-sm">
+              {lang === 'en' ? 'Clear' : lang === 'es' ? 'Limpiar' : lang === 'fr' ? 'Effacer' : lang === 'de' ? 'Löschen' : lang === 'it' ? 'Cancella' : lang === 'pt' ? 'Limpar' : lang === 'ru' ? 'Очистить' : lang === 'zh' ? '清除' : lang === 'ja' ? 'クリア' : lang === 'ko' ? '지우기' : lang === 'ar' ? 'مسح' : lang === 'hi' ? 'साफ़ करें' : lang === 'tr' ? 'Temizle' : 'Clear'}
+            </a>
+          </div>
+        </Reveal>
+      )}
+
+      {category === 'all' && !activeTag && featured.length > 0 && (
+        <section class="featured-section">
+          <Reveal delay={60}>
+            <h2 class="text-display-xs featured-heading">{lang === 'en' ? 'Featured' : lang === 'es' ? 'Destacados' : lang === 'fr' ? 'À la une' : lang === 'de' ? 'Empfohlen' : lang === 'it' ? 'In evidenza' : lang === 'pt' ? 'Em destaque' : lang === 'ru' ? 'Избранное' : lang === 'zh' ? '精选' : lang === 'ja' ? '注目' : lang === 'ko' ? '추천' : lang === 'ar' ? 'مميز' : lang === 'hi' ? 'फ़ीचर्ड' : lang === 'tr' ? 'Öne Çıkanlar' : 'Featured'}</h2>
+          </Reveal>
+          <div class="featured-grid">
+            {featured.map((post, i) => (
+              <Reveal delay={80 + i * 60}>
+                <a href={`${prefix}/blog/${post.slug}/`} class="featured-card">
+                  <div class="featured-card-body">
+                    <div class="blog-card-meta">
+                      <Badge tone={categoryTone[post.category]} eyebrow={post.category}>
+                        {formatDate(post.date, lang)}
+                      </Badge>
+                      <span class="text-caption blog-card-time">{post.readMinutes} min read</span>
+                    </div>
+                    <h3 class="text-display-sm featured-card-title">{getTranslatedTitle(post.slug, lang)}</h3>
+                    <p class="text-body-sm featured-card-desc">{getTranslatedDescription(post.slug, lang)}</p>
+                    <div class="featured-tags">
+                      {post.tags.slice(0, 3).map((tag) => (
+                        <span class="tag-pill">#{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </a>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="blog-list-wrap">
+        {filtered.length === 0 ? (
+          <EmptyState
+            eyebrow={lang === 'en' ? 'No posts' : lang === 'es' ? 'Sin artículos' : lang === 'fr' ? 'Aucun article' : lang === 'de' ? 'Keine Beiträge' : lang === 'it' ? 'Nessun articolo' : lang === 'pt' ? 'Nenhum artigo' : lang === 'ru' ? 'Нет статей' : lang === 'zh' ? '没有文章' : lang === 'ja' ? '投稿がありません' : lang === 'ko' ? '게시물이 없습니다' : lang === 'ar' ? 'لا توجد مقالات' : lang === 'hi' ? 'कोई पोस्ट नहीं' : lang === 'tr' ? 'Yazı yok' : 'No posts'}
+            title={lang === 'en' ? 'Nothing here yet.' : lang === 'es' ? 'Nada aquí todavía.' : lang === 'fr' ? 'Rien ici pour l\'instant.' : lang === 'de' ? 'Hier gibt es noch nichts.' : lang === 'it' ? 'Niente qui ancora.' : lang === 'pt' ? 'Nada aqui ainda.' : lang === 'ru' ? 'Здесь пока ничего нет.' : lang === 'zh' ? '这里还没有内容。' : lang === 'ja' ? 'まだ何もありません。' : lang === 'ko' ? '아직 아무것도 없습니다.' : lang === 'ar' ? 'لا شيء هنا بعد.' : lang === 'hi' ? 'अभी तक कुछ नहीं है।' : lang === 'tr' ? 'Henüz bir şey yok.' : 'Nothing here yet.'}
+            description={lang === 'en' ? 'Try a different category or tag.' : lang === 'es' ? 'Prueba con otra categoría o etiqueta.' : lang === 'fr' ? 'Essayez une autre catégorie ou un autre tag.' : lang === 'de' ? 'Versuchen Sie eine andere Kategorie oder ein anderes Tag.' : lang === 'it' ? 'Prova un\'altra categoria o tag.' : lang === 'pt' ? 'Tente uma categoria ou tag diferente.' : lang === 'ru' ? 'Попробуйте другую категорию или тег.' : lang === 'zh' ? '尝试其他类别或标签。' : lang === 'ja' ? '別のカテゴリーやタグをお試しください。' : lang === 'ko' ? '다른 카테고리나 태그를 시도해보세요.' : lang === 'ar' ? 'جرب فئة أو وسماً آخر.' : lang === 'hi' ? 'कोई दूसरी श्रेणी या टैग आज़माएँ।' : lang === 'tr' ? 'Farklı bir kategori veya etiket deneyin.' : 'Try a different category or tag.'}
+          />
+        ) : (
+          filtered.map((post, i) => (
+            <Reveal delay={i * 40}>
+              <a href={`${prefix}/blog/${post.slug}/`} class="blog-card">
+                <div class="blog-card-meta">
+                  <Badge tone={categoryTone[post.category]} eyebrow={post.category}>
+                    {formatDate(post.date, lang)}
+                  </Badge>
+                  <span class="text-caption blog-card-time">{post.readMinutes} {lang === 'en' ? 'min read' : lang === 'es' ? 'min de lectura' : lang === 'fr' ? 'min de lecture' : lang === 'de' ? 'Min. Lesezeit' : lang === 'it' ? 'min di lettura' : lang === 'pt' ? 'min de leitura' : lang === 'ru' ? 'мин чтения' : lang === 'zh' ? '分钟阅读' : lang === 'ja' ? '分で読める' : lang === 'ko' ? '분 소요' : lang === 'ar' ? 'دقيقة قراءة' : lang === 'hi' ? 'मिनट पढ़ने का समय' : lang === 'tr' ? 'dk okuma' : 'min read'}</span>
+                </div>
+                <h2 class="text-display-sm blog-card-title">{getTranslatedTitle(post.slug, lang)}</h2>
+                <p class="text-body-sm blog-card-desc">{getTranslatedDescription(post.slug, lang)}</p>
+                <div class="blog-card-tags">
+                  {post.tags.slice(0, 3).map((tag) => (
+                    <span class="tag-pill">#{tag}</span>
+                  ))}
+                </div>
+                <span class="text-body-sm-strong blog-card-cta">
+                  {lang === 'en' ? 'Read more' : lang === 'es' ? 'Leer más' : lang === 'fr' ? 'Lire la suite' : lang === 'de' ? 'Weiterlesen' : lang === 'it' ? 'Leggi di più' : lang === 'pt' ? 'Ler mais' : lang === 'ru' ? 'Читать далее' : lang === 'zh' ? '阅读更多' : lang === 'ja' ? '続きを読む' : lang === 'ko' ? '더 읽기' : lang === 'ar' ? 'اقرأ المزيد' : lang === 'hi' ? 'और पढ़ें' : lang === 'tr' ? 'Devamını oku' : 'Read more'}
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </span>
+              </a>
+            </Reveal>
+          ))
+        )}
+      </div>
+    </div>
+
+    <aside class="blog-sidebar">
+      <Reveal delay={100}>
+        <div class="sidebar-card">
+          <h3 class="text-caption-mono sidebar-heading">{lang === 'en' ? 'Browse by tag' : lang === 'es' ? 'Explorar por etiqueta' : lang === 'fr' ? 'Parcourir par tag' : lang === 'de' ? 'Nach Tag durchsuchen' : lang === 'it' ? 'Sfoglia per tag' : lang === 'pt' ? 'Navegar por tag' : lang === 'ru' ? 'Просмотр по тегам' : lang === 'zh' ? '按标签浏览' : lang === 'ja' ? 'タグで閲覧' : lang === 'ko' ? '태그로 찾기' : lang === 'ar' ? 'تصفح حسب الوسم' : lang === 'hi' ? 'टैग द्वारा ब्राउज़ करें' : lang === 'tr' ? 'Etikete göre göz at' : 'Browse by tag'}</h3>
+          <div class="tag-cloud">
+            {allTags.map((tag) => {
+              const count = posts.filter((p) => p.tags.includes(tag)).length;
+              const isActiveTag = activeTag === tag;
+              return (
+                <a
+                  href={category === 'all' ? `${blogPath}/?tag=${tag}` : `${blogPath}/?category=${category}&tag=${tag}`}
+                  class:list={['tag-link', isActiveTag && 'tag-link-active']}
+                >
+                  #{tag}
+                  <span class="tag-count">{count}</span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </Reveal>
+
+      <Reveal delay={160}>
+        <div class="sidebar-card">
+          <h3 class="text-caption-mono sidebar-heading">{lang === 'en' ? 'Recent posts' : lang === 'es' ? 'Artículos recientes' : lang === 'fr' ? 'Articles récents' : lang === 'de' ? 'Neueste Beiträge' : lang === 'it' ? 'Articoli recenti' : lang === 'pt' ? 'Artigos recentes' : lang === 'ru' ? 'Последние статьи' : lang === 'zh' ? '最新文章' : lang === 'ja' ? '最近の投稿' : lang === 'ko' ? '최근 게시물' : lang === 'ar' ? 'المقالات الأخيرة' : lang === 'hi' ? 'हाल के पोस्ट' : lang === 'tr' ? 'Son yazılar' : 'Recent posts'}</h3>
+          <ul class="recent-list">
+            {posts.slice(0, 5).map((post) => (
+              <li>
+                <a href={`${prefix}/blog/${post.slug}/`} class="recent-link">
+                  <span class="recent-title">{getTranslatedTitle(post.slug, lang)}</span>
+                  <span class="text-caption recent-date">{formatDate(post.date, lang)}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Reveal>
+
+      <Reveal delay={220}>
+        <div class="sidebar-card sidebar-cta">
+          <h3 class="text-caption-mono sidebar-heading">{lang === 'en' ? 'Try the Compressor' : lang === 'es' ? 'Prueba el Compresor' : lang === 'fr' ? 'Essayez le Compresseur' : lang === 'de' ? 'Testen Sie den Compressor' : lang === 'it' ? 'Prova il Compressore' : lang === 'pt' ? 'Experimente o Compressor' : lang === 'ru' ? 'Попробуйте Компрессор' : lang === 'zh' ? '试用压缩工具' : lang === 'ja' ? 'コンプレッサーを試す' : lang === 'ko' ? '압축기 사용해보기' : lang === 'ar' ? 'جرب الضاغط' : lang === 'hi' ? 'कंप्रेसर आज़माएँ' : lang === 'tr' ? 'Sıkıştırıcıyı Deneyin' : 'Try the Compressor'}</h3>
+          <p class="text-body-sm">
+            {lang === 'en' ? 'Compress images right in your browser — no uploads, no tracking, no limits.' : lang === 'es' ? 'Comprime imágenes directamente en tu navegador — sin subidas, sin seguimiento, sin límites.' : lang === 'fr' ? 'Compressez les images directement dans votre navigateur — sans téléchargement, sans suivi, sans limites.' : lang === 'de' ? 'Komprimieren Sie Bilder direkt in Ihrem Browser — ohne Uploads, ohne Tracking, ohne Grenzen.' : lang === 'it' ? 'Comprimi le immagini direttamente nel tuo browser — senza caricamenti, senza tracciamento, senza limiti.' : lang === 'pt' ? 'Comprima imagens diretamente no seu navegador — sem uploads, sem rastreamento, sem limites.' : lang === 'ru' ? 'Сжимайте изображения прямо в браузере — без загрузок, без отслеживания, без ограничений.' : lang === 'zh' ? '直接在浏览器中压缩图像 — 无需上传，无追踪，无限制。' : lang === 'ja' ? 'ブラウザで画像を圧縮 — アップロード不要、トラッキングなし、制限なし。' : lang === 'ko' ? '브라우저에서 직접 이미지 압축 — 업로드 불필요, 추적 없음, 제한 없음.' : lang === 'ar' ? 'اضغط الصور مباشرة في متصفحك — بدون رفع، بدون تتبع، بدون حدود.' : lang === 'hi' ? 'अपने ब्राउज़र में सीधे इमेज कंप्रेस करें — कोई अपलोड नहीं, कोई ट्रैकिंग नहीं, कोई सीमा नहीं।' : lang === 'tr' ? 'Görüntüleri doğrudan tarayıcınızda sıkıştırın — yükleme yok, izleme yok, sınır yok.' : 'Compress images right in your browser — no uploads, no tracking, no limits.'}
+          </p>
+          <a href={compressorPath} class="sidebar-button">{lang === 'en' ? 'Start compressing' : lang === 'es' ? 'Empezar a comprimir' : lang === 'fr' ? 'Commencer la compression' : lang === 'de' ? 'Jetzt komprimieren' : lang === 'it' ? 'Inizia a comprimere' : lang === 'pt' ? 'Começar a comprimir' : lang === 'ru' ? 'Начать сжатие' : lang === 'zh' ? '开始压缩' : lang === 'ja' ? '圧縮を開始' : lang === 'ko' ? '압축 시작' : lang === 'ar' ? 'ابدأ الضغط' : lang === 'hi' ? 'कंप्रेस करना शुरू करें' : lang === 'tr' ? 'Sıkıştırmaya başla' : 'Start compressing'}</a>
+        </div>
+      </Reveal>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .blog-hero {
+    padding: calc(var(--space-6xl) + var(--space-2xl)) 0 var(--space-3xl);
+    background-color: var(--color-canvas);
+  }
+  .blog-title { margin: var(--space-md) 0 0; max-width: 18ch; text-wrap: balance; }
+  .blog-lead { margin: var(--space-md) 0 0; color: var(--color-body); max-width: 56ch; }
+  .band { position: relative; padding: var(--space-5xl) 0; }
+  .band-canvas { background-color: var(--color-canvas); }
+  .blog-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: var(--space-3xl);
+    align-items: start;
+  }
+  .blog-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    min-width: 0;
+  }
+  .category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-hairline);
+  }
+  .category-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-canvas-soft);
+    color: var(--color-body);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--weight-medium);
+    transition: background-color var(--dur-fast) var(--ease-out-quart), border-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart);
+  }
+  .category-tab:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+  .category-tab-active { background-color: var(--color-link-bg-soft); border-color: transparent; color: var(--color-link-deep); }
+  [data-theme="dark"] .category-tab-active { color: var(--color-link); }
+  .category-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 4px;
+    border-radius: var(--radius-full); background-color: var(--color-canvas);
+    font-size: 11px; font-weight: var(--weight-semibold); line-height: 1;
+  }
+  .category-tab-active .category-count { background-color: var(--color-canvas-soft); }
+  .active-filter {
+    display: flex; align-items: center; gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-canvas-soft);
+    border-radius: var(--radius-lg); border: 1px solid var(--color-hairline);
+  }
+  .clear-filter { color: var(--color-link); text-decoration: none; margin-left: auto; }
+  .clear-filter:hover { text-decoration: underline; }
+  .featured-section { display: flex; flex-direction: column; gap: var(--space-md); }
+  .featured-heading { margin: 0; color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.1em; }
+  .featured-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-md); }
+  .featured-card {
+    display: flex; flex-direction: column; padding: var(--space-xl);
+    background: linear-gradient(135deg, var(--color-canvas-soft) 0%, var(--color-canvas) 100%);
+    border: 1px solid var(--color-hairline); border-radius: var(--radius-lg);
+    text-decoration: none; color: var(--color-ink);
+    transition: border-color var(--dur-base) var(--ease-out-quart), transform var(--dur-base) var(--ease-out-quart), box-shadow var(--dur-base) var(--ease-out-quart);
+  }
+  .featured-card:hover { border-color: var(--color-hairline-strong); transform: translateY(-2px); box-shadow: var(--shadow-3); }
+  .featured-card:focus-visible { outline: none; box-shadow: var(--focus-ring); border-color: var(--color-link); }
+  .featured-card-body { display: flex; flex-direction: column; gap: var(--space-xs); height: 100%; }
+  .featured-card-title { margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .featured-card-desc { margin: 0; color: var(--color-body); text-wrap: pretty; flex: 1; }
+  .featured-tags { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-sm); }
+  .tag-pill { font-size: var(--font-size-xs); color: var(--color-mute); font-weight: var(--weight-medium); }
+  .blog-list-wrap { display: flex; flex-direction: column; gap: var(--space-md); }
+  .blog-card {
+    display: flex; flex-direction: column; gap: var(--space-xs);
+    padding: var(--space-xl); background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline); border-radius: var(--radius-lg);
+    text-decoration: none; color: var(--color-ink);
+    transition: border-color var(--dur-base) var(--ease-out-quart), transform var(--dur-base) var(--ease-out-quart), box-shadow var(--dur-base) var(--ease-out-quart), background-color var(--dur-base) var(--ease-out-quart);
+  }
+  .blog-card:hover { border-color: var(--color-hairline-strong); transform: translateY(-2px); box-shadow: var(--shadow-3); }
+  .blog-card:focus-visible { outline: none; box-shadow: var(--focus-ring); border-color: var(--color-link); }
+  .blog-card-meta { display: flex; align-items: center; gap: var(--space-sm); color: var(--color-mute); }
+  .blog-card-time { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.08em; font-weight: var(--weight-medium); font-variant-numeric: tabular-nums; }
+  .blog-card-title { margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .blog-card-desc { margin: 0; color: var(--color-body); text-wrap: pretty; }
+  .blog-card-tags { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-xs); }
+  .blog-card-cta { display: inline-flex; align-items: center; gap: var(--space-xs); color: var(--color-link); margin-top: var(--space-xs); transition: gap var(--dur-base) var(--ease-out-quart); }
+  .blog-card:hover .blog-card-cta { gap: var(--space-sm); }
+  .blog-sidebar { display: flex; flex-direction: column; gap: var(--space-lg); position: sticky; top: var(--space-4xl); }
+  .sidebar-card { display: flex; flex-direction: column; gap: var(--space-md); padding: var(--space-lg); background-color: var(--color-canvas-soft); border: 1px solid var(--color-hairline); border-radius: var(--radius-lg); }
+  .sidebar-heading { margin: 0; color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.1em; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+  .tag-link { display: inline-flex; align-items: center; gap: 4px; padding: 2px var(--space-xs); border-radius: var(--radius-full); font-size: var(--font-size-xs); color: var(--color-body); text-decoration: none; border: 1px solid var(--color-hairline); transition: background-color var(--dur-fast) var(--ease-out-quart), border-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); }
+  .tag-link:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+  .tag-link-active { background-color: var(--color-link-bg-soft); border-color: transparent; color: var(--color-link-deep); }
+  [data-theme="dark"] .tag-link-active { color: var(--color-link); }
+  .tag-count { font-size: 10px; color: var(--color-mute); }
+  .recent-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
+  .recent-link { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: var(--color-ink); padding: var(--space-xs) 0; transition: color var(--dur-fast) var(--ease-out-quart); }
+  .recent-link:hover { color: var(--color-link); }
+  .recent-title { font-size: var(--font-size-sm); font-weight: var(--weight-medium); line-height: 1.3; }
+  .recent-date { color: var(--color-mute); }
+  .sidebar-cta p { color: var(--color-body); margin: 0; }
+  .sidebar-button { display: inline-flex; align-items: center; justify-content: center; padding: var(--space-sm) var(--space-lg); background-color: var(--color-link); color: white; border-radius: var(--radius-full); text-decoration: none; font-size: var(--font-size-sm); font-weight: var(--weight-semibold); transition: opacity var(--dur-fast) var(--ease-out-quart); }
+  .sidebar-button:hover { opacity: 0.85; }
+  @media (prefers-reduced-motion: reduce) { .blog-card, .blog-card-cta, .featured-card { transition: none; } }
+  @media (max-width: 800px) { .blog-layout { grid-template-columns: 1fr; } .blog-sidebar { position: static; order: 2; } .blog-main { order: 1; } .featured-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .band { padding: var(--space-4xl) 0; } .blog-hero { padding: var(--space-4xl) 0 var(--space-2xl); } .blog-card { padding: var(--space-lg); } .featured-card { padding: var(--space-lg); } }
+</style>

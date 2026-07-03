@@ -8,6 +8,7 @@ import ToolFooter from '../../components/tools/ToolFooter.astro';
 import RotatorTool from '../../components/tools/RotatorTool.astro';
 import ConverterTool from '../../components/tools/ConverterTool.astro';
 import ResizerTool from '../../components/tools/ResizerTool.astro';
+import ToolSeoContent from '../../components/seo/ToolSeoContent.astro';
 import { tools, getTool } from '../../lib/tools';
 import type { ToolId } from '../../types';
 
@@ -69,11 +70,11 @@ if (!tool) {
     ) : (
       <article class="workflow stack stack-lg">
         {tool.id === 'rotator' ? (
-          <RotatorTool />
+          <><RotatorTool /><ToolSeoContent toolId="rotator" lang="en" /></>
         ) : tool.id === 'converter' ? (
-          <ConverterTool />
+          <><ConverterTool /><ToolSeoContent toolId="converter" lang="en" /></>
         ) : tool.id === 'resizer' ? (
-          <ResizerTool />
+          <><ResizerTool /><ToolSeoContent toolId="resizer" lang="en" /></>
         ) : (
           <>
             <ToolUpload {tool} />

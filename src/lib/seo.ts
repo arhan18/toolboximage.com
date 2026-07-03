@@ -55,6 +55,14 @@ export function websiteSchema(lang: LangCode = 'en') {
     url: SITE_URL,
     description: SITE_DESCRIPTION,
     inLanguage: locale,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/search?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   };
 }
 
