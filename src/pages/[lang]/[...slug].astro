@@ -12,11 +12,14 @@ import CompressorTool from '../../components/tools/CompressorTool.astro';
 import RotatorTool from '../../components/tools/RotatorTool.astro';
 import ConverterTool from '../../components/tools/ConverterTool.astro';
 import ResizerTool from '../../components/tools/ResizerTool.astro';
+import CropperTool from '../../components/tools/CropperTool.astro';
 import ToolSeoContent from '../../components/seo/ToolSeoContent.astro';
 import CompressorSeoContent from '../../components/seo/CompressorSeoContent.astro';
 import { tools } from '../../lib/tools';
+import { softwareAppSchema, breadcrumbSchema, faqSchema, articleSchema } from '../../lib/seo';
 import { useTranslations, LANG_CODES, type LangCode, dirFromLang } from '../../i18n';
-import { getPost } from '../../lib/blog';
+import { getPost, getTranslatedTitle, getTranslatedDescription, getTranslatedTags } from '../../lib/blog';
+import { getAllTools, getCompressTools, getToolsByCategory } from '../../lib/tools-dir';
 
 export async function getStaticPaths() {
   const langs = LANG_CODES.filter((l) => l !== 'en');
@@ -36,7 +39,7 @@ export async function getStaticPaths() {
     'blog/image-compression-basics', 'blog/designing-the-compressor',
     'blog/introducing-toolboximage', 'blog/choose-image-format',
     'blog/batch-compression-guide', 'blog/image-size-limits-social-email',
-    'blog/compress-to-exact-file-size', 'blog/png-vs-webp-vs-avif',
+    'blog/compress-to-exact-file-size', 'blog/png-vs-webp-vs-avif', 'blog/crop-image-online',
     'faq', 'about', 'contact', 'support', 'troubleshooting',
     'legal/privacy', 'legal/terms',
     'tools/rotator', 'tools/converter', 'tools/resizer',
@@ -76,11 +79,11 @@ function pageTitle(slug: string): string {
     'compress-avif': _('nav.compressAvif'),
     'compress-for-instagram': _('tools.instagram'),
     'compress-for-whatsapp': _('tools.whatsapp'),
-    'compress-gif': 'Compress GIF',
-    'compress-for-web': 'Web Image Optimizer',
-    'compress-for-ecommerce': 'Ecommerce Compressor',
-    'image-compressor': 'Image Compressor',
-    'jpeg-vs-png-compression': 'JPEG vs PNG Comparison',
+    'compress-gif': _('tools.compressGif'),
+    'compress-for-web': _('tools.compressForWeb'),
+    'compress-for-ecommerce': _('tools.compressForEcommerce'),
+    'image-compressor': _('tools.imageCompressor'),
+    'jpeg-vs-png-compression': _('tools.jpegVsPng'),
     'image-tools': _('nav.allTools'),
     blog: _('nav.blog'),
     faq: _('nav.faq'),
@@ -90,63 +93,140 @@ function pageTitle(slug: string): string {
     troubleshooting: _('nav.troubleshooting'),
     'legal/privacy': _('footer.privacy'),
     'legal/terms': _('footer.terms'),
-    rotator: 'Rotate Image',
-    converter: 'Format Converter',
-    resizer: 'Image Resizer',
-    cropper: 'Image Cropper',
-    flipper: 'Image Flipper',
-    'heic-converter': 'HEIC to JPEG',
-    'background-remover': 'Background Remover',
-    blur: 'Blur Image',
-    'format-viewer': 'Format Viewer',
-    metadata: 'Metadata Viewer',
+    rotator: _('tools.rotator'),
+    converter: _('tools.converter'),
+    resizer: _('tools.resizer'),
+    cropper: _('tools.cropper'),
+    flipper: _('tools.flipper'),
+    'heic-converter': _('tools.heicConverter'),
+    'background-remover': _('tools.backgroundRemover'),
+    blur: _('tools.blur'),
+    'format-viewer': _('tools.formatViewer'),
+    metadata: _('tools.metadata'),
   };
   return map[slug] || map[last] || titleCase(last);
 }
 
 function pageDesc(slug: string): string {
-  const map: Record<string, string> = {
-    compressor: _('tools.compressorDesc'),
-    faq: _('page.desc.faq'),
-    about: _('page.desc.about'),
-    contact: _('page.desc.contact'),
-    troubleshooting: _('page.desc.troubleshooting'),
+  const slugToKey: Record<string, string> = {
+    compressor: 'tools.compressorDesc',
+    'image-tools': 'page.desc.imageTools',
+    'bulk-image-compressor': 'tools.bulkDesc',
+    'image-compressor-100kb': 'tools.targetDesc',
+    'image-compressor-for-discord': 'tools.discordDesc',
+    'compress-for-email': 'tools.emailDesc',
+    'compress-for-whatsapp': 'tools.whatsappDesc',
+    'compress-for-instagram': 'tools.instagramDesc',
+    'compress-jpeg': 'tools.jpegDesc',
+    'compress-png': 'tools.pngDesc',
+    'compress-webp': 'tools.webpDesc',
+    'compress-avif': 'tools.avifDesc',
+    'compress-gif': 'tools.compressGifDesc',
+    'compress-for-web': 'tools.compressForWebDesc',
+    'compress-for-ecommerce': 'tools.compressForEcommerceDesc',
+    'image-compressor': 'tools.imageCompressorDesc',
+    rotator: 'page.desc.rotator',
+    converter: 'page.desc.converter',
+    resizer: 'page.desc.resizer',
+    cropper: 'page.desc.cropper',
+    support: 'page.desc.support',
+    faq: 'page.desc.faq',
+    about: 'page.desc.about',
+    contact: 'page.desc.contact',
+    troubleshooting: 'page.desc.troubleshooting',
   };
-  return map[slug] || `ToolBox Image — ${pageTitle(slug)}`;
+  const key = slugToKey[slug];
+  if (key) return _(key);
+  const legalMap: Record<string, string> = {
+    'legal/privacy': 'page.desc.privacy',
+    'legal/terms': 'page.desc.terms',
+  };
+  if (legalMap[slug]) return _(legalMap[slug]);
+  return `ToolBox Image — ${pageTitle(slug)}`;
 }
 
 const compressTools = [
-  { href: '/compressor/', label: 'Image Compressor', desc: 'Compress any image format in your browser.' },
-  { href: '/bulk-image-compressor/', label: 'Bulk Compressor', desc: 'Batch compress hundreds of images.' },
-  { href: '/image-compressor-100kb/', label: 'Compress to 100KB', desc: 'Hit exact file size targets.' },
-  { href: '/image-compressor-for-discord/', label: 'Discord Compressor', desc: 'Compress for Discord limits.' },
-  { href: '/compress-for-email/', label: 'Email Compressor', desc: 'Compress for email attachments.' },
-  { href: '/compress-for-whatsapp/', label: 'WhatsApp Compressor', desc: 'Optimize images for WhatsApp.' },
-  { href: '/compress-for-instagram/', label: 'Instagram Compressor', desc: 'Resize and compress for Instagram.' },
-  { href: '/jpeg-vs-png-compression/', label: 'JPEG vs PNG', desc: 'Compare image formats.' },
+  { href: '/compressor/', label: _('tools.compressor'), desc: _('tools.compressorDesc') },
+  { href: '/bulk-image-compressor/', label: _('tools.bulk'), desc: _('tools.bulkDesc') },
+  { href: '/image-compressor-100kb/', label: _('tools.target'), desc: _('tools.targetDesc') },
+  { href: '/image-compressor-for-discord/', label: _('tools.discord'), desc: _('tools.discordDesc') },
+  { href: '/compress-for-email/', label: _('tools.email'), desc: _('tools.emailDesc') },
+  { href: '/compress-for-whatsapp/', label: _('tools.whatsapp'), desc: _('tools.whatsappDesc') },
+  { href: '/compress-for-instagram/', label: _('tools.instagram'), desc: _('tools.instagramDesc') },
+  { href: '/compress-jpeg/', label: _('nav.compressJpeg'), desc: _('tools.jpegDesc') },
+  { href: '/compress-png/', label: _('nav.compressPng'), desc: _('tools.pngDesc') },
+  { href: '/compress-webp/', label: _('nav.compressWebp'), desc: _('tools.webpDesc') },
+  { href: '/compress-avif/', label: _('nav.compressAvif'), desc: _('tools.avifDesc') },
+  { href: '/compress-gif/', label: _('tools.compressGif'), desc: _('tools.compressGifDesc') },
+  { href: '/compress-for-web/', label: _('tools.compressForWeb'), desc: _('tools.compressForWebDesc') },
+  { href: '/compress-for-ecommerce/', label: _('tools.compressForEcommerce'), desc: _('tools.compressForEcommerceDesc') },
+  { href: '/image-compressor/', label: _('tools.imageCompressor'), desc: _('tools.imageCompressorDesc') },
 ];
-function getAllTools(_lang: string) {
-  const dynamic = tools.filter((t) => t.id !== 'compressor').map((t) => ({
-    href: t.path, label: t.name, desc: t.description, icon: t.icon,
-    status: t.status === 'live' ? 'Live' as const : 'Soon' as const,
-  }));
-  return [...compressTools, ...dynamic];
-}
-function getToolsByCategory(cat: string, _lang: string) {
-  return tools.filter((t) => t.id !== 'compressor' && t.category === cat).map((t) => ({
-    href: t.path, label: t.name, desc: t.description,
-    status: t.status === 'live' ? 'Live' as const : 'Soon' as const,
-  }));
-}
+const toolKeyFromId: Record<string, string> = {
+  converter: 'tools.converter', resizer: 'tools.resizer', cropper: 'tools.cropper', rotator: 'tools.rotator',
+  flipper: 'tools.flipper', 'heic-converter': 'tools.heicConverter', 'background-remover': 'tools.backgroundRemover',
+  blur: 'tools.blur', 'format-viewer': 'tools.formatViewer', metadata: 'tools.metadata', 'watermark-remover': 'tools.watermarkRemover',
+};
+const toolDescFromId: Record<string, string> = {
+  converter: 'tools.converterDesc', resizer: 'tools.resizerDesc', cropper: 'tools.cropperDesc', rotator: 'tools.rotatorDesc',
+  flipper: 'tools.flipperDesc', 'heic-converter': 'tools.heicConverterDesc', 'background-remover': 'tools.backgroundRemoverDesc',
+  blur: 'tools.blurDesc', 'format-viewer': 'tools.formatViewerDesc', metadata: 'tools.metadataDesc', 'watermark-remover': 'tools.watermarkRemoverDesc',
+};
+const getName = (id: string) => _(toolKeyFromId[id] || `tools.${id}`);
+const getDesc = (id: string) => _(toolDescFromId[id] || `${toolKeyFromId[id] || `tools.${id}`}Desc`);
 
-const isCompressorPage = slug === 'compressor' || slug === 'bulk-image-compressor' || slug === 'image-compressor-100kb' || slug === 'image-compressor-for-discord' || slug === 'compress-for-email' || slug === 'compress-jpeg' || slug === 'compress-png' || slug === 'compress-webp' || slug === 'compress-avif' || slug === 'compress-for-instagram' || slug === 'compress-for-whatsapp' || slug === 'compress-gif' || slug === 'compress-for-web' || slug === 'compress-for-ecommerce';
+const isCompressorPage = slug === 'compressor' || slug === 'bulk-image-compressor' || slug === 'image-compressor-100kb' || slug === 'image-compressor-for-discord' || slug === 'compress-for-email' || slug === 'compress-jpeg' || slug === 'compress-png' || slug === 'compress-webp' || slug === 'compress-avif' || slug === 'compress-for-instagram' || slug === 'compress-for-whatsapp' || slug === 'compress-gif' || slug === 'compress-for-web' || slug === 'compress-for-ecommerce' || slug === 'image-compressor';
 const isRotatorPage = slug === 'tools/rotator';
 const isConverterPage = slug === 'tools/converter';
 const isResizerPage = slug === 'tools/resizer';
-const isLiveTool = isCompressorPage || isRotatorPage || isConverterPage || isResizerPage;
+const isCropperPage = slug === 'tools/cropper';
+const isLiveTool = isCompressorPage || isRotatorPage || isConverterPage || isResizerPage || isCropperPage;
 const isBlogSlug = slug?.startsWith('blog/');
 const isBlogIndex = slug === 'blog';
 const isFaq = slug === 'faq';
+const nonLiveToolSlugs = ['tools/flipper', 'tools/heic-converter', 'tools/background-remover', 'tools/blur', 'tools/format-viewer', 'tools/metadata', 'tools/watermark-remover'];
+const isNonLiveTool = nonLiveToolSlugs.includes(slug);
+const isLegalStub = slug === 'legal/privacy' || slug === 'legal/terms';
+
+const imageToolsBreadcrumbs = [
+  { name: 'Home', href: `/${lang === 'en' ? '' : lang + '/'}` },
+  { name: _('page.imageTools.title'), href: `/${lang === 'en' ? '' : lang + '/'}image-tools/` },
+];
+
+const faqBreadcrumbs = [
+  { name: 'Home', href: `/${lang === 'en' ? '' : lang + '/'}` },
+  { name: _('nav.faq'), href: `/${lang === 'en' ? '' : lang + '/'}faq/` },
+];
+
+const ogImageMap: Record<string, string> = {
+  compressor: '/og-image-compressor.png',
+  'bulk-image-compressor': '/og-bulk-compressor.png',
+  'image-compressor-100kb': '/og-100kb-compressor.png',
+  'image-compressor-for-discord': '/og-discord-compressor.png',
+  'compress-jpeg': '/og-compress-jpeg.png',
+  'compress-png': '/og-compress-png.png',
+  'compress-webp': '/og-compress-webp.png',
+  'compress-avif': '/og-compress-avif.png',
+  'compress-for-email': '/og-compress-email.png',
+  'compress-for-whatsapp': '/og-compress-whatsapp.png',
+  'compress-for-instagram': '/og-compress-instagram.png',
+  'image-tools': '/og-image-tools.png',
+  'tools/rotator': '/og-rotator.png',
+  'tools/converter': '/og-converter.png',
+  'tools/resizer': '/og-resizer.png',
+  'tools/cropper': '/og-cropper.png',
+  'image-compressor': '/og-image-compressor.png',
+  'compress-gif': '/og-image.png',
+  'compress-for-web': '/og-image.png',
+  'compress-for-ecommerce': '/og-image.png',
+};
+const pageOgImage = ogImageMap[slug] || '/og-image.png';
+
+const blogSlugPart = slug?.startsWith('blog/') ? slug.replace('blog/', '') : null;
+const blogPost = blogSlugPart ? getPost(blogSlugPart) : null;
+const blogTitle = blogPost ? getTranslatedTitle(blogPost.slug, langCode) : null;
+const blogDesc = blogPost ? getTranslatedDescription(blogPost.slug, langCode) : null;
+const blogTags = blogPost ? getTranslatedTags(blogPost.slug, langCode) : null;
 
 const faqItems = [
   { q: _('faq.q1'), a: _('faq.a1') },
@@ -155,16 +235,23 @@ const faqItems = [
   { q: _('faq.q4'), a: _('faq.a4') },
   { q: _('faq.q5'), a: _('faq.a5') },
   { q: _('faq.q6'), a: _('faq.a6') },
+  { q: _('faq.q7'), a: _('faq.a7') },
+  { q: _('faq.q8'), a: _('faq.a8') },
 ];
 ---
 
 <Layout
-  title={`${pageTitle(slug || '')} | ToolBox Image`}
-  description={pageDesc(slug || '')}
+  title={blogTitle ? `${blogTitle} | ToolBox Image` : `${pageTitle(slug || '')} | ToolBox Image`}
+  description={blogDesc ?? pageDesc(slug || '')}
   lang={langCode}
   dir={dirFromLang(langCode)}
-  ogImage="/og-image.png"
-  ogType="website"
+  ogImage={pageOgImage}
+  ogType={blogPost ? 'article' : 'website'}
+  publishedTime={blogPost?.date}
+  author={blogPost?.author}
+  tags={blogTags ?? undefined}
+  noIndex={isNonLiveTool || isLegalStub}
+  schemas={blogPost ? [articleSchema({ slug: blogPost.slug, title: blogTitle!, description: blogDesc!, date: blogPost.date, author: blogPost.author }), breadcrumbSchema([{ name: 'Home', href: `/${lang === 'en' ? '' : lang + '/'}` }, { name: _('nav.blog'), href: `/${lang === 'en' ? '' : lang + '/'}blog/` }, { name: blogTitle!, href: `/${lang === 'en' ? '' : lang + '/'}${slug}/` }])] : slug === 'image-tools' ? [softwareAppSchema(), breadcrumbSchema(imageToolsBreadcrumbs)] : isFaq ? [faqSchema(faqItems), breadcrumbSchema(faqBreadcrumbs)] : undefined}
 >
   <AppShell>
     {isFaq ? (
@@ -285,29 +372,41 @@ const faqItems = [
           <nav class="tabs" role="tablist" aria-label="Tool categories">
             {['all', 'compress', 'transform', 'convert', 'analyze'].map((cat) => (
               <button type="button" class="tab" role="tab" aria-selected={cat === 'all'} data-tab={cat}>
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                {_(`tabs.${cat}`)}
               </button>
             ))}
           </nav>
           <div class="tab-panel" data-panel="all">
             <div class="tools-grid">
-              {getAllTools(langCode).map((tool, i) => (
+              {getAllTools(compressTools, tools, getName, getDesc).map((tool, i) => (
                 <Reveal delay={i * 30}>
-                  <a href={tool.href} class:list={['tool-card', tool.status === 'Soon' && 'tool-card-coming']}>
-                    <Badge eyebrow={tool.status === 'Live' ? 'Free' : _('tools.soon')} tone={tool.status === 'Live' ? 'info' : 'warning'}>{tool.label}</Badge>
+                  <a href={tool.href} class:list={['tool-card', tool.status !== 'Live' && 'tool-card-coming']}>
+                    <Badge eyebrow={tool.status === 'Live' ? 'Free' : tool.status === 'Planned' ? _('nav.planned') : _('tools.soon')} tone={tool.status === 'Live' ? 'info' : 'warning'}>{tool.label}</Badge>
                     <p class="text-body-sm tool-desc">{tool.desc}</p>
                   </a>
                 </Reveal>
               ))}
             </div>
           </div>
-          {['compress', 'transform', 'convert', 'analyze'].map((cat) => (
+          <div class="tab-panel" data-panel="compress" hidden>
+            <div class="tools-grid">
+              {getCompressTools(compressTools).map((tool, i) => (
+                <Reveal delay={i * 30}>
+                  <a href={tool.href} class="tool-card">
+                    <Badge eyebrow="Free" tone="info">{tool.label}</Badge>
+                    <p class="text-body-sm tool-desc">{tool.desc}</p>
+                  </a>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+          {['transform', 'convert', 'analyze'].map((cat) => (
             <div class="tab-panel" data-panel={cat} hidden>
               <div class="tools-grid">
-                {getToolsByCategory(cat, langCode).map((tool, i) => (
+                {getToolsByCategory(cat, tools, getName, getDesc).map((tool, i) => (
                   <Reveal delay={i * 30}>
-                    <a href={tool.href} class:list={['tool-card', tool.status === 'Soon' && 'tool-card-coming']}>
-                      <Badge eyebrow={tool.status === 'Live' ? 'Free' : _('tools.soon')} tone={tool.status === 'Live' ? 'info' : 'warning'}>{tool.label}</Badge>
+                    <a href={tool.href} class:list={['tool-card', tool.status !== 'Live' && 'tool-card-coming']}>
+                      <Badge eyebrow={tool.status === 'Live' ? 'Free' : tool.status === 'Planned' ? _('nav.planned') : _('tools.soon')} tone={tool.status === 'Live' ? 'info' : 'warning'}>{tool.label}</Badge>
                       <p class="text-body-sm tool-desc">{tool.desc}</p>
                     </a>
                   </Reveal>
@@ -318,7 +417,18 @@ const faqItems = [
         </div>
       </section>
     ) : isLiveTool ? (
-      isCompressorPage ? <><CompressorTool lang={langCode} /><CompressorSeoContent variant={slug} lang={langCode} /></> : isRotatorPage ? <RotatorTool lang={langCode} /> : isConverterPage ? <><ConverterTool lang={langCode} /><ToolSeoContent toolId="converter" lang={langCode} /></> : isResizerPage ? <><ResizerTool lang={langCode} /><ToolSeoContent toolId="resizer" lang={langCode} /></> : null
+      isCompressorPage ? <><CompressorTool lang={langCode} /><CompressorSeoContent variant={slug} lang={langCode} /></> : isRotatorPage ? <><RotatorTool lang={langCode} /><ToolSeoContent toolId="rotator" lang={langCode} /></> : isConverterPage ? <><ConverterTool lang={langCode} /><ToolSeoContent toolId="converter" lang={langCode} /></> : isResizerPage ? <><ResizerTool lang={langCode} /><ToolSeoContent toolId="resizer" lang={langCode} /></> : isCropperPage ? <><CropperTool lang={langCode} /><ToolSeoContent toolId="cropper" lang={langCode} /></> : null
+    ) : isNonLiveTool ? (
+      <section class="band band-canvas">
+        <div class="container" style="padding-top: var(--space-5xl); max-width: 640px; text-align: center;">
+          <Badge eyebrow="ToolBox Image" tone="warning">{_('tools.soon')}</Badge>
+          <h1 class="text-display-lg" style="margin-bottom: var(--space-md);">{pageTitle(slug || '')}</h1>
+          <p class="text-body-lg" style="color: var(--color-body);">{_('page.other.available')}</p>
+          <div class="cta-actions" style="margin-top: var(--space-xl); display: flex; gap: var(--space-sm); justify-content: center;">
+            <Button label={_('page.other.cta')} href={`/${slug}`} variant="primary" size="lg" />
+          </div>
+        </div>
+      </section>
     ) : (
       <section class="band band-canvas">
         <div class="container" style="padding-top: var(--space-5xl); max-width: 640px; text-align: center;">

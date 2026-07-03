@@ -528,6 +528,7 @@ const dataMap: Record<string, VariantData> = {
     ],
   },
 };
+dataMap['image-compressor'] = { ...dataMap['compressor'], slug: 'image-compressor', breadcrumbs: [{ name: 'Home', href: `${base}` }, { name: 'Image Tools', href: `${base}image-tools/` }, { name: 'Image Compressor', href: `${base}image-compressor/` }] };
 
 const d = dataMap[variant];
 const appSchema = softwareAppSchema({
@@ -587,6 +588,7 @@ const path = `/${lang === 'en' ? '' : lang + '/'}${d.slug}/`;
         Need to convert images between formats? Try our <a href={`${base}tools/converter/`}>Image Converter</a>.
         To resize images for any platform, use the <a href={`${base}tools/resizer/`}>Image Resizer</a>.
         For rotation and flipping, check the <a href={`${base}tools/rotator/`}>Image Rotator</a>.
+        To crop images with preset aspect ratios, use the <a href={`${base}tools/cropper/`}>Image Cropper</a>.
       </p>
     </Prose>
 
@@ -619,6 +621,10 @@ const path = `/${lang === 'en' ? '' : lang + '/'}${d.slug}/`;
         <a href={`${base}tools/rotator/`} class="seo-related-card">
           <strong>Rotate Image</strong>
           <span>Rotate and flip images</span>
+        </a>
+        <a href={`${base}tools/cropper/`} class="seo-related-card">
+          <strong>Image Cropper</strong>
+          <span>Crop images with preset ratios</span>
         </a>
         <a href={`${base}bulk-image-compressor/`} class="seo-related-card">
           <strong>Bulk Compressor</strong>

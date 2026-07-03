@@ -6,6 +6,7 @@ import Breadcrumbs from '../components/shared/Breadcrumbs.astro';
 import Badge from '../components/ui/Badge.astro';
 import { breadcrumbSchema, softwareAppSchema } from '../lib/seo';
 import { tools } from '../lib/tools';
+import { getAllTools, getCompressTools, getToolsByCategory } from '../lib/tools-dir';
 
 const breadcrumbs = [
   { name: 'Home', href: '/' },
@@ -27,7 +28,14 @@ const compressTools: ToolEntry[] = [
   { href: '/compress-for-email/', label: 'Email Compressor', desc: 'Compress for email attachments.', status: 'Live' },
   { href: '/compress-for-whatsapp/', label: 'WhatsApp Compressor', desc: 'Optimize images for WhatsApp.', status: 'Live' },
   { href: '/compress-for-instagram/', label: 'Instagram Compressor', desc: 'Resize and compress for Instagram.', status: 'Live' },
-  { href: '/jpeg-vs-png-compression/', label: 'JPEG vs PNG', desc: 'Compare image formats.', status: 'Live' },
+  { href: '/compress-jpeg/', label: 'JPEG Compressor', desc: 'Reduce JPEG file size.', status: 'Live' },
+  { href: '/compress-png/', label: 'PNG Compressor', desc: 'Optimize PNG images.', status: 'Live' },
+  { href: '/compress-webp/', label: 'WebP Compressor', desc: 'Make WebP files smaller.', status: 'Live' },
+  { href: '/compress-avif/', label: 'AVIF Compressor', desc: 'Compress AVIF efficiently.', status: 'Live' },
+  { href: '/compress-gif/', label: 'GIF Compressor', desc: 'Reduce animated and static GIF file sizes.', status: 'Live' },
+  { href: '/compress-for-web/', label: 'Web Image Optimizer', desc: 'Optimize images for faster web performance.', status: 'Live' },
+  { href: '/compress-for-ecommerce/', label: 'Ecommerce Compressor', desc: 'Compress product images for faster page loads.', status: 'Live' },
+  { href: '/image-compressor/', label: 'Image Compressor', desc: 'Compress JPG, PNG, WebP, AVIF, and GIF in your browser.', status: 'Live' },
 ];
 
 const categoryLabels: Record<string, string> = {
@@ -38,31 +46,8 @@ const categoryLabels: Record<string, string> = {
 
 const categories = ['all', 'compress', ...new Set(tools.filter((t) => t.id !== 'compressor').map((t) => t.category))];
 
-function getAllTools() {
-  const dynamic = tools.filter((t) => t.id !== 'compressor').map((t) => ({
-    href: t.path,
-    label: t.name,
-    desc: t.description,
-    icon: t.icon,
-    status: t.status === 'live' ? 'Live' as const : 'Soon' as const,
-  }));
-  return [...compressTools, ...dynamic];
-}
-
-function getCompressTools() {
-  return compressTools;
-}
-
-function getToolsByCategory(cat: string): { href: string; label: string; desc: string; status: string }[] {
-  return tools
-    .filter((t) => t.id !== 'compressor' && t.category === cat)
-    .map((t) => ({
-      href: t.path,
-      label: t.name,
-      desc: t.description,
-      status: t.status === 'live' ? 'Live' : 'Soon',
-    }));
-}
+const getName = (id: string) => tools.find((t) => t.id === id)?.name ?? id;
+const getDesc = (id: string) => tools.find((t) => t.id === id)?.description ?? id;
 
 const tabLabels: Record<string, string> = {
   all: 'All',
@@ -119,14 +104,14 @@ const tabLabels: Record<string, string> = {
 
         <div class="tab-panel" data-panel="all">
           <div class="tools-grid">
-            {getAllTools().map((tool, i) => (
+            {getAllTools(compressTools, tools, getName, getDesc).map((tool, i) => (
               <Reveal delay={i * 30}>
                 <a
                   href={tool.href}
-                  class:list={['tool-card', tool.status === 'Soon' && 'tool-card-coming']}
+                  class:list={['tool-card', tool.status !== 'Live' && 'tool-card-coming']}
                 >
                   <Badge
-                    eyebrow={tool.status === 'Live' ? 'Free' : 'Soon'}
+                    eyebrow={tool.status === 'Live' ? 'Free' : tool.status === 'Planned' ? 'Planned' : 'Soon'}
                     tone={tool.status === 'Live' ? 'info' : 'warning'}
                   >
                     {tool.label}
@@ -140,7 +125,7 @@ const tabLabels: Record<string, string> = {
 
         <div class="tab-panel" data-panel="compress" hidden>
           <div class="tools-grid">
-            {getCompressTools().map((tool, i) => (
+            {getCompressTools(compressTools).map((tool, i) => (
               <Reveal delay={i * 30}>
                 <a href={tool.href} class="tool-card">
                   <Badge eyebrow="Free" tone="info">{tool.label}</Badge>
@@ -154,14 +139,14 @@ const tabLabels: Record<string, string> = {
         {['transform', 'convert', 'analyze'].map((cat) => (
           <div class="tab-panel" data-panel={cat} hidden>
             <div class="tools-grid">
-              {getToolsByCategory(cat).map((tool, i) => (
+              {getToolsByCategory(cat, tools, getName, getDesc).map((tool, i) => (
                 <Reveal delay={i * 30}>
                   <a
                     href={tool.href}
-                    class:list={['tool-card', tool.status === 'Soon' && 'tool-card-coming']}
+                    class:list={['tool-card', tool.status !== 'Live' && 'tool-card-coming']}
                   >
                     <Badge
-                      eyebrow={tool.status === 'Live' ? 'Free' : 'Soon'}
+                      eyebrow={tool.status === 'Live' ? 'Free' : tool.status === 'Planned' ? 'Planned' : 'Soon'}
                       tone={tool.status === 'Live' ? 'info' : 'warning'}
                     >
                       {tool.label}

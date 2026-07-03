@@ -10,6 +10,7 @@ import DropZone from '../shared/DropZone.astro';
 import BeforeAfter from '../shared/BeforeAfter.astro';
 import FAQ from '../shared/FAQ.astro';
 import { useTranslations, LANG_CODES, type LangCode } from '../../i18n';
+import { tools as toolRegistry } from '../../lib/tools';
 
 interface Props {
   lang?: LangCode;
@@ -28,11 +29,11 @@ const whyItems = [
 
 const features = [
   { title: isEn ? 'Drag & drop.' : p('step1.title'), body: isEn ? 'Drop a folder of 500 photos. We will handle the queue.' : p('step1.body'), icon: 'mouse' },
-  { title: isEn ? 'Paste from clipboard.' : 'क्लिपबोर्ड से पेस्ट करें.', body: isEn ? 'Screenshot, ⌘V, done. No intermediate file.' : 'Screenshot लें, ⌘V दबाएं, हो गया।', icon: 'clipboard' },
-  { title: isEn ? 'Batch processing.' : 'एकसाथ प्रोसेसिंग।', body: isEn ? 'Process hundreds of images in parallel on web workers.' : 'एक साथ सैकड़ों इमेज प्रोसेस करें।', icon: 'stack' },
-  { title: isEn ? 'Format conversion.' : 'फ़ॉर्मैट बदलें।', body: isEn ? 'JPG → WebP, PNG → AVIF — pick any source, any target.' : 'JPG → WebP, PNG → AVIF — कोई भी सोर्स, कोई भी टार्गेट।', icon: 'swap' },
-  { title: isEn ? 'Quality controls.' : 'क्वालिटी कंट्रोल।', body: isEn ? 'Fine-tune quality, target size, or visual parity per image.' : 'हर इमेज की क्वालिटी, साइज़ या विज़ुअल पैरिटी सेट करें।', icon: 'sliders' },
-  { title: isEn ? 'Side-by-side preview.' : 'साथ-साथ प्रीव्यू।', body: isEn ? 'Compare before and after at full resolution before you download.' : 'डाउनलोड करने से पहले फुल रिज़ॉल्यूशन में तुलना करें।', icon: 'compare' },
+  { title: isEn ? 'Paste from clipboard.' : p('home.features.pasteTitle'), body: isEn ? 'Screenshot, ⌘V, done. No intermediate file.' : p('home.features.pasteBody'), icon: 'clipboard' },
+  { title: isEn ? 'Batch processing.' : p('home.features.batchTitle'), body: isEn ? 'Process hundreds of images in parallel on web workers.' : p('home.features.batchBody'), icon: 'stack' },
+  { title: isEn ? 'Format conversion.' : p('home.features.formatTitle'), body: isEn ? 'JPG → WebP, PNG → AVIF — pick any source, any target.' : p('home.features.formatBody'), icon: 'swap' },
+  { title: isEn ? 'Quality controls.' : p('home.features.qualityTitle'), body: isEn ? 'Fine-tune quality, target size, or visual parity per image.' : p('home.features.qualityBody'), icon: 'sliders' },
+  { title: isEn ? 'Side-by-side preview.' : p('home.features.previewTitle'), body: isEn ? 'Compare before and after at full resolution before you download.' : p('home.features.previewBody'), icon: 'compare' },
 ];
 
 const steps = [
@@ -43,10 +44,10 @@ const steps = [
 ];
 
 const upcoming = [
-  { title: 'Image Cropper', body: isEn ? 'Drag-to-crop with safe-area guides for social platforms.' : 'सोशल प्लेटफ़ॉर्म के लिए क्रॉप गाइड।', status: 'Next' },
-  { title: 'Watermark', body: isEn ? 'Tile or corner watermarks with opacity, scale, and rotation controls.' : 'वॉटरमार्क जोड़ें — ओपैसिटी, स्केल और रोटेशन कंट्रोल।', status: 'Planned' },
-  { title: 'Background Remover', body: isEn ? 'One-click subject isolation. WebGPU-accelerated.' : 'एक क्लिक में बैकग्राउंड हटाएं।', status: 'Planned' },
-  { title: 'EXIF Cleaner', body: isEn ? 'Strip metadata before sharing — keep the pixels, lose the trail.' : 'शेयर करने से पहले मेटाडेटा हटाएं।', status: 'Planned' },
+  { title: 'Image Cropper', body: isEn ? 'Drag-to-crop with safe-area guides for social platforms.' : p('home.upcoming.cropper'), status: 'Next' },
+  { title: 'Watermark', body: isEn ? 'Tile or corner watermarks with opacity, scale, and rotation controls.' : p('home.upcoming.watermark'), status: 'Planned' },
+  { title: 'Background Remover', body: isEn ? 'One-click subject isolation. WebGPU-accelerated.' : p('home.upcoming.bgRemover'), status: 'Planned' },
+  { title: 'EXIF Cleaner', body: isEn ? 'Strip metadata before sharing — keep the pixels, lose the trail.' : p('home.upcoming.exifCleaner'), status: 'Planned' },
 ];
 
 const faqItems = [
@@ -58,29 +59,46 @@ const faqItems = [
   { q: p('faq.q6'), a: p('faq.a6') },
 ];
 
-const toolsGrid = [
-  { href: isEn ? '/compressor/' : `/${lang}/compressor/`, label: isEn ? 'Image Compressor' : p('tools.compressor'), desc: isEn ? 'Batch image compressor with adjustable quality. 100% secure & offline.' : p('tools.compressorDesc'), cat: 'Optimize', status: 'Live' },
-  { href: isEn ? '/bulk-image-compressor/' : `/${lang}/bulk-image-compressor/`, label: isEn ? 'Bulk Compressor' : p('tools.bulk'), desc: isEn ? 'Batch process up to 200 images in parallel.' : p('tools.bulkDesc'), cat: 'Optimize', status: 'Live' },
-  { href: isEn ? '/image-compressor-100kb/' : `/${lang}/image-compressor-100kb/`, label: isEn ? 'Compress to 100 KB' : p('tools.target'), desc: isEn ? 'Compress images to exactly 100 KB or less.' : p('tools.targetDesc'), cat: 'Optimize', status: 'Live' },
-  { href: isEn ? '/image-compressor-for-discord/' : `/${lang}/image-compressor-for-discord/`, label: isEn ? 'Discord Image Limit' : p('tools.discord'), desc: isEn ? 'Compress images to stay under Discord\'s 8 MB limit.' : p('tools.discordDesc'), cat: 'Optimize', status: 'Live' },
-  { href: isEn ? '/compress-for-email/' : `/${lang}/compress-for-email/`, label: isEn ? 'Email Image Size' : p('tools.email'), desc: isEn ? 'Shrink images for email attachments (under 25 MB).' : p('tools.emailDesc'), cat: 'Optimize', status: 'Live' },
-  { href: isEn ? '/tools/rotator/' : `/${lang}/tools/rotator/`, label: 'Rotate Image', desc: 'Rotate and flip images with precision controls.', cat: 'Edit', status: 'Live' },
-  { href: isEn ? '/tools/converter/' : `/${lang}/tools/converter/`, label: 'Format Converter', desc: 'Convert images between JPEG, PNG, WebP, AVIF & more.', cat: 'Convert', status: 'Live' },
-  { href: isEn ? '/tools/resizer/' : `/${lang}/tools/resizer/`, label: 'Image Resizer', desc: 'Resize images to exact dimensions or aspect ratios.', cat: 'Resize', status: 'Live' },
-  { href: isEn ? '/tools/cropper/' : `/${lang}/tools/cropper/`, label: 'Image Cropper', desc: 'Crop images with preset ratios or freeform selection.', cat: 'Resize', status: 'Soon' },
-  { href: isEn ? '/tools/flipper/' : `/${lang}/tools/flipper/`, label: 'Image Flipper', desc: 'Flip images horizontally, vertically, or both.', cat: 'Edit', status: 'Soon' },
-  { href: isEn ? '/tools/heic-converter/' : `/${lang}/tools/heic-converter/`, label: 'HEIC to JPEG', desc: 'Convert Apple HEIC/HEIF photos to JPEG or PNG.', cat: 'Convert', status: 'Soon' },
-  { href: isEn ? '/tools/background-remover/' : `/${lang}/tools/background-remover/`, label: 'Background Remover', desc: 'Remove image backgrounds automatically.', cat: 'Edit', status: 'Planned' },
-  { href: isEn ? '/tools/blur/' : `/${lang}/tools/blur/`, label: 'Blur Image', desc: 'Blur faces, license plates, or custom regions.', cat: 'Edit', status: 'Planned' },
+const toolCatFromId: Record<string, string> = {
+  converter: 'Convert', 'heic-converter': 'Convert',
+  resizer: 'Resize', cropper: 'Resize',
+  rotator: 'Edit', flipper: 'Edit', 'background-remover': 'Edit', blur: 'Edit', 'watermark-remover': 'Edit',
+  'format-viewer': 'Analyze', metadata: 'Analyze',
+};
+const toolKeyFromId: Record<string, string> = {
+  converter: 'tools.converter', resizer: 'tools.resizer', cropper: 'tools.cropper', rotator: 'tools.rotator',
+  flipper: 'tools.flipper', 'heic-converter': 'tools.heicConverter', 'background-remover': 'tools.backgroundRemover',
+  blur: 'tools.blur', 'format-viewer': 'tools.formatViewer', metadata: 'tools.metadata', 'watermark-remover': 'tools.watermarkRemover',
+};
+const toolDescFromId: Record<string, string> = {
+  converter: 'tools.converterDesc', resizer: 'tools.resizerDesc', cropper: 'tools.cropperDesc', rotator: 'tools.rotatorDesc',
+  flipper: 'tools.flipperDesc', 'heic-converter': 'tools.heicConverterDesc', 'background-remover': 'tools.backgroundRemoverDesc',
+  blur: 'tools.blurDesc', 'format-viewer': 'tools.formatViewerDesc', metadata: 'tools.metadataDesc', 'watermark-remover': 'tools.watermarkRemoverDesc',
+};
+
+const staticTools = [
+  { href: isEn ? '/compressor/' : `/${lang}/compressor/`, label: p('tools.compressor'), desc: p('tools.compressorDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/bulk-image-compressor/' : `/${lang}/bulk-image-compressor/`, label: p('tools.bulk'), desc: p('tools.bulkDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/image-compressor-100kb/' : `/${lang}/image-compressor-100kb/`, label: p('tools.target'), desc: p('tools.targetDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/image-compressor-for-discord/' : `/${lang}/image-compressor-for-discord/`, label: p('tools.discord'), desc: p('tools.discordDesc'), cat: 'Optimize', status: 'Live' },
+  { href: isEn ? '/compress-for-email/' : `/${lang}/compress-for-email/`, label: p('tools.email'), desc: p('tools.emailDesc'), cat: 'Optimize', status: 'Live' },
 ];
+const dynamicTools = toolRegistry.filter(t => t.id !== 'compressor').map(t => ({
+  href: `${isEn ? '' : '/' + lang}${t.path}`,
+  label: p(toolKeyFromId[t.id] || `tools.${t.id}`),
+  desc: p(toolDescFromId[t.id] || `${toolKeyFromId[t.id] || `tools.${t.id}`}Desc`),
+  cat: toolCatFromId[t.id] || 'Tools',
+  status: t.status === 'live' ? 'Live' as const : t.status === 'coming-soon' ? 'Soon' as const : 'Planned' as const,
+}));
+const toolsGrid = [...staticTools, ...dynamicTools];
 
 const pickerTools = [
-  { href: isEn ? '/compressor/' : `/${lang}/compressor/`, label: isEn ? 'Image Compressor' : p('tools.compressor'), desc: isEn ? 'Compress any format' : p('tools.compressorDesc'), icon: 'compress' },
-  { href: isEn ? '/tools/rotator/' : `/${lang}/tools/rotator/`, label: 'Rotate Image', desc: '90°, 180°, custom', icon: 'rotate' },
-  { href: isEn ? '/bulk-image-compressor/' : `/${lang}/bulk-image-compressor/`, label: isEn ? 'Bulk Compressor' : p('tools.bulk'), desc: 'Batch 200 files', icon: 'bulk' },
-  { href: isEn ? '/image-compressor-100kb/' : `/${lang}/image-compressor-100kb/`, label: isEn ? '100 KB Target' : p('tools.target'), desc: isEn ? 'Exact file size' : p('tools.targetDesc'), icon: 'target' },
-  { href: isEn ? '/image-compressor-for-discord/' : `/${lang}/image-compressor-for-discord/`, label: isEn ? 'Discord Limit' : p('tools.discord'), desc: 'Under 8 MB', icon: 'discord' },
-  { href: isEn ? '/compress-for-email/' : `/${lang}/compress-for-email/`, label: isEn ? 'Email Attachments' : p('tools.email'), desc: 'Under 25 MB', icon: 'email' },
+  { href: isEn ? '/compressor/' : `/${lang}/compressor/`, label: p('tools.compressor'), desc: p('tools.compressorDesc'), icon: 'compress' },
+  { href: isEn ? '/tools/rotator/' : `/${lang}/tools/rotator/`, label: p('tools.rotator'), desc: p('tools.rotatorDesc'), icon: 'rotate' },
+  { href: isEn ? '/bulk-image-compressor/' : `/${lang}/bulk-image-compressor/`, label: p('tools.bulk'), desc: p('tools.bulkDesc'), icon: 'bulk' },
+  { href: isEn ? '/image-compressor-100kb/' : `/${lang}/image-compressor-100kb/`, label: p('tools.target'), desc: p('tools.targetDesc'), icon: 'target' },
+  { href: isEn ? '/image-compressor-for-discord/' : `/${lang}/image-compressor-for-discord/`, label: p('tools.discord'), desc: p('tools.discordDesc'), icon: 'discord' },
+  { href: isEn ? '/compress-for-email/' : `/${lang}/compress-for-email/`, label: p('tools.email'), desc: p('tools.emailDesc'), icon: 'email' },
 ];
 
 const langInfo: Record<string, { label: string; flag: string }> = {
@@ -147,7 +165,7 @@ const langInfo: Record<string, { label: string; flag: string }> = {
         <svg class="hero-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
-        <input type="search" class="hero-search-input" data-tool-search placeholder={isEn ? 'Search tools…' : 'टूल्स खोजें…'} aria-label={isEn ? 'Search tools' : 'टूल्स खोजें'} />
+        <input type="search" class="hero-search-input" data-tool-search placeholder={isEn ? 'Search tools…' : p('home.search.placeholder')} aria-label={isEn ? 'Search tools' : p('home.search.placeholder')} />
       </div>
     </Reveal>
 
@@ -160,15 +178,15 @@ const langInfo: Record<string, { label: string; flag: string }> = {
 <!-- ============================================================
      TOOL PICKER OVERLAY
      ============================================================ -->
-<div class="tool-picker-overlay" data-tool-picker-overlay hidden role="dialog" aria-label={isEn ? 'Choose a tool' : 'टूल चुनें'} aria-modal="true">
+<div class="tool-picker-overlay" data-tool-picker-overlay hidden role="dialog" aria-label={isEn ? 'Choose a tool' : p('home.picker.heading')} aria-modal="true">
   <div class="tool-picker-backdrop" data-tool-picker-close></div>
   <div class="tool-picker stack stack-lg">
     <div class="tool-picker-heading">
       <p class="text-display-sm tool-picker-title">
-        {isEn ? 'Your image is ready — where should we go?' : 'आपकी इमेज तैयार है — कहाँ जाएँ?'}
+        {isEn ? 'Your image is ready — where should we go?' : p('home.picker.heading')}
       </p>
       <p class="text-body-sm tool-picker-sub">
-        {isEn ? 'Choose a tool to continue with your uploaded file.' : 'अपलोड की गई फ़ाइल के लिए एक टूल चुनें।'}
+        {isEn ? 'Choose a tool to continue with your uploaded file.' : p('home.picker.subtext')}
       </p>
     </div>
     <div class="tool-picker-grid">
@@ -188,7 +206,7 @@ const langInfo: Record<string, { label: string; flag: string }> = {
       ))}
     </div>
     <button type="button" class="tool-picker-cancel" data-tool-picker-close>
-      {isEn ? 'Cancel — remove files' : 'रद्द करें — फ़ाइलें हटाएँ'}
+      {isEn ? 'Cancel — remove files' : p('home.picker.cancel')}
     </button>
   </div>
 </div>
@@ -236,12 +254,12 @@ const langInfo: Record<string, { label: string; flag: string }> = {
     <Reveal>
       <div class="home-tools-header">
         <Badge eyebrow="Toolbox" tone="info">{isEn ? 'All tools' : p('tools.title')}</Badge>
-        <a href={isEn ? '/image-tools/' : `/${lang}/image-tools/`} class="home-tools-link">{isEn ? 'View all →' : 'सब देखें →'}</a>
+        <a href={isEn ? '/image-tools/' : `/${lang}/image-tools/`} class="home-tools-link">{isEn ? 'View all →' : p('home.tools.viewAll')}</a>
       </div>
     </Reveal>
 
     <Reveal delay={10}>
-      <nav class="tools-tabs" role="tablist" aria-label={isEn ? 'Tool categories' : 'टूल कैटेगरी'}>
+      <nav class="tools-tabs" role="tablist" aria-label={isEn ? 'Tool categories' : p('home.search.placeholder')}>
         {['All', 'Optimize', 'Convert', 'Resize', 'Edit'].map((tab, i) => (
           <button
             type="button"
@@ -266,7 +284,7 @@ const langInfo: Record<string, { label: string; flag: string }> = {
           <p class="text-body-sm-strong tool-card-label">{tool.label}</p>
           <p class="text-caption tool-card-desc">{tool.desc}</p>
           <span class="tool-card-status">
-            {tool.status === 'Live' ? 'Free' : tool.status === 'Soon' ? (isEn ? 'Coming soon' : 'जल्द आ रहा है') : (isEn ? 'Planned' : 'आने वाला है')}
+            {tool.status === 'Live' ? 'Free' : tool.status === 'Soon' ? (isEn ? 'Coming soon' : p('home.tools.comingSoon')) : (isEn ? 'Planned' : p('home.tools.planned'))}
           </span>
         </a>
       ))}
@@ -274,10 +292,10 @@ const langInfo: Record<string, { label: string; flag: string }> = {
 
     <div class="tools-pagination" data-tools-pagination>
       <span class="tools-pagination-count text-caption" data-tools-count></span>
-      <nav class="tools-pagination-nav" aria-label={isEn ? 'Tool pages' : 'टूल पेज'}>
-        <button type="button" class="tools-page-btn" data-page-prev disabled>{isEn ? 'Previous' : 'पिछला'}</button>
+      <nav class="tools-pagination-nav" aria-label={isEn ? 'Tool pages' : 'Tool pages'}>
+        <button type="button" class="tools-page-btn" data-page-prev disabled>{isEn ? 'Previous' : p('home.tools.prev')}</button>
         <div class="tools-page-numbers" data-page-numbers></div>
-        <button type="button" class="tools-page-btn" data-page-next disabled>{isEn ? 'Next' : 'अगला'}</button>
+        <button type="button" class="tools-page-btn" data-page-next disabled>{isEn ? 'Next' : p('home.tools.next')}</button>
       </nav>
     </div>
   </div>
@@ -425,9 +443,9 @@ const langInfo: Record<string, { label: string; flag: string }> = {
 <section class="band band-canvas" id="features">
   <div class="container stack stack-3xl">
     <SectionHeader eyebrow="Features" leadMaxWidth="600px">
-      <h2 class="text-display-lg">{isEn ? "Everything you need. Nothing you don't." : 'सब कुछ जो चाहिए। कुछ नहीं जो नहीं चाहिए।'}</h2>
+      <h2 class="text-display-lg">{isEn ? "Everything you need. Nothing you don't." : p('home.features.title')}</h2>
       <p class="lead">
-        {isEn ? 'A focused toolkit that does the boring stuff brilliantly and gets out of your way.' : 'एक फोकस्ड टूलकिट जो ज़रूरी काम बढ़िया करती है और रास्ते से हट जाती है।'}
+        {isEn ? 'A focused toolkit that does the boring stuff brilliantly and gets out of your way.' : p('home.features.lead')}
       </p>
     </SectionHeader>
 
@@ -532,24 +550,24 @@ const langInfo: Record<string, { label: string; flag: string }> = {
   <div class="container ba-grid">
     <Reveal class="ba-copy">
       <p class="text-caption-mono" style="color:var(--color-mute);text-transform:uppercase;letter-spacing:0.06em;">
-        {isEn ? 'See it' : 'देखें'}
+        {isEn ? 'See it' : p('home.compare.seeIt')}
       </p>
-      <h2 class="text-display-lg">{isEn ? 'Drag the divider.' : 'डिवाइडर खींचें।'}</h2>
+      <h2 class="text-display-lg">{isEn ? 'Drag the divider.' : p('home.compare.dragDivider')}</h2>
       <p class="text-body-lg" style="color:var(--color-body);max-width:480px;">
-        {isEn ? '1.8 MB down to 312 KB. Visually identical at normal viewing distances. The Compressor picks the right codec per image — JPEG, WebP, or AVIF — to maximize quality at your target size.' : '1.8 MB से 312 KB तक। आम देखने की दूरी पर बिल्कुल एक जैसा दिखता है। कंप्रेसर हर इमेज के लिए सही कोडेक चुनता है — JPEG, WebP, या AVIF।'}
+        {isEn ? '1.8 MB down to 312 KB. Visually identical at normal viewing distances. The Compressor picks the right codec per image — JPEG, WebP, or AVIF — to maximize quality at your target size.' : p('home.compare.body')}
       </p>
       <ul class="ba-stats" role="list">
         <li class="ba-stat">
           <span class="text-display-md ba-stat-value">−82%</span>
-          <span class="text-caption ba-stat-label">{isEn ? 'Avg. file size' : 'औसत साइज़'}</span>
+          <span class="text-caption ba-stat-label">{isEn ? 'Avg. file size' : p('home.compare.avgSize')}</span>
         </li>
         <li class="ba-stat">
           <span class="text-display-md ba-stat-value">&lt;1s</span>
-          <span class="text-caption ba-stat-label">{isEn ? 'Per image' : 'प्रति इमेज'}</span>
+          <span class="text-caption ba-stat-label">{isEn ? 'Per image' : p('home.compare.perImage')}</span>
         </li>
         <li class="ba-stat">
           <span class="text-display-md ba-stat-value">6</span>
-          <span class="text-caption ba-stat-label">{isEn ? 'Formats' : 'फ़ॉर्मैट'}</span>
+          <span class="text-caption ba-stat-label">{isEn ? 'Formats' : p('home.compare.formats')}</span>
         </li>
       </ul>
     </Reveal>
@@ -566,7 +584,7 @@ const langInfo: Record<string, { label: string; flag: string }> = {
           <polyline points="15 18 9 12 15 6"/>
           <polyline points="9 18 3 12 9 6" transform="translate(9 0)"/>
         </svg>
-        {isEn ? 'Drag · or use ← →' : 'खींचें · या ← → दबाएं'}
+        {isEn ? 'Drag · or use ← →' : p('home.compare.dragHint')}
       </p>
     </Reveal>
   </div>
@@ -577,10 +595,10 @@ const langInfo: Record<string, { label: string; flag: string }> = {
      ============================================================ -->
 <section class="band band-soft">
   <div class="container stack stack-3xl">
-    <SectionHeader eyebrow={isEn ? 'Coming next' : 'आगे क्या'} leadMaxWidth="600px">
-      <h2 class="text-display-lg">{isEn ? 'One toolkit. Many tools.' : 'एक टूलकिट। कई टूल्स।'}</h2>
+    <SectionHeader eyebrow={isEn ? 'Coming next' : p('home.comingNext.eyebrow')} leadMaxWidth="600px">
+      <h2 class="text-display-lg">{isEn ? 'One toolkit. Many tools.' : p('home.comingNext.title')}</h2>
       <p class="lead">
-        {isEn ? 'Image Compressor is the first of many. Every tool follows the same rules: privacy-first, browser-native, no sign-up.' : 'इमेज कंप्रेसर पहला टूल है और आने वाले और भी हैं। हर टूल एक ही नियम पर चलता है: प्राइवेसी पहले, ब्राउज़र में, कोई साइन-अप नहीं।'}
+        {isEn ? 'Image Compressor is the first of many. Every tool follows the same rules: privacy-first, browser-native, no sign-up.' : p('home.comingNext.body')}
       </p>
     </SectionHeader>
 

@@ -40,6 +40,7 @@ const schemas = tool.status === 'live'
 <Layout
   title={`${tool.name} — ToolBox Image`}
   description={tool.longDescription ?? tool.description}
+  ogImage={`/og-${tool.id}.png`}
   noIndex={tool.status !== 'live'}
   lang={lang}
   {schemas}

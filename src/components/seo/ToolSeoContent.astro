@@ -15,7 +15,7 @@ import {
 import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
-  toolId: 'converter' | 'resizer' | 'rotator';
+  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper';
   lang?: string;
 }
 
@@ -25,9 +25,10 @@ const _ = useTranslations(lang as LangCode);
 const isConverter = toolId === 'converter';
 const isResizer = toolId === 'resizer';
 const isRotator = toolId === 'rotator';
+const isCropper = toolId === 'cropper';
 
-const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : 'Rotate Image';
-const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : 'tools/rotator';
+const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : 'Image Cropper';
+const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : 'tools/cropper';
 const toolPath = `/${lang === 'en' ? '' : lang + '/'}${toolSlug}/`;
 
 const breadcrumbItems = [
@@ -42,11 +43,25 @@ const appSchema = softwareAppSchema({
     ? 'Free online image converter — convert PNG, JPG, WebP, and AVIF images instantly in your browser. No uploads, no sign-up, unlimited.'
     : isResizer
     ? 'Free online image resizer — resize images for social media, web, and print. Social media presets, multiple resize modes, no uploads.'
-    : 'Free online image rotator — rotate and flip images in your browser. 90° CW/CCW, 180°, custom angles, horizontal and vertical flip. No uploads.',
+    : isRotator
+    ? 'Free online image rotator — rotate and flip images in your browser. 90° CW/CCW, 180°, custom angles, horizontal and vertical flip. No uploads.'
+    : 'Free online image cropper — crop images with preset aspect ratios or freeform selection. Square, 4:5, 16:9, and custom crops. No uploads.',
   url: `${SITE_URL}${toolSlug}`,
 });
 
-const howTo = isConverter
+const howTo = isCropper
+  ? {
+      name: 'How to Crop an Image Online',
+      description: 'A step-by-step guide to cropping images using ToolBox Image Cropper.',
+      steps: [
+        { name: 'Upload your image', text: 'Click the upload area or drag and drop an image file. Supports JPG, PNG, WebP, and AVIF.' },
+        { name: 'Choose aspect ratio', text: 'Select a preset aspect ratio — Free, 1:1 Square, 4:5 Portrait, 16:9 Landscape, 3:2, or 4:3 — for the crop area.' },
+        { name: 'Adjust crop area', text: 'Drag the crop window to reposition it. Drag the corner and edge handles to resize it. Use arrow keys for pixel-precise positioning.' },
+        { name: 'Apply crop', text: 'Click the Apply Crop button to crop your image. The result preview shows the exact output dimensions.' },
+        { name: 'Download', text: 'Choose your output format and click download to save your cropped image. All processing stays on your device.' },
+      ],
+    }
+  : isConverter
   ? {
       name: 'How to Convert an Image Online',
       description: 'A step-by-step guide to converting images using ToolBox Image Converter.',
@@ -97,6 +112,16 @@ const faqItems = isConverter
       { q: _('resizer.faq.q3'), a: _('resizer.faq.a3') },
       { q: _('resizer.faq.q4'), a: _('resizer.faq.a4') },
       { q: _('resizer.faq.q5'), a: _('resizer.faq.a5') },
+    ]
+  : isCropper
+  ? [
+      { q: _('cropper.faq.q1'), a: _('cropper.faq.a1') },
+      { q: _('cropper.faq.q2'), a: _('cropper.faq.a2') },
+      { q: _('cropper.faq.q3'), a: _('cropper.faq.a3') },
+      { q: _('cropper.faq.q4'), a: _('cropper.faq.a4') },
+      { q: _('cropper.faq.q5'), a: _('cropper.faq.a5') },
+      { q: _('cropper.faq.q6'), a: _('cropper.faq.a6') },
+      { q: _('cropper.faq.q7'), a: _('cropper.faq.a7') },
     ]
   : [
       { q: _('rotator.faq.q1'), a: _('rotator.faq.a1') },
@@ -302,11 +327,73 @@ const howToLd = howToSchema(howTo.steps);
           <li><strong>Resize for email signatures:</strong> Scale down large images to fit email signature requirements (typically 300-600 pixels wide).</li>
         </ul>
       </>}
+
+      {isCropper && <>
+        <h2>Free Online Image Cropper — Crop Images with Aspect Ratio Presets</h2>
+        <p>
+          ToolBox Image Cropper is a fast, private browser-based tool for cropping images to any
+          aspect ratio or dimension. Whether you need to <strong>crop images online</strong> for
+          Instagram, create YouTube thumbnails, or remove unwanted edges from a photograph, this
+          free online image cropper handles it instantly — with no uploads, no sign-up, and no
+          file size limits.
+        </p>
+        <p>
+          All image processing happens locally on your device using the HTML5 Canvas API. Your
+          images never leave your computer, making ToolBox Image Cropper one of the most private
+          image cropping tools online. Whether you choose a preset ratio or freeform selection,
+          every crop is executed losslessly on the selected region.
+        </p>
+
+        <h3>Aspect Ratio Presets</h3>
+        <p>
+          Save time with built-in aspect ratio presets for every common use case. No need to
+          calculate dimensions manually — just pick your ratio and adjust the crop area:
+        </p>
+        <ul>
+          <li><strong>1:1 (Square):</strong> Perfect for Instagram posts, profile pictures, app icons, and product thumbnails. The most versatile crop ratio.</li>
+          <li><strong>4:5 (Portrait):</strong> The dominant Instagram feed format. Creates tall images that take up more screen space and drive engagement.</li>
+          <li><strong>16:9 (Landscape):</strong> Standard widescreen ratio for YouTube thumbnails, video content, presentations, and website hero images.</li>
+          <li><strong>3:2:</strong> The classic 35mm film ratio. Ideal for print photography and DSLR-style compositions.</li>
+          <li><strong>4:3:</strong> Standard ratio used by most smartphone cameras and older displays. Common for iPad screenshots.</li>
+          <li><strong>Freeform:</strong> No aspect ratio constraint. Perfect for removing borders, custom cropping, or unique layout requirements.</li>
+        </ul>
+
+        <h3>Why Use ToolBox Image Cropper?</h3>
+        <p>
+          Most online image cropping tools upload your files to a server, compromising your privacy.
+          ToolBox Image Cropper is different:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All cropping happens in your browser using the Canvas API.</li>
+          <li><strong>No File Size Limits:</strong> Crop images of any size — the only limit is your device's available memory.</li>
+          <li><strong>Pixel-Precise Controls:</strong> Drag crop handles, use arrow keys for nudge, or snap to edges for full-image selection.</li>
+          <li><strong>Multiple Output Formats:</strong> Save cropped images as JPEG, PNG, or WebP with adjustable quality.</li>
+          <li><strong>Free Forever:</strong> No sign-up, no paywall, no credit card. Unlimited crops.</li>
+        </ul>
+
+        <h3>How to Crop Images Online</h3>
+        <p>Cropping images with ToolBox Image is quick and easy:</p>
+        <ol>
+          <li><strong>Upload</strong> — Click the upload area or drag and drop an image file onto the page.</li>
+          <li><strong>Choose Aspect Ratio</strong> — Select from the preset buttons (1:1, 4:5, 16:9, 3:2, 4:3) or choose Freeform for unrestricted cropping.</li>
+          <li><strong>Adjust the Crop Area</strong> — Drag the edges or corners of the crop box to fine-tune your selection. Use arrow keys for pixel-level precision.</li>
+          <li><strong>Apply the Crop</strong> — Click "Apply Crop" to preview the result alongside the original for comparison.</li>
+          <li><strong>Download</strong> — Choose your output format and click download to save your cropped image.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Crop images for Instagram:</strong> Use the 1:1 preset for square posts or the 4:5 preset for portrait-format feed images that maximise screen space.</li>
+          <li><strong>Crop images for YouTube thumbnails:</strong> The 16:9 preset creates perfectly proportioned thumbnails at the standard 1280×720 resolution.</li>
+          <li><strong>Crop profile pictures:</strong> Use the 1:1 square preset to create consistent profile photos for LinkedIn, Twitter, Facebook, and other platforms.</li>
+          <li><strong>Crop product photos for e-commerce:</strong> Standardise product images to uniform aspect ratios for a professional store appearance.</li>
+        </ul>
+      </>}
     </Prose>
 
     <!-- FAQ -->
     <section class="seo-faq">
-      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : 'Rotate Image'}>
+      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : 'Rotate Image'}>
         <h2 class="text-display-lg">Frequently Asked Questions</h2>
       </SectionHeader>
       <FAQ items={faqItems} />
@@ -331,6 +418,10 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Rotate Image</strong>
             <span>Rotate and flip images</span>
           </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/cropper/`} class="seo-related-card">
+            <strong>Image Cropper</strong>
+            <span>Crop images with preset ratios</span>
+          </a>
         </> : isResizer ? <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
             <strong>Image Compressor</strong>
@@ -339,6 +430,27 @@ const howToLd = howToSchema(howTo.steps);
           <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
             <strong>Image Converter</strong>
             <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/rotator/`} class="seo-related-card">
+            <strong>Rotate Image</strong>
+            <span>Rotate and flip images</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/cropper/`} class="seo-related-card">
+            <strong>Image Cropper</strong>
+            <span>Crop images with preset ratios</span>
+          </a>
+        </> : isCropper ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
           </a>
           <a href={`/${lang === 'en' ? '' : lang + '/'}tools/rotator/`} class="seo-related-card">
             <strong>Rotate Image</strong>
@@ -356,6 +468,10 @@ const howToLd = howToSchema(howTo.steps);
           <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
             <strong>Image Resizer</strong>
             <span>Resize images for any platform</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/cropper/`} class="seo-related-card">
+            <strong>Image Cropper</strong>
+            <span>Crop images with preset ratios</span>
           </a>
         </>}
       </div>
@@ -389,7 +505,7 @@ const howToLd = howToSchema(howTo.steps);
   .seo-related { display: flex; flex-direction: column; gap: var(--space-lg); }
   .seo-related-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--space-md);
   }
   .seo-related-card {

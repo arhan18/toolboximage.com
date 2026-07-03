@@ -254,6 +254,17 @@ export const posts: BlogPost[] = [
     tags: ['social-media', 'resizer', 'instagram', 'facebook', 'image-dimensions', 'linkedin', 'youtube'],
     readMinutes: 6,
   },
+  {
+    slug: 'crop-image-online',
+    title: 'How to Crop Images Online — The Complete Guide to Free Image Cropping',
+    description:
+      'Learn how to crop images online for free with our browser-based image cropper. Square, 16:9, 4:5, and custom aspect ratios — all processed locally in your browser.',
+    date: '2026-07-14',
+    author: 'ToolBox Image team',
+    category: 'guides',
+    tags: ['crop-image', 'image-cropper', 'aspect-ratio', 'photo-editing', 'social-media', 'privacy'],
+    readMinutes: 5,
+  },
 ];
 
 export function getPost(slug: string): BlogPost | undefined {

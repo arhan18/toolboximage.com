@@ -8,6 +8,7 @@ import ToolFooter from '../../components/tools/ToolFooter.astro';
 import RotatorTool from '../../components/tools/RotatorTool.astro';
 import ConverterTool from '../../components/tools/ConverterTool.astro';
 import ResizerTool from '../../components/tools/ResizerTool.astro';
+import CropperTool from '../../components/tools/CropperTool.astro';
 import ToolSeoContent from '../../components/seo/ToolSeoContent.astro';
 import { tools, getTool } from '../../lib/tools';
 import type { ToolId } from '../../types';
@@ -75,6 +76,8 @@ if (!tool) {
           <><ConverterTool /><ToolSeoContent toolId="converter" lang="en" /></>
         ) : tool.id === 'resizer' ? (
           <><ResizerTool /><ToolSeoContent toolId="resizer" lang="en" /></>
+        ) : tool.id === 'cropper' ? (
+          <><CropperTool /><ToolSeoContent toolId="cropper" lang="en" /></>
         ) : (
           <>
             <ToolUpload {tool} />

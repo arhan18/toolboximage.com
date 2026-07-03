@@ -138,6 +138,30 @@ const plannedLinks = tools
                 >
                   {_('nav.discordCompressor')}
                 </a>
+                <a
+                  href={langPath(lang, '/compress-for-email/')}
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/compress-for-email/') }]}
+                  aria-current={isActive('/compress-for-email/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  {_('nav.emailCompressor')}
+                </a>
+                <a
+                  href={langPath(lang, '/compress-for-whatsapp/')}
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/compress-for-whatsapp/') }]}
+                  aria-current={isActive('/compress-for-whatsapp/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  {_('nav.whatsappCompressor')}
+                </a>
+                <a
+                  href={langPath(lang, '/compress-for-instagram/')}
+                  class:list={['dropdown-link text-body-sm', { active: isActive('/compress-for-instagram/') }]}
+                  aria-current={isActive('/compress-for-instagram/') ? 'page' : undefined}
+                  data-astro-prefetch="hover"
+                >
+                  {_('nav.instagramCompressor')}
+                </a>
               </div>
             </div>
 

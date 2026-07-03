@@ -1801,4 +1801,538 @@ export const blogTranslations: Record<string, BlogTranslation> = {
 <p>All processing happens in your browser. Your images never leave your device, making this the most private way to resize images for social media.</p>`,
     },
   ),
+  'crop-image-online': t(
+    {
+      en: 'How to Crop Images Online — The Complete Guide to Free Image Cropping',
+      es: 'Cómo recortar imágenes en línea — La guía completa para recortar imágenes gratis',
+      fr: 'Comment recadrer des images en ligne — Le guide complet du recadrage d\'images gratuit',
+      de: 'Bilder online zuschneiden — Der vollständige Leitfaden zum kostenlosen Bildzuschnitt',
+      it: 'Come ritagliare immagini online — La guida completa al ritaglio gratuito di immagini',
+      pt: 'Como cortar imagens online — O guia completo para cortar imagens grátis',
+      ru: 'Как обрезать изображения онлайн — Полное руководство по бесплатной обрезке изображений',
+      zh: '在线裁剪图片 — 免费图片裁剪完整指南',
+      ja: '画像をオンラインで切り抜く方法 — 無料画像クロップ完全ガイド',
+      ko: '온라인에서 이미지 자르기 — 무료 이미지 크롭 완벽 가이드',
+      ar: 'كيفية قص الصور عبر الإنترنت — الدليل الكامل لقص الصور مجاناً',
+      hi: 'ऑनलाइन इमेज क्रॉप करने का पूरा गाइड — मुफ़्त इमेज क्रॉपिंग',
+      tr: 'Çevrimiçi Görüntü Kırpma — Ücretsiz Görüntü Kırpma için Eksiksiz Kılavuz',
+    },
+    {
+      en: 'Learn how to crop images online for free with our browser-based image cropper. Square, 16:9, 4:5, and custom aspect ratios — all processed locally in your browser.',
+      es: 'Aprende a recortar imágenes en línea gratis con nuestro recortador de imágenes. Cuadrado, 16:9, 4:5 y relaciones de aspecto personalizadas, todo procesado localmente en tu navegador.',
+      fr: 'Apprenez à recadrer des images en ligne gratuitement. Carré, 16:9, 4:5 et rapports d\'aspect personnalisés, le tout traité localement dans votre navigateur.',
+      de: 'Erfahren Sie, wie Sie Bilder online kostenlos zuschneiden können. Quadratisch, 16:9, 4:5 und benutzerdefinierte Seitenverhältnisse — alles lokal in Ihrem Browser verarbeitet.',
+      it: 'Impara a ritagliare immagini online gratuitamente. Quadrato, 16:9, 4:5 e rapporti d\'aspetto personalizzati — tutto elaborato localmente nel tuo browser.',
+      pt: 'Aprenda a cortar imagens online gratuitamente. Quadrado, 16:9, 4:5 e relações de aspecto personalizadas — tudo processado localmente no seu navegador.',
+      ru: 'Научитесь бесплатно обрезать изображения онлайн. Квадрат, 16:9, 4:5 и пользовательские пропорции — всё обрабатывается локально в вашем браузере.',
+      zh: '了解如何使用基于浏览器的图片裁剪工具免费在线裁剪图片。方形、16:9、4:5 和自定义宽高比。',
+      ja: 'ブラウザベースの画像クロップツールを使って、オンラインで無料で画像を切り抜く方法を学びましょう。',
+      ko: '브라우저 기반 이미지 크롭 도구로 온라인에서 무료로 이미지를 자르는 방법을 알아보세요.',
+      ar: 'تعلم كيفية قص الصور عبر الإنترنت مجاناً باستخدام أداة قص الصور المبنية على المتصفح.',
+      hi: 'हमारे ब्राउज़र-आधारित इमेज क्रॉपर से ऑनलाइन मुफ़्त में इमेज क्रॉप करना सीखें।',
+      tr: 'Tarayıcı tabanlı görüntü kırpma aracımızla çevrimiçi olarak ücretsiz görüntü kırpmayı öğrenin.',
+    },
+    {
+      en: ['crop-image', 'image-cropper', 'aspect-ratio', 'photo-editing', 'social-media', 'privacy'],
+      es: ['recortar-imagen', 'recortador-imagenes', 'relacion-aspecto', 'edicion-fotos', 'redes-sociales', 'privacidad'],
+      fr: ['recadrer-image', 'recadreur-images', 'rapport-aspect', 'retouche-photo', 'reseaux-sociaux', 'confidentialite'],
+      de: ['bild-zuschneiden', 'bildzuschneider', 'seitenverhaltnis', 'fotobearbeitung', 'soziale-medien', 'datenschutz'],
+      it: ['ritagliare-immagine', 'ritaglio-immagini', 'rapporto-aspetto', 'fotoritocco', 'social-media', 'privacy'],
+      pt: ['cortar-imagem', 'cortador-imagens', 'relacao-aspecto', 'edicao-fotos', 'redes-sociais', 'privacidade'],
+      ru: ['обрезать-изображение', 'обрезчик-изображений', 'соотношение-сторон', 'редактирование-фото', 'социальные-сети', 'конфиденциальность'],
+      zh: ['裁剪图片', '图片裁剪', '宽高比', '照片编辑', '社交媒体', '隐私'],
+      ja: ['画像-切り抜き', '画像クロップ', 'アスペクト比', '写真編集', 'ソーシャルメディア', 'プライバシー'],
+      ko: ['이미지-자르기', '이미지-크롭', '종횡비', '사진-편집', '소셜-미디어', '개인정보'],
+      ar: ['قص-الصورة', 'أداة-قص-الصور', 'نسبة-العرض-إلى-الارتفاع', 'تحرير-الصور', 'وسائل-التواصل-الاجتماعي', 'الخصوصية'],
+      hi: ['इमेज-क्रॉप', 'इमेज-क्रॉपर', 'आस्पेक्ट-रेशियो', 'फ़ोटो-एडिटिंग', 'सोशल-मीडिया', 'प्राइवेसी'],
+      tr: ['görüntü-kırpma', 'görüntü-kırpıcı', 'en-boy-oranı', 'fotoğraf-düzenleme', 'sosyal-medya', 'gizlilik'],
+    },
+    {
+      en: `<p>Cropping an image is one of the most common photo edits, whether you are preparing a profile picture, formatting a social media post, or removing unwanted edges from a photograph. An <strong>image cropper</strong> lets you select a rectangular area of your photo and discard everything outside it, reframing the composition without distorting the pixels. Knowing how to <strong>crop images online</strong> efficiently saves time and gives you professional-looking results without needing desktop software.</p>
+<p>With ToolBox Image, you can <strong>crop images online for free</strong> — directly in your browser. No uploads, no sign-ups, no server processing. Your images stay entirely on your device. Whether you need a 1:1 square for Instagram, a 16:9 widescreen for YouTube thumbnails, or a freeform crop, our <a href="/tools/cropper/">Image Cropper</a> handles it all in seconds. This makes it one of the most private and fast ways to <strong>crop a photo online</strong>.</p>
+
+<h2>Why Use a Browser-Based Image Cropper?</h2>
+<p>Most online image cropping tools require uploading your photo to a remote server. A browser-based <strong>free image cropper</strong> changes everything:</p>
+<ul>
+<li><strong>Privacy first:</strong> Your images are never uploaded anywhere. The entire cropping process runs locally using the Canvas API.</li>
+<li><strong>No file size limits:</strong> Since nothing is transferred over the network, there is no cap on how large your images can be.</li>
+<li><strong>Instant processing:</strong> Cropping happens immediately because there is no network latency.</li>
+<li><strong>Zero cost:</strong> No subscriptions, no credits, no hidden limits. Completely free.</li>
+</ul>
+
+<h2>Common Aspect Ratios and When to Use Them</h2>
+<p>Aspect ratio is the proportional relationship between width and height. Choosing the right ratio helps you <strong>crop image</strong> content to look professional on every platform:</p>
+<ul>
+<li><strong>1:1 (Square):</strong> The classic Instagram square. Also used for profile pictures and e-commerce product images. Use our <strong>image cropper</strong> with the 1:1 preset for perfect squares.</li>
+<li><strong>4:5 (Portrait):</strong> The most popular Instagram feed format in 2026. Taller than square, it drives higher engagement.</li>
+<li><strong>16:9 (Widescreen):</strong> Standard for YouTube thumbnails, video content, presentations, and website hero images.</li>
+<li><strong>3:2 (Classic Photo):</strong> The traditional 35mm film ratio. Great for print photography.</li>
+<li><strong>4:3 (Standard):</strong> Used by most smartphone cameras. Common for standard digital photography.</li>
+<li><strong>Freeform:</strong> No fixed ratio — ideal for custom dimensions.</li>
+</ul>
+<p>If you need to <strong>crop image to specific aspect ratio</strong>, our tool includes all these presets. You can also switch between JPEG, PNG, and WebP output formats.</p>
+
+<h2>How to Crop an Image with ToolBox Image</h2>
+<p>Learning <strong>how to crop an image online</strong> with ToolBox Image is straightforward:</p>
+<ol>
+<li><strong>Upload your image:</strong> Drag and drop or click to select a JPEG, PNG, WebP, or AVIF image.</li>
+<li><strong>Choose an aspect ratio:</strong> Select from preset buttons (1:1, 4:5, 16:9, 3:2, 4:3) or Freeform.</li>
+<li><strong>Adjust the crop area:</strong> Drag the edges or corners of the crop box to fine-tune. Use arrow keys for pixel-level nudge.</li>
+<li><strong>Apply the crop:</strong> Click "Apply Crop" to preview the result alongside the original.</li>
+<li><strong>Choose output format:</strong> Select JPEG, PNG, or WebP.</li>
+<li><strong>Download:</strong> Click "Download Cropped" to save instantly.</li>
+</ol>
+
+<h2>Tips for Better Image Cropping</h2>
+<p>Getting a great crop is about more than just the aspect ratio. Here are techniques to <strong>crop photo</strong> content like a professional:</p>
+<ul>
+<li><strong>Follow the rule of thirds:</strong> Place your subject off-centre, aligning with the imaginary lines that divide the frame into thirds.</li>
+<li><strong>Keep the subject's eye line:</strong> In portraits, keep the subject's eyes in the upper third of the frame.</li>
+<li><strong>Leave breathing room:</strong> Do not crop too tightly. A little extra space makes the image feel less cramped.</li>
+<li><strong>Be consistent across a set:</strong> Use the same aspect ratio for all images in a gallery.</li>
+<li><strong>Crop before resizing:</strong> Always crop first, then resize to avoid quality loss.</li>
+</ul>
+
+<h2>Frequently Asked Questions</h2>
+<p><strong>Is it free to crop images online?</strong> Yes, ToolBox Image is completely free. No limits on crops, file sizes, or usage.</p>
+<p><strong>Are my images private when I crop online?</strong> Absolutely. All processing happens in your browser using the Canvas API. Your images are never uploaded.</p>
+<p><strong>What image formats can I crop?</strong> You can crop JPEG, PNG, WebP, and AVIF images. Save output as JPEG, PNG, or WebP.</p>
+<p><strong>Can I crop to an exact pixel size?</strong> For exact pixel dimensions, use our Image Resizer. The Image Cropper is designed for aspect-ratio-based cropping.</p>
+
+<h2>Start Cropping Now</h2>
+<p>Ready to <strong>crop images online</strong>? No sign-up, no upload, no limits. Open the <a href="/tools/cropper/">Image Cropper</a>, select your image, choose an aspect ratio, and download your result in seconds.</p>`,
+      es: `<p>Recortar una imagen es una de las ediciones más comunes. Un <strong>recortador de imágenes</strong> te permite seleccionar un área rectangular y descartar el resto. Con ToolBox Image, puedes <strong>recortar imágenes en línea gratis</strong> — directamente en tu navegador.</p>
+
+<h2>¿Por qué usar un recortador basado en navegador?</h2>
+<ul>
+<li><strong>Privacidad primero:</strong> Tus imágenes nunca se suben. Todo se procesa localmente.</li>
+<li><strong>Sin límites de tamaño:</strong> No hay transferencia por red.</li>
+<li><strong>Procesamiento instantáneo:</strong> El recorte ocurre sin latencia.</li>
+<li><strong>Cero costo:</strong> Sin suscripciones. Completamente gratis.</li>
+</ul>
+
+<h2>Relaciones de aspecto comunes</h2>
+<ul>
+<li><strong>1:1 (Cuadrado):</strong> Para Instagram y fotos de perfil.</li>
+<li><strong>4:5 (Retrato):</strong> El formato más popular de Instagram.</li>
+<li><strong>16:9 (Panorámico):</strong> Para miniaturas de YouTube.</li>
+<li><strong>3:2 (Foto clásica):</strong> Relación tradicional de 35mm.</li>
+<li><strong>4:3 (Estándar):</strong> Usado por la mayoría de cámaras.</li>
+<li><strong>Libre:</strong> Sin relación fija.</li>
+</ul>
+
+<h2>Cómo recortar una imagen</h2>
+<ol>
+<li>Sube tu imagen arrastrándola o haciendo clic.</li>
+<li>Elige una relación de aspecto.</li>
+<li>Ajusta el área de recorte.</li>
+<li>Haz clic en "Aplicar Recorte".</li>
+<li>Selecciona el formato de salida.</li>
+<li>Descarga tu imagen recortada.</li>
+</ol>
+
+<h2>Preguntas frecuentes</h2>
+<p><strong>¿Es gratis?</strong> Sí, ToolBox Image es completamente gratis.</p>
+<p><strong>¿Mis imágenes son privadas?</strong> Sí. Todo ocurre en tu navegador.</p>
+
+<h2>Empieza a recortar</h2>
+<p>Abre el <a href="/es/tools/cropper/">Recortador de Imágenes</a> y descarga tu resultado.</p>`,
+      fr: `<p>Recadrer une image est l'une des opérations les plus courantes. Un <strong>recadreur d'images</strong> vous permet de sélectionner une zone rectangulaire. Avec ToolBox Image, vous pouvez <strong>recadrer des images en ligne gratuitement</strong>.</p>
+
+<h2>Pourquoi utiliser un recadreur basé sur le navigateur?</h2>
+<ul>
+<li><strong>Confidentialité:</strong> Vos images ne sont jamais téléchargées.</li>
+<li><strong>Aucune limite de taille.</strong></li>
+<li><strong>Traitement instantané.</strong></li>
+<li><strong>Zéro coût.</strong></li>
+</ul>
+
+<h2>Rapports d'aspect courants</h2>
+<ul>
+<li><strong>1:1 (Carré):</strong> Instagram et photos de profil.</li>
+<li><strong>4:5 (Portrait):</strong> Format Instagram populaire.</li>
+<li><strong>16:9 (Panoramique):</strong> Miniatures YouTube.</li>
+<li><strong>3:2 (Classique):</strong> Film 35mm.</li>
+<li><strong>4:3 (Standard):</strong> Appareils photo.</li>
+<li><strong>Libre:</strong> Sans rapport fixe.</li>
+</ul>
+
+<h2>Comment recadrer une image</h2>
+<ol>
+<li>Téléchargez votre image.</li>
+<li>Choisissez un rapport d'aspect.</li>
+<li>Ajustez la zone de recadrage.</li>
+<li>Cliquez sur "Appliquer".</li>
+<li>Sélectionnez le format de sortie.</li>
+<li>Téléchargez.</li>
+</ol>
+
+<h2>FAQ</h2>
+<p><strong>Est-ce gratuit?</strong> Oui.</p>
+<p><strong>Mes images sont-elles privées?</strong> Oui.</p>
+
+<h2>Commencez</h2>
+<p>Ouvrez le <a href="/fr/tools/cropper/">Recadreur d'Images</a>.</p>`,
+      de: `<p>Das Zuschneiden von Bildern ist eine der häufigsten Bearbeitungen. Mit ToolBox Image können Sie <strong>Bilder online kostenlos zuschneiden</strong>.</p>
+
+<h2>Warum ein browserbasierter Zuschneider?</h2>
+<ul>
+<li><strong>Datenschutz:</strong> Ihre Bilder werden nicht hochgeladen.</li>
+<li><strong>Keine Größenbeschränkung.</strong></li>
+<li><strong>Sofortige Verarbeitung.</strong></li>
+<li><strong>Kostenlos.</strong></li>
+</ul>
+
+<h2>Häufige Seitenverhältnisse</h2>
+<ul>
+<li><strong>1:1 (Quadrat):</strong> Instagram.</li>
+<li><strong>4:5 (Hochformat):</strong> Beliebtes Instagram-Format.</li>
+<li><strong>16:9 (Breitbild):</strong> YouTube.</li>
+<li><strong>3:2 (Klassisch):</strong> 35mm Film.</li>
+<li><strong>4:3 (Standard):</strong> Kameras.</li>
+<li><strong>Frei:</strong> Kein festes Verhältnis.</li>
+</ul>
+
+<h2>Wie schneide ich zu?</h2>
+<ol>
+<li>Bild hochladen.</li>
+<li>Seitenverhältnis wählen.</li>
+<li>Bereich anpassen.</li>
+<li>"Zuschneiden" klicken.</li>
+<li>Format wählen.</li>
+<li>Herunterladen.</li>
+</ol>
+
+<h2>FAQ</h2>
+<p><strong>Kostenlos?</strong> Ja.</p>
+<p><strong>Privat?</strong> Ja.</p>
+
+<h2>Loslegen</h2>
+<p>Öffnen Sie den <a href="/de/tools/cropper/">Bildzuschneider</a>.</p>`,
+      it: `<p>Ritagliare un'immagine è una delle modifiche più comuni. Con ToolBox Image, puoi <strong>ritagliare immagini online gratuitamente</strong>.</p>
+
+<h2>Perché un ritaglio basato su browser?</h2>
+<ul>
+<li><strong>Privacy:</strong> Immagini mai caricate.</li>
+<li><strong>Nessun limite.</strong></li>
+<li><strong>Elaborazione istantanea.</strong></li>
+<li><strong>Gratuito.</strong></li>
+</ul>
+
+<h2>Rapporti d'aspetto comuni</h2>
+<ul>
+<li><strong>1:1 (Quadrato):</strong> Instagram.</li>
+<li><strong>4:5 (Ritratto):</strong> Formato popolare.</li>
+<li><strong>16:9 (Panoramico):</strong> YouTube.</li>
+<li><strong>3:2 (Classico):</strong> Pellicola 35mm.</li>
+<li><strong>4:3 (Standard):</strong> Fotocamere.</li>
+<li><strong>Libero.</strong></li>
+</ul>
+
+<h2>Come ritagliare</h2>
+<ol>
+<li>Carica l'immagine.</li>
+<li>Scegli il rapporto.</li>
+<li>Regola l'area.</li>
+<li>Clicca "Applica".</li>
+<li>Seleziona il formato.</li>
+<li>Scarica.</li>
+</ol>
+
+<h2>FAQ</h2>
+<p><strong>Gratuito?</strong> Sì.</p>
+<p><strong>Privato?</strong> Sì.</p>
+
+<h2>Inizia</h2>
+<p>Apri il <a href="/it/tools/cropper/">Ritaglio Immagini</a>.</p>`,
+      pt: `<p>Cortar uma imagem é uma das edições mais comuns. Com ToolBox Image, pode <strong>cortar imagens online gratuitamente</strong>.</p>
+
+<h2>Porquê um cortador baseado no navegador?</h2>
+<ul>
+<li><strong>Privacidade:</strong> Imagens nunca enviadas.</li>
+<li><strong>Sem limites.</strong></li>
+<li><strong>Processamento instantâneo.</strong></li>
+<li><strong>Grátis.</strong></li>
+</ul>
+
+<h2>Proporções comuns</h2>
+<ul>
+<li><strong>1:1 (Quadrado):</strong> Instagram.</li>
+<li><strong>4:5 (Retrato):</strong> Formato popular.</li>
+<li><strong>16:9 (Panorâmico):</strong> YouTube.</li>
+<li><strong>3:2 (Clássica):</strong> Filme 35mm.</li>
+<li><strong>4:3 (Padrão):</strong> Câmaras.</li>
+<li><strong>Livre.</strong></li>
+</ul>
+
+<h2>Como cortar</h2>
+<ol>
+<li>Carregue a imagem.</li>
+<li>Escolha a proporção.</li>
+<li>Ajuste a área.</li>
+<li>Clique "Aplicar".</li>
+<li>Selecione o formato.</li>
+<li>Descarregue.</li>
+</ol>
+
+<h2>FAQ</h2>
+<p><strong>Grátis?</strong> Sim.</p>
+<p><strong>Privado?</strong> Sim.</p>
+
+<h2>Comece</h2>
+<p>Abra o <a href="/pt/tools/cropper/">Cortador de Imagens</a>.</p>`,
+      ru: `<p>Обрезка изображений — одна из самых частых операций. С ToolBox Image вы можете <strong>обрезать изображения онлайн бесплатно</strong>.</p>
+
+<h2>Зачем браузерный обрезчик?</h2>
+<ul>
+<li><strong>Конфиденциальность:</strong> Без загрузки на сервер.</li>
+<li><strong>Без ограничений.</strong></li>
+<li><strong>Мгновенно.</strong></li>
+<li><strong>Бесплатно.</strong></li>
+</ul>
+
+<h2>Соотношения сторон</h2>
+<ul>
+<li><strong>1:1 (Квадрат):</strong> Instagram.</li>
+<li><strong>4:5 (Портрет):</strong> Популярный формат.</li>
+<li><strong>16:9 (Широкий):</strong> YouTube.</li>
+<li><strong>3:2 (Классика):</strong> Плёнка 35мм.</li>
+<li><strong>4:3 (Стандарт):</strong> Камеры.</li>
+<li><strong>Свободный.</strong></li>
+</ul>
+
+<h2>Как обрезать</h2>
+<ol>
+<li>Загрузите изображение.</li>
+<li>Выберите соотношение.</li>
+<li>Настройте область.</li>
+<li>Нажмите "Применить".</li>
+<li>Выберите формат.</li>
+<li>Скачайте.</li>
+</ol>
+
+<h2>Часто задаваемые вопросы</h2>
+<p><strong>Бесплатно?</strong> Да.</p>
+<p><strong>Конфиденциально?</strong> Да.</p>
+
+<h2>Начните</h2>
+<p>Откройте <a href="/ru/tools/cropper/">Обрезчик Изображений</a>.</p>`,
+      zh: `<p>裁剪图片是最常见的照片编辑之一。使用 ToolBox Image，您可以<strong>免费在线裁剪图片</strong>。</p>
+
+<h2>为什么使用基于浏览器的裁剪工具？</h2>
+<ul>
+<li><strong>隐私优先：</strong>不会上传到服务器。</li>
+<li><strong>无限制。</strong></li>
+<li><strong>即时处理。</strong></li>
+<li><strong>免费。</strong></li>
+</ul>
+
+<h2>常见宽高比</h2>
+<ul>
+<li><strong>1:1（方形）：</strong>Instagram。</li>
+<li><strong>4:5（肖像）：</strong>流行格式。</li>
+<li><strong>16:9（宽屏）：</strong>YouTube。</li>
+<li><strong>3:2（经典）：</strong>35mm 胶片。</li>
+<li><strong>4:3（标准）：</strong>相机。</li>
+<li><strong>自由格式。</strong></li>
+</ul>
+
+<h2>如何裁剪</h2>
+<ol>
+<li>上传图片。</li>
+<li>选择宽高比。</li>
+<li>调整区域。</li>
+<li>点击"应用"。</li>
+<li>选择格式。</li>
+<li>下载。</li>
+</ol>
+
+<h2>常见问题</h2>
+<p><strong>免费吗？</strong>是的。</p>
+<p><strong>隐私吗？</strong>是的。</p>
+
+<h2>开始</h2>
+<p>打开<a href="/zh/tools/cropper/">图片裁剪工具</a>。</p>`,
+      ja: `<p>画像の切り抜きは最も一般的な写真編集の一つです。ToolBox Imageを使えば、<strong>オンラインで無料で画像を切り抜く</strong>ことができます。</p>
+
+<h2>ブラウザベースのクロップツールの利点</h2>
+<ul>
+<li><strong>プライバシー：</strong>サーバーにアップロードされません。</li>
+<li><strong>制限なし。</strong></li>
+<li><strong>即時処理。</strong></li>
+<li><strong>無料。</strong></li>
+</ul>
+
+<h2>一般的なアスペクト比</h2>
+<ul>
+<li><strong>1:1（正方形）：</strong>Instagram。</li>
+<li><strong>4:5（ポートレート）：</strong>人気の形式。</li>
+<li><strong>16:9（ワイド）：</strong>YouTube。</li>
+<li><strong>3:2（クラシック）：</strong>35mmフィルム。</li>
+<li><strong>4:3（標準）：</strong>カメラ。</li>
+<li><strong>自由形式。</strong></li>
+</ul>
+
+<h2>切り抜き方法</h2>
+<ol>
+<li>画像をアップロード。</li>
+<li>アスペクト比を選択。</li>
+<li>領域を調整。</li>
+<li>「適用」をクリック。</li>
+<li>形式を選択。</li>
+<li>ダウンロード。</li>
+</ol>
+
+<h2>よくある質問</h2>
+<p><strong>無料ですか？</strong>はい。</p>
+<p><strong>プライベートですか？</strong>はい。</p>
+
+<h2>始める</h2>
+<p><a href="/ja/tools/cropper/">画像クロップツール</a>を開く。</p>`,
+      ko: `<p>이미지 자르기는 가장 일반적인 사진 편집 중 하나입니다. ToolBox Image로 <strong>온라인에서 무료로 이미지를 자를</strong> 수 있습니다.</p>
+
+<h2>브라우저 기반 크롭 도구의 장점</h2>
+<ul>
+<li><strong>개인정보 보호:</strong> 서버에 업로드되지 않음.</li>
+<li><strong>제한 없음.</strong></li>
+<li><strong>즉시 처리.</strong></li>
+<li><strong>무료.</strong></li>
+</ul>
+
+<h2>일반적인 종횡비</h2>
+<ul>
+<li><strong>1:1 (정사각형):</strong> Instagram.</li>
+<li><strong>4:5 (세로):</strong> 인기 형식.</li>
+<li><strong>16:9 (와이드):</strong> YouTube.</li>
+<li><strong>3:2 (클래식):</strong> 35mm 필름.</li>
+<li><strong>4:3 (표준):</strong> 카메라.</li>
+<li><strong>자유형.</strong></li>
+</ul>
+
+<h2>자르는 방법</h2>
+<ol>
+<li>이미지 업로드.</li>
+<li>종횡비 선택.</li>
+<li>영역 조정.</li>
+<li>"적용" 클릭.</li>
+<li>형식 선택.</li>
+<li>다운로드.</li>
+</ol>
+
+<h2>자주 묻는 질문</h2>
+<p><strong>무료인가요?</strong> 네.</p>
+<p><strong>비공개인가요?</strong> 네.</p>
+
+<h2>시작하기</h2>
+<p><a href="/ko/tools/cropper/">이미지 크롭 도구</a> 열기.</p>`,
+      ar: `<p>قص الصور هو أحد أكثر تعديلات الصور شيوعاً. مع ToolBox Image، يمكنك <strong>قص الصور عبر الإنترنت مجاناً</strong>.</p>
+
+<h2>لماذا أداة قص مبنية على المتصفح؟</h2>
+<ul>
+<li><strong>الخصوصية:</strong> دون رفع للخادم.</li>
+<li><strong>بدون حدود.</strong></li>
+<li><strong>معالجة فورية.</strong></li>
+<li><strong>مجاناً.</strong></li>
+</ul>
+
+<h2>نسب الأبعاد الشائعة</h2>
+<ul>
+<li><strong>1:1 (مربع):</strong> Instagram.</li>
+<li><strong>4:5 (عمودي):</strong> تنسيق شائع.</li>
+<li><strong>16:9 (عريض):</strong> YouTube.</li>
+<li><strong>3:2 (كلاسيكي):</strong> فيلم 35mm.</li>
+<li><strong>4:3 (قياسي):</strong> كاميرات.</li>
+<li><strong>حر.</strong></li>
+</ul>
+
+<h2>كيفية القص</h2>
+<ol>
+<li>حمّل الصورة.</li>
+<li>اختر نسبة الأبعاد.</li>
+<li>اضبط المنطقة.</li>
+<li>انقر "تطبيق".</li>
+<li>اختر التنسيق.</li>
+<li>حمّل.</li>
+</ol>
+
+<h2>أسئلة شائعة</h2>
+<p><strong>مجاني؟</strong> نعم.</p>
+<p><strong>خاص؟</strong> نعم.</p>
+
+<h2>ابدأ</h2>
+<p>افتح <a href="/ar/tools/cropper/">أداة قص الصور</a>.</p>`,
+      hi: `<p>इमेज क्रॉप करना सबसे आम फ़ोटो एडिटिंग में से एक है। ToolBox Image से आप <strong>ऑनलाइन मुफ़्त में इमेज क्रॉप</strong> कर सकते हैं।</p>
+
+<h2>ब्राउज़र-आधारित क्रॉपर क्यों?</h2>
+<ul>
+<li><strong>प्राइवेसी:</strong> सर्वर पर अपलोड नहीं होता।</li>
+<li><strong>कोई सीमा नहीं।</strong></li>
+<li><strong>इंस्टेंट प्रोसेसिंग।</strong></li>
+<li><strong>मुफ़्त।</strong></li>
+</ul>
+
+<h2>सामान्य आस्पेक्ट रेशियो</h2>
+<ul>
+<li><strong>1:1 (स्क्वायर):</strong> Instagram।</li>
+<li><strong>4:5 (पोर्ट्रेट):</strong> लोकप्रिय फ़ॉर्मेट।</li>
+<li><strong>16:9 (वाइडस्क्रीन):</strong> YouTube।</li>
+<li><strong>3:2 (क्लासिक):</strong> 35mm फ़िल्म।</li>
+<li><strong>4:3 (स्टैंडर्ड):</strong> कैमरा।</li>
+<li><strong>फ़्रीफ़ॉर्म।</strong></li>
+</ul>
+
+<h2>कैसे क्रॉप करें</h2>
+<ol>
+<li>इमेज अपलोड करें।</li>
+<li>आस्पेक्ट रेशियो चुनें।</li>
+<li>एरिया एडजस्ट करें।</li>
+<li>"लागू करें" पर क्लिक करें।</li>
+<li>फ़ॉर्मेट चुनें।</li>
+<li>डाउनलोड करें।</li>
+</ol>
+
+<h2>अक्सर पूछे जाने वाले सवाल</h2>
+<p><strong>मुफ़्त है?</strong> हाँ।</p>
+<p><strong>प्राइवेट है?</strong> हाँ।</p>
+
+<h2>शुरू करें</h2>
+<p><a href="/hi/tools/cropper/">इमेज क्रॉपर</a> खोलें।</p>`,
+      tr: `<p>Görüntü kırpma en yaygın fotoğraf düzenleme işlemlerinden biridir. ToolBox Image ile <strong>çevrimiçi olarak ücretsiz görüntü kırpabilirsiniz</strong>.</p>
+
+<h2>Neden tarayıcı tabanlı kırpıcı?</h2>
+<ul>
+<li><strong>Gizlilik:</strong> Sunucuya yüklenmez.</li>
+<li><strong>Sınır yok.</strong></li>
+<li><strong>Anında işleme.</strong></li>
+<li><strong>Ücretsiz.</strong></li>
+</ul>
+
+<h2>Yaygın en-boy oranları</h2>
+<ul>
+<li><strong>1:1 (Kare):</strong> Instagram.</li>
+<li><strong>4:5 (Dikey):</strong> Popüler format.</li>
+<li><strong>16:9 (Geniş):</strong> YouTube.</li>
+<li><strong>3:2 (Klasik):</strong> 35mm film.</li>
+<li><strong>4:3 (Standart):</strong> Kameralar.</li>
+<li><strong>Serbest.</strong></li>
+</ul>
+
+<h2>Nasıl kırpılır</h2>
+<ol>
+<li>Görseli yükleyin.</li>
+<li>En-boy oranı seçin.</li>
+<li>Alanı ayarlayın.</li>
+<li>"Uygula"ya tıklayın.</li>
+<li>Biçim seçin.</li>
+<li>İndirin.</li>
+</ol>
+
+<h2>SSS</h2>
+<p><strong>Ücretsiz mi?</strong> Evet.</p>
+<p><strong>Özel mi?</strong> Evet.</p>
+
+<h2>Başlayın</h2>
+<p><a href="/tr/tools/cropper/">Görüntü Kırpıcı</a>'yı açın.</p>`,
+    },
+  ),
 };

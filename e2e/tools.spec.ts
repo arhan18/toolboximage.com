@@ -83,6 +83,17 @@ test.describe('Image Compressor tool', () => {
     await page.goto('/compressor/', { waitUntil: 'load' });
     expect(errors).toEqual([]);
   });
+
+  test('image-compressor page renders upload zone', async ({ page }) => {
+    await page.goto('/image-compressor/', { waitUntil: 'load' });
+    await expect(page.locator('#upload-dropzone')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('image-compressor page has no console errors', async ({ page }) => {
+    const errors = await collectErrors(page);
+    await page.goto('/image-compressor/', { waitUntil: 'load' });
+    expect(errors).toEqual([]);
+  });
 });
 
 test.describe('Image Rotator tool', () => {
@@ -247,5 +258,49 @@ test.describe('Tools directory page', () => {
 
     await expect(allPanel).toBeHidden();
     await expect(compressPanel).toBeVisible();
+  });
+});
+
+test.describe('Image Cropper tool', () => {
+  test('upload zone is visible', async ({ page }) => {
+    await page.goto('/tools/cropper/', { waitUntil: 'load' });
+    await expect(page.locator('[data-tool-upload]')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('no console errors on load', async ({ page }) => {
+    const errors = await collectErrors(page);
+    await page.goto('/tools/cropper/', { waitUntil: 'load' });
+    expect(errors).toEqual([]);
+  });
+
+  test('uploads image, applies crop, and downloads valid result', async ({ page }) => {
+    await page.goto('/tools/cropper/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+    await waitForImgLoaded(page, '[data-cropper-image]');
+
+    const cropArea = page.locator('[data-cropper-preview]');
+    await expect(cropArea).not.toBeHidden({ timeout: 8000 });
+
+    const cropWindow = page.locator('[data-cropper-window]');
+    await expect(cropWindow).toBeVisible({ timeout: 5000 });
+
+    const applyBtn = page.locator('[data-cropper-apply]');
+    await expect(applyBtn).toBeVisible();
+
+    await applyBtn.click();
+
+    const resultArea = page.locator('section[data-cropper-result]');
+    await expect(resultArea).not.toBeHidden({ timeout: 8000 });
+
+    const downloadSection = page.locator('section[data-cropper-download]');
+    await expect(downloadSection).not.toBeHidden({ timeout: 5000 });
+
+    const { suggestedName, buffer } = await captureDownload(
+      page,
+      page.locator('button[data-cropper-download-btn]')
+    );
+    expect(suggestedName).toMatch(/demo-before_cropped\.jpe?g$/i);
+    expect(checkMagic(buffer, 'jpeg')).toBe(true);
+    expect(buffer.length).toBeGreaterThan(500);
   });
 });

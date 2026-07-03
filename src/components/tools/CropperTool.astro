@@ -1,0 +1,568 @@
+---
+import ToolUpload from './ToolUpload.astro';
+import ToolSettingsPanel from './ToolSettingsPanel.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('cropper')!;
+
+const aspectRatios = [
+  { id: 'free', label: _('cropper.free') },
+  { id: 'square', label: '1:1' },
+  { id: 'portrait', label: '4:5' },
+  { id: 'landscape', label: '16:9' },
+  { id: '3-2', label: '3:2' },
+  { id: '4-3', label: '4:3' },
+];
+const aspectIds = ['free', 'square', 'portrait', 'landscape', '3-2', '4-3'];
+---
+<section class="cropper-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <ToolSettingsPanel {tool} {lang}>
+    <div slot="settings-actions">
+      <button type="button" class="cropper-clear-btn" data-cropper-clear hidden>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+    <div slot="settings-controls">
+      <fieldset class="cropper-aspects">
+        <legend class="text-caption-mono cropper-label">{_('cropper.aspectRatio')}</legend>
+        <div class="cropper-aspect-grid" data-cropper-aspects>
+          {aspectRatios.map((r) => (
+            <button type="button" class="cropper-aspect-btn" data-cropper-aspect={r.id}>
+              {r.label}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="cropper-formats">
+        <legend class="text-caption-mono cropper-label">{_('converter.targetFormat')}</legend>
+        <div class="cropper-format-grid" data-cropper-formats>
+          {['JPEG', 'PNG', 'WebP'].map((fmt) => (
+            <button type="button" class="cropper-format-btn" data-cropper-format={fmt.toLowerCase()}>
+              {fmt}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+    </div>
+  </ToolSettingsPanel>
+
+  <section class="cropper-crop-area" data-cropper-preview hidden>
+    <div class="cropper-crop-container" data-cropper-container>
+      <img data-cropper-image alt="" class="cropper-image" />
+      <div class="cropper-crop-window" data-cropper-window role="region" aria-label={_('cropper.cropArea')}>
+        <div class="cropper-handle cropper-handle-nw" data-cropper-handle="nw" role="button" aria-label={_('cropper.handleNW')} tabindex="0"></div>
+        <div class="cropper-handle cropper-handle-ne" data-cropper-handle="ne" role="button" aria-label={_('cropper.handleNE')} tabindex="0"></div>
+        <div class="cropper-handle cropper-handle-sw" data-cropper-handle="sw" role="button" aria-label={_('cropper.handleSW')} tabindex="0"></div>
+        <div class="cropper-handle cropper-handle-se" data-cropper-handle="se" role="button" aria-label={_('cropper.handleSE')} tabindex="0"></div>
+        <div class="cropper-handle cropper-handle-n" data-cropper-handle="n" role="button" aria-label={_('cropper.handleN')} tabindex="0"></div>
+        <div class="cropper-handle cropper-handle-s" data-cropper-handle="s" role="button" aria-label={_('cropper.handleS')} tabindex="0"></div>
+        <div class="cropper-handle cropper-handle-w" data-cropper-handle="w" role="button" aria-label={_('cropper.handleW')} tabindex="0"></div>
+        <div class="cropper-handle cropper-handle-e" data-cropper-handle="e" role="button" aria-label={_('cropper.handleE')} tabindex="0"></div>
+      </div>
+    </div>
+    <div class="cropper-crop-info" data-cropper-info>
+      <span class="text-caption" data-cropper-crop-dims></span>
+      <button type="button" class="cropper-apply-btn" data-cropper-apply>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {_('cropper.apply')}
+      </button>
+    </div>
+  </section>
+
+  <section class="cropper-result" data-cropper-result hidden>
+    <div class="cropper-result-cols">
+      <figure class="cropper-result-fig">
+        <figcaption class="text-caption-mono cropper-result-label">{_('cropper.original')}</figcaption>
+        <div class="cropper-result-frame">
+          <img data-cropper-original alt={_('cropper.original')} class="cropper-result-img" />
+        </div>
+        <p class="text-caption cropper-result-size" data-cropper-original-size></p>
+      </figure>
+      <div class="cropper-result-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <figure class="cropper-result-fig">
+        <figcaption class="text-caption-mono cropper-result-label">{_('cropper.cropped')}</figcaption>
+        <div class="cropper-result-frame">
+          <img data-cropper-result alt={_('cropper.cropped')} class="cropper-result-img" />
+        </div>
+        <p class="text-caption cropper-result-size" data-cropper-result-size></p>
+      </figure>
+    </div>
+    <div class="cropper-actions" data-cropper-actions hidden>
+      <button type="button" class="cropper-action-link" data-cropper-replace>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        {_('cropper.replace')}
+      </button>
+      <button type="button" class="cropper-action-link cropper-action-link-danger" data-cropper-clear>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+  </section>
+
+  <section class="cropper-download" data-cropper-download hidden>
+    <div class="cropper-download-bar">
+      <div class="cropper-download-info">
+        <p class="text-caption-mono cropper-download-label">{_('cropper.download')}</p>
+        <p class="text-body-sm-strong" data-cropper-download-name></p>
+      </div>
+      <button type="button" class="results-btn results-btn-primary" data-cropper-download-btn>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        {_('cropper.download')}
+      </button>
+    </div>
+  </section>
+</section>
+
+<script>
+  const aspectValues: Record<string, number | 'free'> = {
+    free: 'free', square: 1, portrait: 4 / 5, landscape: 16 / 9,
+    '3-2': 3 / 2, '4-3': 4 / 3,
+  };
+  const mimeMap: Record<string, string> = {
+    jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp',
+  };
+
+  const container = document.querySelector<HTMLElement>('[data-cropper-container]');
+  const image = document.querySelector<HTMLImageElement>('[data-cropper-image]');
+  const cropWindow = document.querySelector<HTMLElement>('[data-cropper-window]');
+  const cropDimsEl = document.querySelector<HTMLElement>('[data-cropper-crop-dims]');
+  const applyBtn = document.querySelector<HTMLButtonElement>('[data-cropper-apply]');
+  const previewArea = document.querySelector<HTMLElement>('[data-cropper-preview]');
+  const resultArea = document.querySelector<HTMLElement>('[data-cropper-result]');
+  const origImg = document.querySelector<HTMLImageElement>('[data-cropper-original]');
+  const resultImg = document.querySelector<HTMLImageElement>('[data-cropper-result]');
+  const origSizeEl = document.querySelector<HTMLElement>('[data-cropper-original-size]');
+  const resultSizeEl = document.querySelector<HTMLElement>('[data-cropper-result-size]');
+  const downloadSection = document.querySelector<HTMLElement>('[data-cropper-download]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-cropper-download-btn]');
+  const downloadNameEl = document.querySelector<HTMLElement>('[data-cropper-download-name]');
+  const clearBtns = document.querySelectorAll<HTMLButtonElement>('[data-cropper-clear]');
+  const replaceBtn = document.querySelector<HTMLButtonElement>('[data-cropper-replace]');
+  const actionsBar = document.querySelector<HTMLElement>('[data-cropper-actions]');
+  const settingsClearBtn = document.querySelector<HTMLButtonElement>('[data-cropper-clear-btn]');
+  const aspectBtns = document.querySelectorAll<HTMLButtonElement>('[data-cropper-aspect]');
+  const formatBtns = document.querySelectorAll<HTMLButtonElement>('[data-cropper-format]');
+  const allHandles = document.querySelectorAll<HTMLElement>('[data-cropper-handle]');
+
+  const i18n = (key: string): string => {
+    const el = document.querySelector<HTMLElement>(`[data-i18n="${key}"]`);
+    return el?.textContent ?? key;
+  };
+
+  let currentFile: File | null = null;
+  let currentImg: HTMLImageElement | null = null;
+  let currentBlob: Blob | null = null;
+  let currentBlobUrl: string | null = null;
+  let selectedFormat = 'jpeg';
+  let selectedAspect: number | 'free' = 'free';
+
+  let imgW = 0, imgH = 0;
+  let cropX = 0, cropY = 0, cropW = 0, cropH = 0;
+  let isDragging = false, isResizing = false;
+  let activeHandle = '';
+  let startMX = 0, startMY = 0;
+  let startCX = 0, startCY = 0, startCW = 0, startCH = 0;
+
+  const formatBytes = (b: number): string => {
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+    return (b / 1048576).toFixed(1) + ' MB';
+  };
+
+  const constrain = (v: number, min: number, max: number) =>
+    Math.max(min, Math.min(v, max));
+
+  const updateWindow = () => {
+    if (!cropWindow) return;
+    cropW = Math.max(20, cropW);
+    cropH = Math.max(20, cropH);
+    cropX = constrain(cropX, 0, imgW - cropW);
+    cropY = constrain(cropY, 0, imgH - cropH);
+    cropW = Math.min(cropW, imgW - cropX);
+    cropH = Math.min(cropH, imgH - cropY);
+    cropWindow.style.left = cropX + 'px';
+    cropWindow.style.top = cropY + 'px';
+    cropWindow.style.width = cropW + 'px';
+    cropWindow.style.height = cropH + 'px';
+    if (cropDimsEl) {
+      const outW = Math.round((cropW / imgW) * (currentImg?.naturalWidth || 1));
+      const outH = Math.round((cropH / imgH) * (currentImg?.naturalHeight || 1));
+      cropDimsEl.textContent = `${outW} × ${outH} px`;
+    }
+  };
+
+  const initCrop = () => {
+    if (!currentImg || !container) return;
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    const nw = currentImg.naturalWidth;
+    const nh = currentImg.naturalHeight;
+    const scale = Math.min(cw / nw, ch / nh, 1);
+    imgW = Math.round(nw * scale);
+    imgH = Math.round(nh * scale);
+    const margin = 0.08;
+    cropX = Math.round(imgW * margin);
+    cropY = Math.round(imgH * margin);
+    cropW = Math.round(imgW * (1 - 2 * margin));
+    cropH = Math.round(imgH * (1 - 2 * margin));
+    if (image) {
+      image.style.width = imgW + 'px';
+      image.style.height = imgH + 'px';
+    }
+    updateWindow();
+  };
+
+  const doCrop = async () => {
+    if (!currentImg) return;
+    const nw = currentImg.naturalWidth;
+    const nh = currentImg.naturalHeight;
+    const sx = (cropX / imgW) * nw;
+    const sy = (cropY / imgH) * nh;
+    const sw = (cropW / imgW) * nw;
+    const sh = (cropH / imgH) * nh;
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(sw);
+    canvas.height = Math.round(sh);
+    const ctx = canvas.getContext('2d')!;
+    if (selectedFormat === 'jpeg') {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.drawImage(currentImg, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+    const mime = mimeMap[selectedFormat] || 'image/jpeg';
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((b) => {
+        if (b) resolve(b);
+        else reject(new Error('Crop failed'));
+      }, mime, 0.92);
+    });
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentBlob = blob;
+    currentBlobUrl = URL.createObjectURL(blob);
+    if (resultImg) resultImg.src = currentBlobUrl;
+    if (resultSizeEl) resultSizeEl.textContent = `${Math.round(sw)} × ${Math.round(sh)} · ${formatBytes(blob.size)}`;
+    if (origSizeEl && currentFile) {
+      origSizeEl.textContent = `${nw} × ${nh} · ${formatBytes(currentFile.size)}`;
+    }
+    if (resultArea) resultArea.hidden = false;
+    if (actionsBar) actionsBar.hidden = false;
+    if (downloadSection) downloadSection.hidden = false;
+    if (downloadNameEl && currentFile) {
+      downloadNameEl.textContent = currentFile.name.replace(/\.[^.]+$/, '') + '_cropped.' + selectedFormat;
+    }
+    resultArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const doClear = () => {
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentFile = null;
+    currentImg = null;
+    currentBlob = null;
+    currentBlobUrl = null;
+    if (previewArea) previewArea.hidden = true;
+    if (resultArea) resultArea.hidden = true;
+    if (downloadSection) downloadSection.hidden = true;
+    if (actionsBar) actionsBar.hidden = true;
+    if (settingsClearBtn) settingsClearBtn.hidden = true;
+    if (image) image.src = '';
+    if (image) image.style.width = image.style.height = '';
+    if (origImg) origImg.src = '';
+    if (resultImg) resultImg.src = '';
+    if (origSizeEl) origSizeEl.textContent = '';
+    if (resultSizeEl) resultSizeEl.textContent = '';
+    if (cropDimsEl) cropDimsEl.textContent = '';
+    const uploadZone = document.querySelector<HTMLElement>('[data-tool-upload]');
+    uploadZone?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  clearBtns.forEach((btn) => btn.addEventListener('click', doClear));
+
+  if (replaceBtn) {
+    replaceBtn.addEventListener('click', () => {
+      const input = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
+      input?.click();
+    });
+  }
+
+  if (settingsClearBtn) settingsClearBtn.hidden = true;
+
+  if (applyBtn) {
+    applyBtn.addEventListener('click', doCrop);
+  }
+
+  aspectBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      aspectBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      const id = btn.dataset.cropperAspect || 'free';
+      selectedAspect = aspectValues[id] ?? 'free';
+      if (selectedAspect !== 'free') {
+        const ratio = selectedAspect as number;
+        const centerX = cropX + cropW / 2;
+        const centerY = cropY + cropH / 2;
+        if (cropW / cropH > ratio) {
+          cropW = Math.round(cropH * ratio);
+        } else {
+          cropH = Math.round(cropW / ratio);
+        }
+        cropX = Math.round(centerX - cropW / 2);
+        cropY = Math.round(centerY - cropH / 2);
+      }
+      updateWindow();
+    });
+  });
+  if (aspectBtns[0]) aspectBtns[0].dataset.active = 'true';
+
+  formatBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      formatBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      selectedFormat = btn.dataset.cropperFormat!;
+    });
+  });
+  if (formatBtns[0]) formatBtns[0].dataset.active = 'true';
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!currentFile || !currentBlobUrl) return;
+      const name = currentFile.name.replace(/\.[^.]+$/, '') + '_cropped.' + selectedFormat;
+      const a = document.createElement('a');
+      a.href = currentBlobUrl;
+      a.download = name;
+      a.click();
+    });
+  }
+
+  const EDGE_SNAP = 10;
+
+  const onPointerDown = (e: PointerEvent) => {
+    if (!cropWindow) return;
+    const target = e.target as HTMLElement;
+    const handle = target.closest('[data-cropper-handle]') as HTMLElement | null;
+    startMX = e.clientX;
+    startMY = e.clientY;
+    startCX = cropX;
+    startCY = cropY;
+    startCW = cropW;
+    startCH = cropH;
+    if (handle) {
+      isResizing = true;
+      activeHandle = handle.dataset.cropperHandle || '';
+      e.preventDefault();
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    } else if (target.closest('[data-cropper-window]')) {
+      isDragging = true;
+      activeHandle = '';
+      e.preventDefault();
+      cropWindow.setPointerCapture(e.pointerId);
+    }
+  };
+
+  const snapEdge = (v: number, max: number): number => {
+    if (v < EDGE_SNAP) return 0;
+    if (v > max - EDGE_SNAP) return max;
+    return v;
+  };
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (!isDragging && !isResizing) return;
+    e.preventDefault();
+    const dx = e.clientX - startMX;
+    const dy = e.clientY - startMY;
+
+    if (isDragging) {
+      cropX = startCX + dx;
+      cropY = startCY + dy;
+    } else if (isResizing) {
+      let nx = startCX, ny = startCY, nw = startCW, nh = startCH;
+      const h = activeHandle;
+      const minSize = 30;
+      if (h.includes('e')) nw = Math.max(minSize, startCW + dx);
+      if (h.includes('w')) { nx = startCX + dx; nw = Math.max(minSize, startCW - dx); }
+      if (h.includes('s')) nh = Math.max(minSize, startCH + dy);
+      if (h.includes('n')) { ny = startCY + dy; nh = Math.max(minSize, startCH - dy); }
+      if (selectedAspect !== 'free' && (h.includes('n') || h.includes('s') || h.includes('e') || h.includes('w'))) {
+        const ratio = selectedAspect as number;
+        const cx = nx + nw / 2;
+        const cy = ny + nh / 2;
+        if (nw / nh > ratio) { nw = Math.round(nh * ratio); }
+        else { nh = Math.round(nw / ratio); }
+        nx = Math.round(cx - nw / 2);
+        ny = Math.round(cy - nh / 2);
+      }
+      cropX = nx; cropY = ny; cropW = nw; cropH = nh;
+    }
+    updateWindow();
+  };
+
+  const onPointerUp = () => {
+    isDragging = false;
+    isResizing = false;
+    activeHandle = '';
+    if (cropWindow) {
+      cropX = snapEdge(cropX, imgW - cropW);
+      cropY = snapEdge(cropY, imgH - cropH);
+      updateWindow();
+    }
+  };
+
+  document.addEventListener('pointerdown', onPointerDown);
+  document.addEventListener('pointermove', onPointerMove);
+  document.addEventListener('pointerup', onPointerUp);
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (!currentImg || previewArea?.hidden) return;
+    const step = e.shiftKey ? 10 : 2;
+    switch (e.key) {
+      case 'ArrowUp': cropY -= step; e.preventDefault(); break;
+      case 'ArrowDown': cropY += step; e.preventDefault(); break;
+      case 'ArrowLeft': cropX -= step; e.preventDefault(); break;
+      case 'ArrowRight': cropX += step; e.preventDefault(); break;
+      default: return;
+    }
+    updateWindow();
+  });
+
+  if (container) {
+    const ro = new ResizeObserver(() => {
+      if (currentImg && !previewArea?.hidden) {
+        initCrop();
+      }
+    });
+    ro.observe(container);
+  }
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+    const file = files[0];
+    currentFile = file;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load'));
+      img.src = url;
+    });
+    currentImg = img;
+    if (image) image.src = url;
+    if (origImg) origImg.src = url;
+    await new Promise(requestAnimationFrame);
+    initCrop();
+    if (previewArea) previewArea.hidden = false;
+    if (settingsClearBtn) settingsClearBtn.hidden = false;
+    if (resultArea) resultArea.hidden = true;
+    if (actionsBar) actionsBar.hidden = true;
+    if (downloadSection) downloadSection.hidden = true;
+    previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const validMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+
+  window.addEventListener('toolboximage:files', (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) {
+      const file = detail.files[0];
+      if (!validMimes.includes(file.type)) {
+        alert(i18n('cropper.errorFormat') || 'Unsupported format. Please upload JPEG, PNG, WebP, or AVIF.');
+        return;
+      }
+      onFilesReceived(detail.files);
+    }
+  });
+
+  (async () => {
+    const { retrieveFiles } = await import('../../lib/file-transfer');
+    const files = await retrieveFiles();
+    if (files.length) onFilesReceived(files);
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile) {
+      import('../../lib/file-transfer').then((m) => m.storeFiles([currentFile]));
+    }
+  });
+</script>
+
+<style>
+  .cropper-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+  .cropper-label { color: var(--color-mute); margin: 0 0 var(--space-sm); display: block; }
+
+  .cropper-aspects { border: none; margin: 0; padding: 0; }
+  .cropper-aspect-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xs); }
+  .cropper-aspect-btn { padding: var(--space-sm) var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-family: var(--font-mono); font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background 0.15s ease, border-color 0.15s ease; }
+  .cropper-aspect-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .cropper-aspect-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .cropper-aspect-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+
+  .cropper-formats { border: none; margin: 0; padding: 0; margin-top: var(--space-md); }
+  .cropper-format-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xs); }
+  .cropper-format-btn { padding: var(--space-sm) var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-family: var(--font-mono); font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background 0.15s ease, border-color 0.15s ease; }
+  .cropper-format-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .cropper-format-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .cropper-format-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+
+  .cropper-clear-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-md); cursor: pointer; font: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .cropper-clear-btn:hover { border-color: var(--color-hairline-strong); color: var(--color-error-deep); background-color: var(--color-error-soft); }
+
+  .cropper-crop-area { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .cropper-crop-container { position: relative; display: flex; align-items: center; justify-content: center; min-height: 240px; user-select: none; -webkit-user-select: none; touch-action: none; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; }
+  .cropper-image { display: block; max-width: 100%; max-height: 65vh; pointer-events: none; }
+
+  .cropper-crop-window { position: absolute; outline: 9999px solid rgba(0,0,0,.45); box-shadow: 0 0 0 1px rgba(255,255,255,.3); cursor: move; touch-action: none; }
+  .cropper-handle { position: absolute; width: 16px; height: 16px; background: #fff; border: 2px solid var(--color-link); border-radius: 3px; z-index: 2; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .cropper-handle-nw { top: -8px; left: -8px; cursor: nw-resize; }
+  .cropper-handle-ne { top: -8px; right: -8px; cursor: ne-resize; }
+  .cropper-handle-sw { bottom: -8px; left: -8px; cursor: sw-resize; }
+  .cropper-handle-se { bottom: -8px; right: -8px; cursor: se-resize; }
+  .cropper-handle-n { top: -8px; left: 50%; margin-left: -8px; cursor: n-resize; }
+  .cropper-handle-s { bottom: -8px; left: 50%; margin-left: -8px; cursor: s-resize; }
+  .cropper-handle-w { top: 50%; left: -8px; margin-top: -8px; cursor: w-resize; }
+  .cropper-handle-e { top: 50%; right: -8px; margin-top: -8px; cursor: e-resize; }
+
+  .cropper-crop-info { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-sm) var(--space-lg); background: var(--color-canvas-soft); border-top: 1px solid var(--color-hairline); }
+  .cropper-crop-info .text-caption { color: var(--color-body); font-feature-settings: 'tnum'; }
+  .cropper-apply-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 36px; padding: 0 var(--space-lg); border-radius: var(--radius-pill); border: none; background: var(--color-primary); color: var(--color-on-primary); font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); cursor: pointer; transition: background var(--dur-fast) var(--ease-out-quart); }
+  .cropper-apply-btn:hover { filter: brightness(1.12); }
+  .cropper-apply-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+
+  .cropper-result { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; padding: var(--space-lg); }
+  .cropper-result-cols { display: flex; align-items: center; gap: var(--space-md); }
+  .cropper-result-fig { margin: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .cropper-result-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .cropper-result-frame { position: relative; width: 100%; min-height: 200px; display: flex; align-items: center; justify-content: center; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; border-radius: var(--radius-sm); overflow: hidden; }
+  .cropper-result-img { max-width: 100%; max-height: 320px; object-fit: contain; display: block; }
+  .cropper-result-size { margin: 0; color: var(--color-body); }
+  .cropper-result-arrow { flex-shrink: 0; color: var(--color-mute); }
+  .cropper-actions { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) 0 0; }
+  .cropper-action-link { appearance: none; border: none; background: none; padding: var(--space-xs) var(--space-sm); color: var(--color-link); cursor: pointer; font: inherit; font-size: var(--text-body-sm); display: inline-flex; align-items: center; gap: var(--space-xs); border-radius: var(--radius-sm); transition: background-color 0.15s ease, color 0.15s ease; }
+  .cropper-action-link:hover { background-color: var(--color-canvas-soft); color: var(--color-link-deep); }
+  .cropper-action-link-danger { color: var(--color-error-deep); }
+  .cropper-action-link-danger:hover { background-color: var(--color-error-soft); color: var(--color-error-deep); }
+
+  .cropper-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .cropper-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
+  .cropper-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .cropper-download-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .cropper-download .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .cropper-download .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .cropper-download .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .cropper-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+
+  @media (max-width: 600px) {
+    .cropper-aspect-grid { grid-template-columns: repeat(3, 1fr); }
+    .cropper-result-cols { flex-direction: column; }
+    .cropper-result-arrow { transform: rotate(90deg); }
+  }
+</style>
