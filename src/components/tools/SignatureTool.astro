@@ -173,7 +173,13 @@ const presets = [
       if (currentImg && previewArea && !previewArea.hidden) renderSignature();
     });
   });
-  if (presetBtns[0]) presetBtns[0].dataset.active = 'true';
+  if (presetBtns[0]) {
+    presetBtns[0].dataset.active = 'true';
+    const firstW = Number(presetBtns[0].dataset.w) || 300;
+    const firstH = Number(presetBtns[0].dataset.h) || 80;
+    if (widthInput) widthInput.value = String(firstW);
+    if (heightInput) heightInput.value = String(firstH);
+  }
 
   if (widthInput && heightInput) {
     const onCustomChange = () => {

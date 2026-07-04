@@ -255,6 +255,17 @@ export const posts: BlogPost[] = [
     readMinutes: 6,
   },
   {
+    slug: 'image-to-pdf-guide',
+    title: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+    description:
+      'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+    date: '2026-07-15',
+    author: 'ToolBox Image team',
+    category: 'tutorials',
+    tags: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+    readMinutes: 5,
+  },
+  {
     slug: 'crop-image-online',
     title: 'How to Crop Images Online — The Complete Guide to Free Image Cropping',
     description:

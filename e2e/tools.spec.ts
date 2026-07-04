@@ -520,6 +520,59 @@ test.describe('HEIC Converter tool', () => {
   });
 });
 
+test.describe('Image to PDF tool', () => {
+  test('upload zone is visible', async ({ page }) => {
+    await page.goto('/tools/image-to-pdf/', { waitUntil: 'load' });
+    await expect(page.locator('[data-tool-upload]')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('no console errors on load', async ({ page }) => {
+    const errors = await collectErrors(page);
+    await page.goto('/tools/image-to-pdf/', { waitUntil: 'load' });
+    expect(errors).toEqual([]);
+  });
+
+  test('page size options are visible', async ({ page }) => {
+    await page.goto('/tools/image-to-pdf/', { waitUntil: 'load' });
+    const opts = page.locator('[data-pdf-page-size] [data-pdf-opt]');
+    await expect(opts).toHaveCount(3);
+  });
+
+  test('uploads image and shows thumbnail', async ({ page }) => {
+    await page.goto('/tools/image-to-pdf/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+
+    const thumbGrid = page.locator('[data-pdf-thumb-grid]');
+    await expect(thumbGrid).not.toBeHidden({ timeout: 10000 });
+
+    const thumbImg = thumbGrid.locator('img');
+    await expect(thumbImg).toHaveCount(1);
+
+    const downloadSection = page.locator('[data-pdf-download]');
+    await expect(downloadSection).not.toBeHidden({ timeout: 10000 });
+  });
+
+  test('uploads image, generates PDF, and downloads', async ({ page }) => {
+    await page.goto('/tools/image-to-pdf/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+
+    await page.locator('[data-pdf-thumb-grid]').waitFor({ state: 'visible', timeout: 10000 });
+    await page.locator('[data-pdf-download]').waitFor({ state: 'visible', timeout: 15000 });
+
+    const { suggestedName, buffer } = await captureDownload(
+      page,
+      page.locator('[data-pdf-download-btn]')
+    );
+    expect(suggestedName).toMatch(/\.pdf$/i);
+    // PDF magic bytes: %PDF
+    expect(buffer[0]).toBe(0x25);
+    expect(buffer[1]).toBe(0x50);
+    expect(buffer[2]).toBe(0x44);
+    expect(buffer[3]).toBe(0x46);
+    expect(buffer.length).toBeGreaterThan(500);
+  });
+});
+
 test.describe('Passport Photo Maker tool', () => {
   test('upload zone visible on load', async ({ page }) => {
     await page.goto('/tools/passport/', { waitUntil: 'load' });

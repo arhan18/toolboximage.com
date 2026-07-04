@@ -48,6 +48,10 @@ const LANG_CHECKS: { url: string; present: string[] }[] = [
   { url: '/es/tools/signature/', present: ['Preset Sizes', 'Custom Dimensions'] },
   { url: '/fr/tools/signature/', present: ['Preset Sizes', 'Custom Dimensions'] },
   { url: '/de/tools/signature/', present: ['Preset Sizes', 'Custom Dimensions'] },
+  /* Image to PDF translations */
+  { url: '/es/tools/image-to-pdf/', present: ['Page Size', 'Fit to Image'] },
+  { url: '/fr/tools/image-to-pdf/', present: ['Page Size', 'Fit to Image'] },
+  { url: '/de/tools/image-to-pdf/', present: ['Page Size', 'Fit to Image'] },
 ];
 
 test.describe('Translations render correctly per language', () => {

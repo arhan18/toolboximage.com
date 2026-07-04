@@ -166,6 +166,22 @@ export const tools: ToolConfig[] = [
     steps: ['upload', 'configure', 'process', 'results'],
   },
 
+  {
+    id: 'image-to-pdf',
+    name: 'Image to PDF',
+    shortName: 'PDF',
+    description: 'Convert images to PDF — combine JPG, PNG, WebP, and more into a single PDF document',
+    longDescription: 'Combine multiple images into a single PDF file. Drag to reorder, choose page size (A4, Letter, or Fit to Image), orientation, margins, and image fit. All processing happens in your browser — no uploads.',
+    icon: 'image',
+    path: '/tools/image-to-pdf/',
+    category: 'convert',
+    status: 'live',
+    inputFormats: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'image/bmp', 'image/tiff'],
+    outputFormats: ['PDF'],
+    maxInputs: 50,
+    steps: ['upload', 'configure', 'process', 'results'],
+  },
+
   // ── Planned ───────────────────────────────────────────────────────
   {
     id: 'background-remover',

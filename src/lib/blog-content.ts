@@ -1801,6 +1801,145 @@ export const blogTranslations: Record<string, BlogTranslation> = {
 <p>All processing happens in your browser. Your images never leave your device, making this the most private way to resize images for social media.</p>`,
     },
   ),
+  'image-to-pdf-guide': t(
+    {
+      en: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      es: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      fr: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      de: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      it: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      pt: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      ru: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      zh: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      ja: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      ko: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      ar: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      hi: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+      tr: 'How to Convert Images to PDF Online Free — JPG, PNG, WebP to PDF',
+    },
+    {
+      en: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      es: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      fr: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      de: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      it: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      pt: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      ru: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      zh: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      ja: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      ko: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      ar: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      hi: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+      tr: 'Learn how to convert images to PDF online for free. Combine JPG, PNG, WebP, and more into a single PDF — all processed locally in your browser with no uploads.',
+    },
+    {
+      en: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      es: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      fr: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      de: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      it: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      pt: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      ru: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      zh: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      ja: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      ko: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      ar: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      hi: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+      tr: ['image-to-pdf', 'jpg-to-pdf', 'png-to-pdf', 'pdf-converter', 'conversion', 'privacy'],
+    },
+    {
+      en: `<p><strong>Converting images to PDF</strong> is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. But many online <strong>image to PDF converters</strong> upload your files to a server, exposing your private images. ToolBox Image <strong>to PDF</strong> is different: it converts <strong>JPG to PDF</strong>, <strong>PNG to PDF</strong>, <strong>WebP to PDF</strong>, and more — all in your browser, with no uploads.</p>
+
+<p>In this guide, you will learn how to <strong>convert images to PDF online free</strong>, combine multiple images into a single document, and customise page settings — all while keeping your files completely private.</p>
+
+<h2>Why convert images to PDF?</h2>
+<p>PDF is the universal document format. Unlike raw image files, PDFs are easy to share, print, and archive. Here are the most common reasons to <strong>convert images to PDF</strong>:</p>
+<ul>
+<li><strong>Combine multiple images:</strong> Instead of sending 10 separate JPG attachments, combine them into a single PDF file that recipients can flip through page by page.</li>
+<li><strong>Universal compatibility:</strong> PDFs open on any device — Windows, Mac, Linux, iOS, Android — without requiring specific image viewers or codecs.</li>
+<li><strong>Professional presentation:</strong> A PDF document with consistent page sizes looks more professional than a folder of mixed-format images.</li>
+<li><strong>Easy printing:</strong> PDFs preserve layout and sizing, making them ideal for printing photo albums, contracts, or portfolios.</li>
+<li><strong>Smaller file sizes:</strong> For multi-page documents, a PDF is often smaller than the sum of its individual image files.</li>
+</ul>
+
+<h2>What formats can you convert to PDF?</h2>
+<p>ToolBox Image to PDF supports all major image formats:</p>
+<ul>
+<li><strong>JPG to PDF:</strong> The most common conversion. Convert photographs, product images, and scanned documents from JPG to PDF for easy sharing.</li>
+<li><strong>PNG to PDF:</strong> Perfect for screenshots, graphics, and images with transparency that you want to include in a document.</li>
+<li><strong>WebP to PDF:</strong> WebP images are great for the web but not universally supported in document workflows. Convert them to PDF for offline use.</li>
+<li><strong>AVIF, GIF, BMP, TIFF to PDF:</strong> Less common formats are also supported, making this a true universal <strong>free online image to PDF converter</strong>.</li>
+</ul>
+
+<h2>How to convert images to PDF online free</h2>
+<p>Here is how to <strong>combine images into PDF</strong> using ToolBox Image in five simple steps:</p>
+<ol>
+<li><strong>Open the tool.</strong> Navigate to the <a href="/tools/image-to-pdf/">Image to PDF converter</a> page. No sign-up or installation required.</li>
+<li><strong>Upload your images.</strong> Click the upload area or drag and drop your image files. You can select up to 50 images at once, in any supported format.</li>
+<li><strong>Arrange the order.</strong> Each image appears as a thumbnail. Use the up and down arrow buttons to reorder them. The PDF pages will follow this order.</li>
+<li><strong>Choose page settings.</strong> Select your preferred page size — Fit to Image (each page matches its image), A4 (international standard), or Letter (North American standard). Choose orientation, margins, and whether the image should fit inside the page (Contain) or fill it entirely (Cover).</li>
+<li><strong>Download your PDF.</strong> The PDF is generated automatically. Click the download button to save your combined document. All processing stays on your device — your images never upload to any server.</li>
+</ol>
+
+<h2>Page size options explained</h2>
+<p>Different documents need different page sizes. ToolBox Image to PDF offers three options:</p>
+<ul>
+<li><strong>Fit to Image:</strong> Each page is exactly the size of its image. Best for photo albums, scanned documents, and presentations where preserving the original dimensions matters.</li>
+<li><strong>A4 (210×297 mm):</strong> The international standard for business and academic documents. Use this for contracts, reports, and formal correspondence.</li>
+<li><strong>Letter (215.9×279.4 mm):</strong> The standard North American document size. Choose this for US and Canadian business documents.</li>
+</ul>
+<p>The orientation setting lets you force Portrait, Landscape, or let the tool automatically match each page's orientation to its image.</p>
+
+<h2>Image fit: Contain vs Cover</h2>
+<p>When an image's aspect ratio differs from the page size, the fit mode determines how it is placed:</p>
+<ul>
+<li><strong>Contain:</strong> The image is scaled to fit entirely within the page, maintaining its aspect ratio. White space is added around the image if needed. This ensures no part of the image is cropped.</li>
+<li><strong>Cover:</strong> The image fills the entire page, cropping any excess that doesn't fit. Best for full-bleed photo albums and presentations where you want every page completely covered.</li>
+</ul>
+
+<h2>Privacy: why browser-based processing matters</h2>
+<p>Most <strong>online image to PDF converters</strong> require you to upload your files to a server. This means your images — which could contain sensitive information, personal photos, or confidential documents — are transmitted over the internet and stored on a third-party server.</p>
+<p>ToolBox Image to PDF is different. The entire conversion happens in your browser using <strong>pdf-lib</strong>, a JavaScript library that generates PDFs entirely on your device. Your images never leave your computer. There are no server uploads, no data storage, and no third-party processing. You can verify this by opening your browser's Network tab — you will see zero outbound requests during PDF generation.</p>
+<p>This makes ToolBox Image one of the most private <strong>free online image to PDF converters</strong> available. Whether you are converting personal photos, business documents, or sensitive legal files, your data stays where it belongs — on your device.</p>
+
+<h2>Common use cases for image to PDF conversion</h2>
+<ul>
+<li><strong>Combine scanned documents:</strong> If you have scanned each page of a contract, receipt, or book as separate JPG files, combine them into a single PDF for easy viewing and archiving.</li>
+<li><strong>Convert JPG to PDF for email:</strong> Instead of attaching multiple image files to an email — which can appear as separate downloads or display incorrectly — combine them into one PDF attachment.</li>
+<li><strong>Create photo albums:</strong> Compile vacation photos, event pictures, or portfolio images into a PDF document that anyone can open, regardless of their device or operating system.</li>
+<li><strong>Submit application documents:</strong> Many job applications, university submissions, and government forms accept only PDFs. Convert your supporting documents from images to a single PDF.</li>
+<li><strong>Archive web receipts and screenshots:</strong> Save PNG screenshots of online receipts, confirmations, or web pages as a consolidated PDF for your records.</li>
+<li><strong>Convert WebP to PDF for offline access:</strong> WebP images saved from websites may not open in all document viewers. Convert them to PDF for reliable offline access.</li>
+</ul>
+
+<h2>Frequently asked questions about image to PDF conversion</h2>
+<h3>Is it really free to convert images to PDF online?</h3>
+<p>Yes, ToolBox Image to PDF is completely free. There are no sign-up requirements, no usage limits, no watermarks, and no hidden charges. You can convert as many images as you want, as often as you need.</p>
+<h3>Can I combine JPG and PNG files into the same PDF?</h3>
+<p>Yes, you can mix different image formats in the same PDF. Upload a JPG photo, a PNG screenshot, and a WebP image — they will all be converted and combined into a single PDF document with each image on its own page.</p>
+<h3>What is the maximum number of images I can combine?</h3>
+<p>You can combine up to 50 images into a single PDF. If you need to include more images, simply repeat the process and use a PDF merger tool to combine the resulting files.</p>
+<h3>Will my images be compressed or lose quality?</h3>
+<p>No. Images are embedded in the PDF at their full resolution. The tool uses PNG encoding internally for maximum quality preservation. Your images will appear in the PDF at their original resolution.</p>
+<h3>How is this different from other online image to PDF converters?</h3>
+<p>Most online converters upload your files to a server for processing. ToolBox Image processes everything locally in your browser — no uploads, no servers, no privacy concerns. Your files never leave your device.</p>
+
+<h2>Start converting images to PDF today</h2>
+<p>Converting images to PDF is fast, free, and private with ToolBox Image. <a href="/tools/image-to-pdf/">Open the Image to PDF converter</a> and combine your JPG, PNG, WebP, and other images into a professional PDF document — all from your browser with no uploads required.</p>`,
+      es: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      fr: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      de: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      it: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      pt: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      ru: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      zh: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      ja: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      ko: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      ar: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      hi: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+      tr: `<p>Converting images to PDF is one of the most common document tasks — whether you need to combine scanned contracts, create a photo album, or submit application documents. ToolBox Image to PDF converts JPG, PNG, WebP, and more — all in your browser, with no uploads.</p><p>In this guide, you will learn how to convert images to PDF online free, combine multiple images into a single document, and customise page settings.</p>`,
+    },
+  ),
   'crop-image-online': t(
     {
       en: 'How to Crop Images Online — The Complete Guide to Free Image Cropping',

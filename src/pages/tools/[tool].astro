@@ -14,6 +14,7 @@ import MetadataTool from '../../components/tools/MetadataTool.astro';
 import PassportTool from '../../components/tools/PassportTool.astro';
 import HeicConverterTool from '../../components/tools/HeicConverterTool.astro';
 import SignatureTool from '../../components/tools/SignatureTool.astro';
+import ImageToPdfTool from '../../components/tools/ImageToPdfTool.astro';
 import ToolSeoContent from '../../components/seo/ToolSeoContent.astro';
 import { tools, getTool } from '../../lib/tools';
 import type { ToolId } from '../../types';
@@ -93,6 +94,8 @@ if (!tool) {
           <><HeicConverterTool /><ToolSeoContent toolId="heic-converter" lang="en" /></>
         ) : tool.id === 'signature' ? (
           <><SignatureTool /><ToolSeoContent toolId="signature" lang="en" /></>
+        ) : tool.id === 'image-to-pdf' ? (
+          <><ImageToPdfTool /><ToolSeoContent toolId="image-to-pdf" lang="en" /></>
         ) : (
           <>
             <ToolUpload {tool} />

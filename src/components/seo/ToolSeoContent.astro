@@ -15,7 +15,7 @@ import {
 import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
-  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper' | 'watermark' | 'metadata' | 'passport' | 'heic-converter' | 'signature';
+  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper' | 'watermark' | 'metadata' | 'passport' | 'heic-converter' | 'signature' | 'image-to-pdf';
   lang?: string;
 }
 
@@ -31,9 +31,10 @@ const isMetadata = toolId === 'metadata';
 const isPassport = toolId === 'passport';
 const isHeicConverter = toolId === 'heic-converter';
 const isSignature = toolId === 'signature';
+const isImageToPdf = toolId === 'image-to-pdf';
 
-const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : isHeicConverter ? 'HEIC Converter' : 'Signature Resizer';
-const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : isCropper ? 'tools/cropper' : isWatermark ? 'tools/watermark' : isMetadata ? 'tools/metadata' : isPassport ? 'tools/passport' : isHeicConverter ? 'tools/heic-converter' : 'tools/signature';
+const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : isHeicConverter ? 'HEIC Converter' : isSignature ? 'Signature Resizer' : 'Image to PDF';
+const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : isCropper ? 'tools/cropper' : isWatermark ? 'tools/watermark' : isMetadata ? 'tools/metadata' : isPassport ? 'tools/passport' : isHeicConverter ? 'tools/heic-converter' : isSignature ? 'tools/signature' : 'tools/image-to-pdf';
 const toolPath = `/${lang === 'en' ? '' : lang + '/'}${toolSlug}/`;
 
 const breadcrumbItems = [
@@ -60,6 +61,8 @@ const appSchema = softwareAppSchema({
     ? 'Free online HEIC converter — convert Apple HEIC/HEIF photos to JPEG, PNG, or WebP instantly in your browser. No uploads, no sign-up, unlimited.'
     : isSignature
     ? 'Free online signature resizer — resize your signature image for email, documents, and digital forms. Preset sizes, custom dimensions, white or transparent background. No uploads, no sign-up.'
+    : isImageToPdf
+    ? 'Free online image to PDF converter — combine JPG, PNG, WebP, and more into a single PDF. Reorder pages, choose page size, orientation, margins. No uploads, no sign-up.'
     : 'Free online passport photo maker — create passport and ID photos with correct dimensions and background color. Print-ready layout. No uploads, no sign-up.',
   url: `${SITE_URL}${toolSlug}`,
 });
@@ -146,6 +149,18 @@ const howTo = isCropper
         { name: 'Customize appearance', text: 'Adjust the font size, text color, opacity, rotation angle, and font family to match your brand style.' },
         { name: 'Choose position', text: 'Select a position — Top Left, Top Right, Center, Bottom Left, Bottom Right, or Tile across the entire image.' },
         { name: 'Apply and download', text: 'Click Apply Watermark to preview the result, then download your watermarked image. All processing stays on your device.' },
+      ],
+    }
+      : isImageToPdf
+      ? {
+      name: 'How to Convert Images to PDF Online',
+      description: 'A step-by-step guide to converting images to PDF using ToolBox Image to PDF converter.',
+      steps: [
+        { name: 'Upload your images', text: 'Click the upload area or drag and drop your image files. Supports JPG, PNG, WebP, AVIF, GIF, BMP, and TIFF. You can upload up to 50 images at once.' },
+        { name: 'Arrange the order', text: 'Use the up and down arrow buttons on each thumbnail to reorder your images. The PDF pages will appear in the order shown.' },
+        { name: 'Choose page settings', text: 'Select page size (Fit to Image, A4, or Letter), orientation (Auto, Portrait, or Landscape), margins (None, Small, or Normal), and image fit (Contain or Cover).' },
+        { name: 'Preview the result', text: 'The PDF is generated automatically as you add and arrange images. Review the file name and size information.' },
+        { name: 'Download your PDF', text: 'Click the download button to save your PDF. All processing stays on your device — no uploads, no servers.' },
       ],
     }
       : isSignature
@@ -246,6 +261,13 @@ const faqItems = isConverter
       { q: 'Can I resize a signature image without losing quality?', a: 'Yes, resizing maintains image clarity when you scale down from a larger scanned signature. For best results, upload a high-resolution scan or photo of your signature and scale it down to your desired size. The Signature Resizer uses the HTML5 Canvas API for precise pixel-based resizing.' },
       { q: 'What file format should I use for my digital signature?', a: 'PNG is the recommended format for signature images because it supports transparency and preserves crisp edges. ToolBox Image Signature Resizer outputs PNG files by default. Use the Transparent background option when you need to overlay your signature on different-colored documents or forms.' },
       { q: 'Is it safe to upload my signature image online?', a: 'ToolBox Image Signature Resizer processes everything locally in your browser. Your signature image never leaves your device — there are no server uploads, no data storage, and no third-party processing. You can verify this by checking the Network tab in your browser\'s developer tools.' },
+    ]
+  : isImageToPdf
+  ? [
+      { q: 'Can I combine multiple images into one PDF?', a: 'Yes, ToolBox Image to PDF lets you combine up to 50 images into a single PDF document. Upload all your images, arrange them in the desired order using the up/down arrow buttons, and download a single PDF with each image on its own page.' },
+      { q: 'What image formats can I convert to PDF?', a: 'The tool supports JPG, PNG, WebP, AVIF, GIF, BMP, and TIFF formats. All images are converted to PNG internally before embedding in the PDF, which ensures compatibility regardless of the source format.' },
+      { q: 'Is it free to convert images to PDF online?', a: 'Yes, ToolBox Image to PDF is completely free. There are no sign-up requirements, no usage limits, no watermarks, and no hidden charges. You can convert as many images as you want, as often as you need.' },
+      { q: 'Are my images uploaded to a server during PDF conversion?', a: 'No. All conversion happens locally in your browser using pdf-lib, a PDF generation library that runs entirely in JavaScript. Your images never leave your device. You can verify this by opening your browser\'s Network tab — there are zero outbound requests during PDF generation.' },
     ]
   : [
       { q: _('rotator.faq.q1'), a: _('rotator.faq.a1') },
@@ -881,11 +903,84 @@ const howToLd = howToSchema(howTo.steps);
           <li><strong>Signature for letterheads and invoices:</strong> Add your signature to company letterheads, invoices, proposals, and quotations using the Document preset (400×150) with a transparent background.</li>
         </ul>
       </>}
+
+      {isImageToPdf && <>
+        <h2>Free Online Image to PDF Converter — Combine Images into a Single PDF</h2>
+        <p>
+          ToolBox Image <strong>to PDF</strong> is a fast, private browser-based tool for <strong>converting images to PDF</strong>
+          and <strong>combining multiple images into a single PDF document</strong>. Whether you need to <strong>convert JPG to PDF</strong>,
+          <strong>PNG to PDF</strong>, <strong>WebP to PDF</strong>, or mix different image formats in one document, this free online
+          image to PDF converter handles it instantly — with no uploads, no sign-up, and no file size limits.
+        </p>
+        <p>
+          Unlike online image to PDF converters that send your images to a remote server, ToolBox Image to PDF
+          processes everything locally using <strong>pdf-lib</strong>, a powerful PDF generation library that runs entirely
+          in your browser. Your images never leave your device, making this one of the most private
+          <strong>image to PDF converters</strong> available online. Upload multiple images, rearrange them in any order,
+          customize page settings, and download a professional PDF — all from your browser.
+        </p>
+
+        <h3>Why Use ToolBox Image to PDF Converter?</h3>
+        <p>
+          Most online image to PDF tools upload your files to a server, exposing your private images.
+          ToolBox Image to PDF is different:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All PDF generation happens in your browser using pdf-lib.</li>
+          <li><strong>No File Size Limits:</strong> Convert images of any size — the only limit is your device's available memory.</li>
+          <li><strong>Batch Convert:</strong> Combine up to 50 images into a single PDF document. Perfect for scanning batches of documents, receipts, or photos.</li>
+          <li><strong>Customizable Page Settings:</strong> Choose page size (A4, Letter, or Fit to Image), orientation, margins, and image fit mode.</li>
+          <li><strong>Drag-to-Reorder:</strong> Use the up/down arrow buttons to arrange your images in any order before generating the PDF.</li>
+          <li><strong>Free Forever:</strong> No sign-up, no paywall, no watermarks, no hidden charges. Unlimited PDF generation.</li>
+        </ul>
+
+        <h3>Page Size Options</h3>
+        <p>
+          ToolBox Image to PDF gives you three page size options to match your needs:
+        </p>
+        <ul>
+          <li><strong>Fit to Image:</strong> Each PDF page matches the exact dimensions of its image. Great for photos and graphics where preserving the original aspect ratio is critical.</li>
+          <li><strong>A4 (210×297 mm):</strong> The standard international document size. Ideal for business documents, contracts, and professional reports.</li>
+          <li><strong>Letter (215.9×279.4 mm):</strong> The standard North American document size. Best for US and Canadian business correspondence.</li>
+        </ul>
+
+        <h3>Orientation and Layout Controls</h3>
+        <ul>
+          <li><strong>Auto:</strong> Automatically matches each page's orientation to its image. Landscape images get landscape pages; portrait images get portrait pages.</li>
+          <li><strong>Portrait:</strong> Forces all pages to portrait orientation, regardless of the image aspect ratio.</li>
+          <li><strong>Landscape:</strong> Forces all pages to landscape orientation for a consistent layout throughout the document.</li>
+          <li><strong>Margins:</strong> Choose None for edge-to-edge images, Small (10mm) for a clean border, or Normal (20mm) for comfortable white space around each image.</li>
+        </ul>
+
+        <h3>Image Fit Modes</h3>
+        <ul>
+          <li><strong>Contain:</strong> Scales each image to fit within the page bounds while preserving its aspect ratio. Adds white space around the image if the aspect ratio doesn't match the page.</li>
+          <li><strong>Cover:</strong> Scales each image to fill the entire page, cropping any overflow that doesn't fit the page's aspect ratio. Best for full-bleed photo albums and presentations.</li>
+        </ul>
+
+        <h3>How to Convert Images to PDF Online</h3>
+        <p>Converting images to PDF with ToolBox Image is quick and straightforward:</p>
+        <ol>
+          <li><strong>Upload your images</strong> — Click the upload area or drag and drop image files. You can select multiple files at once. JPG, PNG, WebP, AVIF, GIF, BMP, and TIFF are all supported.</li>
+          <li><strong>Arrange the order</strong> — Each image appears as a thumbnail with up and down arrow buttons. Click these to reorder the images — the PDF pages will match this order.</li>
+          <li><strong>Choose page settings</strong> — Select your preferred page size (Fit to Image, A4, or Letter), orientation (Auto, Portrait, or Landscape), margins (None, Small, or Normal), and image fit (Contain or Cover).</li>
+          <li><strong>Review and download</strong> — The PDF is generated automatically as you make changes. When you're satisfied, click the download button to save your PDF document.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Combine scanned documents:</strong> Scan multiple pages of a contract, receipt, or form and combine the images into a single PDF for easy sharing and archiving.</li>
+          <li><strong>Create photo albums:</strong> Compile a collection of vacation photos, event pictures, or portfolio images into a PDF photo album that anyone can view without special software.</li>
+          <li><strong>Convert JPG to PDF for email:</strong> Instead of attaching multiple JPG files to an email, combine them into a single PDF attachment that's easier to download and navigate.</li>
+          <li><strong>Convert PNG to PDF for business:</strong> Combine PNG screenshots, charts, or graphics into a professional PDF report or presentation.</li>
+          <li><strong>WebP to PDF for archiving:</strong> WebP images are great for the web but less common in offline contexts. Convert them to PDF for universal archiving and sharing.</li>
+        </ul>
+      </>}
     </Prose>
 
     <!-- FAQ -->
     <section class="seo-faq">
-      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : isHeicConverter ? 'HEIC Converter' : isSignature ? 'Signature Resizer' : 'Rotate Image'}>
+      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : isHeicConverter ? 'HEIC Converter' : isSignature ? 'Signature Resizer' : isImageToPdf ? 'Image to PDF' : 'Rotate Image'}>
         <h2 class="text-display-lg">Frequently Asked Questions</h2>
       </SectionHeader>
       <FAQ items={faqItems} />
@@ -1032,6 +1127,23 @@ const howToLd = howToSchema(howTo.steps);
           <a href={`/${lang === 'en' ? '' : lang + '/'}tools/cropper/`} class="seo-related-card">
             <strong>Image Cropper</strong>
             <span>Crop images with preset ratios</span>
+          </a>
+        </> : isImageToPdf ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/passport/`} class="seo-related-card">
+            <strong>Passport Photo Maker</strong>
+            <span>Create passport and ID photos</span>
           </a>
         </> : <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">

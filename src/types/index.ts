@@ -106,7 +106,8 @@ export type ToolId =
   | 'rotator'
   | 'flipper'
   | 'format-viewer'
-  | 'signature';
+  | 'signature'
+  | 'image-to-pdf';
 
 /** High-level grouping for navigation / marketing */
 export type ToolCategory = 'convert' | 'transform' | 'enhance' | 'analyze' | 'create';

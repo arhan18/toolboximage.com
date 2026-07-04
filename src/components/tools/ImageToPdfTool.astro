@@ -1,0 +1,495 @@
+---
+import ToolUpload from './ToolUpload.astro';
+import ToolSettingsPanel from './ToolSettingsPanel.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('image-to-pdf')!;
+
+const pageSizes = [
+  { id: 'fit', key: 'pdfPage.fit' },
+  { id: 'a4', key: 'pdfPage.a4' },
+  { id: 'letter', key: 'pdfPage.letter' },
+];
+const orientations = [
+  { id: 'auto', key: 'pdfPage.auto' },
+  { id: 'portrait', key: 'pdfPage.portrait' },
+  { id: 'landscape', key: 'pdfPage.landscape' },
+];
+const margins = [
+  { id: 'none', key: 'pdfPage.marginNone' },
+  { id: 'small', key: 'pdfPage.marginSmall' },
+  { id: 'normal', key: 'pdfPage.marginNormal' },
+];
+const fits = [
+  { id: 'contain', key: 'pdfPage.fitContain' },
+  { id: 'cover', key: 'pdfPage.fitCover' },
+];
+---
+
+<section class="pdf-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <ToolSettingsPanel {tool} {lang}>
+    <div slot="settings-actions">
+      <span class="text-caption-mono" style="color:var(--color-mute);" data-pdf-file-count></span>
+    </div>
+    <div slot="settings-controls">
+      <fieldset class="pdf-fieldset">
+        <legend class="text-caption-mono pdf-label">{_('pdfPage.pageSize')}</legend>
+        <div class="pdf-btn-row" data-pdf-page-size>
+          {pageSizes.map((s) => (
+            <button type="button" class="pdf-opt-btn" data-pdf-opt={s.id}>{_(s.key)}</button>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="pdf-fieldset">
+        <legend class="text-caption-mono pdf-label">{_('pdfPage.orientation')}</legend>
+        <div class="pdf-btn-row" data-pdf-orientation>
+          {orientations.map((o) => (
+            <button type="button" class="pdf-opt-btn" data-pdf-opt={o.id}>{_(o.key)}</button>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="pdf-fieldset">
+        <legend class="text-caption-mono pdf-label">{_('pdfPage.margins')}</legend>
+        <div class="pdf-btn-row" data-pdf-margins>
+          {margins.map((m) => (
+            <button type="button" class="pdf-opt-btn" data-pdf-opt={m.id}>{_(m.key)}</button>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="pdf-fieldset">
+        <legend class="text-caption-mono pdf-label">{_('pdfPage.imageFit')}</legend>
+        <div class="pdf-btn-row" data-pdf-fit>
+          {fits.map((f) => (
+            <button type="button" class="pdf-opt-btn" data-pdf-opt={f.id}>{_(f.key)}</button>
+          ))}
+        </div>
+      </fieldset>
+    </div>
+  </ToolSettingsPanel>
+
+  <section class="pdf-preview" data-pdf-preview hidden>
+    <div class="pdf-preview-header">
+      <span class="text-caption-mono pdf-preview-title">{_('pdfPage.images')}</span>
+      <button type="button" class="pdf-clear-all-btn" data-pdf-clear-all hidden>{_('tool.clear')}</button>
+    </div>
+    <div class="pdf-thumb-grid" data-pdf-thumb-grid></div>
+  </section>
+
+  <section class="pdf-download" data-pdf-download hidden>
+    <div class="pdf-download-bar">
+      <div class="pdf-download-info">
+        <p class="text-caption-mono pdf-download-label">{_('pdfPage.downloadBtn')}</p>
+        <p class="text-body-sm-strong" data-pdf-download-name></p>
+      </div>
+      <button type="button" class="results-btn results-btn-primary" data-pdf-download-btn>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        {_('pdfPage.downloadBtn')}
+      </button>
+      <button type="button" class="results-btn results-btn-ghost" data-pdf-clear>
+        {_('tool.clear')}
+      </button>
+    </div>
+  </section>
+</section>
+
+<script>
+  const thumbGrid = document.querySelector<HTMLElement>('[data-pdf-thumb-grid]');
+  const previewArea = document.querySelector<HTMLElement>('[data-pdf-preview]');
+  const downloadSection = document.querySelector<HTMLElement>('[data-pdf-download]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-pdf-download-btn]');
+  const downloadNameEl = document.querySelector<HTMLElement>('[data-pdf-download-name]');
+  const clearAllBtn = document.querySelector<HTMLButtonElement>('[data-pdf-clear-all]');
+  const clearBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-clear]');
+  const fileCountEl = document.querySelector<HTMLElement>('[data-pdf-file-count]');
+
+  const pageSizeBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-page-size] [data-pdf-opt]');
+  const orientationBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-orientation] [data-pdf-opt]');
+  const marginBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-margins] [data-pdf-opt]');
+  const fitBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-fit] [data-pdf-opt]');
+
+  interface PdfImage {
+    file: File;
+    img: HTMLImageElement;
+    dataUrl: string;
+  }
+
+  let images: PdfImage[] = [];
+  let pdfLoaded = false;
+  let currentPdfBlob: Blob | null = null;
+  let currentPdfUrl: string | null = null;
+
+  // Default selections
+  let selectedPageSize = 'fit';
+  let selectedOrientation = 'auto';
+  let selectedMargins = 'none';
+  let selectedFit = 'contain';
+
+  const PAGE_DIMS: Record<string, [number, number]> = {
+    a4: [595.28, 841.89],
+    letter: [612, 792],
+  };
+
+  const MARGIN_PTS: Record<string, number> = {
+    none: 0,
+    small: 28.35,
+    normal: 56.69,
+  };
+
+  // Set initial active states
+  pageSizeBtns[0] && (pageSizeBtns[0].dataset.active = 'true');
+  orientationBtns[0] && (orientationBtns[0].dataset.active = 'true');
+  marginBtns[0] && (marginBtns[0].dataset.active = 'true');
+  fitBtns[0] && (fitBtns[0].dataset.active = 'true');
+
+  const handleOptClick = (btns: NodeListOf<HTMLButtonElement>, setter: (v: string) => void) => {
+    btns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        btns.forEach((b) => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        setter(btn.dataset.pdfOpt!);
+      });
+    });
+  };
+
+  handleOptClick(pageSizeBtns, (v) => { selectedPageSize = v; });
+  handleOptClick(orientationBtns, (v) => { selectedOrientation = v; });
+  handleOptClick(marginBtns, (v) => { selectedMargins = v; });
+  handleOptClick(fitBtns, (v) => { selectedFit = v; });
+
+  const formatBytes = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const loadPdfLib = async (): Promise<void> => {
+    if (pdfLoaded) return;
+    if ((window as any).PDFLib) { pdfLoaded = true; return; }
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js';
+      script.onload = () => { pdfLoaded = true; resolve(); };
+      script.onerror = () => reject(new Error('Failed to load pdf-lib'));
+      document.head.appendChild(script);
+    });
+  };
+
+  const loadImageAsDataUrl = (file: File): Promise<{ img: HTMLImageElement; dataUrl: string }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        const img = new Image();
+        img.onload = () => resolve({ img, dataUrl });
+        img.onerror = () => reject(new Error('Failed to decode image'));
+        img.src = dataUrl;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const renderThumbnails = () => {
+    if (!thumbGrid) return;
+    thumbGrid.innerHTML = '';
+    images.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.className = 'pdf-thumb-card';
+      card.innerHTML = `
+        <div class="pdf-thumb-img-wrap">
+          <img src="${item.dataUrl}" alt="${item.file.name}" class="pdf-thumb-img" />
+        </div>
+        <div class="pdf-thumb-info">
+          <span class="text-caption pdf-thumb-name" title="${item.file.name}">${item.file.name}</span>
+          <span class="text-caption pdf-thumb-size">${item.img.naturalWidth}×${item.img.naturalHeight} · ${formatBytes(item.file.size)}</span>
+        </div>
+        <div class="pdf-thumb-actions">
+          <button type="button" class="pdf-thumb-btn" data-pdf-move-up="${idx}" ${idx === 0 ? 'disabled' : ''} aria-label="Move up">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <button type="button" class="pdf-thumb-btn" data-pdf-move-down="${idx}" ${idx === images.length - 1 ? 'disabled' : ''} aria-label="Move down">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <button type="button" class="pdf-thumb-btn pdf-thumb-remove" data-pdf-remove="${idx}" aria-label="Remove">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      `;
+      const upBtn = card.querySelector<HTMLButtonElement>('[data-pdf-move-up]');
+      const downBtn = card.querySelector<HTMLButtonElement>('[data-pdf-move-down]');
+      const removeBtn = card.querySelector<HTMLButtonElement>('[data-pdf-remove]');
+      upBtn?.addEventListener('click', () => moveImage(Number(upBtn.dataset.pdfMoveUp), -1));
+      downBtn?.addEventListener('click', () => moveImage(Number(downBtn.dataset.pdfMoveDown), 1));
+      removeBtn?.addEventListener('click', () => removeImage(Number(removeBtn.dataset.pdfRemove)));
+      thumbGrid.appendChild(card);
+    });
+    updateCount();
+  };
+
+  const moveImage = (idx: number, dir: -1 | 1) => {
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= images.length) return;
+    [images[idx], images[newIdx]] = [images[newIdx], images[idx]];
+    renderThumbnails();
+    currentPdfBlob = null;
+    if (currentPdfUrl) { URL.revokeObjectURL(currentPdfUrl); currentPdfUrl = null; }
+  };
+
+  const removeImage = (idx: number) => {
+    images.splice(idx, 1);
+    if (images.length === 0) {
+      doClear();
+      return;
+    }
+    renderThumbnails();
+    currentPdfBlob = null;
+    if (currentPdfUrl) { URL.revokeObjectURL(currentPdfUrl); currentPdfUrl = null; }
+  };
+
+  const updateCount = () => {
+    if (fileCountEl) fileCountEl.textContent = `${images.length} file${images.length !== 1 ? 's' : ''}`;
+    if (clearAllBtn) clearAllBtn.hidden = images.length === 0;
+  };
+
+  const imageToPngBlob = (img: HTMLImageElement): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob((blob) => resolve(blob!), 'image/png');
+    });
+  };
+
+  const generatePdf = async (): Promise<void> => {
+    if (!images.length) return;
+    await loadPdfLib();
+
+    const PDFLib = (window as any).PDFLib;
+    const doc = await PDFLib.PDFDocument.create();
+
+    for (const item of images) {
+      let width = item.img.naturalWidth;
+      let height = item.img.naturalHeight;
+
+      // Determine page dimensions
+      let pageW: number, pageH: number;
+
+      if (selectedPageSize === 'fit') {
+        // Use image dimensions in points (1pt = 1/72 inch, assume 72 DPI)
+        pageW = width;
+        pageH = height;
+      } else {
+        [pageW, pageH] = PAGE_DIMS[selectedPageSize] || PAGE_DIMS.a4;
+      }
+
+      // Apply orientation
+      if (selectedOrientation === 'portrait' && pageW > pageH) {
+        [pageW, pageH] = [pageH, pageW];
+      } else if (selectedOrientation === 'landscape' && pageH > pageW) {
+        [pageW, pageH] = [pageH, pageW];
+      } else if (selectedOrientation === 'auto') {
+        // Auto: match orientation to image
+        const imgIsLandscape = width > height;
+        const pageIsLandscape = pageW > pageH;
+        if (imgIsLandscape !== pageIsLandscape) {
+          [pageW, pageH] = [pageH, pageW];
+        }
+      }
+
+      const margin = MARGIN_PTS[selectedMargins] || 0;
+      const availW = pageW - margin * 2;
+      const availH = pageH - margin * 2;
+
+      // Calculate image position/size
+      let drawW: number, drawH: number;
+      const imgAspect = width / height;
+      const availAspect = availW / availH;
+
+      if (selectedFit === 'contain') {
+        if (imgAspect > availAspect) {
+          drawW = availW;
+          drawH = availW / imgAspect;
+        } else {
+          drawH = availH;
+          drawW = availH * imgAspect;
+        }
+      } else {
+        // cover
+        if (imgAspect > availAspect) {
+          drawH = availH;
+          drawW = availH * imgAspect;
+        } else {
+          drawW = availW;
+          drawH = availW / imgAspect;
+        }
+      }
+
+      const x = margin + (availW - drawW) / 2;
+      const y = margin + (availH - drawH) / 2;
+
+      // Embed image
+      const pngBlob = await imageToPngBlob(item.img);
+      const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+      const pdfImg = await doc.embedPng(pngBytes);
+
+      const page = doc.addPage([pageW, pageH]);
+      page.drawImage(pdfImg, {
+        x,
+        y,
+        width: drawW,
+        height: drawH,
+      });
+    }
+
+    const pdfBytes = await doc.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    if (currentPdfUrl) URL.revokeObjectURL(currentPdfUrl);
+    currentPdfBlob = blob;
+    currentPdfUrl = URL.createObjectURL(blob);
+
+    if (downloadSection) downloadSection.hidden = false;
+    if (downloadNameEl) {
+      downloadNameEl.textContent = images.length === 1
+        ? images[0].file.name.replace(/\.[^.]+$/, '') + '.pdf'
+        : 'combined_images.pdf';
+    }
+  };
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!currentPdfUrl) return;
+      const a = document.createElement('a');
+      a.href = currentPdfUrl;
+      a.download = downloadNameEl?.textContent || 'images.pdf';
+      a.click();
+    });
+  }
+
+  const doClear = () => {
+    images = [];
+    if (currentPdfUrl) URL.revokeObjectURL(currentPdfUrl);
+    currentPdfBlob = null;
+    currentPdfUrl = null;
+    if (previewArea) previewArea.hidden = true;
+    if (downloadSection) downloadSection.hidden = true;
+    if (thumbGrid) thumbGrid.innerHTML = '';
+    updateCount();
+    const uploadZone = document.querySelector<HTMLElement>('[data-tool-upload]');
+    uploadZone?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  clearBtns.forEach((btn) => btn.addEventListener('click', doClear));
+  if (clearAllBtn) clearAllBtn.addEventListener('click', doClear);
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+
+    for (const file of files) {
+      try {
+        const result = await loadImageAsDataUrl(file);
+        images.push({ file, img: result.img, dataUrl: result.dataUrl });
+      } catch {
+        // Skip files that can't be decoded
+      }
+    }
+
+    if (previewArea) previewArea.hidden = false;
+    renderThumbnails();
+    previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Auto-generate PDF
+    await generatePdf();
+  };
+
+  window.addEventListener('toolboximage:files', async (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) onFilesReceived(detail.files);
+  });
+
+  (async () => {
+    if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      const { retrieveFiles } = await import('../../lib/file-transfer');
+      const files = await retrieveFiles();
+      if (files.length) onFilesReceived(files);
+    }
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (images.length && sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      import('../../lib/file-transfer').then(m => m.storeFiles(images.map(i => i.file)));
+    }
+  });
+</script>
+
+<style>
+  .pdf-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+
+  .pdf-fieldset { border: none; margin: 0; padding: 0; }
+  .pdf-label { color: var(--color-mute); margin: 0 0 var(--space-sm); display: block; }
+
+  .pdf-btn-row { display: flex; gap: var(--space-xs); flex-wrap: wrap; }
+  .pdf-opt-btn {
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-hairline);
+    background: var(--color-canvas);
+    color: var(--color-body);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--text-body-sm);
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .pdf-opt-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .pdf-opt-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); color: var(--color-link-deep); }
+
+  .pdf-preview { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; padding: var(--space-lg); }
+  .pdf-preview-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-md); }
+  .pdf-preview-title { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pdf-clear-all-btn { appearance: none; border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-md); padding: var(--space-xs) var(--space-sm); cursor: pointer; font: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .pdf-clear-all-btn:hover { border-color: var(--color-hairline-strong); color: var(--color-error-deep); background-color: var(--color-error-soft); }
+
+  .pdf-thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-sm); }
+  .pdf-thumb-card { display: flex; flex-direction: column; gap: var(--space-xs); padding: var(--space-sm); border: 1px solid var(--color-hairline); border-radius: var(--radius-md); background: var(--color-canvas-soft); }
+  .pdf-thumb-img-wrap { width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 12px 12px; border-radius: var(--radius-sm); overflow: hidden; }
+  .pdf-thumb-img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+  .pdf-thumb-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .pdf-thumb-name { color: var(--color-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pdf-thumb-size { color: var(--color-mute); }
+  .pdf-thumb-actions { display: flex; gap: 2px; }
+  .pdf-thumb-btn { appearance: none; border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-sm); padding: 4px; cursor: pointer; display: flex; align-items: center; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .pdf-thumb-btn:hover:not(:disabled) { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+  .pdf-thumb-btn:disabled { opacity: 0.4; cursor: default; }
+  .pdf-thumb-remove:hover:not(:disabled) { color: var(--color-error-deep); border-color: var(--color-error-soft); background-color: var(--color-error-soft); }
+
+  .pdf-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .pdf-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
+  .pdf-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pdf-download-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pdf-download .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .pdf-download .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .pdf-download .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .pdf-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .pdf-download .results-btn-ghost { background: transparent; color: var(--color-body); border-color: var(--color-hairline); }
+  .pdf-download .results-btn-ghost:hover { background: var(--color-canvas-soft); color: var(--color-error-deep); border-color: var(--color-hairline-strong); }
+
+  [data-pdf-preview][hidden] { display: none; }
+  [data-pdf-download][hidden] { display: none; }
+  [data-pdf-file-count] { display: block; }
+
+  @media (max-width: 600px) {
+    .pdf-thumb-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

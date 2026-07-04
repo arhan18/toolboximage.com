@@ -18,6 +18,7 @@ import MetadataTool from '../../components/tools/MetadataTool.astro';
 import PassportTool from '../../components/tools/PassportTool.astro';
 import HeicConverterTool from '../../components/tools/HeicConverterTool.astro';
 import SignatureTool from '../../components/tools/SignatureTool.astro';
+import ImageToPdfTool from '../../components/tools/ImageToPdfTool.astro';
 import ToolSeoContent from '../../components/seo/ToolSeoContent.astro';
 import CompressorSeoContent from '../../components/seo/CompressorSeoContent.astro';
 import { tools } from '../../lib/tools';
@@ -44,12 +45,12 @@ export async function getStaticPaths() {
     'blog/image-compression-basics', 'blog/designing-the-compressor',
     'blog/introducing-toolboximage', 'blog/choose-image-format',
     'blog/batch-compression-guide', 'blog/image-size-limits-social-email',
-    'blog/compress-to-exact-file-size', 'blog/png-vs-webp-vs-avif', 'blog/crop-image-online',
+    'blog/compress-to-exact-file-size', 'blog/png-vs-webp-vs-avif',     'blog/image-to-pdf-guide', 'blog/crop-image-online',
     'faq', 'about', 'contact', 'support', 'troubleshooting',
     'legal/privacy', 'legal/terms',
     'tools/rotator', 'tools/converter', 'tools/resizer',
     'tools/cropper', 'tools/watermark', 'tools/passport', 'tools/flipper', 'tools/heic-converter', 'tools/signature',
-    'tools/background-remover', 'tools/blur', 'tools/format-viewer', 'tools/metadata', 'tools/watermark-remover',
+    'tools/image-to-pdf', 'tools/background-remover', 'tools/blur', 'tools/format-viewer', 'tools/metadata', 'tools/watermark-remover',
   ];
   const paths: { params: { lang: string; slug: string } }[] = [];
   for (const lang of langs) {
@@ -138,6 +139,7 @@ function pageDesc(slug: string): string {
     passport: 'page.desc.passport',
     'tools/heic-converter': 'page.desc.heicConverter',
     'tools/signature': 'page.desc.signature',
+  'tools/image-to-pdf': 'page.desc.imageToPdf',
     support: 'page.desc.support',
     faq: 'page.desc.faq',
     about: 'page.desc.about',
@@ -177,6 +179,7 @@ const toolKeyFromId: Record<string, string> = {
   blur: 'tools.blur', 'format-viewer': 'tools.formatViewer', metadata: 'tools.metadata', 'watermark-remover': 'tools.watermarkRemover',
   passport: 'tools.passport',
   signature: 'tools.signature',
+  'image-to-pdf': 'tools.imageToPdf',
 };
 const toolDescFromId: Record<string, string> = {
   converter: 'tools.converterDesc', resizer: 'tools.resizerDesc', cropper: 'tools.cropperDesc', rotator: 'tools.rotatorDesc',
@@ -184,6 +187,7 @@ const toolDescFromId: Record<string, string> = {
   blur: 'tools.blurDesc', 'format-viewer': 'tools.formatViewerDesc', metadata: 'tools.metadataDesc', 'watermark-remover': 'tools.watermarkRemoverDesc',
   passport: 'tools.passportDesc',
   signature: 'tools.signatureDesc',
+  'image-to-pdf': 'tools.imageToPdfDesc',
 };
 const getName = (id: string) => _(toolKeyFromId[id] || `tools.${id}`);
 const getDesc = (id: string) => _(toolDescFromId[id] || `${toolKeyFromId[id] || `tools.${id}`}Desc`);
@@ -198,7 +202,8 @@ const isMetadataPage = slug === 'tools/metadata';
 const isPassportPage = slug === 'tools/passport';
 const isHeicConverterPage = slug === 'tools/heic-converter';
 const isSignaturePage = slug === 'tools/signature';
-const isLiveTool = isCompressorPage || isRotatorPage || isConverterPage || isResizerPage || isCropperPage || isWatermarkPage || isMetadataPage || isPassportPage || isHeicConverterPage || isSignaturePage;
+const isImageToPdfPage = slug === 'tools/image-to-pdf';
+const isLiveTool = isCompressorPage || isRotatorPage || isConverterPage || isResizerPage || isCropperPage || isWatermarkPage || isMetadataPage || isPassportPage || isHeicConverterPage || isSignaturePage || isImageToPdfPage;
 const isBlogSlug = slug?.startsWith('blog/');
 const isBlogIndex = slug === 'blog';
 const isFaq = slug === 'faq';
@@ -240,6 +245,7 @@ const ogImageMap: Record<string, string> = {
   'compress-gif': '/og-image.png',
   'compress-for-web': '/og-image.png',
   'compress-for-ecommerce': '/og-image.png',
+  'tools/image-to-pdf': '/og-image-to-pdf.png',
 };
 const pageOgImage = ogImageMap[slug] || '/og-image.png';
 
@@ -438,7 +444,7 @@ const faqItems = [
         </div>
       </section>
     ) : isLiveTool ? (
-      isCompressorPage ? <><CompressorTool lang={langCode} /><CompressorSeoContent variant={slug} lang={langCode} /></> : isRotatorPage ? <><RotatorTool lang={langCode} /><ToolSeoContent toolId="rotator" lang={langCode} /></> : isConverterPage ? <><ConverterTool lang={langCode} /><ToolSeoContent toolId="converter" lang={langCode} /></> : isResizerPage ? <><ResizerTool lang={langCode} /><ToolSeoContent toolId="resizer" lang={langCode} /></> : isCropperPage ? <><CropperTool lang={langCode} /><ToolSeoContent toolId="cropper" lang={langCode} /></> : isWatermarkPage ? <><WatermarkTool lang={langCode} /><ToolSeoContent toolId="watermark" lang={langCode} /></> : isMetadataPage ? <><MetadataTool lang={langCode} /><ToolSeoContent toolId="metadata" lang={langCode} /></> : isPassportPage ? <><PassportTool lang={langCode} /><ToolSeoContent toolId="passport" lang={langCode} /></> : isHeicConverterPage ? <><HeicConverterTool lang={langCode} /><ToolSeoContent toolId="heic-converter" lang={langCode} /></> : isSignaturePage ? <><SignatureTool lang={langCode} /><ToolSeoContent toolId="signature" lang={langCode} /></> : null
+      isCompressorPage ? <><CompressorTool lang={langCode} /><CompressorSeoContent variant={slug} lang={langCode} /></> : isRotatorPage ? <><RotatorTool lang={langCode} /><ToolSeoContent toolId="rotator" lang={langCode} /></> : isConverterPage ? <><ConverterTool lang={langCode} /><ToolSeoContent toolId="converter" lang={langCode} /></> : isResizerPage ? <><ResizerTool lang={langCode} /><ToolSeoContent toolId="resizer" lang={langCode} /></> : isCropperPage ? <><CropperTool lang={langCode} /><ToolSeoContent toolId="cropper" lang={langCode} /></> : isWatermarkPage ? <><WatermarkTool lang={langCode} /><ToolSeoContent toolId="watermark" lang={langCode} /></> : isMetadataPage ? <><MetadataTool lang={langCode} /><ToolSeoContent toolId="metadata" lang={langCode} /></> : isPassportPage ? <><PassportTool lang={langCode} /><ToolSeoContent toolId="passport" lang={langCode} /></> : isHeicConverterPage ? <><HeicConverterTool lang={langCode} /><ToolSeoContent toolId="heic-converter" lang={langCode} /></> :   isSignaturePage ? <><SignatureTool lang={langCode} /><ToolSeoContent toolId="signature" lang={langCode} /></> : isImageToPdfPage ? <><ImageToPdfTool lang={langCode} /><ToolSeoContent toolId="image-to-pdf" lang={langCode} /></> : null
     ) : isNonLiveTool ? (
       <section class="band band-canvas">
         <div class="container" style="padding-top: var(--space-5xl); max-width: 640px; text-align: center;">
