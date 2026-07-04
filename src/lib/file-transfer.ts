@@ -13,6 +13,24 @@ function openDB(): Promise<IDBDatabase> {
   });
 }
 
+const SESSION_KEY = 'toolboximage:transfer';
+
+export function markTransfer(): void {
+  if (typeof sessionStorage !== 'undefined') {
+    sessionStorage.setItem(SESSION_KEY, '1');
+  }
+}
+
+export function hasTransfer(): boolean {
+  return typeof sessionStorage !== 'undefined' && sessionStorage.getItem(SESSION_KEY) === '1';
+}
+
+export function clearTransfer(): void {
+  if (typeof sessionStorage !== 'undefined') {
+    sessionStorage.removeItem(SESSION_KEY);
+  }
+}
+
 export async function storeFiles(files: File[]): Promise<void> {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readwrite');

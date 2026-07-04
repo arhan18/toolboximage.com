@@ -226,18 +226,24 @@ const _ = useTranslations(lang);
     const runner = new CompressionJobRunner(store, settings, 4);
 
     (async () => {
-      const files = await retrieveFiles();
-      if (files.length) {
-        await store.add(files);
-        queuePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+        sessionStorage.removeItem('toolboximage:transfer');
+        const files = await retrieveFiles();
+        if (files.length) {
+          await store.add(files);
+          queuePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }
     })();
 
     window.addEventListener('beforeunload', () => {
-      const items = store.snapshot();
-      const files = items.map(i => i.file).filter(Boolean);
-      if (files.length) {
-        import('../../lib/file-transfer').then(m => m.storeFiles(files));
+      if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+        sessionStorage.removeItem('toolboximage:transfer');
+        const items = store.snapshot();
+        const files = items.map(i => i.file).filter(Boolean);
+        if (files.length) {
+          import('../../lib/file-transfer').then(m => m.storeFiles(files));
+        }
       }
     });
     const tpl = document.getElementById('tpl-preview-card') as HTMLTemplateElement | null;

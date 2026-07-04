@@ -38,6 +38,12 @@ const LANG_CHECKS: { url: string; present: string[] }[] = [
   { url: '/es/tools/watermark/', present: ['Watermark Text', 'Apply Watermark'] },
   { url: '/fr/tools/watermark/', present: ['Watermark Text', 'Download'] },
   { url: '/de/tools/watermark/', present: ['Watermark Text', 'Apply Watermark'] },
+  /* HEIC Converter translations */
+  { url: '/es/tools/heic-converter/', present: ['Formato Destino', 'Descargar'] },
+  { url: '/fr/tools/heic-converter/', present: ['Format de Sortie', 'Télécharger'] },
+  { url: '/de/tools/heic-converter/', present: ['Zielformat', 'Herunterladen'] },
+  { url: '/ja/tools/heic-converter/', present: ['変換先形式', 'ダウンロード'] },
+  { url: '/hi/tools/heic-converter/', present: ['लक्ष्य प्रारूप', 'डाउनलोड करें'] },
 ];
 
 test.describe('Translations render correctly per language', () => {

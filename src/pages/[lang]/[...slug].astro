@@ -15,6 +15,8 @@ import ResizerTool from '../../components/tools/ResizerTool.astro';
 import CropperTool from '../../components/tools/CropperTool.astro';
 import WatermarkTool from '../../components/tools/WatermarkTool.astro';
 import MetadataTool from '../../components/tools/MetadataTool.astro';
+import PassportTool from '../../components/tools/PassportTool.astro';
+import HeicConverterTool from '../../components/tools/HeicConverterTool.astro';
 import ToolSeoContent from '../../components/seo/ToolSeoContent.astro';
 import CompressorSeoContent from '../../components/seo/CompressorSeoContent.astro';
 import { tools } from '../../lib/tools';
@@ -45,7 +47,7 @@ export async function getStaticPaths() {
     'faq', 'about', 'contact', 'support', 'troubleshooting',
     'legal/privacy', 'legal/terms',
     'tools/rotator', 'tools/converter', 'tools/resizer',
-    'tools/cropper', 'tools/watermark', 'tools/flipper', 'tools/heic-converter',
+    'tools/cropper', 'tools/watermark', 'tools/passport', 'tools/flipper', 'tools/heic-converter',
     'tools/background-remover', 'tools/blur', 'tools/format-viewer', 'tools/metadata', 'tools/watermark-remover',
   ];
   const paths: { params: { lang: string; slug: string } }[] = [];
@@ -105,6 +107,7 @@ function pageTitle(slug: string): string {
     blur: _('tools.blur'),
     'format-viewer': _('tools.formatViewer'),
     metadata: _('tools.metadata'),
+    passport: _('tools.passport'),
   };
   return map[slug] || map[last] || titleCase(last);
 }
@@ -131,6 +134,8 @@ function pageDesc(slug: string): string {
     converter: 'page.desc.converter',
     resizer: 'page.desc.resizer',
     cropper: 'page.desc.cropper',
+    passport: 'page.desc.passport',
+    'tools/heic-converter': 'page.desc.heicConverter',
     support: 'page.desc.support',
     faq: 'page.desc.faq',
     about: 'page.desc.about',
@@ -168,11 +173,13 @@ const toolKeyFromId: Record<string, string> = {
   converter: 'tools.converter', resizer: 'tools.resizer', cropper: 'tools.cropper', rotator: 'tools.rotator',
   watermark: 'tools.watermark', flipper: 'tools.flipper', 'heic-converter': 'tools.heicConverter', 'background-remover': 'tools.backgroundRemover',
   blur: 'tools.blur', 'format-viewer': 'tools.formatViewer', metadata: 'tools.metadata', 'watermark-remover': 'tools.watermarkRemover',
+  passport: 'tools.passport',
 };
 const toolDescFromId: Record<string, string> = {
   converter: 'tools.converterDesc', resizer: 'tools.resizerDesc', cropper: 'tools.cropperDesc', rotator: 'tools.rotatorDesc',
   watermark: 'tools.watermarkDesc', flipper: 'tools.flipperDesc', 'heic-converter': 'tools.heicConverterDesc', 'background-remover': 'tools.backgroundRemoverDesc',
   blur: 'tools.blurDesc', 'format-viewer': 'tools.formatViewerDesc', metadata: 'tools.metadataDesc', 'watermark-remover': 'tools.watermarkRemoverDesc',
+  passport: 'tools.passportDesc',
 };
 const getName = (id: string) => _(toolKeyFromId[id] || `tools.${id}`);
 const getDesc = (id: string) => _(toolDescFromId[id] || `${toolKeyFromId[id] || `tools.${id}`}Desc`);
@@ -184,11 +191,13 @@ const isResizerPage = slug === 'tools/resizer';
 const isCropperPage = slug === 'tools/cropper';
 const isWatermarkPage = slug === 'tools/watermark';
 const isMetadataPage = slug === 'tools/metadata';
-const isLiveTool = isCompressorPage || isRotatorPage || isConverterPage || isResizerPage || isCropperPage || isWatermarkPage || isMetadataPage;
+const isPassportPage = slug === 'tools/passport';
+const isHeicConverterPage = slug === 'tools/heic-converter';
+const isLiveTool = isCompressorPage || isRotatorPage || isConverterPage || isResizerPage || isCropperPage || isWatermarkPage || isMetadataPage || isPassportPage || isHeicConverterPage;
 const isBlogSlug = slug?.startsWith('blog/');
 const isBlogIndex = slug === 'blog';
 const isFaq = slug === 'faq';
-const nonLiveToolSlugs = ['tools/flipper', 'tools/heic-converter', 'tools/background-remover', 'tools/blur', 'tools/format-viewer', 'tools/watermark-remover'];
+const nonLiveToolSlugs = ['tools/flipper', 'tools/background-remover', 'tools/blur', 'tools/format-viewer', 'tools/watermark-remover'];
 const isNonLiveTool = nonLiveToolSlugs.includes(slug);
 const isLegalStub = slug === 'legal/privacy' || slug === 'legal/terms';
 
@@ -221,6 +230,7 @@ const ogImageMap: Record<string, string> = {
   'tools/cropper': '/og-cropper.png',
   'tools/watermark': '/og-watermark.png',
   'tools/metadata': '/og-metadata.png',
+  'tools/passport': '/og-passport.png',
   'image-compressor': '/og-image-compressor.png',
   'compress-gif': '/og-image.png',
   'compress-for-web': '/og-image.png',
@@ -423,7 +433,7 @@ const faqItems = [
         </div>
       </section>
     ) : isLiveTool ? (
-      isCompressorPage ? <><CompressorTool lang={langCode} /><CompressorSeoContent variant={slug} lang={langCode} /></> : isRotatorPage ? <><RotatorTool lang={langCode} /><ToolSeoContent toolId="rotator" lang={langCode} /></> : isConverterPage ? <><ConverterTool lang={langCode} /><ToolSeoContent toolId="converter" lang={langCode} /></> : isResizerPage ? <><ResizerTool lang={langCode} /><ToolSeoContent toolId="resizer" lang={langCode} /></> : isCropperPage ? <><CropperTool lang={langCode} /><ToolSeoContent toolId="cropper" lang={langCode} /></> : isWatermarkPage ? <><WatermarkTool lang={langCode} /><ToolSeoContent toolId="watermark" lang={langCode} /></> : isMetadataPage ? <><MetadataTool lang={langCode} /><ToolSeoContent toolId="metadata" lang={langCode} /></> : null
+      isCompressorPage ? <><CompressorTool lang={langCode} /><CompressorSeoContent variant={slug} lang={langCode} /></> : isRotatorPage ? <><RotatorTool lang={langCode} /><ToolSeoContent toolId="rotator" lang={langCode} /></> : isConverterPage ? <><ConverterTool lang={langCode} /><ToolSeoContent toolId="converter" lang={langCode} /></> : isResizerPage ? <><ResizerTool lang={langCode} /><ToolSeoContent toolId="resizer" lang={langCode} /></> : isCropperPage ? <><CropperTool lang={langCode} /><ToolSeoContent toolId="cropper" lang={langCode} /></> : isWatermarkPage ? <><WatermarkTool lang={langCode} /><ToolSeoContent toolId="watermark" lang={langCode} /></> : isMetadataPage ? <><MetadataTool lang={langCode} /><ToolSeoContent toolId="metadata" lang={langCode} /></> : isPassportPage ? <><PassportTool lang={langCode} /><ToolSeoContent toolId="passport" lang={langCode} /></> : isHeicConverterPage ? <><HeicConverterTool lang={langCode} /><ToolSeoContent toolId="heic-converter" lang={langCode} /></> : null
     ) : isNonLiveTool ? (
       <section class="band band-canvas">
         <div class="container" style="padding-top: var(--space-5xl); max-width: 640px; text-align: center;">

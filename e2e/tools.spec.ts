@@ -471,3 +471,98 @@ test.describe('Image Metadata Viewer tool', () => {
     expect(errors).toEqual([]);
   });
 });
+
+test.describe('HEIC Converter tool', () => {
+  test('upload zone is visible', async ({ page }) => {
+    await page.goto('/tools/heic-converter/', { waitUntil: 'load' });
+    await expect(page.locator('[data-tool-upload]')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('no console errors on load', async ({ page }) => {
+    const errors = await collectErrors(page);
+    await page.goto('/tools/heic-converter/', { waitUntil: 'load' });
+    expect(errors).toEqual([]);
+  });
+
+  test('format buttons are visible', async ({ page }) => {
+    await page.goto('/tools/heic-converter/', { waitUntil: 'load' });
+    const formatBtns = page.locator('[data-heic-format]');
+    await expect(formatBtns).toHaveCount(3);
+  });
+
+  test('quality slider is visible', async ({ page }) => {
+    await page.goto('/tools/heic-converter/', { waitUntil: 'load' });
+    await expect(page.locator('[data-heic-quality]')).toBeVisible({ timeout: 5000 });
+  });
+});
+
+test.describe('Passport Photo Maker tool', () => {
+  test('upload zone visible on load', async ({ page }) => {
+    await page.goto('/tools/passport/', { waitUntil: 'load' });
+    await expect(page.locator('[data-tool-upload]')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('no console errors on load', async ({ page }) => {
+    const errors = await collectErrors(page);
+    await page.goto('/tools/passport/', { waitUntil: 'load' });
+    expect(errors).toEqual([]);
+  });
+
+  test('uploads image and shows crop area', async ({ page }) => {
+    await page.goto('/tools/passport/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+
+    const cropArea = page.locator('[data-passport-preview]');
+    await expect(cropArea).not.toBeHidden({ timeout: 15000 });
+
+    const cropWindow = page.locator('[data-passport-window]');
+    await expect(cropWindow).toBeVisible({ timeout: 5000 });
+  });
+
+  test('generates passport photo and shows result', async ({ page }) => {
+    await page.goto('/tools/passport/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+
+    const generateBtn = page.locator('[data-passport-generate]');
+    await expect(generateBtn).toBeVisible({ timeout: 10000 });
+    await generateBtn.click();
+
+    const resultSection = page.locator('[data-passport-result]');
+    await expect(resultSection).not.toBeHidden({ timeout: 15000 });
+
+    const singleImg = page.locator('[data-passport-single]');
+    await expect(singleImg).not.toBeHidden({ timeout: 5000 });
+  });
+
+  test('generates and downloads single photo', async ({ page }) => {
+    await page.goto('/tools/passport/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+
+    await page.locator('[data-passport-generate]').click();
+    await page.locator('[data-passport-result]').waitFor({ state: 'visible', timeout: 15000 });
+
+    const { suggestedName, buffer } = await captureDownload(
+      page,
+      page.locator('[data-passport-download]')
+    );
+    expect(suggestedName).toMatch(/demo-before_passport\.jpe?g$/i);
+    expect(checkMagic(buffer, 'jpeg')).toBe(true);
+    expect(buffer.length).toBeGreaterThan(500);
+  });
+
+  test('generates and downloads print layout', async ({ page }) => {
+    await page.goto('/tools/passport/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+
+    await page.locator('[data-passport-generate]').click();
+    await page.locator('[data-passport-result]').waitFor({ state: 'visible', timeout: 15000 });
+
+    const { suggestedName, buffer } = await captureDownload(
+      page,
+      page.locator('[data-passport-download-layout]')
+    );
+    expect(suggestedName).toMatch(/demo-before_passport_layout\.jpe?g$/i);
+    expect(checkMagic(buffer, 'jpeg')).toBe(true);
+    expect(buffer.length).toBeGreaterThan(500);
+  });
+});

@@ -34,6 +34,10 @@ const socialPresets: { label: string; w: number; h: number }[] = [
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         {_('tool.clear')}
       </button>
+      <button type="button" class="resizer-crop-toggle" data-resizer-crop-toggle aria-pressed="false">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v4h4"/><path d="M18 2v4h-4"/><path d="M6 20H2v-4"/><path d="M18 20h4v-4"/><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+        {_('resizer.crop')}
+      </button>
     </div>
     <div slot="settings-controls">
       <div class="resizer-dimensions">
@@ -92,9 +96,18 @@ const socialPresets: { label: string; w: number; h: number }[] = [
   <section class="resizer-preview" data-resizer-preview hidden>
     <div class="resizer-preview-cols">
       <figure class="resizer-preview-fig">
-        <figcaption class="text-caption-mono resizer-preview-label">{_('resizer.original')}</figcaption>
-        <div class="resizer-preview-frame">
+        <figcaption class="text-caption-mono resizer-preview-label">
+          {_('resizer.original')}
+          <span class="text-caption" data-resizer-crop-dims hidden></span>
+        </figcaption>
+        <div class="resizer-crop-container" data-resizer-crop-container>
           <img data-resizer-original alt={_('resizer.original')} class="resizer-preview-img" />
+          <div class="resizer-crop-window" data-resizer-crop-window hidden role="region" aria-label="Crop area">
+            <div class="resizer-handle resizer-handle-nw" data-resizer-handle="nw" role="button" tabindex="0"></div>
+            <div class="resizer-handle resizer-handle-ne" data-resizer-handle="ne" role="button" tabindex="0"></div>
+            <div class="resizer-handle resizer-handle-sw" data-resizer-handle="sw" role="button" tabindex="0"></div>
+            <div class="resizer-handle resizer-handle-se" data-resizer-handle="se" role="button" tabindex="0"></div>
+          </div>
         </div>
         <p class="text-caption resizer-preview-size" data-resizer-original-size></p>
       </figure>
@@ -183,6 +196,20 @@ const socialPresets: { label: string; w: number; h: number }[] = [
   let selectedQuality = 92;
   let selectedMode: 'fit' | 'fill' | 'stretch' = 'fit';
 
+  // Crop state
+  const cropContainer = document.querySelector<HTMLElement>('[data-resizer-crop-container]');
+  const cropWindow = document.querySelector<HTMLElement>('[data-resizer-crop-window]');
+  const cropDimsEl = document.querySelector<HTMLElement>('[data-resizer-crop-dims]');
+  const cropToggle = document.querySelector<HTMLButtonElement>('[data-resizer-crop-toggle]');
+  const cropHandles = document.querySelectorAll<HTMLElement>('[data-resizer-handle]');
+  let cropEnabled = false;
+  let cropX = 0, cropY = 0, cropW = 0, cropH = 0;
+  let cropImgW = 0, cropImgH = 0;
+  let isCropDragging = false, isCropResizing = false;
+  let activeCropHandle = '';
+  let cropStartMX = 0, cropStartMY = 0;
+  let cropStartCX = 0, cropStartCY = 0, cropStartCW = 0, cropStartCH = 0;
+
   const formatBytes = (bytes: number): string => {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -253,7 +280,7 @@ const socialPresets: { label: string; w: number; h: number }[] = [
     return final;
   };
 
-  const resize = (img: HTMLImageElement, tgtW: number, tgtH: number, mime: string, quality: number): Promise<Blob> =>
+  const resize = (img: HTMLImageElement | HTMLCanvasElement, tgtW: number, tgtH: number, mime: string, quality: number): Promise<Blob> =>
     new Promise((resolve, reject) => {
       try {
         const canvas = stepDownResize(img, tgtW, tgtH);
@@ -272,11 +299,28 @@ const socialPresets: { label: string; w: number; h: number }[] = [
     return { w, h };
   };
 
+  const getCroppedSource = (img: HTMLImageElement): HTMLCanvasElement | HTMLImageElement => {
+    if (!cropEnabled || !cropWindow || cropWindow.hidden) return img;
+    const nw = img.naturalWidth;
+    const nh = img.naturalHeight;
+    const sx = (cropX / cropImgW) * nw;
+    const sy = (cropY / cropImgH) * nh;
+    const sw = (cropW / cropImgW) * nw;
+    const sh = (cropH / cropImgH) * nh;
+    const c = document.createElement('canvas');
+    c.width = Math.round(sw);
+    c.height = Math.round(sh);
+    const ctx = c.getContext('2d')!;
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
+    return c;
+  };
+
   const updatePreview = async () => {
     if (!currentImg) return;
     const mime = mimeMap[selectedFormat] || 'image/jpeg';
     const { w, h } = getTargetDims();
-    currentBlob = await resize(currentImg, w, h, mime, selectedQuality);
+    const source = getCroppedSource(currentImg);
+    currentBlob = await resize(source, w, h, mime, selectedQuality);
     if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
     currentBlobUrl = URL.createObjectURL(currentBlob);
     if (resultImg) resultImg.src = currentBlobUrl;
@@ -371,6 +415,144 @@ const socialPresets: { label: string; w: number; h: number }[] = [
     });
   }
 
+  // --- Crop box logic ---
+  const constrainCrop = (v: number, min: number, max: number) =>
+    Math.max(min, Math.min(v, max));
+
+  const updateCropWindow = () => {
+    if (!cropWindow) return;
+    cropW = Math.max(40, cropW);
+    cropH = Math.max(40, cropH);
+    cropX = constrainCrop(cropX, 0, cropImgW - cropW);
+    cropY = constrainCrop(cropY, 0, cropImgH - cropH);
+    cropW = Math.min(cropW, cropImgW - cropX);
+    cropH = Math.min(cropH, cropImgH - cropY);
+    cropWindow.style.left = cropX + 'px';
+    cropWindow.style.top = cropY + 'px';
+    cropWindow.style.width = cropW + 'px';
+    cropWindow.style.height = cropH + 'px';
+    if (cropDimsEl && currentImg) {
+      const outW = Math.round((cropW / cropImgW) * currentImg.naturalWidth);
+      const outH = Math.round((cropH / cropImgH) * currentImg.naturalHeight);
+      cropDimsEl.textContent = `${outW} × ${outH}`;
+    }
+  };
+
+  const initCropWindow = () => {
+    if (!currentImg || !origImg || !cropContainer) return;
+    const cw = cropContainer.clientWidth;
+    const ch = cropContainer.clientHeight;
+    const nw = currentImg.naturalWidth;
+    const nh = currentImg.naturalHeight;
+    const scale = Math.min(cw / nw, ch / nh, 1);
+    cropImgW = Math.round(nw * scale);
+    cropImgH = Math.round(nh * scale);
+    const margin = 0.08;
+    cropX = Math.round(cropImgW * margin);
+    cropY = Math.round(cropImgH * margin);
+    cropW = Math.round(cropImgW * (1 - 2 * margin));
+    cropH = Math.round(cropImgH * (1 - 2 * margin));
+    origImg.style.width = cropImgW + 'px';
+    origImg.style.height = cropImgH + 'px';
+    updateCropWindow();
+  };
+
+  const CROP_EDGE_SNAP = 10;
+
+  const onCropPointerDown = (e: PointerEvent) => {
+    if (!cropWindow || !cropEnabled) return;
+    const target = e.target as HTMLElement;
+    const handle = target.closest('[data-resizer-handle]') as HTMLElement | null;
+    cropStartMX = e.clientX;
+    cropStartMY = e.clientY;
+    cropStartCX = cropX;
+    cropStartCY = cropY;
+    cropStartCW = cropW;
+    cropStartCH = cropH;
+    if (handle) {
+      isCropResizing = true;
+      activeCropHandle = handle.dataset.resizerHandle || '';
+      e.preventDefault();
+      handle.setPointerCapture(e.pointerId);
+    } else if (target.closest('[data-resizer-crop-window]')) {
+      isCropDragging = true;
+      activeCropHandle = '';
+      e.preventDefault();
+      cropWindow.setPointerCapture(e.pointerId);
+    }
+  };
+
+  const onCropPointerMove = (e: PointerEvent) => {
+    if (!isCropDragging && !isCropResizing) return;
+    e.preventDefault();
+    const dx = e.clientX - cropStartMX;
+    const dy = e.clientY - cropStartMY;
+
+    if (isCropDragging) {
+      cropX = cropStartCX + dx;
+      cropY = cropStartCY + dy;
+    } else if (isCropResizing) {
+      let nx = cropStartCX, ny = cropStartCY, nw = cropStartCW, nh = cropStartCH;
+      const h = activeCropHandle;
+      const minSize = 40;
+      if (h.includes('e')) nw = Math.max(minSize, cropStartCW + dx);
+      if (h.includes('w')) { nx = cropStartCX + dx; nw = Math.max(minSize, cropStartCW - dx); }
+      if (h.includes('s')) nh = Math.max(minSize, cropStartCH + dy);
+      if (h.includes('n')) { ny = cropStartCY + dy; nh = Math.max(minSize, cropStartCH - dy); }
+      cropX = nx; cropY = ny; cropW = nw; cropH = nh;
+    }
+    updateCropWindow();
+  };
+
+  const onCropPointerUp = () => {
+    isCropDragging = false;
+    isCropResizing = false;
+    activeCropHandle = '';
+    if (cropWindow && cropEnabled) {
+      cropX = snapEdge(cropX, cropImgW - cropW);
+      cropY = snapEdge(cropY, cropImgH - cropH);
+      updateCropWindow();
+    }
+  };
+
+  document.addEventListener('pointerdown', onCropPointerDown);
+  document.addEventListener('pointermove', onCropPointerMove);
+  document.addEventListener('pointerup', onCropPointerUp);
+
+  if (cropToggle) {
+    cropToggle.addEventListener('click', () => {
+      cropEnabled = !cropEnabled;
+      cropToggle.setAttribute('aria-pressed', String(cropEnabled));
+      if (cropWindow) cropWindow.hidden = !cropEnabled;
+      if (cropDimsEl) cropDimsEl.hidden = !cropEnabled;
+      if (cropEnabled && currentImg) {
+        initCropWindow();
+      }
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  }
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (!cropEnabled || !currentImg || cropWindow?.hidden) return;
+    const step = e.shiftKey ? 10 : 2;
+    switch (e.key) {
+      case 'ArrowUp': cropY -= step; e.preventDefault(); break;
+      case 'ArrowDown': cropY += step; e.preventDefault(); break;
+      case 'ArrowLeft': cropX -= step; e.preventDefault(); break;
+      case 'ArrowRight': cropX += step; e.preventDefault(); break;
+      default: return;
+    }
+    updateCropWindow();
+  });
+
+  if (cropContainer) {
+    const cropRo = new ResizeObserver(() => {
+      if (currentImg && cropEnabled) initCropWindow();
+    });
+    cropRo.observe(cropContainer);
+  }
+  // --- End crop logic ---
+
   const doClear = () => {
     if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
     if (origBlobUrl) URL.revokeObjectURL(origBlobUrl);
@@ -386,6 +568,10 @@ const socialPresets: { label: string; w: number; h: number }[] = [
     if (downloadSection) downloadSection.hidden = true;
     if (actionsBar) actionsBar.hidden = true;
     if (settingsClearBtn) settingsClearBtn.hidden = true;
+    if (cropToggle) cropToggle.setAttribute('aria-pressed', 'false');
+    if (cropWindow) cropWindow.hidden = true;
+    if (cropDimsEl) cropDimsEl.hidden = true;
+    cropEnabled = false;
     if (origImg) origImg.src = '';
     if (resultImg) resultImg.src = '';
     if (origSizeEl) origSizeEl.textContent = '';
@@ -442,6 +628,11 @@ const socialPresets: { label: string; w: number; h: number }[] = [
     if (resultSizeEl) resultSizeEl.textContent = '—';
     if (resultLabel) resultLabel.textContent = i18n('resizer.result');
     if (downloadSection) downloadSection.hidden = true;
+    if (origImg) { origImg.style.width = ''; origImg.style.height = ''; }
+    if (cropWindow) cropWindow.hidden = true;
+    if (cropDimsEl) cropDimsEl.hidden = true;
+    if (cropToggle) cropToggle.setAttribute('aria-pressed', 'false');
+    cropEnabled = false;
     previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     await updatePreview();
   };
@@ -452,13 +643,17 @@ const socialPresets: { label: string; w: number; h: number }[] = [
   });
 
   (async () => {
-    const { retrieveFiles } = await import('../../lib/file-transfer');
-    const files = await retrieveFiles();
-    if (files.length) onFilesReceived(files);
+    if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      const { retrieveFiles } = await import('../../lib/file-transfer');
+      const files = await retrieveFiles();
+      if (files.length) onFilesReceived(files);
+    }
   })();
 
   window.addEventListener('beforeunload', () => {
-    if (currentFile) {
+    if (currentFile && sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
       import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
     }
   });
@@ -505,6 +700,17 @@ const socialPresets: { label: string; w: number; h: number }[] = [
   .resizer-preview-arrow { flex-shrink: 0; color: var(--color-mute); }
   .resizer-actions { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) 0 0; }
   .resizer-action-link { appearance: none; border: none; background: none; padding: var(--space-xs) var(--space-sm); color: var(--color-link); cursor: pointer; font: inherit; font-size: var(--text-body-sm); display: inline-flex; align-items: center; gap: var(--space-xs); border-radius: var(--radius-sm); transition: background-color 0.15s ease, color 0.15s ease; }
+
+  .resizer-crop-toggle { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-md); cursor: pointer; font: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .resizer-crop-toggle:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+  .resizer-crop-toggle[aria-pressed="true"] { border-color: var(--color-link); color: var(--color-link); }
+  .resizer-crop-container { position: relative; user-select: none; -webkit-user-select: none; touch-action: none; }
+  .resizer-crop-window { position: absolute; outline: 9999px solid rgba(0,0,0,.45); box-shadow: 0 0 0 1px rgba(255,255,255,.3); cursor: move; touch-action: none; }
+  .resizer-handle { position: absolute; width: 14px; height: 14px; background: #fff; border: 2px solid var(--color-link); border-radius: 3px; z-index: 2; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .resizer-handle-nw { top: -7px; left: -7px; cursor: nw-resize; }
+  .resizer-handle-ne { top: -7px; right: -7px; cursor: ne-resize; }
+  .resizer-handle-sw { bottom: -7px; left: -7px; cursor: sw-resize; }
+  .resizer-handle-se { bottom: -7px; right: -7px; cursor: se-resize; }
   .resizer-action-link:hover { background-color: var(--color-canvas-soft); color: var(--color-link-deep); }
   .resizer-action-link-danger { color: var(--color-error-deep); }
   .resizer-action-link-danger:hover { background-color: var(--color-error-soft); color: var(--color-error-deep); }

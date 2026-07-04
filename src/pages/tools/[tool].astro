@@ -11,6 +11,8 @@ import ResizerTool from '../../components/tools/ResizerTool.astro';
 import CropperTool from '../../components/tools/CropperTool.astro';
 import WatermarkTool from '../../components/tools/WatermarkTool.astro';
 import MetadataTool from '../../components/tools/MetadataTool.astro';
+import PassportTool from '../../components/tools/PassportTool.astro';
+import HeicConverterTool from '../../components/tools/HeicConverterTool.astro';
 import ToolSeoContent from '../../components/seo/ToolSeoContent.astro';
 import { tools, getTool } from '../../lib/tools';
 import type { ToolId } from '../../types';
@@ -84,6 +86,10 @@ if (!tool) {
           <><WatermarkTool /><ToolSeoContent toolId="watermark" lang="en" /></>
         ) : tool.id === 'metadata' ? (
           <><MetadataTool /><ToolSeoContent toolId="metadata" lang="en" /></>
+        ) : tool.id === 'passport' ? (
+          <><PassportTool /><ToolSeoContent toolId="passport" lang="en" /></>
+        ) : tool.id === 'heic-converter' ? (
+          <><HeicConverterTool /><ToolSeoContent toolId="heic-converter" lang="en" /></>
         ) : (
           <>
             <ToolUpload {tool} />
@@ -599,10 +605,13 @@ if (!tool) {
 
     // Retrieve files from IndexedDB (homepage picker)
     (async () => {
-      const { retrieveFiles } = await import('../../lib/file-transfer');
-      const files = await retrieveFiles();
-      if (files.length) {
-        onFilesReceived(files);
+      if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+        sessionStorage.removeItem('toolboximage:transfer');
+        const { retrieveFiles } = await import('../../lib/file-transfer');
+        const files = await retrieveFiles();
+        if (files.length) {
+          onFilesReceived(files);
+        }
       }
     })();
   }

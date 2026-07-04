@@ -1,0 +1,397 @@
+---
+import ToolUpload from './ToolUpload.astro';
+import ToolSettingsPanel from './ToolSettingsPanel.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('heic-converter')!;
+---
+<section class="heic-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <ToolSettingsPanel {tool} {lang}>
+    <div slot="settings-actions">
+      <button type="button" class="heic-clear-btn" data-heic-clear hidden>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+    <div slot="settings-controls">
+      <fieldset class="heic-formats">
+        <legend class="text-caption-mono heic-label">{_('converter.targetFormat')}</legend>
+        <div class="heic-format-grid" data-heic-formats>
+          {['JPEG', 'PNG', 'WebP'].map((fmt) => (
+            <button type="button" class="heic-format-btn" data-heic-format={fmt.toLowerCase()}>
+              {fmt}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <div class="heic-quality">
+        <label class="text-caption-mono heic-label" for="heic-quality">{_('converter.quality')}</label>
+        <div class="heic-quality-row">
+          <input type="range" id="heic-quality" class="heic-range" data-heic-quality min="1" max="100" value="92" />
+          <span class="text-body-sm-strong heic-quality-value" data-heic-quality-value>92%</span>
+        </div>
+      </div>
+    </div>
+  </ToolSettingsPanel>
+
+  <section class="heic-preview" data-heic-preview hidden>
+    <div class="heic-preview-cols">
+      <figure class="heic-preview-fig">
+        <figcaption class="text-caption-mono heic-preview-label">{_('converter.original')}</figcaption>
+        <div class="heic-preview-frame">
+          <img data-heic-original alt={_('converter.original')} class="heic-preview-img" />
+        </div>
+        <p class="text-caption heic-preview-size" data-heic-original-size></p>
+      </figure>
+      <div class="heic-preview-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <figure class="heic-preview-fig">
+        <figcaption class="text-caption-mono heic-preview-label" data-heic-result-label>{_('converter.result')}</figcaption>
+        <div class="heic-preview-frame">
+          <img data-heic-result alt={_('converter.result')} class="heic-preview-img" />
+        </div>
+        <p class="text-caption heic-preview-size" data-heic-result-size></p>
+      </figure>
+    </div>
+    <div class="heic-actions" data-heic-actions hidden>
+      <button type="button" class="heic-action-link" data-heic-replace>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        {_('converter.replace')}
+      </button>
+      <button type="button" class="heic-action-link heic-action-link-danger" data-heic-clear>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+    <div class="heic-decoding" data-heic-decoding hidden>
+      <span class="heic-spinner"></span>
+      <span class="text-body-sm" data-heic-decoding-text>{_('converter.processing')}</span>
+    </div>
+  </section>
+
+  <section class="heic-download" data-heic-download hidden>
+    <div class="heic-download-bar">
+      <div class="heic-download-info">
+        <p class="text-caption-mono heic-download-label">{_('converter.downloadBtn')}</p>
+        <p class="text-body-sm-strong" data-heic-download-name></p>
+      </div>
+      <button type="button" class="results-btn results-btn-primary" data-heic-download-btn>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        {_('converter.downloadBtn')}
+      </button>
+      <button type="button" class="results-btn results-btn-ghost" data-heic-clear>
+        {_('tool.clear')}
+      </button>
+    </div>
+  </section>
+</section>
+
+<script>
+  const mimeMap: Record<string, string> = {
+    jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp',
+  };
+
+  const formatBtns = document.querySelectorAll<HTMLButtonElement>('[data-heic-format]');
+  const qualityInput = document.querySelector<HTMLInputElement>('[data-heic-quality]');
+  const qualityValue = document.querySelector<HTMLElement>('[data-heic-quality-value]');
+  const previewArea = document.querySelector<HTMLElement>('[data-heic-preview]');
+  const origImg = document.querySelector<HTMLImageElement>('[data-heic-original]');
+  const resultImg = document.querySelector<HTMLImageElement>('[data-heic-result]');
+  const origSizeEl = document.querySelector<HTMLElement>('[data-heic-original-size]');
+  const resultSizeEl = document.querySelector<HTMLElement>('[data-heic-result-size]');
+  const resultLabel = document.querySelector<HTMLElement>('[data-heic-result-label]');
+  const downloadSection = document.querySelector<HTMLElement>('[data-heic-download]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-heic-download-btn]');
+  const downloadNameEl = document.querySelector<HTMLElement>('[data-heic-download-name]');
+  const clearBtns = document.querySelectorAll<HTMLButtonElement>('[data-heic-clear]');
+  const replaceBtn = document.querySelector<HTMLButtonElement>('[data-heic-replace]');
+  const actionsBar = document.querySelector<HTMLElement>('[data-heic-actions]');
+  const settingsClearBtn = document.querySelector<HTMLButtonElement>('[data-heic-clear-btn]');
+  const decodingIndicator = document.querySelector<HTMLElement>('[data-heic-decoding]');
+  const decodingText = document.querySelector<HTMLElement>('[data-heic-decoding-text]');
+
+  let currentFile: File | null = null;
+  let currentImg: HTMLImageElement | HTMLCanvasElement | null = null;
+  let currentBlob: Blob | null = null;
+  let currentBlobUrl: string | null = null;
+  let selectedFormat = 'jpeg';
+  let selectedQuality = 92;
+  let heicLibLoaded = false;
+
+  const formatBytes = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const loadHeicLib = async (): Promise<void> => {
+    if (heicLibLoaded) return;
+    if (decodingText) decodingText.textContent = 'Loading HEIC decoder…';
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/heic-to@1.5.2/dist/iife/heic-to.js';
+      script.onload = () => {
+        heicLibLoaded = true;
+        resolve();
+      };
+      script.onerror = () => reject(new Error('Failed to load HEIC decoder'));
+      document.head.appendChild(script);
+    });
+  };
+
+  const decodeHeic = async (file: File): Promise<HTMLImageElement | HTMLCanvasElement> => {
+    if (!heicLibLoaded) await loadHeicLib();
+    if (decodingIndicator) decodingIndicator.hidden = false;
+    if (decodingText) decodingText.textContent = 'Decoding HEIC…';
+
+    const HeicTo = (window as any).HeicTo;
+    if (!HeicTo) throw new Error('HEIC decoder not available');
+
+    const isHeic = HeicTo.isHeic ? await HeicTo.isHeic(file) : true;
+    if (!isHeic) {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load image'));
+      });
+      if (decodingIndicator) decodingIndicator.hidden = true;
+      return img;
+    }
+
+    const result = await HeicTo.heicTo({ blob: file, type: 'image/jpeg', quality: 0.92 });
+
+    if (result instanceof Blob) {
+      const img = new Image();
+      img.src = URL.createObjectURL(result);
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load decoded image'));
+      });
+      if (decodingIndicator) decodingIndicator.hidden = true;
+      return img;
+    }
+
+    if (decodingIndicator) decodingIndicator.hidden = true;
+    throw new Error('HEIC decoding returned unexpected result');
+  };
+
+  const convert = (img: HTMLImageElement | HTMLCanvasElement, mime: string, quality: number): Promise<Blob> =>
+    new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img instanceof HTMLImageElement ? img.naturalWidth : img.width;
+      canvas.height = img instanceof HTMLImageElement ? img.naturalHeight : img.height;
+      const ctx = canvas.getContext('2d')!;
+      if (mime === 'image/jpeg') {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      ctx.drawImage(img, 0, 0);
+      try {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Conversion failed'));
+        }, mime, quality / 100);
+      } catch (e) {
+        reject(e);
+      }
+    });
+
+  const updatePreview = async () => {
+    if (!currentImg) return;
+    const mime = mimeMap[selectedFormat] || 'image/jpeg';
+    currentBlob = await convert(currentImg, mime, selectedQuality);
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentBlobUrl = URL.createObjectURL(currentBlob);
+    if (resultImg) resultImg.src = currentBlobUrl;
+    if (resultSizeEl) resultSizeEl.textContent = formatBytes(currentBlob.size);
+    if (resultLabel) resultLabel.textContent = selectedFormat.toUpperCase();
+    if (downloadSection) downloadSection.hidden = false;
+    if (downloadNameEl && currentFile) {
+      downloadNameEl.textContent = currentFile.name.replace(/\.[^.]+$/, '') + '.' + selectedFormat;
+    }
+  };
+
+  formatBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      formatBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      selectedFormat = btn.dataset.heicFormat!;
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  });
+  if (formatBtns[0]) formatBtns[0].dataset.active = 'true';
+
+  if (qualityInput && qualityValue) {
+    const fillSlider = (input: HTMLInputElement) => {
+      const min = Number(input.min || 0);
+      const max = Number(input.max || 100);
+      const val = Number(input.value || 0);
+      const pct = ((val - min) / (max - min)) * 100;
+      input.style.setProperty('--fill', `${pct}%`);
+    };
+    fillSlider(qualityInput);
+    qualityInput.addEventListener('input', () => {
+      selectedQuality = Number(qualityInput.value);
+      qualityValue.textContent = selectedQuality + '%';
+      fillSlider(qualityInput);
+      if (previewArea && !previewArea.hidden) updatePreview();
+    });
+  }
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!currentFile || !currentBlobUrl) return;
+      const name = currentFile.name.replace(/\.[^.]+$/, '') + '.' + selectedFormat;
+      const a = document.createElement('a');
+      a.href = currentBlobUrl;
+      a.download = name;
+      a.click();
+    });
+  }
+
+  const doClear = () => {
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentFile = null;
+    currentImg = null;
+    currentBlob = null;
+    currentBlobUrl = null;
+    if (previewArea) previewArea.hidden = true;
+    if (downloadSection) downloadSection.hidden = true;
+    if (actionsBar) actionsBar.hidden = true;
+    if (settingsClearBtn) settingsClearBtn.hidden = true;
+    if (decodingIndicator) decodingIndicator.hidden = true;
+    if (origImg) origImg.src = '';
+    if (resultImg) resultImg.src = '';
+    if (origSizeEl) origSizeEl.textContent = '';
+    if (resultSizeEl) resultSizeEl.textContent = '';
+    const uploadZone = document.querySelector<HTMLElement>('[data-tool-upload]');
+    uploadZone?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  clearBtns.forEach((btn) => btn.addEventListener('click', doClear));
+
+  if (replaceBtn) {
+    replaceBtn.addEventListener('click', () => {
+      const input = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
+      input?.click();
+    });
+  }
+
+  if (settingsClearBtn) settingsClearBtn.hidden = true;
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+    const file = files[0];
+    currentFile = file;
+    const origUrl = URL.createObjectURL(file);
+    if (origImg) origImg.src = origUrl;
+    if (origSizeEl) origSizeEl.textContent = formatBytes(file.size);
+    if (previewArea) previewArea.hidden = false;
+    if (actionsBar) actionsBar.hidden = false;
+    if (settingsClearBtn) settingsClearBtn.hidden = false;
+    if (resultSizeEl) resultSizeEl.textContent = '—';
+    if (resultLabel) resultLabel.textContent = 'Decoding…';
+    if (downloadSection) downloadSection.hidden = true;
+
+    previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    try {
+      const decoded = await decodeHeic(file);
+      currentImg = decoded;
+      if (resultSizeEl && decoded instanceof HTMLImageElement) {
+        resultSizeEl.textContent = `${decoded.naturalWidth} × ${decoded.naturalHeight} · ${formatBytes(file.size)}`;
+      }
+      if (origSizeEl && decoded instanceof HTMLImageElement) {
+        origSizeEl.textContent = `${decoded.naturalWidth} × ${decoded.naturalHeight} · ${formatBytes(file.size)}`;
+      }
+      await updatePreview();
+    } catch (err) {
+      if (resultLabel) resultLabel.textContent = 'Error';
+      if (resultSizeEl) resultSizeEl.textContent = 'Conversion failed. Try a different file.';
+      if (decodingIndicator) decodingIndicator.hidden = true;
+    }
+  };
+
+  window.addEventListener('toolboximage:files', async (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) onFilesReceived(detail.files);
+  });
+
+  (async () => {
+    if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      const { retrieveFiles } = await import('../../lib/file-transfer');
+      const files = await retrieveFiles();
+      if (files.length) onFilesReceived(files);
+    }
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile && sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
+    }
+  });
+</script>
+
+<style>
+  .heic-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+  .heic-formats { border: none; margin: 0; padding: 0; }
+  .heic-label { color: var(--color-mute); margin: 0 0 var(--space-sm); display: block; }
+  .heic-format-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xs); }
+  .heic-format-btn { padding: var(--space-sm) var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-family: var(--font-mono); font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background 0.15s ease, border-color 0.15s ease; }
+  .heic-format-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .heic-format-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .heic-format-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+  .heic-quality { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .heic-quality-row { display: flex; align-items: center; gap: var(--space-md); }
+  .heic-range { flex: 1; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--color-link) var(--fill, 92%), var(--color-hairline) var(--fill, 92%)); outline: none; cursor: pointer; }
+  .heic-range::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--color-canvas); border: 2px solid var(--color-link); cursor: pointer; box-shadow: var(--shadow-1); }
+  .heic-range::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--color-canvas); border: 2px solid var(--color-link); cursor: pointer; box-shadow: var(--shadow-1); }
+  .heic-quality-value { min-width: 48px; text-align: right; font-feature-settings: 'tnum'; }
+  .heic-preview { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; padding: var(--space-lg); }
+  .heic-preview-cols { display: flex; align-items: center; gap: var(--space-md); }
+  .heic-preview-fig { margin: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .heic-preview-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .heic-preview-frame { position: relative; width: 100%; min-height: 200px; display: flex; align-items: center; justify-content: center; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; border-radius: var(--radius-sm); overflow: hidden; }
+  .heic-preview-img { max-width: 100%; max-height: 320px; object-fit: contain; display: block; }
+  .heic-preview-size { margin: 0; color: var(--color-body); }
+  .heic-preview-arrow { flex-shrink: 0; color: var(--color-mute); }
+  .heic-actions { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) 0 0; }
+  .heic-action-link { appearance: none; border: none; background: none; padding: var(--space-xs) var(--space-sm); color: var(--color-link); cursor: pointer; font: inherit; font-size: var(--text-body-sm); display: inline-flex; align-items: center; gap: var(--space-xs); border-radius: var(--radius-sm); transition: background-color 0.15s ease, color 0.15s ease; }
+  .heic-action-link:hover { background-color: var(--color-canvas-soft); color: var(--color-link-deep); }
+  .heic-action-link-danger { color: var(--color-error-deep); }
+  .heic-action-link-danger:hover { background-color: var(--color-error-soft); color: var(--color-error-deep); }
+  .heic-clear-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-md); cursor: pointer; font: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .heic-clear-btn:hover { border-color: var(--color-hairline-strong); color: var(--color-error-deep); background-color: var(--color-error-soft); }
+  .heic-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .heic-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
+  .heic-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .heic-download-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .heic-download .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .heic-download .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .heic-download .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .heic-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .heic-download .results-btn-ghost { background: transparent; color: var(--color-body); border-color: var(--color-hairline); }
+  .heic-download .results-btn-ghost:hover { background: var(--color-canvas-soft); color: var(--color-error-deep); border-color: var(--color-hairline-strong); }
+  .heic-decoding { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-md) 0; color: var(--color-body); }
+  .heic-spinner { width: 18px; height: 18px; border: 2px solid var(--color-hairline); border-top-color: var(--color-link); border-radius: 50%; animation: heic-spin 0.6s linear infinite; }
+  @keyframes heic-spin { to { transform: rotate(360deg); } }
+  .heic-decoding[hidden] { display: none; }
+  @media (max-width: 600px) {
+    .heic-format-grid { grid-template-columns: repeat(3, 1fr); }
+    .heic-preview-cols { flex-direction: column; }
+    .heic-preview-arrow { transform: rotate(90deg); }
+  }
+</style>

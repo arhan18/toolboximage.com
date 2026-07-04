@@ -265,13 +265,17 @@ const tool = getTool('converter')!;
   });
 
   (async () => {
-    const { retrieveFiles } = await import('../../lib/file-transfer');
-    const files = await retrieveFiles();
-    if (files.length) onFilesReceived(files);
+    if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      const { retrieveFiles } = await import('../../lib/file-transfer');
+      const files = await retrieveFiles();
+      if (files.length) onFilesReceived(files);
+    }
   })();
 
   window.addEventListener('beforeunload', () => {
-    if (currentFile) {
+    if (currentFile && sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
       import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
     }
   });

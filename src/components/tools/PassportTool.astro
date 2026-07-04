@@ -1,0 +1,596 @@
+---
+import ToolUpload from './ToolUpload.astro';
+import ToolSettingsPanel from './ToolSettingsPanel.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('passport')!;
+
+interface PassportSpec {
+  id: string;
+  label: string;
+  widthMm: number;
+  heightMm: number;
+  widthPx: number;
+  heightPx: number;
+  aspect: number;
+}
+
+const specs: PassportSpec[] = [
+  { id: 'us', label: _('passport.us'), widthMm: 51, heightMm: 51, widthPx: 600, heightPx: 600, aspect: 1 },
+  { id: 'uk', label: _('passport.uk'), widthMm: 35, heightMm: 45, widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+  { id: 'eu', label: _('passport.eu'), widthMm: 35, heightMm: 45, widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+  { id: 'india', label: _('passport.india'), widthMm: 35, heightMm: 45, widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+  { id: 'canada', label: _('passport.canada'), widthMm: 50, heightMm: 70, widthPx: 591, heightPx: 827, aspect: 50 / 70 },
+  { id: 'australia', label: _('passport.australia'), widthMm: 35, heightMm: 45, widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+  { id: 'china', label: _('passport.china'), widthMm: 33, heightMm: 48, widthPx: 390, heightPx: 567, aspect: 33 / 48 },
+  { id: 'japan', label: _('passport.japan'), widthMm: 35, heightMm: 45, widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+  { id: 'china1', label: _('passport.china1'), widthMm: 25, heightMm: 35, widthPx: 295, heightPx: 413, aspect: 25 / 35 },
+  { id: 'china2', label: _('passport.china2'), widthMm: 35, heightMm: 53, widthPx: 413, heightPx: 626, aspect: 35 / 53 },
+];
+
+const colors = [
+  { id: 'white', label: _('passport.white'), hex: '#FFFFFF' },
+  { id: 'blue', label: _('passport.blue'), hex: '#4488DD' },
+  { id: 'gray', label: _('passport.gray'), hex: '#CCCCCC' },
+  { id: 'red', label: _('passport.red'), hex: '#DD4444' },
+];
+---
+
+<section class="passport-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <ToolSettingsPanel {tool} {lang}>
+    <div slot="settings-controls">
+      <fieldset class="passport-sizes">
+        <legend class="text-caption-mono passport-label">{_('passport.size')}</legend>
+        <div class="passport-size-grid" data-passport-sizes>
+          {specs.map((s) => (
+            <button type="button" class="passport-size-btn" data-passport-size={s.id} title={`${s.widthMm}×${s.heightMm} mm`}>
+              <span class="passport-size-name">{s.label}</span>
+              <span class="passport-size-dims">{s.widthMm}×{s.heightMm} mm</span>
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="passport-bg">
+        <legend class="text-caption-mono passport-label">{_('passport.background')}</legend>
+        <div class="passport-bg-grid" data-passport-bg>
+          {colors.map((c) => (
+            <button type="button" class="passport-bg-btn" data-passport-bg={c.id}>
+              <span class="passport-bg-swatch" style={`background:${c.hex}`}></span>
+              <span>{c.label}</span>
+            </button>
+          ))}
+        </div>
+      </fieldset>
+    </div>
+  </ToolSettingsPanel>
+
+  <section class="passport-crop-area" data-passport-preview hidden>
+    <p class="text-body-sm passport-crop-hint">{_('passport.crop')}</p>
+    <div class="passport-crop-container" data-passport-container>
+      <img data-passport-image alt="" class="passport-image" />
+      <div class="passport-crop-window" data-passport-window role="region" aria-label="Crop area">
+        <div class="passport-handle passport-handle-nw" data-passport-handle="nw" role="button" tabindex="0"></div>
+        <div class="passport-handle passport-handle-ne" data-passport-handle="ne" role="button" tabindex="0"></div>
+        <div class="passport-handle passport-handle-sw" data-passport-handle="sw" role="button" tabindex="0"></div>
+        <div class="passport-handle passport-handle-se" data-passport-handle="se" role="button" tabindex="0"></div>
+      </div>
+    </div>
+    <div class="passport-crop-info">
+      <span class="text-caption" data-passport-crop-dims></span>
+      <button type="button" class="passport-generate-btn" data-passport-generate>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {_('passport.generate')}
+      </button>
+    </div>
+  </section>
+
+  <section class="passport-result" data-passport-result hidden>
+    <h3 class="text-display-sm passport-result-heading">{_('passport.result')}</h3>
+    <div class="passport-result-cols">
+      <figure class="passport-result-fig">
+        <div class="passport-result-frame">
+          <img data-passport-single alt="Passport photo" class="passport-result-img" />
+        </div>
+        <p class="text-caption" data-passport-single-info></p>
+      </figure>
+      <figure class="passport-result-fig">
+        <figcaption class="text-caption-mono passport-result-label">{_('passport.downloadLayout')}</figcaption>
+        <div class="passport-result-frame passport-result-frame-sm">
+          <img data-passport-layout alt="Print layout" class="passport-result-img" />
+        </div>
+        <p class="text-caption" data-passport-layout-info></p>
+      </figure>
+    </div>
+    <div class="passport-actions">
+      <button type="button" class="results-btn results-btn-primary" data-passport-download>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        {_('passport.download')}
+      </button>
+      <button type="button" class="results-btn results-btn-secondary" data-passport-download-layout>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+        {_('passport.downloadLayout')}
+      </button>
+    </div>
+  </section>
+</section>
+
+<script>
+  const specs = [
+    { id: 'us', widthPx: 600, heightPx: 600, aspect: 1 },
+    { id: 'uk', widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+    { id: 'eu', widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+    { id: 'india', widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+    { id: 'canada', widthPx: 591, heightPx: 827, aspect: 50 / 70 },
+    { id: 'australia', widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+    { id: 'china', widthPx: 390, heightPx: 567, aspect: 33 / 48 },
+    { id: 'japan', widthPx: 413, heightPx: 531, aspect: 35 / 45 },
+    { id: 'china1', widthPx: 295, heightPx: 413, aspect: 25 / 35 },
+    { id: 'china2', widthPx: 413, heightPx: 626, aspect: 35 / 53 },
+  ];
+
+  const colors: Record<string, string> = {
+    white: '#FFFFFF',
+    blue: '#4488DD',
+    gray: '#CCCCCC',
+    red: '#DD4444',
+  };
+
+  const container = document.querySelector<HTMLElement>('[data-passport-container]');
+  const image = document.querySelector<HTMLImageElement>('[data-passport-image]');
+  const cropWindow = document.querySelector<HTMLElement>('[data-passport-window]');
+  const cropDimsEl = document.querySelector<HTMLElement>('[data-passport-crop-dims]');
+  const generateBtn = document.querySelector<HTMLButtonElement>('[data-passport-generate]');
+  const previewArea = document.querySelector<HTMLElement>('[data-passport-preview]');
+  const resultSection = document.querySelector<HTMLElement>('[data-passport-result]');
+  const singleImg = document.querySelector<HTMLImageElement>('[data-passport-single]');
+  const layoutImg = document.querySelector<HTMLImageElement>('[data-passport-layout]');
+  const singleInfo = document.querySelector<HTMLElement>('[data-passport-single-info]');
+  const layoutInfo = document.querySelector<HTMLElement>('[data-passport-layout-info]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-passport-download]');
+  const downloadLayoutBtn = document.querySelector<HTMLButtonElement>('[data-passport-download-layout]');
+  const sizeBtns = document.querySelectorAll<HTMLButtonElement>('[data-passport-size]');
+  const bgBtns = document.querySelectorAll<HTMLButtonElement>('[data-passport-bg]');
+  const allHandles = document.querySelectorAll<HTMLElement>('[data-passport-handle]');
+
+  const i18n = (key: string): string => {
+    const el = document.querySelector<HTMLElement>(`[data-i18n="${key}"]`);
+    return el?.textContent ?? key;
+  };
+
+  let currentFile: File | null = null;
+  let currentImg: HTMLImageElement | null = null;
+  let currentSpec = specs[0];
+  let currentBg = '#FFFFFF';
+  let singleBlobUrl: string | null = null;
+  let layoutBlobUrl: string | null = null;
+
+  let imgW = 0, imgH = 0;
+  let cropX = 0, cropY = 0, cropW = 0, cropH = 0;
+  let isDragging = false, isResizing = false;
+  let activeHandle = '';
+  let startMX = 0, startMY = 0;
+  let startCX = 0, startCY = 0, startCW = 0, startCH = 0;
+
+  const formatBytes = (b: number): string => {
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+    return (b / 1048576).toFixed(1) + ' MB';
+  };
+
+  const constrain = (v: number, min: number, max: number) =>
+    Math.max(min, Math.min(v, max));
+
+  const updateWindow = () => {
+    if (!cropWindow) return;
+    cropW = Math.max(40, cropW);
+    cropH = Math.max(40, cropH);
+    cropX = constrain(cropX, 0, imgW - cropW);
+    cropY = constrain(cropY, 0, imgH - cropH);
+    cropW = Math.min(cropW, imgW - cropX);
+    cropH = Math.min(cropH, imgH - cropY);
+    cropWindow.style.left = cropX + 'px';
+    cropWindow.style.top = cropY + 'px';
+    cropWindow.style.width = cropW + 'px';
+    cropWindow.style.height = cropH + 'px';
+    if (cropDimsEl) {
+      const outW = Math.round((cropW / imgW) * (currentImg?.naturalWidth || 1));
+      const outH = Math.round((cropH / imgH) * (currentImg?.naturalHeight || 1));
+      cropDimsEl.textContent = `${outW} × ${outH}`;
+    }
+  };
+
+  const initCrop = () => {
+    if (!currentImg || !container) return;
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    const nw = currentImg.naturalWidth;
+    const nh = currentImg.naturalHeight;
+    const scale = Math.min(cw / nw, ch / nh, 1);
+    imgW = Math.round(nw * scale);
+    imgH = Math.round(nh * scale);
+    const margin = 0.08;
+    cropX = Math.round(imgW * margin);
+    cropY = Math.round(imgH * margin);
+    cropW = Math.round(imgW * (1 - 2 * margin));
+    cropH = Math.round(imgH * (1 - 2 * margin));
+    applyAspect();
+    if (image) {
+      image.style.width = imgW + 'px';
+      image.style.height = imgH + 'px';
+    }
+    updateWindow();
+  };
+
+  const applyAspect = () => {
+    const ratio = currentSpec.aspect;
+    const cx = cropX + cropW / 2;
+    const cy = cropY + cropH / 2;
+    if (cropW / cropH > ratio) {
+      cropW = Math.round(cropH * ratio);
+    } else {
+      cropH = Math.round(cropW / ratio);
+    }
+    cropX = Math.round(cx - cropW / 2);
+    cropY = Math.round(cy - cropH / 2);
+  };
+
+  const generatePhoto = async () => {
+    if (!currentImg) return;
+
+    const nw = currentImg.naturalWidth;
+    const nh = currentImg.naturalHeight;
+    const sx = (cropX / imgW) * nw;
+    const sy = (cropY / imgH) * nh;
+    const sw = (cropW / imgW) * nw;
+    const sh = (cropH / imgH) * nh;
+
+    // Generate single passport photo at exact spec dimensions
+    const singleCanvas = document.createElement('canvas');
+    singleCanvas.width = currentSpec.widthPx;
+    singleCanvas.height = currentSpec.heightPx;
+    const sCtx = singleCanvas.getContext('2d')!;
+    sCtx.fillStyle = currentBg;
+    sCtx.fillRect(0, 0, singleCanvas.width, singleCanvas.height);
+    sCtx.drawImage(currentImg, sx, sy, sw, sh, 0, 0, singleCanvas.width, singleCanvas.height);
+
+    const singleBlob = await new Promise<Blob>((resolve) =>
+      singleCanvas.toBlob((b) => resolve(b!), 'image/jpeg', 0.95)
+    );
+    if (singleBlobUrl) URL.revokeObjectURL(singleBlobUrl);
+    singleBlobUrl = URL.createObjectURL(singleBlob);
+    if (singleImg) singleImg.src = singleBlobUrl;
+    if (singleInfo) {
+      singleInfo.textContent = `${currentSpec.widthPx}×${currentSpec.heightPx} · ${formatBytes(singleBlob.size)}`;
+    }
+
+    // Generate 4×6 print layout (~300 DPI: 1200×1800)
+    const layoutCanvas = document.createElement('canvas');
+    const lw = 1200, lh = 1800;
+    layoutCanvas.width = lw;
+    layoutCanvas.height = lh;
+    const lCtx = layoutCanvas.getContext('2d')!;
+    lCtx.fillStyle = '#FFFFFF';
+    lCtx.fillRect(0, 0, lw, lh);
+
+    // Calculate how many photos fit: margin 30px each side
+    const margin = 30;
+    const gap = 20;
+    const usableW = lw - 2 * margin;
+    const usableH = lh - 2 * margin;
+    const pw = currentSpec.widthPx;
+    const ph = currentSpec.heightPx;
+    const scaleX = (usableW - gap) / (2 * pw);
+    const scaleY = (usableH - gap) / (3 * ph);
+    const fitScale = Math.min(scaleX, scaleY, 1);
+    const dw = Math.round(pw * fitScale);
+    const dh = Math.round(ph * fitScale);
+    const cols = Math.floor((usableW + gap) / (dw + gap));
+    const rows = Math.min(Math.floor((usableH + gap) / (dh + gap)), 4);
+    const count = cols * rows;
+
+    const offsetX = Math.round((lw - (cols * dw + (cols - 1) * gap)) / 2);
+    const offsetY = Math.round((lh - (rows * dh + (rows - 1) * gap)) / 2);
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = offsetX + c * (dw + gap);
+        const y = offsetY + r * (dh + gap);
+        // Cut lines (light gray dotted)
+        lCtx.strokeStyle = '#CCCCCC';
+        lCtx.lineWidth = 1;
+        lCtx.setLineDash([4, 4]);
+        lCtx.strokeRect(x - 1, y - 1, dw + 2, dh + 2);
+        lCtx.setLineDash([]);
+        // Photo
+        lCtx.fillStyle = currentBg;
+        lCtx.fillRect(x, y, dw, dh);
+        lCtx.drawImage(singleCanvas, 0, 0, pw, ph, x, y, dw, dh);
+      }
+    }
+
+    const layoutBlob = await new Promise<Blob>((resolve) =>
+      layoutCanvas.toBlob((b) => resolve(b!), 'image/jpeg', 0.92)
+    );
+    if (layoutBlobUrl) URL.revokeObjectURL(layoutBlobUrl);
+    layoutBlobUrl = URL.createObjectURL(layoutBlob);
+    if (layoutImg) layoutImg.src = layoutBlobUrl;
+    if (layoutInfo) {
+      layoutInfo.textContent = `4×6 in · ${count} copies · ${formatBytes(layoutBlob.size)}`;
+    }
+
+    if (resultSection) resultSection.hidden = false;
+    resultSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // Size preset selection
+  sizeBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      sizeBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      const id = btn.dataset.passportSize || 'us';
+      currentSpec = specs.find((s) => s.id === id) || specs[0];
+      if (currentImg) {
+        applyAspect();
+        updateWindow();
+      }
+    });
+  });
+  if (sizeBtns[0]) sizeBtns[0].dataset.active = 'true';
+
+  // Background color selection
+  bgBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      bgBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      const id = btn.dataset.passportBg || 'white';
+      currentBg = colors[id] || '#FFFFFF';
+    });
+  });
+  if (bgBtns[0]) bgBtns[0].dataset.active = 'true';
+
+  if (generateBtn) {
+    generateBtn.addEventListener('click', generatePhoto);
+  }
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!currentFile || !singleBlobUrl) return;
+      const a = document.createElement('a');
+      a.href = singleBlobUrl;
+      a.download = currentFile.name.replace(/\.[^.]+$/, '') + '_passport.jpg';
+      a.click();
+    });
+  }
+
+  if (downloadLayoutBtn) {
+    downloadLayoutBtn.addEventListener('click', () => {
+      if (!currentFile || !layoutBlobUrl) return;
+      const a = document.createElement('a');
+      a.href = layoutBlobUrl;
+      a.download = currentFile.name.replace(/\.[^.]+$/, '') + '_passport_layout.jpg';
+      a.click();
+    });
+  }
+
+  const EDGE_SNAP = 10;
+
+  const onPointerDown = (e: PointerEvent) => {
+    if (!cropWindow) return;
+    const target = e.target as HTMLElement;
+    const handle = target.closest('[data-passport-handle]') as HTMLElement | null;
+    startMX = e.clientX;
+    startMY = e.clientY;
+    startCX = cropX;
+    startCY = cropY;
+    startCW = cropW;
+    startCH = cropH;
+    if (handle) {
+      isResizing = true;
+      activeHandle = handle.dataset.passportHandle || '';
+      e.preventDefault();
+      handle.setPointerCapture(e.pointerId);
+    } else if (target.closest('[data-passport-window]')) {
+      isDragging = true;
+      activeHandle = '';
+      e.preventDefault();
+      cropWindow.setPointerCapture(e.pointerId);
+    }
+  };
+
+  const snapEdge = (v: number, max: number): number => {
+    if (v < EDGE_SNAP) return 0;
+    if (v > max - EDGE_SNAP) return max;
+    return v;
+  };
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (!isDragging && !isResizing) return;
+    e.preventDefault();
+    const dx = e.clientX - startMX;
+    const dy = e.clientY - startMY;
+
+    if (isDragging) {
+      cropX = startCX + dx;
+      cropY = startCY + dy;
+    } else if (isResizing) {
+      let nx = startCX, ny = startCY, nw = startCW, nh = startCH;
+      const h = activeHandle;
+      const minSize = 40;
+      if (h.includes('e')) nw = Math.max(minSize, startCW + dx);
+      if (h.includes('w')) { nx = startCX + dx; nw = Math.max(minSize, startCW - dx); }
+      if (h.includes('s')) nh = Math.max(minSize, startCH + dy);
+      if (h.includes('n')) { ny = startCY + dy; nh = Math.max(minSize, startCH - dy); }
+      // Maintain aspect ratio
+      const ratio = currentSpec.aspect;
+      const cx = nx + nw / 2;
+      const cy = ny + nh / 2;
+      if (nw / nh > ratio) { nw = Math.round(nh * ratio); }
+      else { nh = Math.round(nw / ratio); }
+      nx = Math.round(cx - nw / 2);
+      ny = Math.round(cy - nh / 2);
+      cropX = nx; cropY = ny; cropW = nw; cropH = nh;
+    }
+    updateWindow();
+  };
+
+  const onPointerUp = () => {
+    isDragging = false;
+    isResizing = false;
+    activeHandle = '';
+    if (cropWindow) {
+      cropX = snapEdge(cropX, imgW - cropW);
+      cropY = snapEdge(cropY, imgH - cropH);
+      updateWindow();
+    }
+  };
+
+  document.addEventListener('pointerdown', onPointerDown);
+  document.addEventListener('pointermove', onPointerMove);
+  document.addEventListener('pointerup', onPointerUp);
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (!currentImg || previewArea?.hidden) return;
+    const step = e.shiftKey ? 10 : 2;
+    switch (e.key) {
+      case 'ArrowUp': cropY -= step; e.preventDefault(); break;
+      case 'ArrowDown': cropY += step; e.preventDefault(); break;
+      case 'ArrowLeft': cropX -= step; e.preventDefault(); break;
+      case 'ArrowRight': cropX += step; e.preventDefault(); break;
+      default: return;
+    }
+    updateWindow();
+  });
+
+  if (container) {
+    const ro = new ResizeObserver(() => {
+      if (currentImg && !previewArea?.hidden) {
+        initCrop();
+      }
+    });
+    ro.observe(container);
+  }
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+    const file = files[0];
+    currentFile = file;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load'));
+      img.src = url;
+    });
+    currentImg = img;
+    if (image) image.src = url;
+    await new Promise(requestAnimationFrame);
+    initCrop();
+    if (previewArea) previewArea.hidden = false;
+    if (resultSection) resultSection.hidden = true;
+    previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const validMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+
+  window.addEventListener('toolboximage:files', (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) {
+      const file = detail.files[0];
+      if (!validMimes.includes(file.type)) {
+        alert(i18n('passport.errorFormat') || 'Unsupported format. Please upload JPEG, PNG, WebP, or AVIF.');
+        return;
+      }
+      onFilesReceived(detail.files);
+    }
+  });
+
+  (async () => {
+    if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      const { retrieveFiles } = await import('../../lib/file-transfer');
+      const files = await retrieveFiles();
+      if (files.length) onFilesReceived(files);
+    }
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile && sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      import('../../lib/file-transfer').then((m) => m.storeFiles([currentFile]));
+    }
+  });
+</script>
+
+<style>
+  .passport-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+  .passport-label { color: var(--color-mute); margin: 0 0 var(--space-sm); display: block; }
+
+  .passport-sizes { border: none; margin: 0; padding: 0; }
+  .passport-size-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-xs); }
+  .passport-size-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--space-sm) var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease; }
+  .passport-size-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .passport-size-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .passport-size-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+  .passport-size-name { font-weight: var(--weight-medium); line-height: 1.2; }
+  .passport-size-dims { font-size: 11px; color: var(--color-mute); }
+
+  .passport-bg { border: none; margin: 0; padding: 0; margin-top: var(--space-md); }
+  .passport-bg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xs); }
+  .passport-bg-btn { display: flex; align-items: center; gap: var(--space-xs); justify-content: center; padding: var(--space-sm) var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease; }
+  .passport-bg-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .passport-bg-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .passport-bg-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+  .passport-bg-swatch { display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--color-hairline); flex-shrink: 0; }
+
+  .passport-crop-hint { color: var(--color-body); margin: 0 0 var(--space-sm); }
+  .passport-crop-area { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; padding: var(--space-lg); }
+  .passport-crop-container { position: relative; min-height: 240px; user-select: none; -webkit-user-select: none; touch-action: none; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; border-radius: var(--radius-sm); }
+  .passport-image { display: block; pointer-events: none; }
+
+  .passport-crop-window { position: absolute; outline: 9999px solid rgba(0,0,0,.45); box-shadow: 0 0 0 1px rgba(255,255,255,.3); cursor: move; touch-action: none; }
+  .passport-handle { position: absolute; width: 16px; height: 16px; background: #fff; border: 2px solid var(--color-link); border-radius: 3px; z-index: 2; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .passport-handle-nw { top: -8px; left: -8px; cursor: nw-resize; }
+  .passport-handle-ne { top: -8px; right: -8px; cursor: ne-resize; }
+  .passport-handle-sw { bottom: -8px; left: -8px; cursor: sw-resize; }
+  .passport-handle-se { bottom: -8px; right: -8px; cursor: se-resize; }
+
+  .passport-crop-info { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-sm) 0 0; }
+  .passport-crop-info .text-caption { color: var(--color-body); font-feature-settings: 'tnum'; }
+  .passport-generate-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 36px; padding: 0 var(--space-lg); border-radius: var(--radius-pill); border: none; background: var(--color-primary); color: var(--color-on-primary); font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); cursor: pointer; transition: background var(--dur-fast) var(--ease-out-quart); }
+  .passport-generate-btn:hover { filter: brightness(1.12); }
+  .passport-generate-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+
+  .passport-result { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; padding: var(--space-lg); }
+  .passport-result-heading { margin: 0 0 var(--space-md); }
+  .passport-result-cols { display: flex; align-items: flex-start; gap: var(--space-lg); }
+  .passport-result-fig { margin: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .passport-result-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .passport-result-frame { width: 100%; min-height: 160px; display: flex; align-items: center; justify-content: center; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; border-radius: var(--radius-sm); overflow: hidden; padding: var(--space-sm); }
+  .passport-result-frame-sm { min-height: 120px; }
+  .passport-result-img { max-width: 100%; max-height: 300px; object-fit: contain; display: block; }
+  .passport-actions { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg) 0 0; flex-wrap: wrap; }
+  .passport-actions .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-lg); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .passport-actions .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .passport-actions .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .passport-actions .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .passport-actions .results-btn-secondary { background-color: var(--color-canvas-soft); color: var(--color-ink); border-color: var(--color-hairline-strong); }
+  .passport-actions .results-btn-secondary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+
+  @media (max-width: 800px) {
+    .passport-size-grid { grid-template-columns: repeat(3, 1fr); }
+    .passport-result-cols { flex-direction: column; }
+  }
+  @media (max-width: 600px) {
+    .passport-size-grid { grid-template-columns: repeat(2, 1fr); }
+    .passport-bg-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

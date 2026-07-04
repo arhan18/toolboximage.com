@@ -15,7 +15,7 @@ import {
 import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
-  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper' | 'watermark' | 'metadata';
+  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper' | 'watermark' | 'metadata' | 'passport' | 'heic-converter';
   lang?: string;
 }
 
@@ -28,9 +28,11 @@ const isRotator = toolId === 'rotator';
 const isCropper = toolId === 'cropper';
 const isWatermark = toolId === 'watermark';
 const isMetadata = toolId === 'metadata';
+const isPassport = toolId === 'passport';
+const isHeicConverter = toolId === 'heic-converter';
 
-const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : 'Image Metadata Viewer';
-const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : isCropper ? 'tools/cropper' : isWatermark ? 'tools/watermark' : 'tools/metadata';
+const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : 'HEIC Converter';
+const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : isCropper ? 'tools/cropper' : isWatermark ? 'tools/watermark' : isMetadata ? 'tools/metadata' : isPassport ? 'tools/passport' : 'tools/heic-converter';
 const toolPath = `/${lang === 'en' ? '' : lang + '/'}${toolSlug}/`;
 
 const breadcrumbItems = [
@@ -51,7 +53,11 @@ const appSchema = softwareAppSchema({
     ? 'Free online image cropper — crop images with preset aspect ratios or freeform selection. Square, 4:5, 16:9, and custom crops. No uploads.'
     : isWatermark
     ? 'Free online image watermark tool — add text watermarks to images with custom opacity, position, font, and styling. No uploads, no sign-up.'
-    : 'Free online image metadata viewer — view EXIF, GPS, and camera metadata. Strip private data before sharing. No uploads, no sign-up.',
+    : isMetadata
+    ? 'Free online image metadata viewer — view EXIF, GPS, and camera metadata. Strip private data before sharing. No uploads, no sign-up.'
+    : isHeicConverter
+    ? 'Free online HEIC converter — convert Apple HEIC/HEIF photos to JPEG, PNG, or WebP instantly in your browser. No uploads, no sign-up, unlimited.'
+    : 'Free online passport photo maker — create passport and ID photos with correct dimensions and background color. Print-ready layout. No uploads, no sign-up.',
   url: `${SITE_URL}${toolSlug}`,
 });
 
@@ -103,6 +109,30 @@ const howTo = isCropper
         { name: 'Strip and download', text: 'Click Strip Metadata to remove all EXIF data, then download the cleaned image. Your original image is never modified.' },
       ],
     }
+      : isPassport
+      ? {
+      name: 'How to Make a Passport Photo Online Free',
+      description: 'A step-by-step guide to creating passport size photos at home using ToolBox Image free online Passport Photo Maker.',
+      steps: [
+        { name: 'Upload your portrait', text: 'Click the upload area or drag and drop a well-lit, front-facing portrait. A smartphone photo against a plain white wall works best for creating a passport size photo.' },
+        { name: 'Select your country preset', text: 'Choose your country or document type from the size presets — US Passport (2×2 in, 600×600 px), UK/EU/India Passport (35×45 mm, 413×531 px), Canada Passport (50×70 mm, 591×827 px), and more.' },
+        { name: 'Choose background color', text: 'Select a background color — White (most passports), Blue (visa/ID), Gray, or Red — that matches your document requirements.' },
+        { name: 'Frame head and shoulders', text: 'Drag the crop window to frame your head and shoulders within the official proportions. The aspect ratio is locked to your selected country preset. Use arrow keys for pixel-precise fine positioning.' },
+        { name: 'Generate and download', text: 'Click Generate Passport Photo to render the image at exact government dimensions at 300 DPI. Download the single digital photo for online submission or the printable 4×6 inch print layout with multiple copies and cut guides.' },
+      ],
+    }
+      : isHeicConverter
+      ? {
+      name: 'How to Convert HEIC to JPG Online',
+      description: 'A step-by-step guide to converting HEIC/HEIF photos to JPEG, PNG, or WebP using ToolBox Image HEIC Converter.',
+      steps: [
+        { name: 'Upload your HEIC photo', text: 'Click the upload area or drag and drop an HEIC/HEIF file from your iPhone or iPad. These photos are saved in Apple\'s HEIC format by default on iOS devices running iOS 11 and later.' },
+        { name: 'Choose output format', text: 'Select your desired output format — JPEG for universal compatibility, PNG for lossless quality with transparency, or WebP for the smallest file size.' },
+        { name: 'Adjust quality', text: 'Use the quality slider to control file size vs. image quality. Higher values (92-100%) produce better-looking images. Lower values (60-80%) create smaller files suitable for web use.' },
+        { name: 'Preview the result', text: 'See a side-by-side comparison of your original HEIC photo and the converted output with file size information. The HEIC decoder runs in your browser using WebAssembly.' },
+        { name: 'Download', text: 'Click the download button to save your converted image. Your original HEIC file is never uploaded — all processing stays on your device.' },
+      ],
+    }
       : isWatermark
       ? {
       name: 'How to Add a Watermark to an Image Online',
@@ -126,6 +156,20 @@ const howTo = isCropper
         { name: 'Download', text: 'Click the download button to save your rotated image. All processing stays on your device.' },
       ],
     };
+
+let heicFaqItems: { q: string; a: string }[] = [];
+if (isHeicConverter) {
+  heicFaqItems = [
+    { q: 'What is HEIC format and why do I need to convert it?', a: 'HEIC (High Efficiency Image Container) is Apple\'s default photo format since iOS 11. It uses HEVC (High Efficiency Video Coding) compression to create files about half the size of JPEGs at the same quality. The downside is that HEIC has limited support on Windows, Android, and many web platforms, so converting HEIC to JPG or PNG is often necessary for sharing and uploading.' },
+    { q: 'Is it free to convert HEIC to JPG online?', a: 'Yes, ToolBox Image HEIC Converter is completely free. There are no sign-up requirements, no usage limits, no watermarks, and no hidden charges. You can convert as many HEIC photos as you want, as often as you need.' },
+    { q: 'Are my HEIC photos uploaded to a server during conversion?', a: 'No. All conversion happens locally in your browser using a WebAssembly build of the libheif library. Your HEIC files never leave your device. You can verify this by opening your browser\'s Network tab — there are zero outbound requests during conversion.' },
+    { q: 'What output formats does the HEIC converter support?', a: 'The converter supports three output formats: JPEG (best for universal compatibility, social media, and email), PNG (lossless format ideal for screenshots and images requiring transparency), and WebP (Google\'s modern format that offers superior compression for web use).' },
+    { q: 'Can I convert multiple HEIC photos at once?', a: 'Yes, the tool supports batch conversion of up to 50 HEIC/HEIF files at once. Each file is decoded independently and you can download the converted results individually.' },
+    { q: 'What is the difference between HEIC and HEIF?', a: 'HEIF (High Efficiency Image File Format) is the container format standard (ISO/IEC 23008-12). HEIC is Apple\'s specific implementation of HEIF that uses HEVC/H.265 compression. HEIF is the container; HEIC is Apple\'s version of it. Some Android devices also produce .heif files using a different codec.' },
+    { q: 'Why can\'t I open HEIC photos on my Windows or Android device?', a: 'HEIC uses the HEVC (H.265) video codec for compression, which requires a license for decoding. Apple includes this support natively, but Windows requires a paid ($0.99) HEVC extension from the Microsoft Store, and most Android devices don\'t include HEIC decoding support out of the box. Converting to JPEG solves this compatibility issue.' },
+    { q: 'Does converting HEIC to JPEG lose quality?', a: 'JPEG is a lossy format, so some quality loss occurs during the conversion from HEIC. However, at higher quality settings (92% or above), the difference is visually imperceptible. The HEIC file itself was already compressed using HEVC, so the conversion adds JPEG compression on top of that.' },
+  ];
+}
 
 const faqItems = isConverter
   ? [
@@ -153,6 +197,16 @@ const faqItems = isConverter
       { q: _('cropper.faq.q6'), a: _('cropper.faq.a6') },
       { q: _('cropper.faq.q7'), a: _('cropper.faq.a7') },
     ]
+  : isPassport
+  ? [
+      { q: _('passport.faq.q1'), a: _('passport.faq.a1') },
+      { q: _('passport.faq.q2'), a: _('passport.faq.a2') },
+      { q: _('passport.faq.q3'), a: _('passport.faq.a3') },
+      { q: _('passport.faq.q4'), a: _('passport.faq.a4') },
+      { q: _('passport.faq.q5'), a: _('passport.faq.a5') },
+      { q: _('passport.faq.q6'), a: _('passport.faq.a6') },
+      { q: _('passport.faq.q7'), a: _('passport.faq.a7') },
+    ]
   : isMetadata
   ? [
       { q: _('metadata.faq.q1'), a: _('metadata.faq.a1') },
@@ -169,6 +223,8 @@ const faqItems = isConverter
       { q: _('watermark.faq.q4'), a: _('watermark.faq.a4') },
       { q: _('watermark.faq.q5'), a: _('watermark.faq.a5') },
     ]
+  : isHeicConverter
+  ? heicFaqItems
   : [
       { q: _('rotator.faq.q1'), a: _('rotator.faq.a1') },
       { q: _('rotator.faq.q2'), a: _('rotator.faq.a2') },
@@ -498,6 +554,99 @@ const howToLd = howToSchema(howTo.steps);
         </ul>
       </>}
 
+      {isPassport && <>
+        <h2>Free Online Passport Photo Maker — Create Passport Size Photos for Any Country</h2>
+        <p>
+          ToolBox Image <strong>Passport Photo Maker</strong> is a fast, private browser-based
+          tool for creating <strong>passport size photos</strong> and ID photos that meet official
+          government specifications. Whether you need a US passport photo (2×2 inches, 600×600 px),
+          a UK passport photo (35×45 mm, 413×531 px), or <strong>passport size photos</strong>
+          for India, Canada, Australia, China, Japan, or the EU, this free online passport photo
+          maker handles it instantly — with no uploads, no sign-up, and no file size limits.
+        </p>
+        <p>
+          Creating a <strong>passport photo online</strong> has never been easier. Just upload
+          a front-facing portrait, select your country or document type from the size presets,
+          frame your face within the crop guide, and download a print-ready file at 300 DPI.
+          Unlike other online passport photo tools that send your photos to a remote server,
+          ToolBox Image <strong>passport photo maker</strong> processes everything locally using
+          the HTML5 Canvas API. Your photos never leave your device, making it one of the most
+          private <strong>free passport photo maker</strong> tools available online.
+        </p>
+
+        <h3>Supported Passport Photo Sizes by Country</h3>
+        <p>
+          ToolBox Image Passport Photo Maker supports the most common passport and ID photo
+          sizes for countries around the world. All dimensions are calculated at 300 DPI for
+          print-ready quality. Need a specific size? Here are the
+          <strong>passport photo sizes by country</strong> we support:
+        </p>
+        <ul>
+          <li><strong>US Passport (2×2 in / 51×51 mm):</strong> 600×600 px. Square format used for US passports, visas, and immigration documents.</li>
+          <li><strong>UK Passport (35×45 mm):</strong> 413×531 px. Standard for British passports and many Commonwealth countries.</li>
+          <li><strong>EU Passport (35×45 mm):</strong> 413×531 px. Used across the European Union for passports and ID cards.</li>
+          <li><strong>India Passport (35×45 mm):</strong> 413×531 px. Standard size for Indian passports and visa applications.</li>
+          <li><strong>Canada Passport (50×70 mm):</strong> 591×827 px. Larger format used for Canadian passports.</li>
+          <li><strong>Australia Passport (35×45 mm):</strong> 413×531 px. Standard Australian passport photo size.</li>
+          <li><strong>China Passport (33×48 mm):</strong> 390×567 px. Used for Chinese passports and many visa applications.</li>
+          <li><strong>Japan Passport (35×45 mm):</strong> 413×531 px. Standard Japanese passport photo specification.</li>
+          <li><strong>China 1-inch ID (25×35 mm):</strong> 295×413 px. Common for Chinese ID cards and certificates.</li>
+          <li><strong>China 2-inch ID (35×53 mm):</strong> 413×626 px. Used for Chinese visa and residence permit photos.</li>
+        </ul>
+
+        <h3>Passport Photo Background Color Options by Country</h3>
+        <p>
+          Different countries and document types require specific background colors for their
+          <strong>passport size photos</strong>. ToolBox Image Passport Photo Maker offers
+          four options to match official requirements:
+        </p>
+        <ul>
+          <li><strong>White:</strong> The most common background for US, UK, EU, India, Canada, Australia, and Japan passports. White backgrounds provide the highest contrast for biometric recognition.</li>
+          <li><strong>Blue:</strong> Required for some Chinese visa applications, driving licenses, and certain ID cards in Asia.</li>
+          <li><strong>Gray:</strong> Used for some professional certificates, work permits, and specific country visa applications, including Germany and some EU documents.</li>
+          <li><strong>Red:</strong> Used for certain Chinese document photos and specific ID card applications.</li>
+        </ul>
+        <p>
+          Choosing the correct background is critical for passport approval. Most countries require
+          a plain white or off-white background for <strong>passport size photos</strong>, but
+          some (like Germany) permit light gray, and certain Chinese ID documents require blue or
+          red. Always verify your country's specific requirements before submitting.
+        </p>
+
+        <h3>Why Use ToolBox Image Passport Photo Maker?</h3>
+        <p>
+          Most free online passport photo tools upload your photos to a server, compromising your
+          privacy. ToolBox Image Passport Photo Maker is different:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All processing happens in your browser using the Canvas API.</li>
+          <li><strong>Exact Government Specs:</strong> Each preset uses official passport photo dimensions at 300 DPI, so your photos meet submission requirements.</li>
+          <li><strong>Print-Ready Layout:</strong> Download a 4×6 inch print layout with multiple passport photos and cut lines — perfect for printing at home or at a photo kiosk.</li>
+          <li><strong>Multiple Background Colors:</strong> Switch between white, blue, gray, and red backgrounds to match different document requirements.</li>
+          <li><strong>Free Forever:</strong> No sign-up, no paywall, no credit card. Unlimited passport photo generation.</li>
+        </ul>
+
+        <h3>How to Make a Passport Photo Online Free</h3>
+        <p>Creating a <strong>passport size photo</strong> with ToolBox Image <strong>free passport photo maker</strong> is quick and easy — no sign-up required:</p>
+        <ol>
+          <li><strong>Upload your portrait</strong> — Click the upload area or drag and drop a front-facing portrait. A well-lit smartphone photo against a plain white wall works best.</li>
+          <li><strong>Select your country</strong> — Choose your country or document type from the size presets. The crop area automatically locks to the correct aspect ratio for that country's passport photo requirements.</li>
+          <li><strong>Pick a background color</strong> — Select the required background — white (most common), blue (visa/ID), gray, or red — to match your document specifications.</li>
+          <li><strong>Frame your head and shoulders</strong> — Drag the crop window to position your face within the frame. Use the corner handles to resize while the aspect ratio stays locked. Arrow keys provide pixel-precise positioning.</li>
+          <li><strong>Generate your passport photo</strong> — Click "Generate Passport Photo" to render the image at exact government dimensions at 300 DPI with the selected background.</li>
+          <li><strong>Download the result</strong> — Download the single digital photo for online submission, or the 4×6 inch print layout for printing at home or a photo kiosk.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Apply for a new passport:</strong> Create a compliant US, UK, or EU passport photo from home instead of paying at a pharmacy photo booth.</li>
+          <li><strong>Renew an expiring passport:</strong> Most passport renewals allow you to upload a digital photo. Use our tool to get the exact dimensions for your country.</li>
+          <li><strong>Visa applications:</strong> Different countries have different photo requirements. Use our country presets to match each country's visa photo specifications.</li>
+          <li><strong>Student and employee ID cards:</strong> Create professional ID photos for school IDs, company badges, and access cards with the correct background color.</li>
+          <li><strong>Print at home for travel:</strong> Download the 4×6 print layout and print passport photos at home or at any photo kiosk for last-minute travel needs.</li>
+        </ul>
+      </>}
+
       {isCropper && <>
         <h2>Free Online Image Cropper — Crop Images with Aspect Ratio Presets</h2>
         <p>
@@ -559,11 +708,88 @@ const howToLd = howToSchema(howTo.steps);
           <li><strong>Crop product photos for e-commerce:</strong> Standardise product images to uniform aspect ratios for a professional store appearance.</li>
         </ul>
       </>}
+
+      {isHeicConverter && <>
+        <h2>Free Online HEIC Converter — Convert HEIC/HEIF to JPG, PNG & WebP</h2>
+        <p>
+          ToolBox Image <strong>HEIC Converter</strong> is a fast, private browser-based tool for converting
+          <strong>Apple HEIC/HEIF photos to JPEG, PNG, or WebP</strong>. If you have an iPhone or iPad,
+          your photos are automatically saved in HEIC format — which is great for saving storage space but
+          causes compatibility issues when you try to share or upload them on Windows, Android, or the web.
+          This free online HEIC converter solves that problem instantly — with no uploads, no sign-up,
+          and no file size limits.
+        </p>
+        <p>
+          Unlike online HEIC to JPG converters that send your photos to a remote server, ToolBox Image
+          HEIC Converter processes everything locally using <strong>libheif</strong>, an open-source HEIC
+          decoder compiled to WebAssembly. Your photos never leave your device, making it one of the most
+          private <strong>HEIC conversion tools</strong> available online. The tool supports batch
+          conversion, a quality slider for fine-grained control, and instant side-by-side previews so
+          you can compare before and after.
+        </p>
+
+        <h3>Why Convert HEIC to JPG, PNG, or WebP?</h3>
+        <p>
+          Apple introduced <strong>HEIC</strong> (High Efficiency Image Container) as the default photo
+          format starting with iOS 11 in 2017. While HEIC offers excellent compression — photos are about
+          half the size of JPEGs at the same visual quality — the format has significant compatibility
+          limitations:
+        </p>
+        <ul>
+          <li><strong>Windows:</strong> Cannot open HEIC photos without a paid ($0.99) HEVC codec extension from the Microsoft Store.</li>
+          <li><strong>Android:</strong> Most Android devices cannot open HEIC files natively. Some newer Samsung and Google Pixel devices support it, but compatibility is inconsistent.</li>
+          <li><strong>Web browsers:</strong> Only Safari supports HEIC in the browser. Chrome has limited support on macOS and Android. Firefox does not support HEIC at all.</li>
+          <li><strong>Email and messaging:</strong> Most email clients and messaging apps (Gmail, Outlook, WhatsApp, Telegram) cannot display HEIC images inline. They either fail to load or appear as unopenable attachments.</li>
+          <li><strong>Social media:</strong> Facebook, Twitter/X, Instagram, LinkedIn, and most other platforms require JPEG or PNG uploads. HEIC files will be rejected or automatically converted (often with quality loss).</li>
+        </ul>
+
+        <h3>Supported HEIC Conversion Options</h3>
+        <p>ToolBox Image HEIC Converter supports three output formats to match your specific needs:</p>
+        <ul>
+          <li><strong>HEIC to JPG:</strong> The most compatible option. JPEG is supported everywhere — every device, every operating system, every website, every app. Best for sharing photos, email attachments, and social media uploads. The quality slider lets you balance file size and image quality.</li>
+          <li><strong>HEIC to PNG:</strong> Lossless format that preserves full image quality. PNG files are larger than JPEGs but maintain every pixel of detail. Best for screenshots, graphics, and images that require transparency or further editing.</li>
+          <li><strong>HEIC to WebP:</strong> Google's modern image format that offers superior compression. WebP files are typically 25-35% smaller than JPEGs at equivalent quality. Best for web use where you want the smallest possible file size with good quality.</li>
+        </ul>
+
+        <h3>Why Use ToolBox Image HEIC Converter?</h3>
+        <p>
+          Most online HEIC converters upload your photos to a server, exposing your private images.
+          ToolBox Image HEIC Converter is different:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All HEIC decoding happens in your browser using a WebAssembly build of libheif.</li>
+          <li><strong>No File Size Limits:</strong> Convert HEIC photos of any size — the only limit is your device's available memory.</li>
+          <li><strong>No Sign-Up:</strong> Start converting immediately. No account creation, no email, no credit card required.</li>
+          <li><strong>Quality Control:</strong> Fine-tune output quality with a precise slider (1-100%) to balance file size and image clarity.</li>
+          <li><strong>Instant Preview:</strong> See your original HEIC photo and converted output side by side with exact file size information.</li>
+          <li><strong>Free Forever:</strong> Unlimited conversions, no watermarks, no paywalls, no hidden charges.</li>
+        </ul>
+
+        <h3>How to Convert HEIC to JPG Online</h3>
+        <p>Converting HEIC photos with ToolBox Image is simple and takes just a few seconds:</p>
+        <ol>
+          <li><strong>Upload your HEIC photo</strong> — Click the upload area or drag and drop an HEIC/HEIF file from your iPhone, iPad, or any device using Apple's HEIC format.</li>
+          <li><strong>Choose output format</strong> — Select JPEG for maximum compatibility, PNG for lossless quality, or WebP for the smallest file size.</li>
+          <li><strong>Adjust quality</strong> — Move the quality slider to control the output file size. Higher values (92-100%) produce better quality images. Lower values (60-80%) create smaller files ideal for the web.</li>
+          <li><strong>Preview the result</strong> — See your original HEIC photo and the converted image side by side with file size details. The HEIC decoder processes everything in your browser using WebAssembly.</li>
+          <li><strong>Download</strong> — Click the download button to save your converted image. Your original HEIC file is never uploaded or modified — all processing stays on your device.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Convert HEIC to JPG for Windows:</strong> Transfer photos from your iPhone to a Windows PC and convert them to JPEG so you can view, edit, and share them without installing additional codecs.</li>
+          <li><strong>Convert HEIC to JPG for email:</strong> Most email clients cannot display HEIC photos. Convert them to JPEG before attaching to ensure your recipients can view them regardless of their device or operating system.</li>
+          <li><strong>Convert HEIC to JPG for social media:</strong> Upload HEIC photos to Facebook, Instagram, Twitter/X, and LinkedIn by converting them to JPEG first. Most platforms strip or reject HEIC files.</li>
+          <li><strong>Convert HEIC to JPG for web uploads:</strong> Many websites, forms, and applications only accept JPEG or PNG uploads. Convert HEIC files to compatible formats before submitting.</li>
+          <li><strong>Convert HEIC to PNG for editing:</strong> If you need to edit an iPhone photo in software that doesn't support HEIC, convert to lossless PNG first to preserve full image quality during the editing process.</li>
+          <li><strong>Batch convert HEIC photos:</strong> After a trip or event, batch-convert all your iPhone HEIC photos to JPEG to create a universally compatible photo album for sharing with family and friends.</li>
+        </ul>
+      </>}
     </Prose>
 
     <!-- FAQ -->
     <section class="seo-faq">
-      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : 'Rotate Image'}>
+      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : isHeicConverter ? 'HEIC Converter' : 'Rotate Image'}>
         <h2 class="text-display-lg">Frequently Asked Questions</h2>
       </SectionHeader>
       <FAQ items={faqItems} />
@@ -588,9 +814,9 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Rotate Image</strong>
             <span>Rotate and flip images</span>
           </a>
-          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/metadata/`} class="seo-related-card">
-            <strong>Metadata Viewer</strong>
-            <span>View and strip EXIF data</span>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/passport/`} class="seo-related-card">
+            <strong>Passport Photo Maker</strong>
+            <span>Create passport and ID photos</span>
           </a>
         </> : isResizer ? <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
@@ -605,9 +831,9 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Rotate Image</strong>
             <span>Rotate and flip images</span>
           </a>
-          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/metadata/`} class="seo-related-card">
-            <strong>Metadata Viewer</strong>
-            <span>View and strip EXIF data</span>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/passport/`} class="seo-related-card">
+            <strong>Passport Photo Maker</strong>
+            <span>Create passport and ID photos</span>
           </a>
         </> : isCropper ? <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
@@ -622,9 +848,9 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Image Resizer</strong>
             <span>Resize images for any platform</span>
           </a>
-          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/metadata/`} class="seo-related-card">
-            <strong>Metadata Viewer</strong>
-            <span>View and strip EXIF data</span>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/passport/`} class="seo-related-card">
+            <strong>Passport Photo Maker</strong>
+            <span>Create passport and ID photos</span>
           </a>
         </> : isWatermark ? <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
@@ -639,9 +865,9 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Image Resizer</strong>
             <span>Resize images for any platform</span>
           </a>
-          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/metadata/`} class="seo-related-card">
-            <strong>Metadata Viewer</strong>
-            <span>View and strip EXIF data</span>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/passport/`} class="seo-related-card">
+            <strong>Passport Photo Maker</strong>
+            <span>Create passport and ID photos</span>
           </a>
         </> : isMetadata ? <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
@@ -656,9 +882,43 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Image Resizer</strong>
             <span>Resize images for any platform</span>
           </a>
-          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/watermark/`} class="seo-related-card">
-            <strong>Image Watermark</strong>
-            <span>Add text watermarks to images</span>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/passport/`} class="seo-related-card">
+            <strong>Passport Photo Maker</strong>
+            <span>Create passport and ID photos</span>
+          </a>
+        </> : isPassport ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/cropper/`} class="seo-related-card">
+            <strong>Image Cropper</strong>
+            <span>Crop images with preset ratios</span>
+          </a>
+        </> : isHeicConverter ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/passport/`} class="seo-related-card">
+            <strong>Passport Photo Maker</strong>
+            <span>Create passport and ID photos</span>
           </a>
         </> : <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">

@@ -88,6 +88,12 @@ const others = LANG_CODES.filter((l) => l !== currentLang);
       dropdown.hidden = true;
     });
   });
+
+  document.querySelectorAll('.lang-item').forEach((el) => {
+    el.addEventListener('click', () => {
+      sessionStorage.setItem('toolboximage:transfer', '1');
+    });
+  });
 </script>
 
 <style>

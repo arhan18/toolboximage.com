@@ -99,6 +99,7 @@ const pickerTools = [
   { href: isEn ? '/image-compressor-100kb/' : `/${lang}/image-compressor-100kb/`, label: p('tools.target'), desc: p('tools.targetDesc'), icon: 'target' },
   { href: isEn ? '/image-compressor-for-discord/' : `/${lang}/image-compressor-for-discord/`, label: p('tools.discord'), desc: p('tools.discordDesc'), icon: 'discord' },
   { href: isEn ? '/compress-for-email/' : `/${lang}/compress-for-email/`, label: p('tools.email'), desc: p('tools.emailDesc'), icon: 'email' },
+  { href: isEn ? '/image-tools/' : `/${lang}/image-tools/`, label: isEn ? 'All Tools' : p('nav.allTools'), desc: isEn ? 'Browse all image tools' : p('home.picker.allTools'), icon: 'grid' },
 ];
 
 const langInfo: Record<string, { label: string; flag: string }> = {
@@ -199,6 +200,7 @@ const langInfo: Record<string, { label: string; flag: string }> = {
             {tool.icon === 'target' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>}
             {tool.icon === 'discord' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="4"/><path d="M8 16V8l8 4-8 4z"/></svg>}
             {tool.icon === 'email' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>}
+            {tool.icon === 'grid' && <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>}
           </div>
           <p class="text-body-sm-strong tool-picker-card-label">{tool.label}</p>
           <p class="text-caption tool-picker-card-desc">{tool.desc}</p>
@@ -234,6 +236,7 @@ const langInfo: Record<string, { label: string; flag: string }> = {
   links.forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
+      sessionStorage.setItem('toolboximage:transfer', '1');
       const href = link.getAttribute('href');
       if (href) window.location.href = href;
     });

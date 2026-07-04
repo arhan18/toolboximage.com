@@ -1,6 +1,6 @@
 import { UploadStore, formatBytes } from './upload-store';
 import type { UploadItem } from './upload-store';
-import { retrieveFiles } from './file-transfer';
+import { retrieveFiles, hasTransfer, clearTransfer } from './file-transfer';
 import { DEFAULT_SETTINGS, MODE_PRESETS } from './compression-settings';
 import type { CompressionSettings, CompressionMode, OutputFormat } from './compression-settings';
 import { CompressionJobRunner, type Job } from './compression-runner';
@@ -63,9 +63,12 @@ export function initCompressor(): void {
   const runner = new CompressionJobRunner(store, settings, 4);
 
   (async () => {
-    const files = await retrieveFiles();
-    if (files.length) {
-      await store.add(files);
+    if (hasTransfer()) {
+      clearTransfer();
+      const files = await retrieveFiles();
+      if (files.length) {
+        await store.add(files);
+      }
     }
   })();
   const tpl = document.getElementById('tpl-preview-card') as HTMLTemplateElement | null;
