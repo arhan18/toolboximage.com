@@ -1,0 +1,407 @@
+---
+import ToolUpload from '../../components/tools/ToolUpload.astro';
+import ToolSettingsPanel from '../../components/tools/ToolSettingsPanel.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('watermark')!;
+
+const positions = [
+  { id: 'top-left', key: 'watermark.topLeft' },
+  { id: 'top-right', key: 'watermark.topRight' },
+  { id: 'center', key: 'watermark.center' },
+  { id: 'bottom-left', key: 'watermark.bottomLeft' },
+  { id: 'bottom-right', key: 'watermark.bottomRight' },
+  { id: 'tile', key: 'watermark.tile' },
+];
+
+const fonts = ['Arial', 'Impact', 'Times New Roman', 'Georgia', 'Verdana', 'Courier New', 'Trebuchet MS', 'Comic Sans MS'];
+---
+<section class="watermark-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <section class="watermark-preview-area" data-wm-preview hidden>
+    <figure class="watermark-preview-fig">
+      <figcaption class="text-caption-mono watermark-preview-label">{_('watermark.original')}</figcaption>
+      <div class="watermark-preview-frame">
+        <img data-wm-original-img alt={_('watermark.original')} class="watermark-preview-img" />
+      </div>
+      <p class="text-caption watermark-preview-size" data-wm-original-size></p>
+    </figure>
+    <div class="watermark-preview-arrow" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+    <figure class="watermark-preview-fig">
+      <figcaption class="text-caption-mono watermark-preview-label" data-wm-result-label data-i18n="watermark.result">{_('watermark.result')}</figcaption>
+      <div class="watermark-preview-frame">
+        <img data-wm-result-img alt={_('watermark.result')} class="watermark-preview-img" />
+      </div>
+      <p class="text-caption watermark-preview-size" data-wm-result-size></p>
+    </figure>
+  </section>
+
+  <ToolSettingsPanel {tool} {lang}>
+    <div slot="settings-controls">
+      <div class="watermark-controls">
+        <label class="watermark-field">
+          <span class="text-caption-mono watermark-label">{_('watermark.text')}</span>
+          <input type="text" class="watermark-input" data-wm-text value="© ToolBox Image" />
+        </label>
+        <div class="watermark-row">
+          <label class="watermark-field watermark-field-half">
+            <span class="text-caption-mono watermark-label">{_('watermark.fontSize')}</span>
+            <input type="range" class="watermark-slider" data-wm-font-size min="12" max="200" value="48" />
+            <span class="text-caption watermark-value" data-wm-font-size-val>48px</span>
+          </label>
+          <label class="watermark-field watermark-field-half">
+            <span class="text-caption-mono watermark-label">{_('watermark.opacity')}</span>
+            <input type="range" class="watermark-slider" data-wm-opacity min="0.05" max="1" step="0.05" value="0.5" />
+            <span class="text-caption watermark-value" data-wm-opacity-val>50%</span>
+          </label>
+        </div>
+        <div class="watermark-row">
+          <label class="watermark-field watermark-field-half">
+            <span class="text-caption-mono watermark-label">{_('watermark.color')}</span>
+            <input type="color" class="watermark-color" data-wm-color value="#ffffff" />
+          </label>
+          <label class="watermark-field watermark-field-half">
+            <span class="text-caption-mono watermark-label">{_('watermark.fontFamily')}</span>
+            <select class="watermark-select" data-wm-font>
+              {fonts.map((f) => (
+                <option value={f} selected={f === 'Arial'}>{f}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <fieldset class="watermark-positions">
+          <legend class="text-caption-mono watermark-label">{_('watermark.position')}</legend>
+          <div class="watermark-pos-grid" data-wm-positions>
+            {positions.map((p) => (
+              <button type="button" class="watermark-pos-btn" data-wm-pos={p.id}>
+                {_(p.key)}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+        <label class="watermark-field">
+          <span class="text-caption-mono watermark-label">{_('watermark.rotate')}</span>
+          <input type="range" class="watermark-slider" data-wm-rotate min="-180" max="180" value="0" step="1" />
+          <span class="text-caption watermark-value" data-wm-rotate-val>0°</span>
+        </label>
+        <button type="button" class="watermark-apply-btn" data-wm-apply>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          {_('watermark.apply')}
+        </button>
+      </div>
+    </div>
+  </ToolSettingsPanel>
+
+  <section class="watermark-download" data-wm-download hidden>
+    <div class="watermark-download-bar">
+      <div class="watermark-download-info">
+        <p class="text-caption-mono watermark-download-label">{_('watermark.result')}</p>
+        <p class="text-body-sm-strong" data-wm-download-name></p>
+      </div>
+      <button type="button" class="results-btn results-btn-primary" data-wm-download-btn>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        {_('watermark.downloadBtn')}
+      </button>
+    </div>
+  </section>
+</section>
+
+<script>
+  const origImg = document.querySelector<HTMLImageElement>('[data-wm-original-img]');
+  const origSize = document.querySelector<HTMLElement>('[data-wm-original-size]');
+  const resultImg = document.querySelector<HTMLImageElement>('[data-wm-result-img]');
+  const resultSize = document.querySelector<HTMLElement>('[data-wm-result-size]');
+  const resultLabel = document.querySelector<HTMLElement>('[data-wm-result-label]');
+  const previewArea = document.querySelector<HTMLElement>('[data-wm-preview]');
+  const downloadSection = document.querySelector<HTMLElement>('[data-wm-download]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-wm-download-btn]');
+  const downloadNameEl = document.querySelector<HTMLElement>('[data-wm-download-name]');
+
+  const textInput = document.querySelector<HTMLInputElement>('[data-wm-text]');
+  const fontSizeSlider = document.querySelector<HTMLInputElement>('[data-wm-font-size]');
+  const fontSizeVal = document.querySelector<HTMLElement>('[data-wm-font-size-val]');
+  const opacitySlider = document.querySelector<HTMLInputElement>('[data-wm-opacity]');
+  const opacityVal = document.querySelector<HTMLElement>('[data-wm-opacity-val]');
+  const colorInput = document.querySelector<HTMLInputElement>('[data-wm-color]');
+  const fontSelect = document.querySelector<HTMLSelectElement>('[data-wm-font]');
+  const rotateSlider = document.querySelector<HTMLInputElement>('[data-wm-rotate]');
+  const rotateVal = document.querySelector<HTMLElement>('[data-wm-rotate-val]');
+  const posBtns = document.querySelectorAll<HTMLButtonElement>('[data-wm-pos]');
+  const applyBtn = document.querySelector<HTMLButtonElement>('[data-wm-apply]');
+
+  let currentFile: File | null = null;
+  let currentImg: HTMLImageElement | null = null;
+  let currentBlobUrl: string | null = null;
+  let selectedPos = 'bottom-right';
+
+  const formatBytes = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const dataUrlToBlob = (dataUrl: string): Blob => {
+    const parts = dataUrl.split(',');
+    const mime = parts[0].match(/:(.*?);/)![1];
+    const bytes = atob(parts[1]);
+    const arr = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  };
+
+  // Auto-preview: re-render watermark on any control change
+  const autoPreview = () => {
+    if (!currentImg) return;
+    updatePreview();
+  };
+  let previewTimer: ReturnType<typeof setTimeout> | null = null;
+  const debouncedPreview = () => {
+    if (previewTimer) clearTimeout(previewTimer);
+    previewTimer = setTimeout(autoPreview, 150);
+  };
+
+  // Position selection
+  posBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      posBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      selectedPos = btn.dataset.wmPos || 'bottom-right';
+      debouncedPreview();
+    });
+  });
+  // Default: bottom-right selected
+  posBtns.forEach((b) => {
+    if (b.dataset.wmPos === 'bottom-right') b.dataset.active = 'true';
+  });
+
+  // Slider value displays + auto-preview
+  if (fontSizeSlider && fontSizeVal) {
+    fontSizeSlider.addEventListener('input', () => {
+      fontSizeVal.textContent = fontSizeSlider.value + 'px';
+      debouncedPreview();
+    });
+  }
+  if (opacitySlider && opacityVal) {
+    opacitySlider.addEventListener('input', () => {
+      opacityVal.textContent = Math.round(Number(opacitySlider.value) * 100) + '%';
+      debouncedPreview();
+    });
+  }
+  if (rotateSlider && rotateVal) {
+    rotateSlider.addEventListener('input', () => {
+      rotateVal.textContent = rotateSlider.value + '°';
+      debouncedPreview();
+    });
+  }
+  if (textInput) {
+    textInput.addEventListener('input', debouncedPreview);
+  }
+  if (colorInput) {
+    colorInput.addEventListener('input', debouncedPreview);
+  }
+  if (fontSelect) {
+    fontSelect.addEventListener('change', debouncedPreview);
+  }
+
+  const renderWatermark = (img: HTMLImageElement): { blob: Blob; width: number; height: number } => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    ctx.drawImage(img, 0, 0);
+
+    const text = textInput?.value || '© ToolBox Image';
+    const fontSize = Number(fontSizeSlider?.value) || 48;
+    const opacity = Number(opacitySlider?.value) || 0.5;
+    const color = colorInput?.value || '#ffffff';
+    const font = fontSelect?.value || 'Arial';
+    const rotation = Number(rotateSlider?.value) || 0;
+
+    ctx.globalAlpha = opacity;
+    ctx.font = `${fontSize}px "${font}"`;
+    ctx.fillStyle = color;
+    ctx.textBaseline = 'middle';
+
+    if (selectedPos === 'tile') {
+      const metrics = ctx.measureText(text);
+      const textW = metrics.width;
+      const textH = fontSize;
+      const gapX = textW + 60;
+      const gapY = textH + 60;
+      for (let y = 0; y < canvas.height + gapY; y += gapY) {
+        for (let x = 0; x < canvas.width + gapX; x += gapX) {
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate((rotation * Math.PI) / 180);
+          ctx.fillText(text, 0, 0);
+          ctx.restore();
+        }
+      }
+    } else {
+      let posX: number, posY: number;
+      const padding = 30;
+      const metrics = ctx.measureText(text);
+      const textW = metrics.width;
+
+      switch (selectedPos) {
+        case 'top-left':
+          posX = padding; posY = padding + fontSize / 2;
+          break;
+        case 'top-right':
+          posX = canvas.width - textW - padding; posY = padding + fontSize / 2;
+          break;
+        case 'center':
+          posX = (canvas.width - textW) / 2; posY = canvas.height / 2;
+          break;
+        case 'bottom-left':
+          posX = padding; posY = canvas.height - padding - fontSize / 2;
+          break;
+        case 'bottom-right':
+        default:
+          posX = canvas.width - textW - padding; posY = canvas.height - padding - fontSize / 2;
+          break;
+      }
+
+      ctx.save();
+      ctx.translate(posX + textW / 2, posY);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.fillText(text, -textW / 2, 0);
+      ctx.restore();
+    }
+
+    ctx.globalAlpha = 1;
+    return { blob: dataUrlToBlob(canvas.toDataURL('image/png')), width: canvas.width, height: canvas.height };
+  };
+
+  const updatePreview = () => {
+    if (!currentImg) return;
+    const result = renderWatermark(currentImg);
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentBlobUrl = URL.createObjectURL(result.blob);
+    if (resultImg) resultImg.src = currentBlobUrl;
+    if (resultSize) resultSize.textContent = `${result.width} × ${result.height} · ${formatBytes(result.blob.size)}`;
+    if (downloadSection) downloadSection.hidden = false;
+    if (resultLabel) resultLabel.textContent = 'Watermarked';
+    if (downloadNameEl && currentFile) {
+      downloadNameEl.textContent = currentFile.name.replace(/\.[^.]+$/, '') + '_watermarked.' + (currentFile.name.split('.').pop() || 'jpg');
+    }
+  };
+
+  const applyWatermark = () => {
+    updatePreview();
+    downloadSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  if (applyBtn) {
+    applyBtn.addEventListener('click', applyWatermark);
+  }
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!currentFile || !currentBlobUrl) return;
+      const ext = currentFile.name.split('.').pop() || 'jpg';
+      const name = currentFile.name.replace(/\.[^.]+$/, '') + '_watermarked.' + ext;
+      const a = document.createElement('a');
+      a.href = currentBlobUrl;
+      a.download = name;
+      a.click();
+    });
+  }
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+    const file = files[0];
+    currentFile = file;
+    const origUrl = URL.createObjectURL(file);
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load'));
+      img.src = origUrl;
+    });
+    currentImg = img;
+    if (origImg) origImg.src = origUrl;
+    if (origSize) origSize.textContent = `${img.width} × ${img.height} · ${formatBytes(file.size)}`;
+    if (previewArea) previewArea.hidden = false;
+    if (resultImg) resultImg.src = origUrl;
+    if (resultSize) resultSize.textContent = `${img.width} × ${img.height} · ${formatBytes(file.size)}`;
+    if (resultLabel) resultLabel.textContent = 'Original';
+    if (downloadSection) downloadSection.hidden = true;
+    previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.addEventListener('toolboximage:files', async (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) onFilesReceived(detail.files);
+  });
+
+  (async () => {
+    const { retrieveFiles } = await import('../../lib/file-transfer');
+    const files = await retrieveFiles();
+    if (files.length) onFilesReceived(files);
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile) {
+      import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
+    }
+  });
+</script>
+
+<style>
+  .watermark-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+  .watermark-controls { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .watermark-field { display: flex; flex-direction: column; gap: var(--space-xs); border: none; margin: 0; padding: 0; }
+  .watermark-field-half { flex: 1; min-width: 0; }
+  .watermark-row { display: flex; gap: var(--space-md); }
+  .watermark-label { color: var(--color-mute); margin: 0 0 var(--space-xs); display: block; }
+  .watermark-input { width: 100%; padding: var(--space-sm); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); font-size: var(--text-body-sm); font-family: inherit; }
+  .watermark-input:focus { outline: none; border-color: var(--color-link); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-link) 20%, transparent); }
+  .watermark-slider { width: 100%; accent-color: var(--color-link); }
+  .watermark-value { color: var(--color-body); font-size: 12px; font-family: var(--font-mono); }
+  .watermark-color { width: 48px; height: 36px; padding: 2px; border-radius: var(--radius-sm); border: 1px solid var(--color-hairline); background: var(--color-canvas); cursor: pointer; }
+  .watermark-color:focus { outline: none; border-color: var(--color-link); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-link) 20%, transparent); }
+  .watermark-select { width: 100%; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); font-size: var(--text-body-sm); font-family: inherit; }
+  .watermark-select:focus { outline: none; border-color: var(--color-link); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-link) 20%, transparent); }
+  .watermark-positions { border: none; margin: 0; padding: 0; }
+  .watermark-pos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xs); }
+  .watermark-pos-btn { display: flex; align-items: center; justify-content: center; padding: var(--space-sm); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-size: 11px; font-family: inherit; transition: background 0.15s ease, border-color 0.15s ease; }
+  .watermark-pos-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .watermark-pos-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .watermark-pos-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+  .watermark-apply-btn { display: inline-flex; align-items: center; gap: var(--space-xs); align-self: flex-start; padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-pill); border: 1px solid transparent; background-color: var(--color-primary); color: var(--color-on-primary); cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart); }
+  .watermark-apply-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .watermark-apply-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .watermark-preview-area { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg); background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); }
+  .watermark-preview-fig { margin: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .watermark-preview-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .watermark-preview-frame { position: relative; width: 100%; min-height: 200px; display: flex; align-items: center; justify-content: center; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; border-radius: var(--radius-sm); overflow: hidden; }
+  .watermark-preview-img { max-width: 100%; max-height: 320px; object-fit: contain; display: block; }
+  .watermark-preview-size { margin: 0; color: var(--color-body); }
+  .watermark-preview-arrow { flex-shrink: 0; color: var(--color-mute); }
+  .watermark-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .watermark-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
+  .watermark-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .watermark-download-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .watermark-download .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .watermark-download .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .watermark-download .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .watermark-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  @media (max-width: 600px) {
+    .watermark-preview-area { flex-direction: column; }
+    .watermark-preview-arrow { transform: rotate(90deg); }
+    .watermark-pos-grid { grid-template-columns: repeat(3, 1fr); }
+    .watermark-row { flex-direction: column; }
+  }
+</style>

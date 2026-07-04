@@ -1,0 +1,376 @@
+---
+import ToolUpload from '../../components/tools/ToolUpload.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('metadata')!;
+---
+
+<section class="metadata-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <section class="metadata-results" data-md-results hidden>
+    <div class="metadata-card" data-md-camera hidden>
+      <h3 class="text-caption-mono metadata-section-title">{_('metadata.camera')}</h3>
+      <table class="metadata-table">
+        <tbody>
+          <tr data-md-row="make"><td class="metadata-key">{_('metadata.make')}</td><td class="metadata-val" data-md-make></td></tr>
+          <tr data-md-row="model"><td class="metadata-key">{_('metadata.model')}</td><td class="metadata-val" data-md-model></td></tr>
+          <tr data-md-row="focalLength"><td class="metadata-key">{_('metadata.focalLength')}</td><td class="metadata-val" data-md-focal></td></tr>
+          <tr data-md-row="aperture"><td class="metadata-key">{_('metadata.aperture')}</td><td class="metadata-val" data-md-aperture></td></tr>
+          <tr data-md-row="shutterSpeed"><td class="metadata-key">{_('metadata.shutterSpeed')}</td><td class="metadata-val" data-md-shutter></td></tr>
+          <tr data-md-row="iso"><td class="metadata-key">{_('metadata.iso')}</td><td class="metadata-val" data-md-iso></td></tr>
+          <tr data-md-row="dateTaken"><td class="metadata-key">{_('metadata.dateTaken')}</td><td class="metadata-val" data-md-date></td></tr>
+          <tr data-md-row="flash"><td class="metadata-key">{_('metadata.flash')}</td><td class="metadata-val" data-md-flash></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="metadata-card" data-md-gps hidden>
+      <h3 class="text-caption-mono metadata-section-title">{_('metadata.gps')}</h3>
+      <table class="metadata-table">
+        <tbody>
+          <tr data-md-row="latitude"><td class="metadata-key">{_('metadata.latitude')}</td><td class="metadata-val" data-md-lat></td></tr>
+          <tr data-md-row="longitude"><td class="metadata-key">{_('metadata.longitude')}</td><td class="metadata-val" data-md-lng></td></tr>
+          <tr data-md-row="altitude"><td class="metadata-key">{_('metadata.altitude')}</td><td class="metadata-val" data-md-alt></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="metadata-card" data-md-file hidden>
+      <h3 class="text-caption-mono metadata-section-title">{_('metadata.file')}</h3>
+      <table class="metadata-table">
+        <tbody>
+          <tr data-md-row="format"><td class="metadata-key">{_('metadata.format')}</td><td class="metadata-val" data-md-format></td></tr>
+          <tr data-md-row="fileSize"><td class="metadata-key">{_('metadata.fileSize')}</td><td class="metadata-val" data-md-size></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="metadata-card" data-md-image hidden>
+      <h3 class="text-caption-mono metadata-section-title">{_('metadata.image')}</h3>
+      <table class="metadata-table">
+        <tbody>
+          <tr data-md-row="dimensions"><td class="metadata-key">{_('metadata.dimensions')}</td><td class="metadata-val" data-md-dims></td></tr>
+          <tr data-md-row="colorSpace"><td class="metadata-key">{_('metadata.colorSpace')}</td><td class="metadata-val" data-md-colorspace></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="metadata-none" data-md-none hidden>
+      <p class="text-body-sm">{_('metadata.noData')}</p>
+    </div>
+
+    <div class="metadata-strip-actions" data-md-strip-section hidden>
+      <details class="metadata-strip-details">
+        <summary class="text-body-sm-strong metadata-strip-summary">{_('metadata.strip')}</summary>
+        <div class="metadata-strip-body">
+          <p class="text-body-sm">{_('metadata.stripConfirm')}</p>
+          <button type="button" class="results-btn results-btn-danger" data-md-strip-btn>
+            {_('metadata.strip')}
+          </button>
+        </div>
+      </details>
+    </div>
+
+    <section class="metadata-download" data-md-download hidden>
+      <div class="metadata-download-bar">
+        <div class="metadata-download-info">
+          <p class="text-caption-mono metadata-download-label">{_('metadata.stripDone')}</p>
+          <p class="text-body-sm-strong" data-md-download-name></p>
+        </div>
+        <button type="button" class="results-btn results-btn-primary" data-md-download-btn>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          {_('metadata.downloadClean')}
+        </button>
+      </div>
+    </section>
+  </section>
+</section>
+
+<script>
+  import exifr from 'exifr';
+
+  const resultsSection = document.querySelector<HTMLElement>('[data-md-results]');
+  const camSection = document.querySelector<HTMLElement>('[data-md-camera]');
+  const gpsSection = document.querySelector<HTMLElement>('[data-md-gps]');
+  const fileSection = document.querySelector<HTMLElement>('[data-md-file]');
+  const imgSection = document.querySelector<HTMLElement>('[data-md-image]');
+  const noneMsg = document.querySelector<HTMLElement>('[data-md-none]');
+  const stripSection = document.querySelector<HTMLElement>('[data-md-strip-section]');
+  const stripBtn = document.querySelector<HTMLButtonElement>('[data-md-strip-btn]');
+  const downloadSection = document.querySelector<HTMLElement>('[data-md-download]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-md-download-btn]');
+  const downloadNameEl = document.querySelector<HTMLElement>('[data-md-download-name]');
+
+  const setVal = (sel: string, val: string | number | null | undefined) => {
+    const el = document.querySelector<HTMLElement>(sel);
+    if (el) el.textContent = val != null ? String(val) : '—';
+  };
+
+  const showSection = (el: HTMLElement | null, show: boolean) => {
+    if (el) el.hidden = !show;
+  };
+
+  let currentFile: File | null = null;
+  let cleanBlobUrl: string | null = null;
+
+  const formatBytes = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const formatShutter = (val: unknown): string => {
+    if (typeof val === 'number') {
+      if (val >= 1) return `1/${Math.round(val)}`;
+      return `${Math.round(1 / val)}"`;
+    }
+    return val != null ? String(val) : '—';
+  };
+
+  const formatAperture = (val: unknown): string => {
+    if (typeof val === 'number') return `f/${val.toFixed(1)}`;
+    return val != null ? String(val) : '—';
+  };
+
+  const displayMetadata = async (file: File) => {
+    // Reset sections
+    showSection(camSection, false);
+    showSection(gpsSection, false);
+    showSection(noneMsg, false);
+    showSection(stripSection, false);
+    showSection(downloadSection, false);
+
+    // File info — always shown
+    setVal('[data-md-format]', file.type || file.name.split('.').pop()?.toUpperCase() || '—');
+    setVal('[data-md-size]', formatBytes(file.size));
+    showSection(fileSection, true);
+
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = () => reject();
+      i.src = URL.createObjectURL(file);
+    });
+
+    // Image info — always shown (dimensions from Image API)
+    setVal('[data-md-dims]', `${img.naturalWidth} × ${img.naturalHeight} px`);
+    showSection(imgSection, true);
+
+    try {
+      const output = await exifr.parse(file, { 
+        tiff: true, 
+        xmp: false,
+        icc: false,
+        iptc: false,
+      });
+
+      if (output && Object.keys(output).length > 0) {
+        setVal('[data-md-make]', output['Make']);
+        setVal('[data-md-model]', output['Model']);
+        setVal('[data-md-focal]', output['FocalLength'] != null ? `${output['FocalLength']} mm` : null);
+        setVal('[data-md-aperture]', formatAperture(output['FNumber'] ?? output['ApertureValue']));
+        setVal('[data-md-shutter]', formatShutter(output['ExposureTime'] ?? output['ShutterSpeedValue']));
+        setVal('[data-md-iso]', output['ISO']);
+        setVal('[data-md-date]', output['DateTimeOriginal'] ?? output['DateTime']);
+        setVal('[data-md-flash]', output['Flash'] != null ? (output['Flash'] ? 'Yes' : 'No') : null);
+        setVal('[data-md-colorspace]', output['ColorSpace'] ?? output['colorSpace'] ?? null);
+
+        showSection(camSection, true);
+
+        // GPS
+        if (output['latitude'] != null || output['longitude'] != null) {
+          setVal('[data-md-lat]', output['latitude'] != null ? output['latitude'].toFixed(6) : null);
+          setVal('[data-md-lng]', output['longitude'] != null ? output['longitude'].toFixed(6) : null);
+          setVal('[data-md-alt]', output['altitude'] != null ? `${output['altitude'].toFixed(1)} m` : null);
+          showSection(gpsSection, true);
+        }
+      } else {
+        showSection(noneMsg, true);
+      }
+    } catch {
+      showSection(noneMsg, true);
+    }
+
+    showSection(stripSection, true);
+  };
+
+  // Strip metadata by re-encoding through canvas
+  const stripMetadata = async () => {
+    if (!currentFile) return;
+    const img = new Image();
+    const url = URL.createObjectURL(currentFile);
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject();
+      img.src = url;
+    });
+    URL.revokeObjectURL(url);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(img, 0, 0);
+
+    const mime = currentFile.type === 'image/png' ? 'image/png' : 'image/jpeg';
+    const quality = mime === 'image/jpeg' ? 0.95 : undefined;
+    const blob = await new Promise<Blob>((resolve) => canvas.toBlob((b) => resolve(b!), mime, quality));
+    if (cleanBlobUrl) URL.revokeObjectURL(cleanBlobUrl);
+    cleanBlobUrl = URL.createObjectURL(blob);
+    if (downloadNameEl && currentFile) {
+      const ext = mime === 'image/png' ? 'png' : 'jpg';
+      downloadNameEl.textContent = currentFile.name.replace(/\.[^.]+$/, '') + '_clean.' + ext;
+    }
+    showSection(downloadSection, true);
+    downloadSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  if (stripBtn) {
+    stripBtn.addEventListener('click', stripMetadata);
+  }
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!cleanBlobUrl || !currentFile) return;
+      const mime = currentFile.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      const ext = mime === 'image/png' ? 'png' : 'jpg';
+      const a = document.createElement('a');
+      a.href = cleanBlobUrl;
+      a.download = currentFile.name.replace(/\.[^.]+$/, '') + '_clean.' + ext;
+      a.click();
+    });
+  }
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+    currentFile = files[0];
+    showSection(resultsSection, true);
+    resultsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    await displayMetadata(currentFile);
+  };
+
+  window.addEventListener('toolboximage:files', async (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) onFilesReceived(detail.files);
+  });
+
+  (async () => {
+    const { retrieveFiles } = await import('../../lib/file-transfer');
+    const files = await retrieveFiles();
+    if (files.length) onFilesReceived(files);
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile) {
+      import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
+    }
+  });
+</script>
+
+<style>
+  .metadata-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+  .metadata-results { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .metadata-card {
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .metadata-section-title {
+    margin: 0;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--color-canvas-soft);
+    color: var(--color-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .metadata-table { width: 100%; border-collapse: collapse; }
+  .metadata-table tr { border-bottom: 1px solid var(--color-hairline); }
+  .metadata-table tr:last-child { border-bottom: none; }
+  .metadata-key {
+    padding: var(--space-sm) var(--space-lg);
+    color: var(--color-body);
+    font-size: var(--text-body-sm);
+    white-space: nowrap;
+    width: 160px;
+  }
+  .metadata-val {
+    padding: var(--space-sm) var(--space-lg);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-family: var(--font-mono);
+    text-align: right;
+  }
+  .metadata-none {
+    padding: var(--space-lg);
+    background: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    color: var(--color-mute);
+  }
+  .metadata-strip-section { display: flex; flex-direction: column; gap: var(--space-md); }
+  .metadata-strip-details {
+    background: var(--color-canvas);
+    border: 1px solid var(--color-danger);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .metadata-strip-summary {
+    padding: var(--space-md) var(--space-lg);
+    cursor: pointer;
+    color: var(--color-danger);
+    font-weight: var(--weight-medium);
+  }
+  .metadata-strip-summary:hover { background: var(--color-canvas-soft); }
+  .metadata-strip-body {
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .metadata-strip-body p { color: var(--color-body); margin: 0; }
+  .metadata-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .metadata-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
+  .metadata-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .metadata-download-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .metadata-download .results-btn {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    height: 40px;
+    padding: 0 var(--space-md);
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--text-body-sm);
+    font-weight: var(--weight-medium);
+    transition: background-color var(--dur-fast) var(--ease-out-quart);
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .metadata-download .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .metadata-download .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .metadata-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .results-btn-danger {
+    align-self: flex-start;
+    background-color: var(--color-danger);
+    color: var(--color-on-primary);
+  }
+  .results-btn-danger:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  @media (max-width: 600px) {
+    .metadata-key { width: 100px; }
+  }
+</style>

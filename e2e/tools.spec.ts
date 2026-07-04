@@ -241,6 +241,80 @@ test.describe('Image Resizer tool', () => {
     await expect(errorEl).not.toBeHidden({ timeout: 5000 });
     expect(errors).toEqual([]);
   });
+
+  test('preview shows actual image content (not blank)', async ({ page }) => {
+    await page.goto('/tools/resizer/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+    await waitForImgLoaded(page, '[data-resizer-result]');
+
+    const hasContent = await page.evaluate(() => {
+      const img = document.querySelector('[data-resizer-result]') as HTMLImageElement;
+      if (!img || !img.naturalWidth) return false;
+      const c = document.createElement('canvas');
+      c.width = img.naturalWidth;
+      c.height = img.naturalHeight;
+      const ctx = c.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+      const data = ctx.getImageData(0, 0, c.width, c.height).data;
+      let nonWhite = 0;
+      const total = data.length / 4;
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] < 250 || data[i + 1] < 250 || data[i + 2] < 250) nonWhite++;
+      }
+      return nonWhite / total > 0.05;
+    });
+    expect(hasContent).toBe(true);
+  });
+
+  test('preview updates when dimensions change', async ({ page }) => {
+    await page.goto('/tools/resizer/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+    await waitForImgLoaded(page, '[data-resizer-result]');
+
+    const resultImg = page.locator('[data-resizer-result]');
+    const firstSrc = await resultImg.evaluate((el: HTMLImageElement) => el.src);
+
+    await page.locator('[data-resizer-width]').fill('400');
+    await page.waitForFunction(
+      ({ sel, tgtW }: { sel: string; tgtW: number }) => {
+        const img = document.querySelector(sel) as HTMLImageElement | null;
+        return img && img.naturalWidth > 0 && Math.abs(img.naturalWidth - tgtW) <= 2;
+      },
+      { sel: '[data-resizer-result]', tgtW: 400 },
+      { timeout: 15000 }
+    );
+
+    const secondSrc = await resultImg.evaluate((el: HTMLImageElement) => el.src);
+    expect(secondSrc).not.toBe(firstSrc);
+
+    const dims = await page.evaluate(() => {
+      const img = document.querySelector('[data-resizer-result]') as HTMLImageElement;
+      return { w: img.naturalWidth, h: img.naturalHeight };
+    });
+    expect(Math.abs(dims.w - 400)).toBeLessThanOrEqual(2);
+  });
+
+  test('fill mode changes preview', async ({ page }) => {
+    await page.goto('/tools/resizer/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+    await waitForImgLoaded(page, '[data-resizer-result]');
+
+    const resultImg = page.locator('[data-resizer-result]');
+    const fitSrc = await resultImg.evaluate((el: HTMLImageElement) => el.src);
+
+    await page.locator('[data-resizer-mode="fill"]').click();
+    await page.waitForFunction(
+      ({ sel, oldSrc }: { sel: string; oldSrc: string }) => {
+        const img = document.querySelector(sel) as HTMLImageElement | null;
+        return img && img.src && img.src !== oldSrc && img.naturalWidth > 0;
+      },
+      { sel: '[data-resizer-result]', oldSrc: fitSrc },
+      { timeout: 15000 }
+    );
+
+    const fillSrc = await resultImg.evaluate((el: HTMLImageElement) => el.src);
+    expect(fillSrc).not.toBe(fitSrc);
+  });
 });
 
 test.describe('Tools directory page', () => {
@@ -302,5 +376,98 @@ test.describe('Image Cropper tool', () => {
     expect(suggestedName).toMatch(/demo-before_cropped\.jpe?g$/i);
     expect(checkMagic(buffer, 'jpeg')).toBe(true);
     expect(buffer.length).toBeGreaterThan(500);
+  });
+
+  test.describe('Image Watermark tool', () => {
+    test('upload zone visible on load', async ({ page }) => {
+      await page.goto('/tools/watermark/', { waitUntil: 'load' });
+      await expect(page.locator('[data-tool-upload]')).toBeVisible({ timeout: 10000 });
+    });
+
+    test('no console errors on load', async ({ page }) => {
+      const errors = await collectErrors(page);
+      await page.goto('/tools/watermark/', { waitUntil: 'load' });
+      expect(errors).toEqual([]);
+    });
+
+    test('uploads image, applies watermark, and downloads result', async ({ page }) => {
+      await page.goto('/tools/watermark/', { waitUntil: 'load' });
+      await uploadViaInput(page, TEST_IMAGE);
+      await waitForImgLoaded(page, '[data-wm-original-img]');
+
+      const previewArea = page.locator('[data-wm-preview]');
+      await expect(previewArea).not.toBeHidden({ timeout: 8000 });
+
+      const applyBtn = page.locator('[data-wm-apply]');
+      await expect(applyBtn).toBeVisible();
+
+      // Change watermark text
+      const textInput = page.locator('[data-wm-text]');
+      await textInput.fill('Test Watermark');
+
+      // Click apply
+      await applyBtn.click();
+
+      const downloadSection = page.locator('[data-wm-download]');
+      await expect(downloadSection).not.toBeHidden({ timeout: 8000 });
+
+      const { suggestedName, buffer } = await captureDownload(
+        page,
+        page.locator('button[data-wm-download-btn]')
+      );
+      expect(suggestedName).toMatch(/demo-before_watermarked\.\w+$/i);
+      expect(checkMagic(buffer, 'png')).toBe(true);
+      expect(buffer.length).toBeGreaterThan(500);
+    });
+
+    test('rejects invalid file type', async ({ page }) => {
+      await page.goto('/tools/watermark/', { waitUntil: 'load' });
+      await uploadViaInput(page, INVALID_FILE);
+      const previewArea = page.locator('[data-wm-preview]');
+      await expect(previewArea).toBeHidden();
+    });
+  });
+});
+
+test.describe('Image Metadata Viewer tool', () => {
+  test('upload zone visible on load', async ({ page }) => {
+    await page.goto('/tools/metadata/', { waitUntil: 'load' });
+    await expect(page.locator('[data-tool-upload]')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('no console errors on load', async ({ page }) => {
+    const errors = await collectErrors(page);
+    await page.goto('/tools/metadata/', { waitUntil: 'load' });
+    expect(errors).toEqual([]);
+  });
+
+  test('uploads image and displays metadata results', async ({ page }) => {
+    await page.goto('/tools/metadata/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+
+    await expect(page.locator('[data-md-results]')).not.toBeHidden({ timeout: 15000 });
+
+    // File info section should be visible
+    const formatVal = page.locator('[data-md-format]');
+    await expect(formatVal).not.toBeEmpty({ timeout: 8000 });
+
+    const sizeVal = page.locator('[data-md-size]');
+    await expect(sizeVal).not.toBeEmpty({ timeout: 5000 });
+  });
+
+  test('shows strip metadata section after upload', async ({ page }) => {
+    await page.goto('/tools/metadata/', { waitUntil: 'load' });
+    await uploadViaInput(page, TEST_IMAGE);
+
+    await expect(page.locator('[data-md-strip-section]')).not.toBeHidden({ timeout: 15000 });
+  });
+
+  test('handles unsupported file type gracefully', async ({ page }) => {
+    const errors = await collectErrors(page);
+    await page.goto('/tools/metadata/', { waitUntil: 'load' });
+    await uploadViaInput(page, INVALID_FILE);
+    const resultsSection = page.locator('[data-md-results]');
+    await expect(resultsSection).toBeHidden({ timeout: 5000 });
+    expect(errors).toEqual([]);
   });
 });

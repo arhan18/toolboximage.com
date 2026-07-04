@@ -176,6 +176,7 @@ const socialPresets: { label: string; w: number; h: number }[] = [
   let currentImg: HTMLImageElement | null = null;
   let currentBlob: Blob | null = null;
   let currentBlobUrl: string | null = null;
+  let origBlobUrl: string | null = null;
   let aspectRatio = 1;
   let isLocked = true;
   let selectedFormat = 'jpeg';
@@ -210,8 +211,14 @@ const socialPresets: { label: string; w: number; h: number }[] = [
 
   const stepDownResize = (img: HTMLImageElement | HTMLCanvasElement, tgtW: number, tgtH: number): HTMLCanvasElement => {
     let src: HTMLCanvasElement | HTMLImageElement = img;
-    let cw = typeof img.width === 'number' ? img.width : (img as HTMLImageElement).naturalWidth;
-    let ch = typeof img.height === 'number' ? img.height : (img as HTMLImageElement).naturalHeight;
+    let cw: number, ch: number;
+    if (img instanceof HTMLCanvasElement) {
+      cw = img.width;
+      ch = img.height;
+    } else {
+      cw = img.naturalWidth;
+      ch = img.naturalHeight;
+    }
 
     while (cw > tgtW * 2 || ch > tgtH * 2) {
       cw = Math.floor(cw * 0.5);
@@ -237,8 +244,8 @@ const socialPresets: { label: string; w: number; h: number }[] = [
     fCtx.imageSmoothingEnabled = true;
     fCtx.imageSmoothingQuality = 'high';
     const { w, h, offX, offY } = calcDimensions(
-      typeof img.width === 'number' ? img.width : (img as HTMLImageElement).naturalWidth,
-      typeof img.height === 'number' ? img.height : (img as HTMLImageElement).naturalHeight,
+      img instanceof HTMLCanvasElement ? img.width : img.naturalWidth,
+      img instanceof HTMLCanvasElement ? img.height : img.naturalHeight,
       tgtW, tgtH
     );
     fCtx.drawImage(src, offX, offY, w, h);
@@ -366,10 +373,12 @@ const socialPresets: { label: string; w: number; h: number }[] = [
 
   const doClear = () => {
     if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    if (origBlobUrl) URL.revokeObjectURL(origBlobUrl);
     currentFile = null;
     currentImg = null;
     currentBlob = null;
     currentBlobUrl = null;
+    origBlobUrl = null;
     if (widthInput) widthInput.value = '800';
     if (heightInput) heightInput.value = '800';
     if (presetsSelect) presetsSelect.value = '';
@@ -411,7 +420,9 @@ const socialPresets: { label: string; w: number; h: number }[] = [
     if (!files.length) return;
     const file = files[0];
     currentFile = file;
+    if (origBlobUrl) URL.revokeObjectURL(origBlobUrl);
     const origUrl = URL.createObjectURL(file);
+    origBlobUrl = origUrl;
     const img = new Image();
     await new Promise<void>((resolve, reject) => {
       img.onload = () => resolve();

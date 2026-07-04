@@ -24,7 +24,7 @@ Key facts about this project (read before starting new tasks):
 - **Font optimizations:** Only preload Regular (font-display: swap for others)
 - **Share buttons:** Added to compressor result page (Twitter/X, Reddit, Email)
 - **Competitor reference:** https://imagetoolbox.app — they have 24+ tools (converters, PDF tools, AI tools, passport photo, background remover). User wants to build similar tools directory with working tools under hero section (pattern: "All / Convert / Resize / Edit / Optimize" tabs)
-- **Live tools:** Image Compressor, Bulk Compressor, Compress JPEG/PNG/WebP/AVIF, 100KB/Email/Discord target pages, Rotate Image (rotator tool now live), Format Converter & Image Resizer (now live)
+- **Live tools (8):** Image Compressor, Bulk Compressor, Compress JPEG/PNG/WebP/AVIF/GIF/for-Web/for-Ecommerce, 100KB/Email/Discord/WhatsApp/Instagram targets, Rotator, Format Converter, Image Resizer, Cropper
 - **Tools directory:** /image-tools/ has tabbed layout (All/Compress/Transform/Convert/Analyze). Homepage now has 12-card tools grid below hero, matching competitor layout
 - **Updated this session:** Homepage tools grid added with live/soon status dots, link to /image-tools/, ToolUpload component got live upload handling JS (fixes rotator/tool uploads), rotate tool flip buttons fixed, homepage upload now shows tool picker overlay instead of auto-redirecting to compressor, search bar added above tools grid. Rotator status changed to Live on homepage. Playwright E2E tests added (pages.spec.ts, language.spec.ts, tools.spec.ts, translations.spec.ts). Full tools directory (/image-tools/) now renders correctly in all 13 language pages. Auto-scroll on upload added to all tools (CompressorTool, ToolUpload, RotatorTool). File persistence across language switch added via beforeunload + IndexedDB.
 - **i18n system (current session):** Full multi-language support for 13 languages (EN, ES, FR, DE, IT, PT, RU, ZH, JA, KO, AR, HI, TR). Homepage content extracted into `src/components/home/HomeContent.astro` shared component used by both `index.astro` and `[lang].astro`. Catch-all route `[lang]/[...slug].astro` serves translated pages for all tools, blog, FAQ, about, contact, legal pages (678 total pages). Hindi translations rewritten to use conversational/natural Hindi. Language-prefixed links throughout (e.g., `/hi/compressor/` instead of `/compressor/`).
@@ -72,10 +72,13 @@ Consult these guides before working on related tasks:
 - Learn from the best implementations, then build an original implementation. Do not copy code.
 - Reuse existing shared components.
 
-### 2. Browser First
-- Prefer browser-native processing. Avoid paid APIs and third-party services.
-- Only use third-party services if free, no hidden limits, improves the product, and doesn't compromise privacy.
-- Process files locally. Keep images on device. Avoid uploads.
+### 2. Browser First — Zero Budget
+- Prefer browser-native processing. **No paid APIs, no paid services, no subscriptions.**
+- Every tool must work 100% free, client-side, with no server costs.
+- Only use third-party libraries if they're MIT/Apache/BSD licensed and run entirely in the browser.
+- Process files locally. Keep images on device. Never upload.
+- If a tool requires AI/ML, use browser-compatible ONNX/TF.js models — but only if the model is small enough for practical web use.
+- Tools that require paid APIs (remove.bg, Cloudinary, etc.) are automatically deprioritized regardless of search demand.
 
 ### 3. Reusable Architecture
 Every new tool must reuse shared layouts, components, UI, upload/download systems, and localization. Never duplicate existing code.
@@ -118,6 +121,103 @@ Every tool page needs: overview, features, benefits, step-by-step guide, support
 
 ### 6. Quality Assurance
 Before marking complete verify: upload, drag & drop, multi-upload, folder upload, clipboard paste, processing, preview, download, output validity, file sizes, statistics, responsive layout, dark mode, accessibility, all languages, SEO metadata, structured data.
+
+## Bible Directory
+
+This project follows the ToolboxImage Engineering Bible.
+
+When choosing which tool to build next, consult `bible/TOOL_PRIORITY.md` — it ranks tools by search demand, feasibility, and brand fit.
+
+### Before Every Task
+
+1. **Read the Bible README** — understand the project's engineering principles.
+2. **Read only the handbook documents relevant to the current task** — don't waste time on unrelated ones.
+3. **Never upload, commit, publish, or expose any handbook file.** The Bible is confidential local documentation and is never part of the repository.
+4. **Before writing code, inspect the existing project** — reuse components whenever possible. Never duplicate existing code.
+5. **Before implementing, explain your plan** — outline what you'll build and how.
+
+### After Implementing
+
+After implementing any feature, do NOT report "Done" immediately.
+
+Instead:
+1. Read the relevant handbook documents.
+2. Identify the tool category and create a tool-specific validation plan.
+3. Test the feature like a real user would.
+4. Verify that previews match exported results.
+5. Verify calculations and transformations.
+6. Test edge cases, mobile/desktop layouts, and major browsers.
+7. Run Playwright tests.
+8. Fix every issue found before reporting completion.
+
+### Mandatory Validation
+
+Passing compilation is NOT sufficient.
+
+Passing Playwright is NOT sufficient.
+
+Passing unit tests is NOT sufficient.
+
+Every feature must be validated from the perspective of a real user.
+
+AI agents must identify the tool category and perform tool-specific validation before considering any task complete.
+
+**Example — Image Resizer:**
+- Verify preview accuracy.
+- Verify exported image dimensions.
+- Verify aspect ratio preservation.
+- Verify mobile layout.
+- Verify browser compatibility.
+- Verify accessibility.
+
+**Example — Image Compressor:**
+- Verify file size reduction.
+- Verify visual quality.
+- Verify metadata handling.
+- Verify target-size compression.
+- Verify preview matches download.
+- Verify downloads.
+
+**Example — Crop Tool:**
+- Verify crop preview accuracy.
+- Verify exported crop matches preview.
+- Verify preset aspect ratios.
+- Verify freeform crop.
+- Verify touch/drag support.
+
+Each tool has different validation requirements.
+
+Think about how users will actually use the tool and test those scenarios.
+
+Never assume the preview is correct.
+
+Never assume the exported file is correct.
+
+Never assume calculations are correct.
+
+Verify them.
+
+### Bugs Become Rules
+
+Every bug discovered after implementation must become a permanent handbook rule if it exposes a missing validation step.
+
+If you discover missing handbook guidance, recommend improvements to the handbook itself.
+
+### Definition of Done
+
+A feature is complete only when:
+
+- **Engineering standards pass** — code follows project conventions, builds cleanly.
+- **UX validation passes** — workflows are intuitive, no confusing states.
+- **Tool-specific validation passes** — the tool works correctly for all intended use cases.
+- **Accessibility passes** — keyboard navigation, screen readers, color contrast.
+- **Performance passes** — processing is fast, no jank, memory usage is reasonable.
+- **Security passes** — no exposed data, no injection vectors.
+- **SEO passes** — metadata, structured data, internal links, content.
+
+The objective is not to produce code.
+
+The objective is to produce a reliable product that users trust.
 
 ## Testing with Playwright
 

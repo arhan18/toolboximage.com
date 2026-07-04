@@ -15,7 +15,7 @@ import {
 import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
-  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper';
+  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper' | 'watermark' | 'metadata';
   lang?: string;
 }
 
@@ -26,9 +26,11 @@ const isConverter = toolId === 'converter';
 const isResizer = toolId === 'resizer';
 const isRotator = toolId === 'rotator';
 const isCropper = toolId === 'cropper';
+const isWatermark = toolId === 'watermark';
+const isMetadata = toolId === 'metadata';
 
-const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : 'Image Cropper';
-const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : 'tools/cropper';
+const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : 'Image Metadata Viewer';
+const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : isCropper ? 'tools/cropper' : isWatermark ? 'tools/watermark' : 'tools/metadata';
 const toolPath = `/${lang === 'en' ? '' : lang + '/'}${toolSlug}/`;
 
 const breadcrumbItems = [
@@ -45,7 +47,11 @@ const appSchema = softwareAppSchema({
     ? 'Free online image resizer — resize images for social media, web, and print. Social media presets, multiple resize modes, no uploads.'
     : isRotator
     ? 'Free online image rotator — rotate and flip images in your browser. 90° CW/CCW, 180°, custom angles, horizontal and vertical flip. No uploads.'
-    : 'Free online image cropper — crop images with preset aspect ratios or freeform selection. Square, 4:5, 16:9, and custom crops. No uploads.',
+    : isCropper
+    ? 'Free online image cropper — crop images with preset aspect ratios or freeform selection. Square, 4:5, 16:9, and custom crops. No uploads.'
+    : isWatermark
+    ? 'Free online image watermark tool — add text watermarks to images with custom opacity, position, font, and styling. No uploads, no sign-up.'
+    : 'Free online image metadata viewer — view EXIF, GPS, and camera metadata. Strip private data before sharing. No uploads, no sign-up.',
   url: `${SITE_URL}${toolSlug}`,
 });
 
@@ -85,7 +91,31 @@ const howTo = isCropper
         { name: 'Download', text: 'Preview the result and download your resized image. All processing is done locally.' },
       ],
     }
-  : {
+      : isMetadata
+      ? {
+      name: 'How to View and Strip Image Metadata Online',
+      description: 'A step-by-step guide to viewing and removing EXIF metadata from images using ToolBox Image Metadata Viewer.',
+      steps: [
+        { name: 'Upload your image', text: 'Click the upload area or drag and drop a JPEG or TIFF image file. These formats contain the most comprehensive EXIF metadata.' },
+        { name: 'View metadata', text: 'The tool automatically extracts and displays all available metadata — camera settings, GPS location, file information, and image details.' },
+        { name: 'Review camera info', text: 'Check the Camera Info section for make, model, focal length, aperture, shutter speed, ISO, date taken, and flash settings.' },
+        { name: 'Check GPS location', text: 'If your image contains GPS coordinates, they will be displayed with latitude, longitude, and altitude values.' },
+        { name: 'Strip and download', text: 'Click Strip Metadata to remove all EXIF data, then download the cleaned image. Your original image is never modified.' },
+      ],
+    }
+      : isWatermark
+      ? {
+      name: 'How to Add a Watermark to an Image Online',
+      description: 'A step-by-step guide to adding text watermarks to images using ToolBox Image Watermark.',
+      steps: [
+        { name: 'Upload your image', text: 'Click the upload area or drag and drop any image file. Supports JPG, PNG, WebP, and AVIF.' },
+        { name: 'Enter watermark text', text: 'Type the text you want to overlay on your image. You can use your brand name, copyright notice, or any custom text.' },
+        { name: 'Customize appearance', text: 'Adjust the font size, text color, opacity, rotation angle, and font family to match your brand style.' },
+        { name: 'Choose position', text: 'Select a position — Top Left, Top Right, Center, Bottom Left, Bottom Right, or Tile across the entire image.' },
+        { name: 'Apply and download', text: 'Click Apply Watermark to preview the result, then download your watermarked image. All processing stays on your device.' },
+      ],
+    }
+      : {
       name: 'How to Rotate an Image Online',
       description: 'A step-by-step guide to rotating and flipping images using ToolBox Image Rotator.',
       steps: [
@@ -122,6 +152,22 @@ const faqItems = isConverter
       { q: _('cropper.faq.q5'), a: _('cropper.faq.a5') },
       { q: _('cropper.faq.q6'), a: _('cropper.faq.a6') },
       { q: _('cropper.faq.q7'), a: _('cropper.faq.a7') },
+    ]
+  : isMetadata
+  ? [
+      { q: _('metadata.faq.q1'), a: _('metadata.faq.a1') },
+      { q: _('metadata.faq.q2'), a: _('metadata.faq.a2') },
+      { q: _('metadata.faq.q3'), a: _('metadata.faq.a3') },
+      { q: _('metadata.faq.q4'), a: _('metadata.faq.a4') },
+      { q: _('metadata.faq.q5'), a: _('metadata.faq.a5') },
+    ]
+  : isWatermark
+  ? [
+      { q: _('watermark.faq.q1'), a: _('watermark.faq.a1') },
+      { q: _('watermark.faq.q2'), a: _('watermark.faq.a2') },
+      { q: _('watermark.faq.q3'), a: _('watermark.faq.a3') },
+      { q: _('watermark.faq.q4'), a: _('watermark.faq.a4') },
+      { q: _('watermark.faq.q5'), a: _('watermark.faq.a5') },
     ]
   : [
       { q: _('rotator.faq.q1'), a: _('rotator.faq.a1') },
@@ -328,6 +374,130 @@ const howToLd = howToSchema(howTo.steps);
         </ul>
       </>}
 
+      {isWatermark && <>
+        <h2>Free Online Image Watermark Tool — Add Watermarks to Images</h2>
+        <p>
+          ToolBox Image Watermark is a fast, private, browser-based tool for adding <strong>text
+          watermarks</strong> to your images. Whether you need to protect your photography portfolio,
+          brand your social media content, or add copyright notices before sharing, this free online
+          watermark tool handles it instantly — with no uploads, no sign-up, and no file size limits.
+        </p>
+        <p>
+          Unlike online watermark tools that send your images to a remote server, ToolBox Image
+          Watermark processes everything locally using the HTML5 Canvas API. Your images and your
+          watermarked results never leave your device. This makes it one of the most private image
+          watermarking tools available online.
+        </p>
+
+        <h3>Customizable Watermark Options</h3>
+        <p>
+          ToolBox Image Watermark gives you full control over the appearance and placement of your
+          text watermark:
+        </p>
+        <ul>
+          <li><strong>Custom Text:</strong> Enter any text — your brand name, copyright notice, website URL, or logo text.</li>
+          <li><strong>Font Size &amp; Family:</strong> Choose from eight font families and adjust the size from small captions to bold overlays.</li>
+          <li><strong>Text Color:</strong> Pick any color using the built-in color picker. White, black, or brand colors — whatever works best.</li>
+          <li><strong>Opacity Control:</strong> Adjust transparency from subtle (5%) to fully opaque (100%). Perfect for discreet copyright marks.</li>
+          <li><strong>Rotation:</strong> Rotate the watermark text from -180° to 180° for angled watermark effects.</li>
+          <li><strong>Position Presets:</strong> Top Left, Top Right, Center, Bottom Left, Bottom Right, or Tile the watermark across the entire image.</li>
+        </ul>
+
+        <h3>Why Use ToolBox Image Watermark?</h3>
+        <p>
+          Most online watermarking tools either upload your files to a server or require expensive
+          software. ToolBox Image Watermark is different:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All watermarking happens in your browser.</li>
+          <li><strong>No File Size Limits:</strong> Watermark images of any size — the only limit is your device's available memory.</li>
+          <li><strong>Full Customization:</strong> Control every aspect of the watermark — text, font, size, color, opacity, rotation, and position.</li>
+          <li><strong>Tile Mode:</strong> Cover the entire image with repeating watermarks for maximum protection against unauthorized use.</li>
+          <li><strong>Free Forever:</strong> No sign-up, no paywall, no credit card. Unlimited watermarking.</li>
+        </ul>
+
+        <h3>How to Add a Watermark to an Image Online</h3>
+        <p>Watermarking images with ToolBox Image is quick and easy:</p>
+        <ol>
+          <li><strong>Upload</strong> — Click the upload area or drag and drop an image file onto the page.</li>
+          <li><strong>Enter Text</strong> — Type your watermark text in the input field. Use your brand name, copyright, or any custom message.</li>
+          <li><strong>Customize</strong> — Adjust font size, color, opacity, rotation, and font family using the controls.</li>
+          <li><strong>Choose Position</strong> — Select where the watermark should appear — corner, center, or tiled across the image.</li>
+          <li><strong>Apply &amp; Download</strong> — Click "Apply Watermark" to see the result, then download your watermarked image.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Protect photography portfolios:</strong> Add visible watermarks to your online portfolio images to deter unauthorized use and content theft.</li>
+          <li><strong>Brand social media content:</strong> Add your brand name or logo text to images before posting on Instagram, Facebook, Twitter, and LinkedIn.</li>
+          <li><strong>Copyright notices for images:</strong> Include © copyright symbols and your name or business name to assert ownership over your creative work.</li>
+          <li><strong>Preview watermarks for clients:</strong> Add "DRAFT" or "PROOF" watermarks to client preview images before delivering final files.</li>
+          <li><strong>Batch watermark for e-commerce:</strong> Use tiled watermarks across all product images to prevent competitors from copying your catalog photos.</li>
+        </ul>
+      </>}
+
+      {isMetadata && <>
+        <h2>Free Online Image Metadata Viewer — View & Strip EXIF Data</h2>
+        <p>
+          ToolBox Image Metadata Viewer is a fast, private browser-based tool for viewing and
+          removing <strong>EXIF metadata</strong> from your images. Whether you need to inspect
+          camera settings, check GPS coordinates, or strip private data before sharing online,
+          this free online metadata viewer handles it instantly — with no uploads, no sign-up,
+          and no file size limits.
+        </p>
+        <p>
+          Unlike online EXIF viewers that send your images to a remote server, ToolBox Image
+          Metadata Viewer processes everything locally using the <strong>exifr</strong> library.
+          Your images never leave your device, making it one of the most private metadata
+          inspection tools available online.
+        </p>
+
+        <h3>What Metadata Can You View?</h3>
+        <p>
+          ToolBox Image Metadata Viewer extracts comprehensive metadata from JPEG and TIFF
+          images. The tool organizes data into four easy-to-read sections:
+        </p>
+        <ul>
+          <li><strong>Camera Info:</strong> Camera make and model, focal length, aperture (f-stop), shutter speed, ISO sensitivity, date and time the photo was taken, and flash settings.</li>
+          <li><strong>GPS Location:</strong> Latitude, longitude, and altitude coordinates embedded by GPS-enabled cameras and smartphones.</li>
+          <li><strong>File Info:</strong> Image format (JPEG, TIFF, PNG, etc.) and exact file size.</li>
+          <li><strong>Image Details:</strong> Image dimensions (width × height) and color space information.</li>
+        </ul>
+
+        <h3>Why Use ToolBox Image Metadata Viewer?</h3>
+        <p>
+          Most online metadata viewers upload your files to a server, potentially exposing your
+          private data. ToolBox Image Metadata Viewer is different:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All metadata processing happens in your browser using the exifr library.</li>
+          <li><strong>No File Size Limits:</strong> Inspect images of any size — the only limit is your device's available memory.</li>
+          <li><strong>Strip Private Data:</strong> Remove all EXIF metadata with one click. Perfect for privacy-conscious users who share photos online.</li>
+          <li><strong>Clean Downloads:</strong> Download a metadata-free copy of your image in JPEG or PNG format.</li>
+          <li><strong>Free Forever:</strong> No sign-up, no paywall, no credit card. Unlimited metadata viewing and stripping.</li>
+        </ul>
+
+        <h3>How to View and Strip Image Metadata Online</h3>
+        <p>Viewing and removing image metadata with ToolBox Image is quick and easy:</p>
+        <ol>
+          <li><strong>Upload</strong> — Click the upload area or drag and drop an image file onto the page. JPEG and TIFF images contain the most comprehensive metadata.</li>
+          <li><strong>View Automatically</strong> — The tool instantly extracts and displays all available metadata in organized sections: Camera Info, GPS Location, File Info, and Image Details.</li>
+          <li><strong>Review Camera Settings</strong> — Check the camera make, model, lens information, exposure settings, and other technical details captured by your camera.</li>
+          <li><strong>Check GPS Coordinates</strong> — If your camera or smartphone embedded GPS data, view the exact latitude, longitude, and altitude where the photo was taken.</li>
+          <li><strong>Strip Metadata (Optional)</strong> — Click "Strip Metadata" to remove all EXIF data. This is recommended before sharing photos on social media or with clients.</li>
+          <li><strong>Download Clean Image</strong> — Download your metadata-free image. Your original file is never modified.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Check camera settings after a shoot:</strong> Review aperture, shutter speed, ISO, and focal length to understand how each photo was captured and improve your photography technique.</li>
+          <li><strong>Remove GPS data before sharing:</strong> Many smartphones automatically embed GPS coordinates in photos. Strip this data before posting online to protect your privacy and location.</li>
+          <li><strong>Verify image authenticity:</strong> Check metadata to confirm when and with which device a photo was taken. Useful for verifying original content.</li>
+          <li><strong>Prepare images for clients:</strong> Strip all metadata from client deliverables to ensure clean, professional files without embedded camera or location information.</li>
+          <li><strong>Reduce image file size:</strong> Removing metadata can slightly reduce file size, especially for images with extensive embedded thumbnail and GPS data.</li>
+        </ul>
+      </>}
+
       {isCropper && <>
         <h2>Free Online Image Cropper — Crop Images with Aspect Ratio Presets</h2>
         <p>
@@ -393,7 +563,7 @@ const howToLd = howToSchema(howTo.steps);
 
     <!-- FAQ -->
     <section class="seo-faq">
-      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : 'Rotate Image'}>
+      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : 'Rotate Image'}>
         <h2 class="text-display-lg">Frequently Asked Questions</h2>
       </SectionHeader>
       <FAQ items={faqItems} />
@@ -418,9 +588,9 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Rotate Image</strong>
             <span>Rotate and flip images</span>
           </a>
-          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/cropper/`} class="seo-related-card">
-            <strong>Image Cropper</strong>
-            <span>Crop images with preset ratios</span>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/metadata/`} class="seo-related-card">
+            <strong>Metadata Viewer</strong>
+            <span>View and strip EXIF data</span>
           </a>
         </> : isResizer ? <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
@@ -435,9 +605,9 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Rotate Image</strong>
             <span>Rotate and flip images</span>
           </a>
-          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/cropper/`} class="seo-related-card">
-            <strong>Image Cropper</strong>
-            <span>Crop images with preset ratios</span>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/metadata/`} class="seo-related-card">
+            <strong>Metadata Viewer</strong>
+            <span>View and strip EXIF data</span>
           </a>
         </> : isCropper ? <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
@@ -452,9 +622,43 @@ const howToLd = howToSchema(howTo.steps);
             <strong>Image Resizer</strong>
             <span>Resize images for any platform</span>
           </a>
-          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/rotator/`} class="seo-related-card">
-            <strong>Rotate Image</strong>
-            <span>Rotate and flip images</span>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/metadata/`} class="seo-related-card">
+            <strong>Metadata Viewer</strong>
+            <span>View and strip EXIF data</span>
+          </a>
+        </> : isWatermark ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/metadata/`} class="seo-related-card">
+            <strong>Metadata Viewer</strong>
+            <span>View and strip EXIF data</span>
+          </a>
+        </> : isMetadata ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/watermark/`} class="seo-related-card">
+            <strong>Image Watermark</strong>
+            <span>Add text watermarks to images</span>
           </a>
         </> : <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">

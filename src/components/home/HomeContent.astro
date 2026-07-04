@@ -298,10 +298,14 @@ const langInfo: Record<string, { label: string; flag: string }> = {
         <button type="button" class="tools-page-btn" data-page-next disabled>{isEn ? 'Next' : p('home.tools.next')}</button>
       </nav>
     </div>
+    <span hidden data-i18n="home.tools.noResults">{p('home.tools.noResults')}</span>
+    <span hidden data-i18n="home.tools.showing">{p('home.tools.showing')}</span>
   </div>
 </section>
 
 <script>
+  const i18n = (key) => document.querySelector(`[data-i18n="${key}"]`)?.textContent ?? key;
+
   const PER_PAGE = 9;
   const searchInput = document.querySelector<HTMLInputElement>('[data-tool-search]');
   const toolGrid = document.querySelector<HTMLElement>('[data-tool-grid]');
@@ -343,9 +347,9 @@ const langInfo: Record<string, { label: string; flag: string }> = {
     });
     if (countEl) {
       if (total === 0) {
-        countEl.textContent = 'No tools found';
+        countEl.textContent = i18n('home.tools.noResults');
       } else {
-        countEl.textContent = `Showing ${start + 1}–${end} of ${total} tools`;
+        countEl.textContent = i18n('home.tools.showing').replace('{start}', String(start + 1)).replace('{end}', String(end)).replace('{total}', String(total));
       }
     }
     if (prevBtn) prevBtn.disabled = currentPage <= 1;

@@ -150,6 +150,9 @@ const _ = useTranslations(lang);
   <span hidden data-i18n="compressor.ready">{_('compressor.ready')}</span>
   <span hidden data-i18n="compressor.skipped">{_('compressor.skipped')}</span>
   <span hidden data-i18n="compressor.failed">{_('compressor.failed')}</span>
+  <span hidden data-i18n="compressor.before">{_('compressor.before')}</span>
+  <span hidden data-i18n="compressor.after">{_('compressor.after')}</span>
+  <span hidden data-i18n="compressor.filesSkipped">{_('compressor.filesSkipped')}</span>
 </main>
 
 <script>
@@ -594,11 +597,11 @@ const _ = useTranslations(lang);
               </div>
               <span style="position:absolute;top:12px;left:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:color-mix(in srgb,var(--color-primary) 55%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--color-on-primary);text-transform:uppercase;letter-spacing:0.06em;pointer-events:none;font-feature-settings:'tnum';z-index:3;font-size:12px;font-family:var(--font-mono);">
                 <span style="width:6px;height:6px;border-radius:999px;background:var(--color-on-primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--color-on-primary) 25%,transparent);flex-shrink:0;"></span>
-                Before
+                ${i18n('compressor.before')}
               </span>
               <span style="position:absolute;bottom:12px;right:12px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:color-mix(in srgb,var(--color-primary) 55%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--color-on-primary);text-transform:uppercase;letter-spacing:0.06em;pointer-events:none;font-feature-settings:'tnum';z-index:3;font-size:12px;font-family:var(--font-mono);">
                 <span style="width:6px;height:6px;border-radius:999px;background:var(--color-cyan);box-shadow:0 0 0 2px color-mix(in srgb,var(--color-cyan) 25%,transparent);flex-shrink:0;"></span>
-                After
+                ${i18n('compressor.after')}
               </span>
               <div class="ba-divider" style="position:absolute;top:0;bottom:0;left:calc(50% - 1px);width:2px;background:var(--color-canvas);pointer-events:none;box-shadow:0 0 0 1px rgb(0 0 0 / 0.08);z-index:2;" aria-hidden="true"></div>
               <button type="button" class="ba-handle" aria-label="Drag to compare before and after" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:999px;border:none;cursor:ew-resize;background:transparent;padding:0;z-index:4;-webkit-tap-highlight-color:transparent;">
@@ -743,7 +746,7 @@ const _ = useTranslations(lang);
         const toast = (window as any).toast;
         if (typeof toast === 'function') {
           toast({
-            title: `${result.errors.length} file${result.errors.length === 1 ? '' : 's'} skipped`,
+            title: i18n('compressor.filesSkipped').replace('{count}', String(result.errors.length)),
             description: result.errors.slice(0, 3).map((er) => `· ${er.fileName}`).join('\n'),
             tone: 'warning',
           });

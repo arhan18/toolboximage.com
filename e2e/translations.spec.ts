@@ -15,6 +15,29 @@ const LANG_CHECKS: { url: string; present: string[] }[] = [
   { url: '/es/image-tools/', present: ['Todas las Herramientas de Imagen'] },
   { url: '/es/faq/', present: ['Preguntas frecuentes'] },
   { url: '/es/about/', present: ['Acerca de'] },
+  /* Rotator translations */
+  { url: '/es/tools/rotator/', present: ['Girar', 'Ángulo Personalizado'] },
+  { url: '/fr/tools/rotator/', present: ['Pivoter', 'Angle Personnalisé'] },
+  { url: '/de/tools/rotator/', present: ['Drehen', 'Benutzerdefinierter Winkel'] },
+  { url: '/it/tools/rotator/', present: ['Ruota', 'Angolo Personalizzato'] },
+  { url: '/pt/tools/rotator/', present: ['Girar', 'Ângulo Personalizado'] },
+  { url: '/ja/tools/rotator/', present: ['回転', 'カスタム角度'] },
+  { url: '/hi/tools/rotator/', present: ['घुमाएं'] },
+  { url: '/tr/tools/rotator/', present: ['Döndür', 'Özel Açı'] },
+  /* Converter more languages */
+  { url: '/it/tools/converter/', present: ['Formato Destinazione', 'Scarica'] },
+  { url: '/pt/tools/converter/', present: ['Formato de Destino', 'Baixar'] },
+  { url: '/ja/tools/converter/', present: ['変換先形式', 'ダウンロード'] },
+  { url: '/hi/tools/converter/', present: ['लक्ष्य प्रारूप', 'डाउनलोड'] },
+  /* Resizer more languages */
+  { url: '/it/tools/resizer/', present: ['Larghezza', 'Scarica'] },
+  { url: '/pt/tools/resizer/', present: ['Largura', 'Baixar'] },
+  { url: '/fr/image-tools/', present: ['Tous les Outils d\'Image'] },
+  { url: '/de/image-tools/', present: ['Alle Bildtools'] },
+  /* Watermark translations (UI falls back to EN) */
+  { url: '/es/tools/watermark/', present: ['Watermark Text', 'Apply Watermark'] },
+  { url: '/fr/tools/watermark/', present: ['Watermark Text', 'Download'] },
+  { url: '/de/tools/watermark/', present: ['Watermark Text', 'Apply Watermark'] },
 ];
 
 test.describe('Translations render correctly per language', () => {
