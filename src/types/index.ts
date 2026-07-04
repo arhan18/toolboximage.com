@@ -105,7 +105,8 @@ export type ToolId =
   | 'blur'
   | 'rotator'
   | 'flipper'
-  | 'format-viewer';
+  | 'format-viewer'
+  | 'signature';
 
 /** High-level grouping for navigation / marketing */
 export type ToolCategory = 'convert' | 'transform' | 'enhance' | 'analyze' | 'create';

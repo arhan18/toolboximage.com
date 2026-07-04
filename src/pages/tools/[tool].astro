@@ -13,6 +13,7 @@ import WatermarkTool from '../../components/tools/WatermarkTool.astro';
 import MetadataTool from '../../components/tools/MetadataTool.astro';
 import PassportTool from '../../components/tools/PassportTool.astro';
 import HeicConverterTool from '../../components/tools/HeicConverterTool.astro';
+import SignatureTool from '../../components/tools/SignatureTool.astro';
 import ToolSeoContent from '../../components/seo/ToolSeoContent.astro';
 import { tools, getTool } from '../../lib/tools';
 import type { ToolId } from '../../types';
@@ -90,6 +91,8 @@ if (!tool) {
           <><PassportTool /><ToolSeoContent toolId="passport" lang="en" /></>
         ) : tool.id === 'heic-converter' ? (
           <><HeicConverterTool /><ToolSeoContent toolId="heic-converter" lang="en" /></>
+        ) : tool.id === 'signature' ? (
+          <><SignatureTool /><ToolSeoContent toolId="signature" lang="en" /></>
         ) : (
           <>
             <ToolUpload {tool} />

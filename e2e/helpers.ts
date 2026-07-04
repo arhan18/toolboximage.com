@@ -43,7 +43,7 @@ export function classifyUrl(url: string): PageType {
   const noLang = p.replace(/^\/(?:es|fr|de|it|pt|ru|zh|ja|ko|ar|hi|tr)\//, '/');
   if (noLang === '/' || noLang === '') return 'home';
   if (noLang.startsWith('/compressor') || noLang.startsWith('/compress-') || noLang.startsWith('/bulk-') || noLang.startsWith('/image-compressor') || noLang.startsWith('/jpeg-vs-png')) return 'compressor';
-  if (noLang.startsWith('/tools/rotator') || noLang.startsWith('/tools/cropper') || noLang.startsWith('/tools/watermark') || noLang.startsWith('/tools/metadata') || noLang.startsWith('/tools/passport') || noLang.startsWith('/tools/heic-converter')) return 'tool';
+  if (noLang.startsWith('/tools/rotator') || noLang.startsWith('/tools/cropper') || noLang.startsWith('/tools/watermark') || noLang.startsWith('/tools/metadata') || noLang.startsWith('/tools/passport') || noLang.startsWith('/tools/heic-converter') || noLang.startsWith('/tools/signature')) return 'tool';
   if (noLang.startsWith('/blog/')) return 'blog-post';
   if (noLang.startsWith('/blog') || noLang === '/blog') return 'blog';
   return 'info';
@@ -64,6 +64,7 @@ export const LIVE_TOOL_PAGES = [
   '/tools/metadata/',
   '/tools/passport/',
   '/tools/heic-converter/',
+  '/tools/signature/',
 ];
 
 export function isLiveToolPage(pathname: string): boolean {

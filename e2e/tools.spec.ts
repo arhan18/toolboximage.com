@@ -472,6 +472,30 @@ test.describe('Image Metadata Viewer tool', () => {
   });
 });
 
+test.describe('Signature Resizer tool', () => {
+  test('upload zone is visible', async ({ page }) => {
+    await page.goto('/tools/signature/', { waitUntil: 'load' });
+    await expect(page.locator('[data-tool-upload]')).toBeVisible({ timeout: 10000 });
+  });
+
+  test('no console errors on load', async ({ page }) => {
+    const errors = await collectErrors(page);
+    await page.goto('/tools/signature/', { waitUntil: 'load' });
+    expect(errors).toEqual([]);
+  });
+
+  test('preset buttons are visible', async ({ page }) => {
+    await page.goto('/tools/signature/', { waitUntil: 'load' });
+    const presets = page.locator('[data-sig-preset]');
+    await expect(presets).toHaveCount(6);
+  });
+
+  test('background buttons are visible', async ({ page }) => {
+    await page.goto('/tools/signature/', { waitUntil: 'load' });
+    await expect(page.locator('[data-sig-bg]')).toHaveCount(2);
+  });
+});
+
 test.describe('HEIC Converter tool', () => {
   test('upload zone is visible', async ({ page }) => {
     await page.goto('/tools/heic-converter/', { waitUntil: 'load' });

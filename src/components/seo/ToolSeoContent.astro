@@ -15,7 +15,7 @@ import {
 import { useTranslations, type LangCode } from '../../i18n';
 
 interface Props {
-  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper' | 'watermark' | 'metadata' | 'passport' | 'heic-converter';
+  toolId: 'converter' | 'resizer' | 'rotator' | 'cropper' | 'watermark' | 'metadata' | 'passport' | 'heic-converter' | 'signature';
   lang?: string;
 }
 
@@ -30,9 +30,10 @@ const isWatermark = toolId === 'watermark';
 const isMetadata = toolId === 'metadata';
 const isPassport = toolId === 'passport';
 const isHeicConverter = toolId === 'heic-converter';
+const isSignature = toolId === 'signature';
 
-const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : 'HEIC Converter';
-const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : isCropper ? 'tools/cropper' : isWatermark ? 'tools/watermark' : isMetadata ? 'tools/metadata' : isPassport ? 'tools/passport' : 'tools/heic-converter';
+const toolName = isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isRotator ? 'Rotate Image' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : isHeicConverter ? 'HEIC Converter' : 'Signature Resizer';
+const toolSlug = isConverter ? 'tools/converter' : isResizer ? 'tools/resizer' : isRotator ? 'tools/rotator' : isCropper ? 'tools/cropper' : isWatermark ? 'tools/watermark' : isMetadata ? 'tools/metadata' : isPassport ? 'tools/passport' : isHeicConverter ? 'tools/heic-converter' : 'tools/signature';
 const toolPath = `/${lang === 'en' ? '' : lang + '/'}${toolSlug}/`;
 
 const breadcrumbItems = [
@@ -57,6 +58,8 @@ const appSchema = softwareAppSchema({
     ? 'Free online image metadata viewer — view EXIF, GPS, and camera metadata. Strip private data before sharing. No uploads, no sign-up.'
     : isHeicConverter
     ? 'Free online HEIC converter — convert Apple HEIC/HEIF photos to JPEG, PNG, or WebP instantly in your browser. No uploads, no sign-up, unlimited.'
+    : isSignature
+    ? 'Free online signature resizer — resize your signature image for email, documents, and digital forms. Preset sizes, custom dimensions, white or transparent background. No uploads, no sign-up.'
     : 'Free online passport photo maker — create passport and ID photos with correct dimensions and background color. Print-ready layout. No uploads, no sign-up.',
   url: `${SITE_URL}${toolSlug}`,
 });
@@ -145,6 +148,18 @@ const howTo = isCropper
         { name: 'Apply and download', text: 'Click Apply Watermark to preview the result, then download your watermarked image. All processing stays on your device.' },
       ],
     }
+      : isSignature
+      ? {
+      name: 'How to Resize a Signature Image Online',
+      description: 'A step-by-step guide to resizing signature images for email, documents, and digital forms using ToolBox Image Signature Resizer.',
+      steps: [
+        { name: 'Upload your signature', text: 'Click the upload area or drag and drop a scanned or photographed signature image. Works with JPG, PNG, WebP, AVIF, and GIF files.' },
+        { name: 'Choose a preset size', text: 'Select from preset signature sizes — Email Signature (300×80), Document (400×150), Small (200×60), Standard (350×110), or Large (500×180). Each preset is optimized for its specific use case.' },
+        { name: 'Set custom dimensions', text: 'If a preset doesn\'t fit your needs, choose Custom and enter exact width and height values. The aspect ratio lock toggle preserves your signature\'s proportions.' },
+        { name: 'Choose background', text: 'Select White for documents and email signatures that need a clean background, or Transparent for overlaying your signature on different-colored documents.' },
+        { name: 'Download', text: 'Click the download button to save your resized signature as a PNG file. All processing stays on your device — no uploads, no servers.' },
+      ],
+    }
       : {
       name: 'How to Rotate an Image Online',
       description: 'A step-by-step guide to rotating and flipping images using ToolBox Image Rotator.',
@@ -225,6 +240,13 @@ const faqItems = isConverter
     ]
   : isHeicConverter
   ? heicFaqItems
+  : isSignature
+  ? [
+      { q: 'What is the best signature size for email signatures?', a: 'The standard email signature image size is 300-400 pixels wide by 80-150 pixels tall. ToolBox Image Signature Resizer includes a dedicated Email Signature preset (300×80) that works perfectly with most email clients including Gmail, Outlook, Apple Mail, and Yahoo Mail. For wider email layouts, use the Standard preset (350×110).' },
+      { q: 'Can I resize a signature image without losing quality?', a: 'Yes, resizing maintains image clarity when you scale down from a larger scanned signature. For best results, upload a high-resolution scan or photo of your signature and scale it down to your desired size. The Signature Resizer uses the HTML5 Canvas API for precise pixel-based resizing.' },
+      { q: 'What file format should I use for my digital signature?', a: 'PNG is the recommended format for signature images because it supports transparency and preserves crisp edges. ToolBox Image Signature Resizer outputs PNG files by default. Use the Transparent background option when you need to overlay your signature on different-colored documents or forms.' },
+      { q: 'Is it safe to upload my signature image online?', a: 'ToolBox Image Signature Resizer processes everything locally in your browser. Your signature image never leaves your device — there are no server uploads, no data storage, and no third-party processing. You can verify this by checking the Network tab in your browser\'s developer tools.' },
+    ]
   : [
       { q: _('rotator.faq.q1'), a: _('rotator.faq.a1') },
       { q: _('rotator.faq.q2'), a: _('rotator.faq.a2') },
@@ -785,11 +807,85 @@ const howToLd = howToSchema(howTo.steps);
           <li><strong>Batch convert HEIC photos:</strong> After a trip or event, batch-convert all your iPhone HEIC photos to JPEG to create a universally compatible photo album for sharing with family and friends.</li>
         </ul>
       </>}
+
+      {isSignature && <>
+        <h2>Free Online Signature Resizer — Resize Your Signature for Any Use</h2>
+        <p>
+          Your signature is one of your most personal and frequently used digital assets. Whether you
+          need a professional email signature, a clean document signature for PDF contracts, or a
+          small signature for online forms, getting the dimensions right is essential. ToolBox Image
+          Signature Resizer is a free online tool that resizes your signature image to any size —
+          with no uploads, no sign-up, and no quality loss.
+        </p>
+        <p>
+          Unlike photo resizing where you can approximate dimensions, signatures often need exact
+          pixel dimensions to fit properly in email clients, document templates, and digital
+          signature platforms. Too large and your signature overwhelms the message; too small and
+          it looks unprofessional or illegible. The Signature Resizer gives you precise control
+          with preset sizes optimized for real-world use cases, plus a custom mode for any other
+          requirement.
+        </p>
+
+        <h3>Signature Size Presets</h3>
+        <p>
+          ToolBox Image Signature Resizer includes five carefully chosen preset sizes, each
+          optimized for a specific use case:
+        </p>
+        <ul>
+          <li><strong>Email Signature (300×80):</strong> The ideal width for most email clients. Fits neatly below your email body without stretching the message width. Works with Gmail, Outlook, Apple Mail, Yahoo Mail, and ProtonMail.</li>
+          <li><strong>Document (400×150):</strong> Perfect for formal documents, PDF contracts, cover letters, and official correspondence. Large enough to be clearly legible while fitting within standard document margins.</li>
+          <li><strong>Small (200×60):</strong> For compact spaces — online forms, comment sections, forum profiles, and mobile-optimized layouts where space is limited.</li>
+          <li><strong>Standard (350×110):</strong> A versatile all-purpose size suitable for most digital signature needs. Works well in professional correspondence, proposals, and business documents.</li>
+          <li><strong>Large (500×180):</strong> For full-width signature blocks that include additional details like your job title, company name, phone number, and website alongside the signature image.</li>
+        </ul>
+
+        <h3>White vs Transparent Background</h3>
+        <p>
+          The Signature Resizer offers two background options that serve different purposes:
+        </p>
+        <ul>
+          <li><strong>White Background:</strong> Best for email signatures, documents, and PDFs that expect a clean white backing. Ensures your signature is clearly visible against any email or document background.</li>
+          <li><strong>Transparent Background:</strong> Ideal for overlaying your signature on colored documents, letterheads, or forms where the background should show through. The signature edges remain crisp while the background disappears.</li>
+        </ul>
+
+        <h3>Why Use ToolBox Image Signature Resizer?</h3>
+        <p>
+          Most online image resizing tools are designed for photos, not signatures. ToolBox Image
+          Signature Resizer is purpose-built for signature images:
+        </p>
+        <ul>
+          <li><strong>100% Private:</strong> No uploads, no servers, no tracking. All resizing happens locally in your browser using the HTML5 Canvas API.</li>
+          <li><strong>Signature-Specific Presets:</strong> Preset sizes optimized for email, documents, and digital forms — not generic photo dimensions.</li>
+          <li><strong>PNG Output:</strong> Downloaded as PNG to preserve transparency and sharp edges. Perfect for signatures that need to look professional.</li>
+          <li><strong>Background Control:</strong> Choose between white and transparent backgrounds depending on where you plan to use the signature.</li>
+          <li><strong>Aspect Ratio Lock:</strong> Keep your signature proportions intact while adjusting dimensions. Toggle lock off for freeform resizing.</li>
+          <li><strong>Free Forever:</strong> No sign-up, no paywall, no watermarks, no hidden charges. Unlimited signature resizing.</li>
+        </ul>
+
+        <h3>How to Resize a Signature Image Online</h3>
+        <p>Resizing your signature with ToolBox Image is quick and straightforward:</p>
+        <ol>
+          <li><strong>Upload your signature</strong> — Click the upload area or drag and drop a scanned signature, a photo of your signed name, or a digital signature file. JPG, PNG, WebP, AVIF, and GIF formats are supported.</li>
+          <li><strong>Select a preset size</strong> — Choose from Email Signature, Document, Small, Standard, or Large presets. Each preset shows its pixel dimensions so you can pick the right one for your use case.</li>
+          <li><strong>Or set custom dimensions</strong> — If none of the presets match your needs, select Custom and enter any width and height. The aspect ratio lock keeps your signature proportions correct.</li>
+          <li><strong>Choose background</strong> — Select White for clean visibility or Transparent for overlay use. The preview updates instantly so you can see the result before downloading.</li>
+          <li><strong>Download</strong> — Click the download button to save your resized signature as a PNG file. Your original signature image is never uploaded — all processing stays on your device.</li>
+        </ol>
+
+        <h3>Common Use Cases</h3>
+        <ul>
+          <li><strong>Professional email signatures:</strong> Create a properly sized signature image for your company email. The Email Signature preset (300×80) fits perfectly in Gmail, Outlook, and Apple Mail footers.</li>
+          <li><strong>Digital document signing:</strong> Resize your scanned signature to fit PDF contracts, lease agreements, employment forms, and other official documents without distorting the proportions.</li>
+          <li><strong>Online form signatures:</strong> Most web forms that accept signature uploads have limited space. Use the Small (200×60) or Standard (350×110) preset for a clean fit.</li>
+          <li><strong>Email signatures for small businesses:</strong> Combine your resized signature with contact details, logo, and social links in a professional email signature block using the Large preset (500×180).</li>
+          <li><strong>Signature for letterheads and invoices:</strong> Add your signature to company letterheads, invoices, proposals, and quotations using the Document preset (400×150) with a transparent background.</li>
+        </ul>
+      </>}
     </Prose>
 
     <!-- FAQ -->
     <section class="seo-faq">
-      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : isHeicConverter ? 'HEIC Converter' : 'Rotate Image'}>
+      <SectionHeader eyebrow={isConverter ? 'Image Converter' : isResizer ? 'Image Resizer' : isCropper ? 'Image Cropper' : isWatermark ? 'Image Watermark' : isMetadata ? 'Image Metadata Viewer' : isPassport ? 'Passport Photo Maker' : isHeicConverter ? 'HEIC Converter' : isSignature ? 'Signature Resizer' : 'Rotate Image'}>
         <h2 class="text-display-lg">Frequently Asked Questions</h2>
       </SectionHeader>
       <FAQ items={faqItems} />
@@ -919,6 +1015,23 @@ const howToLd = howToSchema(howTo.steps);
           <a href={`/${lang === 'en' ? '' : lang + '/'}tools/passport/`} class="seo-related-card">
             <strong>Passport Photo Maker</strong>
             <span>Create passport and ID photos</span>
+          </a>
+        </> : isSignature ? <>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">
+            <strong>Image Compressor</strong>
+            <span>Compress images without losing quality</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/converter/`} class="seo-related-card">
+            <strong>Image Converter</strong>
+            <span>Convert between image formats</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/resizer/`} class="seo-related-card">
+            <strong>Image Resizer</strong>
+            <span>Resize images for any platform</span>
+          </a>
+          <a href={`/${lang === 'en' ? '' : lang + '/'}tools/cropper/`} class="seo-related-card">
+            <strong>Image Cropper</strong>
+            <span>Crop images with preset ratios</span>
           </a>
         </> : <>
           <a href={`/${lang === 'en' ? '' : lang + '/'}compressor/`} class="seo-related-card">

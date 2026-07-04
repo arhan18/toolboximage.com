@@ -1,0 +1,394 @@
+---
+import ToolUpload from './ToolUpload.astro';
+import ToolSettingsPanel from './ToolSettingsPanel.astro';
+import { getTool } from '../../lib/tools';
+import { useTranslations, type LangCode } from '../../i18n';
+
+interface Props {
+  lang?: LangCode;
+}
+
+const { lang = 'en' } = Astro.props;
+const _ = useTranslations(lang);
+const tool = getTool('signature')!;
+
+const presets = [
+  { id: 'email', key: 'signature.emailLabel', w: 300, h: 80 },
+  { id: 'document', key: 'signature.documentLabel', w: 400, h: 150 },
+  { id: 'small', key: 'signature.smallLabel', w: 200, h: 60 },
+  { id: 'standard', key: 'signature.standardLabel', w: 350, h: 110 },
+  { id: 'large', key: 'signature.largeLabel', w: 500, h: 180 },
+  { id: 'custom', key: 'signature.customLabel', w: 0, h: 0 },
+];
+---
+<section class="sig-workflow stack stack-lg">
+  <ToolUpload {tool} {lang} />
+
+  <ToolSettingsPanel {tool} {lang}>
+    <div slot="settings-actions">
+      <button type="button" class="sig-clear-btn" data-sig-clear hidden>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+    <div slot="settings-controls">
+      <fieldset class="sig-presets">
+        <legend class="text-caption-mono sig-label">{_('signature.preset')}</legend>
+        <div class="sig-preset-grid" data-sig-presets>
+          {presets.map((p) => (
+            <button type="button" class="sig-preset-btn" data-sig-preset={p.id} data-w={p.w} data-h={p.h}>
+              <span class="sig-preset-name">{_(p.key)}</span>
+              {p.w > 0 ? <span class="sig-preset-dims">{p.w}×{p.h}</span> : null}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="sig-custom" data-sig-custom hidden>
+        <legend class="text-caption-mono sig-label">{_('signature.customDims')}</legend>
+        <div class="sig-custom-row">
+          <label class="sig-custom-field">
+            <span class="text-caption sig-custom-field-label">{_('signature.width')}</span>
+            <input type="number" class="sig-custom-input" data-sig-width min="1" max="4000" value="350" />
+          </label>
+          <span class="sig-custom-sep">×</span>
+          <label class="sig-custom-field">
+            <span class="text-caption sig-custom-field-label">{_('signature.height')}</span>
+            <input type="number" class="sig-custom-input" data-sig-height min="1" max="4000" value="110" />
+          </label>
+          <button type="button" class="sig-lock-btn" data-sig-lock aria-label={_('signature.lockAspect')} aria-pressed="true">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </button>
+          <button type="button" class="sig-lock-btn sig-lock-btn-off" data-sig-unlock hidden aria-label={_('signature.unlockAspect')} aria-pressed="false">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          </button>
+        </div>
+      </fieldset>
+      <fieldset class="sig-bg">
+        <legend class="text-caption-mono sig-label">{_('signature.background')}</legend>
+        <div class="sig-bg-row">
+          <button type="button" class="sig-bg-btn" data-sig-bg="white" data-active="true">{_('signature.bgWhite')}</button>
+          <button type="button" class="sig-bg-btn" data-sig-bg="transparent">{_('signature.bgTransparent')}</button>
+        </div>
+      </fieldset>
+    </div>
+  </ToolSettingsPanel>
+
+  <section class="sig-preview" data-sig-preview hidden>
+    <div class="sig-preview-cols">
+      <figure class="sig-preview-fig">
+        <figcaption class="text-caption-mono sig-preview-label">{_('signature.original')}</figcaption>
+        <div class="sig-preview-frame">
+          <img data-sig-original alt={_('signature.original')} class="sig-preview-img" />
+        </div>
+        <p class="text-caption sig-preview-size" data-sig-original-size></p>
+      </figure>
+      <div class="sig-preview-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <figure class="sig-preview-fig">
+        <figcaption class="text-caption-mono sig-preview-label" data-sig-result-label>{_('signature.result')}</figcaption>
+        <div class="sig-preview-frame">
+          <canvas data-sig-result class="sig-preview-canvas"></canvas>
+        </div>
+        <p class="text-caption sig-preview-size" data-sig-result-size></p>
+      </figure>
+    </div>
+    <div class="sig-actions" data-sig-actions hidden>
+      <button type="button" class="sig-action-link" data-sig-replace>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        {_('signature.replace')}
+      </button>
+      <button type="button" class="sig-action-link sig-action-link-danger" data-sig-clear>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        {_('tool.clear')}
+      </button>
+    </div>
+  </section>
+
+  <section class="sig-download" data-sig-download hidden>
+    <div class="sig-download-bar">
+      <div class="sig-download-info">
+        <p class="text-caption-mono sig-download-label">{_('signature.downloadBtn')}</p>
+        <p class="text-body-sm-strong" data-sig-download-name></p>
+      </div>
+      <button type="button" class="results-btn results-btn-primary" data-sig-download-btn>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        {_('signature.downloadBtn')}
+      </button>
+      <button type="button" class="results-btn results-btn-ghost" data-sig-clear>
+        {_('tool.clear')}
+      </button>
+    </div>
+  </section>
+</section>
+
+<script>
+  const presetBtns = document.querySelectorAll<HTMLButtonElement>('[data-sig-preset]');
+  const customFieldset = document.querySelector<HTMLElement>('[data-sig-custom]');
+  const widthInput = document.querySelector<HTMLInputElement>('[data-sig-width]');
+  const heightInput = document.querySelector<HTMLInputElement>('[data-sig-height]');
+  const lockBtn = document.querySelector<HTMLButtonElement>('[data-sig-lock]');
+  const unlockBtn = document.querySelector<HTMLButtonElement>('[data-sig-unlock]');
+  const bgBtns = document.querySelectorAll<HTMLButtonElement>('[data-sig-bg]');
+  const previewArea = document.querySelector<HTMLElement>('[data-sig-preview]');
+  const origImg = document.querySelector<HTMLImageElement>('[data-sig-original]');
+  const resultCanvas = document.querySelector<HTMLCanvasElement>('[data-sig-result]');
+  const origSizeEl = document.querySelector<HTMLElement>('[data-sig-original-size]');
+  const resultSizeEl = document.querySelector<HTMLElement>('[data-sig-result-size]');
+  const resultLabel = document.querySelector<HTMLElement>('[data-sig-result-label]');
+  const downloadSection = document.querySelector<HTMLElement>('[data-sig-download]');
+  const downloadBtn = document.querySelector<HTMLButtonElement>('[data-sig-download-btn]');
+  const downloadNameEl = document.querySelector<HTMLElement>('[data-sig-download-name]');
+  const clearBtns = document.querySelectorAll<HTMLButtonElement>('[data-sig-clear]');
+  const replaceBtn = document.querySelector<HTMLButtonElement>('[data-sig-replace]');
+  const actionsBar = document.querySelector<HTMLElement>('[data-sig-actions]');
+  const settingsClearBtn = document.querySelector<HTMLButtonElement>('[data-sig-clear-btn]');
+
+  let currentFile: File | null = null;
+  let currentImg: HTMLImageElement | null = null;
+  let currentBlob: Blob | null = null;
+  let currentBlobUrl: string | null = null;
+  let selectedBg: string = 'white';
+  let aspectRatio: number | null = null;
+  let lockAspect = true;
+
+  const formatBytes = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  presetBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      presetBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      const w = Number(btn.dataset.w);
+      const h = Number(btn.dataset.h);
+      const isCustom = btn.dataset.sigPreset === 'custom';
+      if (customFieldset) customFieldset.hidden = !isCustom;
+      if (!isCustom && widthInput && heightInput) {
+        widthInput.value = String(w);
+        heightInput.value = String(h);
+      }
+      if (currentImg && previewArea && !previewArea.hidden) renderSignature();
+    });
+  });
+  if (presetBtns[0]) presetBtns[0].dataset.active = 'true';
+
+  if (widthInput && heightInput) {
+    const onCustomChange = () => {
+      if (lockAspect && aspectRatio && widthInput && heightInput) {
+        const w = Number(widthInput.value) || 1;
+        heightInput.value = String(Math.round(w / aspectRatio));
+      }
+      if (currentImg && previewArea && !previewArea.hidden) renderSignature();
+    };
+    widthInput.addEventListener('input', onCustomChange);
+    heightInput.addEventListener('input', () => {
+      if (lockAspect && aspectRatio && widthInput && heightInput) {
+        const h = Number(heightInput.value) || 1;
+        widthInput.value = String(Math.round(h * aspectRatio));
+      }
+      if (currentImg && previewArea && !previewArea.hidden) renderSignature();
+    });
+  }
+
+  if (lockBtn && unlockBtn) {
+    lockBtn.addEventListener('click', () => {
+      lockAspect = false;
+      lockBtn.hidden = true;
+      unlockBtn.hidden = false;
+    });
+    unlockBtn.addEventListener('click', () => {
+      lockAspect = true;
+      unlockBtn.hidden = true;
+      lockBtn.hidden = false;
+    });
+  }
+
+  bgBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      bgBtns.forEach((b) => b.dataset.active = 'false');
+      btn.dataset.active = 'true';
+      selectedBg = btn.dataset.sigBg!;
+      if (currentImg && previewArea && !previewArea.hidden) renderSignature();
+    });
+  });
+
+  const renderSignature = () => {
+    if (!currentImg || !resultCanvas || !widthInput || !heightInput) return;
+    const w = Number(widthInput.value) || 100;
+    const h = Number(heightInput.value) || 100;
+    resultCanvas.width = w;
+    resultCanvas.height = h;
+    const ctx = resultCanvas.getContext('2d')!;
+    if (selectedBg === 'white') {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, w, h);
+    }
+    ctx.drawImage(currentImg, 0, 0, w, h);
+    resultCanvas.toBlob((blob) => {
+      if (!blob) return;
+      if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+      currentBlob = blob;
+      currentBlobUrl = URL.createObjectURL(blob);
+      if (resultSizeEl) resultSizeEl.textContent = formatBytes(blob.size);
+      if (resultLabel) resultLabel.textContent = `${w} × ${h}`;
+      if (downloadSection) downloadSection.hidden = false;
+      if (downloadNameEl && currentFile) {
+        downloadNameEl.textContent = currentFile.name.replace(/\.[^.]+$/, '') + '_signature.png';
+      }
+    }, 'image/png');
+  };
+
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      if (!currentFile || !currentBlobUrl) return;
+      const name = currentFile.name.replace(/\.[^.]+$/, '') + '_signature.png';
+      const a = document.createElement('a');
+      a.href = currentBlobUrl;
+      a.download = name;
+      a.click();
+    });
+  }
+
+  const doClear = () => {
+    if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+    currentFile = null;
+    currentImg = null;
+    currentBlob = null;
+    currentBlobUrl = null;
+    if (previewArea) previewArea.hidden = true;
+    if (downloadSection) downloadSection.hidden = true;
+    if (actionsBar) actionsBar.hidden = true;
+    if (settingsClearBtn) settingsClearBtn.hidden = true;
+    if (origImg) origImg.src = '';
+    if (origSizeEl) origSizeEl.textContent = '';
+    if (resultSizeEl) resultSizeEl.textContent = '';
+    const uploadZone = document.querySelector<HTMLElement>('[data-tool-upload]');
+    uploadZone?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  clearBtns.forEach((btn) => btn.addEventListener('click', doClear));
+
+  if (replaceBtn) {
+    replaceBtn.addEventListener('click', () => {
+      const input = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
+      input?.click();
+    });
+  }
+
+  if (settingsClearBtn) settingsClearBtn.hidden = true;
+
+  const onFilesReceived = async (files: File[]) => {
+    if (!files.length) return;
+    const file = files[0];
+    currentFile = file;
+    const img = new Image();
+    img.onload = () => {
+      currentImg = img;
+      aspectRatio = img.naturalWidth / img.naturalHeight;
+      if (previewArea) previewArea.hidden = false;
+      if (actionsBar) actionsBar.hidden = false;
+      if (settingsClearBtn) settingsClearBtn.hidden = false;
+      if (downloadSection) downloadSection.hidden = true;
+      if (origImg) {
+        origImg.src = img.src;
+        origImg.alt = file.name;
+      }
+      if (origSizeEl) {
+        origSizeEl.textContent = `${img.naturalWidth} × ${img.naturalHeight} · ${formatBytes(file.size)}`;
+      }
+      previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      renderSignature();
+    };
+    img.onerror = () => {
+      if (resultLabel) resultLabel.textContent = 'Error';
+      if (origSizeEl) origSizeEl.textContent = 'Failed to load image.';
+    };
+    img.src = URL.createObjectURL(file);
+  };
+
+  window.addEventListener('toolboximage:files', async (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (detail?.files?.length) onFilesReceived(detail.files);
+  });
+
+  (async () => {
+    if (sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      const { retrieveFiles } = await import('../../lib/file-transfer');
+      const files = await retrieveFiles();
+      if (files.length) onFilesReceived(files);
+    }
+  })();
+
+  window.addEventListener('beforeunload', () => {
+    if (currentFile && sessionStorage.getItem('toolboximage:transfer') === '1') {
+      sessionStorage.removeItem('toolboximage:transfer');
+      import('../../lib/file-transfer').then(m => m.storeFiles([currentFile]));
+    }
+  });
+</script>
+
+<style>
+  .sig-workflow { display: flex; flex-direction: column; gap: var(--space-2xl); }
+  .sig-presets { border: none; margin: 0; padding: 0; }
+  .sig-label { color: var(--color-mute); margin: 0 0 var(--space-sm); display: block; }
+  .sig-preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xs); }
+  .sig-preset-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--space-sm) var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); cursor: pointer; font-family: var(--font-mono); font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease; }
+  .sig-preset-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .sig-preset-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .sig-preset-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); }
+  .sig-preset-name { font-weight: var(--weight-medium); }
+  .sig-preset-dims { font-size: var(--text-caption); color: var(--color-mute); }
+  .sig-custom { border: none; margin: 0; padding: 0; }
+  .sig-custom-row { display: flex; align-items: center; gap: var(--space-sm); }
+  .sig-custom-field { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .sig-custom-field-label { color: var(--color-mute); }
+  .sig-custom-input { width: 100%; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-ink); font: inherit; font-size: var(--text-body-sm); font-feature-settings: 'tnum'; }
+  .sig-custom-input:focus { outline: none; border-color: var(--color-link); box-shadow: var(--focus-ring-tight); }
+  .sig-custom-sep { color: var(--color-mute); font-size: var(--text-body-sm); padding: 0 var(--space-xxs); margin-top: 18px; }
+  .sig-lock-btn { appearance: none; border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-sm); padding: var(--space-xs); cursor: pointer; display: flex; align-items: center; margin-top: 18px; transition: border-color 0.15s ease, color 0.15s ease; }
+  .sig-lock-btn:hover { border-color: var(--color-hairline-strong); color: var(--color-ink); }
+  .sig-lock-btn-off { color: var(--color-mute); }
+  .sig-bg { border: none; margin: 0; padding: 0; }
+  .sig-bg-row { display: flex; gap: var(--space-xs); }
+  .sig-bg-btn { padding: var(--space-xs) var(--space-md); border-radius: var(--radius-pill); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); cursor: pointer; font: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease; }
+  .sig-bg-btn:hover { background: var(--color-canvas-soft); border-color: var(--color-hairline-strong); }
+  .sig-bg-btn[data-active="true"] { border-color: var(--color-link); background: color-mix(in srgb, var(--color-link) 10%, transparent); color: var(--color-link-deep); }
+  .sig-clear-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); padding: var(--space-xs) var(--space-sm); border: 1px solid var(--color-hairline); background: var(--color-canvas); color: var(--color-body); border-radius: var(--radius-md); cursor: pointer; font: inherit; font-size: var(--text-body-sm); transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+  .sig-clear-btn:hover { border-color: var(--color-hairline-strong); color: var(--color-error-deep); background-color: var(--color-error-soft); }
+  .sig-preview { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; padding: var(--space-lg); }
+  .sig-preview-cols { display: flex; align-items: flex-start; gap: var(--space-md); }
+  .sig-preview-fig { margin: 0; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .sig-preview-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sig-preview-frame { position: relative; width: 100%; min-height: 100px; display: flex; align-items: center; justify-content: center; background: repeating-conic-gradient(var(--color-hairline) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px; border-radius: var(--radius-sm); overflow: hidden; }
+  .sig-preview-img, .sig-preview-canvas { max-width: 100%; max-height: 200px; object-fit: contain; display: block; }
+  .sig-preview-size { margin: 0; color: var(--color-body); }
+  .sig-preview-arrow { flex-shrink: 0; color: var(--color-mute); margin-top: var(--space-xl); }
+  .sig-actions { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) 0 0; }
+  .sig-action-link { appearance: none; border: none; background: none; padding: var(--space-xs) var(--space-sm); color: var(--color-link); cursor: pointer; font: inherit; font-size: var(--text-body-sm); display: inline-flex; align-items: center; gap: var(--space-xs); border-radius: var(--radius-sm); transition: background-color 0.15s ease, color 0.15s ease; }
+  .sig-action-link:hover { background-color: var(--color-canvas-soft); color: var(--color-link-deep); }
+  .sig-action-link-danger { color: var(--color-error-deep); }
+  .sig-action-link-danger:hover { background-color: var(--color-error-soft); color: var(--color-error-deep); }
+  .sig-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
+  .sig-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
+  .sig-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .sig-download-label { color: var(--color-mute); text-transform: uppercase; letter-spacing: 0.06em; }
+  .sig-download .results-btn { appearance: none; display: inline-flex; align-items: center; gap: var(--space-xs); height: 40px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: var(--text-body-sm); font-weight: var(--weight-medium); transition: background-color var(--dur-fast) var(--ease-out-quart), color var(--dur-fast) var(--ease-out-quart); white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+  .sig-download .results-btn:focus-visible { outline: none; box-shadow: var(--focus-ring-tight); }
+  .sig-download .results-btn-primary { background-color: var(--color-primary); color: var(--color-on-primary); }
+  .sig-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
+  .sig-download .results-btn-ghost { background: transparent; color: var(--color-body); border-color: var(--color-hairline); }
+  .sig-download .results-btn-ghost:hover { background: var(--color-canvas-soft); color: var(--color-error-deep); border-color: var(--color-hairline-strong); }
+  [data-sig-preview][hidden] { display: none; }
+  [data-sig-download][hidden] { display: none; }
+  [data-sig-custom][hidden] { display: none; }
+  [data-sig-actions][hidden] { display: none; }
+  @media (max-width: 600px) {
+    .sig-preset-grid { grid-template-columns: repeat(2, 1fr); }
+    .sig-preview-cols { flex-direction: column; }
+    .sig-preview-arrow { transform: rotate(90deg); align-self: center; margin-top: 0; }
+  }
+</style>

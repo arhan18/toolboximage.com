@@ -44,6 +44,10 @@ const LANG_CHECKS: { url: string; present: string[] }[] = [
   { url: '/de/tools/heic-converter/', present: ['Zielformat', 'Herunterladen'] },
   { url: '/ja/tools/heic-converter/', present: ['変換先形式', 'ダウンロード'] },
   { url: '/hi/tools/heic-converter/', present: ['लक्ष्य प्रारूप', 'डाउनलोड करें'] },
+  /* Signature Resizer translations */
+  { url: '/es/tools/signature/', present: ['Preset Sizes', 'Custom Dimensions'] },
+  { url: '/fr/tools/signature/', present: ['Preset Sizes', 'Custom Dimensions'] },
+  { url: '/de/tools/signature/', present: ['Preset Sizes', 'Custom Dimensions'] },
 ];
 
 test.describe('Translations render correctly per language', () => {
