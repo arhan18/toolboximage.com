@@ -73,6 +73,21 @@ const fits = [
           ))}
         </div>
       </fieldset>
+      <fieldset class="pdf-fieldset">
+        <legend class="text-caption-mono pdf-label">{_('pdfPage.format')}</legend>
+        <div class="pdf-btn-row" data-pdf-encoding>
+          <button type="button" class="pdf-opt-btn" data-pdf-opt="jpeg" data-active="true">{_('pdfPage.jpeg')}</button>
+          <button type="button" class="pdf-opt-btn" data-pdf-opt="png">{_('pdfPage.png')}</button>
+        </div>
+        <p class="text-caption pdf-format-hint" data-pdf-format-hint data-jpeg-hint={_('pdfPage.formatJpegHint')} data-png-hint={_('pdfPage.formatPngHint')}>{_('pdfPage.formatJpegHint')}</p>
+      </fieldset>
+      <div class="pdf-quality" data-pdf-quality-section>
+        <label class="text-caption-mono pdf-label" for="pdf-quality">{_('pdfPage.quality')}</label>
+        <div class="pdf-quality-row">
+          <input type="range" id="pdf-quality" class="pdf-range" data-pdf-quality min="1" max="100" value="85" />
+          <span class="text-body-sm-strong pdf-quality-value" data-pdf-quality-value>85%</span>
+        </div>
+      </div>
     </div>
   </ToolSettingsPanel>
 
@@ -82,13 +97,23 @@ const fits = [
       <button type="button" class="pdf-clear-all-btn" data-pdf-clear-all hidden>{_('tool.clear')}</button>
     </div>
     <div class="pdf-thumb-grid" data-pdf-thumb-grid></div>
+
+    <div class="pdf-viewer" data-pdf-viewer hidden>
+      <div class="pdf-viewer-header">
+        <span class="text-caption-mono pdf-preview-title">{_('pdfPage.pdfPreview')}</span>
+        <span class="text-caption-mono" data-pdf-page-info data-pages-text={_('pdfPage.pages')}></span>
+      </div>
+      <div class="pdf-viewer-iframe-wrap">
+        <iframe class="pdf-iframe" data-pdf-iframe title="PDF Preview"></iframe>
+      </div>
+    </div>
   </section>
 
   <section class="pdf-download" data-pdf-download hidden>
     <div class="pdf-download-bar">
       <div class="pdf-download-info">
         <p class="text-caption-mono pdf-download-label">{_('pdfPage.downloadBtn')}</p>
-        <p class="text-body-sm-strong" data-pdf-download-name></p>
+        <p class="text-body-sm-strong" data-pdf-download-name data-filename="images.pdf"></p>
       </div>
       <button type="button" class="results-btn results-btn-primary" data-pdf-download-btn>
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -115,6 +140,14 @@ const fits = [
   const orientationBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-orientation] [data-pdf-opt]');
   const marginBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-margins] [data-pdf-opt]');
   const fitBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-fit] [data-pdf-opt]');
+  const encodingBtns = document.querySelectorAll<HTMLButtonElement>('[data-pdf-encoding] [data-pdf-opt]');
+  const formatHintEl = document.querySelector<HTMLElement>('[data-pdf-format-hint]');
+  const qualitySection = document.querySelector<HTMLElement>('[data-pdf-quality-section]');
+  const qualityInput = document.querySelector<HTMLInputElement>('[data-pdf-quality]');
+  const qualityValueEl = document.querySelector<HTMLElement>('[data-pdf-quality-value]');
+  const pdfViewer = document.querySelector<HTMLElement>('[data-pdf-viewer]');
+  const pdfIframe = document.querySelector<HTMLIFrameElement>('[data-pdf-iframe]');
+  const pdfPageInfo = document.querySelector<HTMLElement>('[data-pdf-page-info]');
 
   interface PdfImage {
     file: File;
@@ -123,6 +156,7 @@ const fits = [
   }
 
   let images: PdfImage[] = [];
+  let filesBeingProcessed = false;
   let pdfLoaded = false;
   let currentPdfBlob: Blob | null = null;
   let currentPdfUrl: string | null = null;
@@ -132,6 +166,8 @@ const fits = [
   let selectedOrientation = 'auto';
   let selectedMargins = 'none';
   let selectedFit = 'contain';
+  let selectedEncoding = 'jpeg';
+  let selectedQuality = 85;
 
   const PAGE_DIMS: Record<string, [number, number]> = {
     a4: [595.28, 841.89],
@@ -164,6 +200,24 @@ const fits = [
   handleOptClick(orientationBtns, (v) => { selectedOrientation = v; });
   handleOptClick(marginBtns, (v) => { selectedMargins = v; });
   handleOptClick(fitBtns, (v) => { selectedFit = v; });
+  handleOptClick(encodingBtns, (v) => {
+    selectedEncoding = v;
+    if (qualitySection) qualitySection.hidden = v !== 'jpeg';
+    if (formatHintEl) {
+      formatHintEl.textContent = v === 'jpeg'
+        ? formatHintEl.dataset.jpegHint || 'JPEG reduces quality slightly but makes the PDF file 5–10× smaller'
+        : formatHintEl.dataset.pngHint || 'PNG preserves perfect quality but makes the PDF file much larger';
+    }
+    if (images.length) generatePdf();
+  });
+
+  if (qualityInput && qualityValueEl) {
+    qualityInput.addEventListener('input', () => {
+      selectedQuality = Number(qualityInput.value);
+      qualityValueEl.textContent = selectedQuality + '%';
+      if (images.length) generatePdf();
+    });
+  }
 
   const formatBytes = (bytes: number): string => {
     if (bytes < 1024) return bytes + ' B';
@@ -260,14 +314,16 @@ const fits = [
     if (clearAllBtn) clearAllBtn.hidden = images.length === 0;
   };
 
-  const imageToPngBlob = (img: HTMLImageElement): Promise<Blob> => {
+  const imageEncodeBlob = (img: HTMLImageElement, encoding: string, quality: number): Promise<Blob> => {
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas');
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, 0, 0);
-      canvas.toBlob((blob) => resolve(blob!), 'image/png');
+      const mime = encoding === 'jpeg' ? 'image/jpeg' : 'image/png';
+      const q = encoding === 'jpeg' ? quality / 100 : undefined;
+      canvas.toBlob((blob) => resolve(blob!), mime, q);
     });
   };
 
@@ -339,9 +395,11 @@ const fits = [
       const y = margin + (availH - drawH) / 2;
 
       // Embed image
-      const pngBlob = await imageToPngBlob(item.img);
-      const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
-      const pdfImg = await doc.embedPng(pngBytes);
+      const encodedBlob = await imageEncodeBlob(item.img, selectedEncoding, selectedQuality);
+      const encodedBytes = new Uint8Array(await encodedBlob.arrayBuffer());
+      const pdfImg = selectedEncoding === 'jpeg'
+        ? await doc.embedJpg(encodedBytes)
+        : await doc.embedPng(encodedBytes);
 
       const page = doc.addPage([pageW, pageH]);
       page.drawImage(pdfImg, {
@@ -360,9 +418,22 @@ const fits = [
 
     if (downloadSection) downloadSection.hidden = false;
     if (downloadNameEl) {
-      downloadNameEl.textContent = images.length === 1
+      const name = images.length === 1
         ? images[0].file.name.replace(/\.[^.]+$/, '') + '.pdf'
         : 'combined_images.pdf';
+      downloadNameEl.textContent = `${name} · ${formatBytes(blob.size)}`;
+      downloadNameEl.dataset.filename = name;
+    }
+
+    const pageCount = doc.getPageCount();
+    if (pdfViewer) pdfViewer.hidden = false;
+    if (pdfIframe && currentPdfUrl) {
+      if (pdfIframe.src.startsWith('blob:')) URL.revokeObjectURL(pdfIframe.src);
+      pdfIframe.src = currentPdfUrl;
+    }
+    if (pdfPageInfo) {
+      const label = pdfPageInfo.dataset.pagesText || 'pages';
+      pdfPageInfo.textContent = `${pageCount} ${label}`;
     }
   };
 
@@ -371,19 +442,22 @@ const fits = [
       if (!currentPdfUrl) return;
       const a = document.createElement('a');
       a.href = currentPdfUrl;
-      a.download = downloadNameEl?.textContent || 'images.pdf';
+      a.download = downloadNameEl?.dataset.filename || 'images.pdf';
       a.click();
     });
   }
 
   const doClear = () => {
     images = [];
+    filesBeingProcessed = false;
     if (currentPdfUrl) URL.revokeObjectURL(currentPdfUrl);
     currentPdfBlob = null;
     currentPdfUrl = null;
     if (previewArea) previewArea.hidden = true;
     if (downloadSection) downloadSection.hidden = true;
     if (thumbGrid) thumbGrid.innerHTML = '';
+    if (pdfViewer) pdfViewer.hidden = true;
+    if (pdfIframe) { if (pdfIframe.src.startsWith('blob:')) URL.revokeObjectURL(pdfIframe.src); pdfIframe.src = ''; }
     updateCount();
     const uploadZone = document.querySelector<HTMLElement>('[data-tool-upload]');
     uploadZone?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -392,30 +466,64 @@ const fits = [
   clearBtns.forEach((btn) => btn.addEventListener('click', doClear));
   if (clearAllBtn) clearAllBtn.addEventListener('click', doClear);
 
-  const onFilesReceived = async (files: File[]) => {
-    if (!files.length) return;
+  const showError = (msg: string) => {
+    const errorsEl = document.querySelector<HTMLElement>('[data-tool-errors]');
+    const errorsList = document.querySelector<HTMLElement>('[data-tool-errors-list]');
+    if (errorsEl && errorsList) {
+      errorsList.innerHTML = `<li>${msg}</li>`;
+      errorsEl.hidden = false;
+    }
+  };
 
+  const onFilesReceived = async (files: File[]) => {
+    if (filesBeingProcessed || !files.length) return;
+    filesBeingProcessed = true;
+
+    let validCount = 0;
     for (const file of files) {
       try {
         const result = await loadImageAsDataUrl(file);
         images.push({ file, img: result.img, dataUrl: result.dataUrl });
+        validCount++;
       } catch {
         // Skip files that can't be decoded
       }
+    }
+
+    if (validCount === 0) {
+      showError('No valid images could be loaded. Try a different file format (JPEG, PNG, WebP, etc.)');
+      return;
     }
 
     if (previewArea) previewArea.hidden = false;
     renderThumbnails();
     previewArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // Auto-generate PDF
-    await generatePdf();
+    try {
+      await generatePdf();
+    } catch (e) {
+      console.error('PDF generation failed:', e);
+      showError('Failed to generate PDF. The PDF library may not have loaded. Please check your internet connection and try again.');
+    }
   };
 
   window.addEventListener('toolboximage:files', async (e: Event) => {
     const detail = (e as CustomEvent).detail;
     if (detail?.files?.length) onFilesReceived(detail.files);
   });
+
+  // Capture-phase file input listener (catches uploads even if CustomEvent fails)
+  const fileInput = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      const target = e.target as HTMLInputElement;
+      if (!target.files?.length) return;
+      const files = Array.from(target.files);
+      setTimeout(() => {
+        if (!filesBeingProcessed) onFilesReceived(files);
+      }, 0);
+    }, { capture: true });
+  }
 
   (async () => {
     if (sessionStorage.getItem('toolboximage:transfer') === '1') {
@@ -474,6 +582,12 @@ const fits = [
   .pdf-thumb-btn:disabled { opacity: 0.4; cursor: default; }
   .pdf-thumb-remove:hover:not(:disabled) { color: var(--color-error-deep); border-color: var(--color-error-soft); background-color: var(--color-error-soft); }
 
+  .pdf-viewer { margin-top: var(--space-lg); border-top: 1px solid var(--color-hairline); padding-top: var(--space-lg); }
+  .pdf-viewer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-sm); }
+  .pdf-viewer-iframe-wrap { position: relative; width: 100%; aspect-ratio: 8.5 / 11; max-height: 70vh; border: 1px solid var(--color-hairline); border-radius: var(--radius-md); overflow: hidden; background: var(--color-canvas-soft); }
+  .pdf-iframe { width: 100%; height: 100%; border: none; display: block; }
+  .pdf-viewer[hidden] { display: none; }
+
   .pdf-download { background: var(--color-canvas); border-radius: var(--radius-lg); box-shadow: var(--shadow-2); overflow: hidden; }
   .pdf-download-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-lg); }
   .pdf-download-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -484,6 +598,12 @@ const fits = [
   .pdf-download .results-btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgb(0 0 0 / 0.28); }
   .pdf-download .results-btn-ghost { background: transparent; color: var(--color-body); border-color: var(--color-hairline); }
   .pdf-download .results-btn-ghost:hover { background: var(--color-canvas-soft); color: var(--color-error-deep); border-color: var(--color-hairline-strong); }
+
+  .pdf-quality { border: none; margin: 0; padding: 0; }
+  .pdf-quality-row { display: flex; align-items: center; gap: var(--space-sm); }
+  .pdf-range { flex: 1; max-width: 240px; accent-color: var(--color-link); height: 4px; cursor: pointer; }
+  .pdf-quality-value { min-width: 3ch; text-align: right; font-feature-settings: 'tnum'; color: var(--color-ink); }
+  .pdf-format-hint { color: var(--color-mute); margin: var(--space-xs) 0 0; }
 
   [data-pdf-preview][hidden] { display: none; }
   [data-pdf-download][hidden] { display: none; }

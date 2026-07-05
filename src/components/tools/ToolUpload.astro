@@ -99,13 +99,13 @@ const formatList = tool.inputFormats
     zone.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        input.click();
+        requestAnimationFrame(() => input.click());
       }
     });
 
     browseBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      input.click();
+      requestAnimationFrame(() => input.click());
     });
 
     pasteBtn.addEventListener('click', async (e) => {
@@ -136,7 +136,7 @@ const formatList = tool.inputFormats
     zone.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       if (target.closest('[data-action="paste"]')) return;
-      input.click();
+      requestAnimationFrame(() => input.click());
     });
 
     ['dragenter', 'dragover'].forEach((ev) => {
@@ -186,7 +186,7 @@ const formatList = tool.inputFormats
     padding: var(--space-4xl) var(--space-xl);
     text-align: center;
     cursor: pointer;
-    transition: border-color var(--dur-fast) var(--ease-out-quart), background-color var(--dur-fast) var(--ease-out-quart);
+    transition: border-color var(--dur-fast) var(--ease-out-quart);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -197,12 +197,15 @@ const formatList = tool.inputFormats
   }
 
   .tool-upload-zone:hover,
-  .tool-upload-zone:focus-visible,
   .tool-upload-zone[data-dragover="true"] {
     border-color: var(--color-link);
     background-color: var(--color-canvas);
-    outline: none;
-    box-shadow: var(--focus-ring);
+  }
+  .tool-upload-zone:focus-visible {
+    border-color: var(--color-link);
+    background-color: var(--color-canvas);
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
   }
 
   .tool-upload-icon {
