@@ -512,18 +512,15 @@ const fits = [
     if (detail?.files?.length) onFilesReceived(detail.files);
   });
 
-  // Capture-phase file input listener (catches uploads even if CustomEvent fails)
-  const fileInput = document.querySelector<HTMLInputElement>('[data-action="file-input"]');
-  if (fileInput) {
-    fileInput.addEventListener('change', (e) => {
-      const target = e.target as HTMLInputElement;
-      if (!target.files?.length) return;
-      const files = Array.from(target.files);
-      setTimeout(() => {
-        if (!filesBeingProcessed) onFilesReceived(files);
-      }, 0);
-    }, { capture: true });
-  }
+  // Document capture-phase listener (fires BEFORE event reaches file input, before ToolUpload clears it)
+  document.addEventListener('change', (e) => {
+    const target = e.target as HTMLInputElement;
+    if (!target.matches('[data-action="file-input"]') || !target.files?.length) return;
+    const files = Array.from(target.files);
+    setTimeout(() => {
+      if (!filesBeingProcessed) onFilesReceived(files);
+    }, 0);
+  }, { capture: true });
 
   (async () => {
     if (sessionStorage.getItem('toolboximage:transfer') === '1') {
